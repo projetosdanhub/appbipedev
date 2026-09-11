@@ -31,7 +31,7 @@ Uma tarefa so pode entrar em `DONE` com criterio de aceite verificado, testes co
 | INF-004 | READY | Criar logger estruturado e request id | INF-003 | logs correlacionam uma requisicao ponta a ponta |
 | INF-005 | READY | Criar pipeline CI inicial | FND-004 | checks de lint, typecheck, teste e secret scan |
 | INF-006 | READY | Configurar proxy HTTPS local e contrato de forwarded headers | INF-003 | hosts locais HTTPS, redirect controlado e proxy confiavel testados |
-| INF-007 | READY | Bloquear exposicao de arquivos e portas internas | INF-001, INF-006 | dotfiles, secrets, backups, listagem e servicos internos bloqueados |
+| INF-007 | READY | Bloquear exposicao de arquivos e portas internas | INF-001, INF-006 | `pnpm security:check` passa; dotfiles, secrets, backups, listagem e servicos internos bloqueados |
 
 ## Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
