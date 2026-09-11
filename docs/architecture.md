@@ -1,0 +1,30 @@
+# Arquitetura de referencia
+
+## Contextos
+
+| Contexto | Responsabilidade | Dados principais |
+| --- | --- | --- |
+| Identity | autenticar e criar sessoes | users, sessions, verifications |
+| Tenant | empresa, membros e cargos | tenants, memberships, roles |
+| CRM | contatos, pipeline e conversas | contacts, conversations, messages |
+| Messaging | providers, QR, webhooks e envio | channels, provider_events |
+| Automation | regras e execucoes | triggers, workflows, runs |
+| Knowledge | documentos e embeddings | documents, chunks, embeddings |
+| Catalog | produtos e pedidos | catalogs, products, orders |
+| Pages | editor e publicacao | sites, pages, domains |
+| Billing | planos e uso | plans, subscriptions, entitlements |
+
+## Contrato de contexto
+
+```ts
+type TenantContext = {
+  requestId: string;
+  userId: string;
+  tenantId: string;
+  membershipId: string;
+  permissions: readonly string[];
+  supportAccess?: { reason: string; expiresAt: string };
+};
+```
+
+Nenhum use case tenant-owned recebe apenas `userId`. O `TenantContext` e criado pelo servidor depois da sessao e da membership serem validados.
