@@ -25,6 +25,10 @@ Ao receber esse comando, a IA deve ler `rules/00_MASTER.md` e os arquivos de reg
 
 Na fundacao, a tarefa `FND-008` pode executar `pnpm structure:scaffold`. Esse comando cria apenas a estrutura de pastas modular; o codigo de negocio sera construido por tarefas posteriores.
 
+Para configurar a maquina Windows uma unica vez, siga
+`rules/SETUP-01-LOCAL.md`. O arquivo prepara Docker, certificado HTTPS local,
+proxy, verificacoes de seguranca e ngrok sem colocar tokens no repositorio.
+
 ## Superficies e dominios propostos
 
 - `bipesend.com.br`: dominio primario para o mercado brasileiro.
