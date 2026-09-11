@@ -25,3 +25,12 @@ Nao existe link de login do superadmin dentro do painel do tenant. Suporte usa a
 ## Excecoes
 
 Conta suspensa nao pode operar. Tenant sem assinatura ativa pode entrar apenas no billing e suporte, conforme politica. Limite de plano bloqueia criacao/execucao, mas nao deve apagar dados.
+
+
+## Bootstrap e superficies
+
+O platform_owner nasce apenas pelo procedimento de bootstrap controlado no VPS,
+conforme 28_AUTH_SURFACES_BOOTSTRAP.md. O painel superadmin e o painel tenant
+nao compartilham cookie, audience ou rota de login. API e hooks sao superficies
+de maquina: API exige sessao/API key escopada; hooks exigem assinatura, timestamp,
+replay protection e idempotencia.

@@ -20,6 +20,7 @@ Uma tarefa so pode entrar em `DONE` com criterio de aceite verificado, testes co
 | FND-007 | READY | Criar mapa modular e regras anti-monolito | FND-003 | dependencias e nomes canonicos documentados |
 | FND-008 | READY | Gerar skeleton de modulos sem codigo de negocio | FND-007 | pastas numeradas, READMEs e checks de arquitetura |
 | FND-009 | DONE | Consolidar contrato visual, motion e atualizacao de dados | FND-001, FND-007 | tipografia, estados, refresh, frescor e versao documentados |
+| FND-010 | DONE | Auditar fundacao e transformar taskboard em guia executavel | FND-009 | auditoria versionada, riscos classificados, cards com arquivos/testes/aceite e regras atualizadas |
 
 ## Milestone 1 - ambiente local
 
@@ -32,6 +33,7 @@ Uma tarefa so pode entrar em `DONE` com criterio de aceite verificado, testes co
 | INF-005 | READY | Criar pipeline CI inicial | FND-004 | checks de lint, typecheck, teste e secret scan |
 | INF-006 | READY | Configurar proxy HTTPS local e contrato de forwarded headers | INF-003 | hosts locais HTTPS, redirect controlado e proxy confiavel testados |
 | INF-007 | READY | Bloquear exposicao de arquivos e portas internas | INF-001, INF-006 | `pnpm security:check` passa; dotfiles, secrets, backups, listagem e servicos internos bloqueados |
+| INF-008 | READY | Sanear readiness e mover health para modulo shared | INF-003, FND-008 | nenhum erro bruto, contrato versionado, testes e acesso interno documentado |
 
 ## Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
@@ -49,6 +51,10 @@ Uma tarefa so pode entrar em `DONE` com criterio de aceite verificado, testes co
 | AUTH-010 | READY | Criar tela de login visual | AUTH-004, AUTH-009 | estados loading/erro/sucesso, acessibilidade e SEO noindex |
 | AUTH-011 | READY | Testar fluxos E2E | AUTH-002..AUTH-010 | registro, login, reset, convite e cross-tenant falham corretamente |
 | AUTH-012 | READY | Revisao de seguranca do primeiro marco | AUTH-011 | checklist sem blocker critico |
+| AUTH-013 | READY | Bootstrap seguro do platform_owner via CLI no VPS | AUTH-001, INF-002 | comando one-shot, stdin seguro, Argon2id, advisory lock, MFA pendente e auditoria |
+| AUTH-014 | READY | Login separado do superadmin e do tenant | AUTH-004, AUTH-008 | cookies, audiences, rotas, rate limit, recovery e MFA sem compartilhamento |
+| AUTH-015 | READY | Proteger API, webhooks e servicos internos | AUTH-004, MSG-005 | API key escopada, HMAC/timestamp/replay, mTLS/JWT interno e health seguro |
+| AUTH-016 | READY | E2E das superficies de acesso | AUTH-013..AUTH-015 | tenant, superadmin, API, hooks, revogacao, CSRF e escalada falham corretamente |
 
 ## Milestone 3 - equipe, setores e auditoria
 
@@ -143,3 +149,123 @@ Uma tarefa so pode entrar em `DONE` com criterio de aceite verificado, testes co
 7. AUTH-010, AUTH-011 e AUTH-012.
 
 O Sprint 1 termina com um login funcional e seguro, mas ainda sem WhatsApp, IA ou pagamentos reais.
+
+
+## Como o Gemini executa uma tarefa
+
+O taskboard e um contrato de execucao, nao apenas uma lista. Ao receber
+!construibase <ID>, o agente deve:
+
+1. ler rules/00_MASTER.md e todas as rules na ordem;
+2. ler docs/taskboard.md, docs/decisions.md, docs/module-map.md e os contratos da superficie;
+3. localizar o card do ID e repetir objetivo, dependencias e criterio de aceite;
+4. declarar arquivos a criar/alterar, migration, permissao, evento, risco e testes;
+5. parar se a dependencia nao estiver DONE ou se houver conflito de regra;
+6. implementar somente a menor fatia vertical do card;
+7. rodar os checks do card, atualizar taskboard/decisions e relatar bloqueios;
+8. nunca criar mock que pareca funcional sem marcar explicitamente como prototipo.
+
+Saida obrigatoria de cada tarefa:
+
+- resumo do que mudou;
+- arquivos criados/alterados e por que;
+- tenant/superficie/permissao afetados;
+- migrations e rollback;
+- eventos, filas e integrações;
+- testes executados e resultado;
+- riscos pendentes;
+- proximo item READY.
+
+## Resumo didatico dos dominios
+
+| Grupo | O que construir | Regra de inicio |
+| --- | --- | --- |
+| FND | regras, nomes, arquitetura, contratos e skeleton | nenhuma feature antes da fundacao |
+| INF | Docker, env, health, HTTPS, proxy, logs e CI | portas internas e segredos protegidos |
+| AUTH | usuarios, sessoes, tenant, cargos, logins e bootstrap | isolamento e autorizacao antes do visual |
+| TEAM | setores, cargos customizados, membros e auditoria | nunca elevar ou remover tenant_admin |
+| CRM | contatos, tags, pipelines, inbox e atribuicao | toda query com tenant context |
+| MSG/AUTO | provider WhatsApp, QR, webhooks, filas e automacoes | adapter, idempotencia, opt-in e limites |
+| AI | upload, RAG, LLM, MCP e copiloto | read-only, allowlist e tenant assinado |
+| CAT/PAGE | catalogo, ecommerce, editor, dominios e SEO | schema de blocos sem JS arbitrario |
+| BILL | planos, entitlements, Stripe e Mercado Pago | webhook confirmado; redirect nao confirma |
+| OPS/MOB | backup, alertas, pentest e mobile | somente apos fluxos críticos estaveis |
+
+## Cards operacionais do primeiro ciclo
+
+### INF-008 — readiness seguro
+
+- Objetivo: manter liveness simples e readiness sem vazamento de DSN, stack ou provider.
+- Arquivos esperados: modulo 00-shared de health, contrato em packages/contracts e testes de API.
+- Nao fazer: expor mensagem de exception, liberar diagnostico detalhado no frontend ou criar polling global.
+- Testes: Postgres/Redis ok, timeout, senha errada, resposta sem DSN/stack, status 200/503.
+- Aceite: health/ready documentados, sanitizados e executados pelo proxy/conteiners.
+
+### AUTH-001 — modelo de identidade e tenant
+
+- Entidades: users, tenants, memberships, roles, permissions, role_permissions, sessions, verifications e password_resets.
+- Arquivos esperados: migration, repositorios, policies, RLS, contratos, factories de teste.
+- Seguranca: tenant_id obrigatorio nas tabelas tenant-owned, FORCE RLS, UUID, hashes e auditoria.
+- Testes: cross-tenant, membership suspensa, sessão revogada e rollback da migration.
+- Aceite: migration reversivel/documentada e isolamento demonstrado por teste.
+
+### AUTH-009/AUTH-010 — shell e login do tenant
+
+- Superficie: app.bipesend.com.br; SEO noindex; responsivo desde 360 px.
+- Telas: login, cadastro, verificacao de e-mail, recuperar senha, redefinir senha e estados loading/error/success.
+- Arquivos esperados: app rotas finas, feature identity, contratos API, componentes UI compartilhados e testes E2E/a11y.
+- Seguranca: cookie server-side, CSRF, rate limit, mensagens genericas, sem token no localStorage.
+- Aceite: fluxo real conectado à API, teclado, foco, reduced motion e cross-tenant negativos.
+
+### AUTH-013 — bootstrap do platform_owner
+
+- Superficie: somente CLI no VPS; nenhum endpoint, seed ou formulario.
+- Arquivos esperados: use case em 01-identity, adapter de transacao/advisory lock, CLI em 14-platform, auditoria e testes.
+- Entrada: email normalizado e senha por stdin; exigir confirmacao explicita e janela/nonce de secret manager.
+- Armazenamento: hash Argon2id; nunca cifra reversivel de senha; MFA fica pendente ate registro seguro.
+- Testes: primeira execucao, segunda execução, concorrencia, stdin ausente, nonce invalido, logs sem segredo.
+- Aceite: exatamente um owner, execução auditada e modo bootstrap fechado após sucesso.
+
+### AUTH-014 — login superadmin e tenant
+
+- Superadmin: admin.bipesend.com.br, cookie/audience/rotas separados, MFA/WebAuthn obrigatório.
+- Tenant: app.bipesend.com.br, membership e permissões do tenant.
+- Arquivos esperados: features de cada frontend, policies, sessões, recovery, controllers e testes.
+- Não fazer: link cruzado, flag de admin enviada pelo cliente, reutilização de cookie ou painel mock.
+- Aceite: login, logout, recovery, MFA, revogacao e redirecionamentos testados por superfície.
+
+### AUTH-015 — API, hooks e serviços internos
+
+- API: sessão/API key escopada, tenant context e permissão; sem página de login.
+- Hooks: assinatura, raw body quando exigido, timestamp, replay protection, idempotencia e fila.
+- Interno: mTLS/JWT com audience, scopes, expiração e rotação; sem acesso total da IA.
+- Testes: assinatura invalida, replay, duplicata, API key revogada, cross-tenant e token interno vencido.
+- Aceite: nenhuma superficie maquina-a-maquina depende de cookie de navegador.
+
+### TEAM-005/TEAM-006 — erros e auditoria
+
+- Tenant reporta erro com requestId, rota, módulo e contexto redigido.
+- Superadmin busca por codigo, fingerprint, tenant, severidade, estado e periodo.
+- Estados: open, investigating, resolved, ignored.
+- Aceite: PII/segredo redigidos, auditoria completa e codigo BPS separado do status HTTP.
+
+### OPS-004/OPS-005 — saúde de integrações
+
+- Providers: Stripe, Mercado Pago, WhatsApp e IA via adapter.
+- Estados: connected, degraded, disconnected, misconfigured, not_entitled, disabled, unknown.
+- Frontend mostra texto, icone, ultima verificacao e reduced motion; nunca apenas bolinha.
+- Aceite: tenant vê apenas o proprio escopo; superadmin vê agregado conforme permissao; nenhum token retorna.
+
+## Ordem de inicio após a fundacao
+
+1. INF-008 e INF-004.
+2. AUTH-001.
+3. AUTH-002, AUTH-003, AUTH-004 e AUTH-005.
+4. AUTH-006, AUTH-007 e AUTH-008.
+5. AUTH-009 e AUTH-010.
+6. AUTH-011 e AUTH-012.
+7. AUTH-013, AUTH-014, AUTH-015 e AUTH-016.
+8. TEAM-005/TEAM-006 e OPS-004/OPS-005.
+
+Nao iniciar CRM, WhatsApp, IA, catalogo, paginas ou billing antes de AUTH-016
+passar.

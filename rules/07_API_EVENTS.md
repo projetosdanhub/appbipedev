@@ -37,3 +37,12 @@ WebSocket com rooms por tenant e usuario. O servidor autoriza a entrada na room.
 O estado exibido para Stripe, Mercado Pago, WhatsApp e IA vem de verificacao
 server-side e usa os estados de `27_INTEGRATION_HEALTH.md`. Eventos de
 transicao sao idempotentes, auditaveis e nunca carregam tokens.
+
+
+## Health e superficies de maquina
+
+/health e liveness minimalista. /ready informa apenas estado/latencia
+sanitizados e nao devolve mensagens de exception, DSN, stack ou segredo. API e
+hooks nao possuem login HTML: API usa credencial escopada e hooks usam assinatura
+do provider, timestamp, replay protection, idempotencia e processamento
+assíncrono.

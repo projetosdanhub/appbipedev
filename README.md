@@ -75,3 +75,15 @@ Esta base e uma especificacao inicial v0.3. O taskboard em `docs/taskboard.md`
 e as regras devem ser revisados antes de qualquer integracao externa em
 producao. A configuracao local de HTTPS exige certificado de desenvolvimento
 gerado na maquina; certificados e tokens nunca entram no repositorio.
+
+
+## Contrato de acesso e bootstrap
+
+O mapa de superficies está em docs/auth-surfaces.md. O painel do tenant e o
+superpainel possuem logins separados. API e hooks não possuem tela de login:
+API usa sessão/API key escopada; hooks usam assinatura, timestamp, replay
+protection e idempotência.
+
+O primeiro platform_owner é criado somente por CLI no VPS, com senha recebida
+por stdin e hash Argon2id. Não existe endpoint ou seed público para criar o
+administrador geral. O card AUTH-013 do taskboard contém o contrato executável.

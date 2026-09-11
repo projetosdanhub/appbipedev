@@ -37,6 +37,7 @@ Construir uma plataforma multitenant de CRM, atendimento omnichannel, automacao,
 25. `25_HTTPS_PROXY_FILE_SECURITY.md`
 26. `26_ERROR_CATALOG_AUDIT.md`
 27. `27_INTEGRATION_HEALTH.md`
+28. `28_AUTH_SURFACES_BOOTSTRAP.md`
 
 ## Contrato para qualquer agente de IA
 
@@ -91,3 +92,6 @@ O primeiro marco e a fundacao modular mais o painel do contratante com registro,
 - acesso de navegador e webhook usa HTTPS; portas de banco, fila e storage sao internas e nunca entram no proxy publico.
 - codigo de aplicacao, dicionario de erros e estado de integracoes sao contratos separados do status HTTP e de segredos.
 - reportes de erro do tenant entram em auditoria do superadmin com minimizacao de PII e sem stack trace publico.
+
+
+- `platform_owner` so nasce pelo bootstrap controlado no VPS; nenhum endpoint, seed ou frontend pode cria-lo.
