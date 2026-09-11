@@ -113,6 +113,7 @@ Executar na raiz:
 
     pnpm install
     pnpm rules:check
+    pnpm security:check
     pnpm structure:scaffold
 
 O scaffold é idempotente. Ele deve criar apenas pastas e marcadores
@@ -262,6 +263,7 @@ Não fazer push remoto sem confirmação do proprietário.
 Concluir somente quando:
 
 - pnpm rules:check passar;
+- pnpm security:check passar;
 - pnpm structure:scaffold terminar sem erro;
 - docker compose config --quiet passar;
 - PostgreSQL, Redis, Mailpit e MinIO estiverem em execução;

@@ -12,6 +12,7 @@
     "db:seed": "pnpm --filter @bipesend/db db:seed",
     "structure:scaffold": "node scripts/create-modular-skeleton.mjs",
     "rules:check": "node scripts/check-rules.mjs",
+    "security:check": "node scripts/check-security-baseline.mjs",
     "pdf:build": "python3 scripts/build_foundation_pdf.py"
   },
   "devDependencies": {

@@ -14,6 +14,9 @@
 8. Rodar checks relevantes.
 9. Atualizar taskboard/decisoes.
 
+Na fundacao de infraestrutura, `pnpm rules:check` e
+`pnpm security:check` sao obrigatorios antes de declarar sucesso.
+
 Quando o pedido nao informar uma tarefa, o agente deve apenas validar a fundacao e indicar o proximo item READY do taskboard. Nao deve implementar todos os itens automaticamente.
 
 Uso recomendado para uma tarefa especifica:
