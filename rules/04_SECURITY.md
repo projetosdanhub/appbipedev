@@ -28,3 +28,24 @@ Quarentena, limite de tamanho, allowlist de MIME/extensao, nome gerado pelo sist
 ## Mensageria
 
 Opt-in, opt-out e lista de supressao. Limites por tenant, numero e contato. Nao prometer que o envio em massa evita bloqueio de plataforma. Mensagens fora de politica devem ser bloqueadas ou encaminhadas para revisao.
+
+## HTTPS, proxy e arquivos
+
+Todo acesso de usuario e webhook usa HTTPS na borda. O proxy confiavel termina
+TLS, adiciona headers e encaminha somente para upstreams privados; a API valida
+host, origem, forwarded headers e contexto de sessao. PostgreSQL, Redis, MinIO
+e Mailpit nao sao expostos pelo proxy ou ngrok.
+
+A raiz publica aceita somente build/assets allowlisted. Dotfiles, `.env`,
+backups, dumps, logs, chaves, certificados, configuracoes, source maps
+publicos e codigo-fonte sao bloqueados. Downloads usam autorizacao por tenant,
+allowlist de recurso e URL assinada curta; nunca montar caminho de arquivo com
+entrada do usuario. Detalhes completos estao em
+`25_HTTPS_PROXY_FILE_SECURITY.md`.
+
+## Erros e diagnostico
+
+Respostas usam codigo de aplicacao BipeSend separado do status HTTP, mensagem
+segura e `requestId`. Stack trace, SQL, tokens, prompts e PII nao chegam ao
+cliente. Reportes do tenant entram em fluxo auditado do superadmin e seguem o
+catalogo de `26_ERROR_CATALOG_AUDIT.md`.

@@ -1,6 +1,6 @@
-# Taskboard NexoFlow
+# Taskboard BipeSend
 
-Versao: 0.1.0  
+Versao: 0.2.0  
 Legenda: `BACKLOG`, `READY`, `IN_PROGRESS`, `BLOCKED`, `DONE`
 
 ## Regra de uso
@@ -17,16 +17,21 @@ Uma tarefa so pode entrar em `DONE` com criterio de aceite verificado, testes co
 | FND-004 | READY | Criar repositorio Git e branch protection | FND-003 | PR exige lint, typecheck e testes |
 | FND-005 | READY | Definir threat model inicial | FND-001 | riscos, controles e responsaveis registrados |
 | FND-006 | READY | Criar matriz de permissoes v1 | FND-005 | todas as telas do MVP mapeadas |
+| FND-007 | READY | Criar mapa modular e regras anti-monolito | FND-003 | dependencias e nomes canonicos documentados |
+| FND-008 | READY | Gerar skeleton de modulos sem codigo de negocio | FND-007 | pastas numeradas, READMEs e checks de arquitetura |
+| FND-009 | DONE | Consolidar contrato visual, motion e atualizacao de dados | FND-001, FND-007 | tipografia, estados, refresh, frescor e versao documentados |
 
 ## Milestone 1 - ambiente local
 
 | ID | Estado | Tarefa | Dependencias | Aceite |
 | --- | --- | --- | --- | --- |
-| INF-001 | DONE | Subir PostgreSQL/pgvector, Redis, Mailpit e MinIO | FND-003 | `docker compose up -d` saudavel |
-| INF-002 | DONE | Validar config por schema | INF-001 | boot falha com variavel invalida/ausente critica |
-| INF-003 | DONE | Criar health/readiness endpoints | INF-001 | API e dependencias reportam estado sem segredos |
+| INF-001 | READY | Subir PostgreSQL/pgvector, Redis, Mailpit e MinIO | FND-003 | `docker compose up -d` saudavel |
+| INF-002 | READY | Validar config por schema | INF-001 | boot falha com variavel invalida/ausente critica |
+| INF-003 | READY | Criar health/readiness endpoints | INF-001 | API e dependencias reportam estado sem segredos |
 | INF-004 | READY | Criar logger estruturado e request id | INF-003 | logs correlacionam uma requisicao ponta a ponta |
 | INF-005 | READY | Criar pipeline CI inicial | FND-004 | checks de lint, typecheck, teste e secret scan |
+| INF-006 | READY | Configurar proxy HTTPS local e contrato de forwarded headers | INF-003 | hosts locais HTTPS, redirect controlado e proxy confiavel testados |
+| INF-007 | READY | Bloquear exposicao de arquivos e portas internas | INF-001, INF-006 | dotfiles, secrets, backups, listagem e servicos internos bloqueados |
 
 ## Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
@@ -53,6 +58,8 @@ Uma tarefa so pode entrar em `DONE` com criterio de aceite verificado, testes co
 | TEAM-002 | BACKLOG | CRUD de cargos customizados | AUTH-008 | permissao nao pode exceder criador |
 | TEAM-003 | BACKLOG | Gestao de membros | TEAM-002 | suspender, reativar, transferir e auditar |
 | TEAM-004 | BACKLOG | Auditoria pesquisavel | AUTH-004 | filtros por actor, acao, recurso e periodo |
+| TEAM-005 | BACKLOG | Contrato de erros e reporte pelo painel tenant | INF-004, AUTH-004 | codigo BipeSend, request id, redacao e protocolo de reporte |
+| TEAM-006 | BACKLOG | Dicionario e triagem de erros no superpainel | TEAM-005, AUTH-008 | buscar, vincular, promover, resolver e auditar |
 
 ## Milestone 4 - CRM e inbox
 
@@ -120,15 +127,19 @@ Uma tarefa so pode entrar em `DONE` com criterio de aceite verificado, testes co
 | OPS-001 | BACKLOG | Backup e restore drill | INF-001 | restore documentado e medido |
 | OPS-002 | BACKLOG | Observabilidade e alertas | INF-004 | SLOs e runbooks |
 | OPS-003 | BACKLOG | Pentest e revisao externa | todos | sem blocker critico |
+| OPS-004 | BACKLOG | Registro e verificacao de saude das integracoes | INF-004 | estados, timeout, backoff e resumo sem segredos |
+| OPS-005 | BACKLOG | Indicadores de API e integracao no painel | OPS-004, AUTH-009 | status textual, ponto acessivel, ultima verificacao e reduced motion |
 | MOB-001 | BACKLOG | Especificar app nativo | OPS-003 | decisoes de escopo e API mobile |
 | MOB-002 | BACKLOG | Implementar mobile | MOB-001 | paridade dos fluxos prioritarios |
 
 ## Sprint 1 recomendado
 
-1. INF-001, INF-002 e INF-003.
-2. AUTH-001 e AUTH-004.
-3. AUTH-002, AUTH-003 e AUTH-005.
-4. AUTH-006, AUTH-008 e AUTH-009.
-5. AUTH-010, AUTH-011 e AUTH-012.
+1. FND-007 e FND-008.
+2. INF-001, INF-002, INF-003, INF-006 e INF-007.
+3. INF-004 e INF-005.
+4. AUTH-001 e AUTH-004.
+5. AUTH-002, AUTH-003 e AUTH-005.
+6. AUTH-006, AUTH-008 e AUTH-009.
+7. AUTH-010, AUTH-011 e AUTH-012.
 
 O Sprint 1 termina com um login funcional e seguro, mas ainda sem WhatsApp, IA ou pagamentos reais.

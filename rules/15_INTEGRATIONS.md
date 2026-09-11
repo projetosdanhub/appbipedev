@@ -15,3 +15,11 @@ Provedores de chat e embeddings entram como configuracao do backend. Nunca chama
 ## Observabilidade de provedor
 
 Guardar `provider_request_id`, status, latencia, tipo de erro e correlation id. Nao guardar payload completo com segredo ou PII sem necessidade. Painel mostra saude, nao tokens.
+
+## Saude operacional
+
+Cada adapter publica um health check com timeout, retry, backoff e circuit
+breaker. O registro diferencia `connected`, `degraded`, `disconnected`,
+`misconfigured`, `not_entitled`, `disabled` e `unknown`; ausencia de recurso por
+plano nao e desconexao. O detalhe seguro e definido em
+`27_INTEGRATION_HEALTH.md`.

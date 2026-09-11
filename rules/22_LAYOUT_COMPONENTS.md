@@ -27,3 +27,11 @@ Skeleton representa a forma real do conteudo, nao um spinner global. Lazy load p
 ## Iconografia
 
 Usar biblioteca SVG aprovada, com `aria-hidden` quando decorativa e label quando interativa. Nao usar emoji, caracteres Unicode ou imagens sem semantica como substitutos de icones.
+
+## Diagnostico e saude
+
+`ErrorState`, `ReportErrorButton`, `IntegrationStatusBadge` e `LastCheckedLabel`
+sao componentes compartilhados quando o comportamento for igual. Eles devem
+exibir estado textual, possuir foco e labels acessiveis, suportar retry sem
+duplicacao e respeitar reduced motion. A pagina nao deve implementar outro
+formato de erro ou outra bolinha de status local.

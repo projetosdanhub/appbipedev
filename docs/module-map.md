@@ -20,7 +20,7 @@ apps/api/src/modules/
   11-pages/
   12-billing/
   13-integrations/
-  14-platform/
+  14-platform/       catalogo de erros, reportes, auditoria e configuracoes globais
   99-test-support/
 ```
 
@@ -74,3 +74,14 @@ services/ai-service/app/
 ## Regra de localizacao
 
 Se o arquivo atende uma regra de negocio, ele fica no modulo do dominio. Se atende somente visual, fica em `packages/ui` ou `components`. Se conversa com provider, fica no adapter de integracao. Se e contrato entre servicos, fica em `packages/contracts`.
+
+## Diagnostico e saude
+
+- contrato de erro seguro, `requestId` e redacao: `00-shared` e `packages/contracts`;
+- catalogo, reportes do tenant e triagem do superadmin: `14-platform`;
+- auditoria de transicoes e observabilidade: infraestrutura compartilhada com
+  eventos publicados pelo modulo dono;
+- health checks e estados de Stripe, Mercado Pago, WhatsApp e IA:
+  `13-integrations`;
+- componentes `ErrorState`, `ReportErrorButton` e `IntegrationStatusBadge`:
+  `packages/ui`, com comportamento conectado pela feature da superficie.

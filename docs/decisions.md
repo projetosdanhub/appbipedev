@@ -32,6 +32,49 @@
 **Motivo:** evitar arquivos monoliticos, reduzir imports circulares e tornar a localizacao compreensivel para pessoas e agentes de IA.  
 **Status:** aprovada para a fundacao.
 
+## ADR-0007 - HTTPS e proxy como entrada unica
+
+**Decisao:** usar Nginx como referencia de borda; localmente, disponibilizar
+os hosts `*.localhost` em HTTPS na porta `3443` com certificado de
+desenvolvimento, mantendo os processos em portas upstream de loopback. Em
+producao, redirecionar `80` para `443`, usar certificados gerenciados e
+habilitar HSTS somente depois da validacao dos subdominios.
+
+**Motivo:** manter o mesmo modelo de superficies (`www`, `app`, `admin`, `api`
+e `hooks`) em local e producao, reduzir erro de configuracao e impedir acesso
+direto aos servicos internos.
+
+**Alternativa rejeitada:** tratar `.htaccess` como controle universal; ele so
+funciona em Apache e nao protege Node, Nginx, Docker ou buckets.
+
+**Status:** aprovada para a fundacao; certificados e DNS de producao pendentes.
+
+## ADR-0008 - catalogo de erros e reporte auditavel
+
+**Decisao:** separar status HTTP de codigo de aplicacao `BPS-<DOMINIO>-<NUMERO>`;
+usar resposta segura com `message` e `requestId`; aceitar reportes autenticados
+do tenant e fazer triagem no superpainel com estados `open`, `investigating`,
+`resolved` e `ignored`.
+
+**Motivo:** HTTP `201` e sucesso, e o uso de status como dicionario gera
+ambiguidade. Um codigo estavel permite localizar modulo, runbook e causa sem
+vazar stack trace ou PII.
+
+**Status:** aprovada; implementacao prevista em TEAM-005 e TEAM-006.
+
+## ADR-0009 - saude de integracoes server-side
+
+**Decisao:** cada adapter publica um estado operacional normalizado
+(`connected`, `degraded`, `disconnected`, `misconfigured`, `not_entitled`,
+`disabled`, `unknown`). O frontend recebe apenas resumo seguro; transicoes sao
+auditadas e atualizadas por eventos/revalidacao controlada.
+
+**Motivo:** identificar Stripe, Mercado Pago, WhatsApp e IA ausentes ou
+desconectados sem enviar chaves ao browser e sem confundir limite de plano com
+falha tecnica.
+
+**Status:** aprovada; implementacao prevista em OPS-004 e OPS-005.
+
 ## ADR-0006 - contrato visual, motion e frescor de dados
 
 **Decisao:** manter tokens tipograficos, cores e espacamentos em
@@ -44,10 +87,3 @@ polling de fallback controlado e refresh manual preservando o contexto da tela.
 rascunhos e atualizacoes que interrompam o trabalho do usuario.
 
 **Status:** aprovada para a fundacao.
-
-## ADR-0007 - API minima com Fastify e health/ready
-
-**Decisao:** criar a API minima em `apps/api` usando Fastify (nao NestJS completo) para a fase de fundacao, com apenas `GET /health` e `GET /ready`.  
-**Motivo:** Fastify e a engine declarada na ADR-0002; o bootstrap minimo permite validar infraestrutura Docker, configuracao e conectividade sem introduzir complexidade de modulos de negocio.  
-**Detalhes:** `/health` retorna status e uptime sem segredos; `/ready` verifica PostgreSQL e Redis reportando latencia sem expor credenciais. Configuracao validada no boot via schema em `src/config/env.ts`. Testes com `node:test` nativo.  
-**Status:** implementada e validada.

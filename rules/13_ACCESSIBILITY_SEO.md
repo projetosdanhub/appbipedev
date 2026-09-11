@@ -15,3 +15,11 @@ Slugs sao normalizados, reservados e unicos. Dominios customizados passam por ve
 ## Pixel e tracking
 
 Tags sao registradas por tenant, validadas e carregadas apenas em paginas autorizadas. Consentimento, redacao de PII, allowlist de destinos e auditoria sao obrigatorios. Nenhum script arbitrario entra no editor.
+
+## Status e reportes
+
+Estado de API/integracao nunca depende somente de cor ou de animacao: exibir
+texto, icone SVG, ultima verificacao e `aria-label`. O ponto vermelho pode
+piscar suavemente apenas para erro ativo e deve parar com
+`prefers-reduced-motion`, aba oculta ou resolucao. O botao `Reportar erro` deve
+ser operavel por teclado e anunciar protocolo, sucesso e falha em live region.

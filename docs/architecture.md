@@ -13,6 +13,8 @@
 | Catalog | produtos e pedidos | catalogs, products, orders |
 | Pages | editor e publicacao | sites, pages, domains |
 | Billing | planos e uso | plans, subscriptions, entitlements |
+| Integrations | adapters, OAuth, webhooks e saude | integration_connections, provider_events |
+| Platform | erros, reportes, auditoria e configuracao global | error_catalog_entries, error_reports, audit_events |
 
 ## Contrato de contexto
 

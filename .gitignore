@@ -11,3 +11,6 @@ output/
 *.log
 *.local
 
+# Certificados locais gerados por mkcert; nunca versionar chaves privadas.
+infra/certs/*
+!infra/certs/.gitkeep

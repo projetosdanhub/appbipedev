@@ -52,6 +52,22 @@ Todos sao nomes candidatos. A disponibilidade dos dominios, marca e requisitos l
 
 O backend e dividido por dominios numerados em `apps/api/src/modules/`, com camadas `domain`, `application`, `infrastructure`, `presentation` e `tests`. Os frontends usam feature slices. O mapa completo esta em `docs/module-map.md` e as regras anti-monolito em `rules/23_MODULAR_ARCHITECTURE.md`.
 
+## Seguranca de acesso e operacao
+
+O acesso de navegador usa HTTPS por superficie. No local, o proxy Nginx atende
+`https://www.localhost:3443`, `https://app.localhost:3443`,
+`https://admin.localhost:3443`, `https://api.localhost:3443` e
+`https://hooks.localhost:3443`; as portas dos processos sao apenas upstreams
+locais. Em producao, a borda usa `443` e redireciona `80` para HTTPS.
+
+O dicionario inicial de erros esta em `docs/error-catalog.md` e o contrato de
+saude de integracoes em `docs/integration-health.md`. A regra de acesso a
+arquivos, proxy, HTTPS e `.htaccess` esta em
+`rules/25_HTTPS_PROXY_FILE_SECURITY.md`.
+
 ## Estado atual
 
-Esta base e uma especificacao inicial v0.2. O documento PDF em `output/pdf/` e o taskboard em `docs/taskboard.md` devem ser revisados antes de qualquer integracao externa em producao.
+Esta base e uma especificacao inicial v0.3. O taskboard em `docs/taskboard.md`
+e as regras devem ser revisados antes de qualquer integracao externa em
+producao. A configuracao local de HTTPS exige certificado de desenvolvimento
+gerado na maquina; certificados e tokens nunca entram no repositorio.

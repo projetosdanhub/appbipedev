@@ -83,6 +83,7 @@ A política deve ser definida por recurso, nunca por um timer global:
 | Upload e processamento | evento de progresso ou polling controlado |
 | Configurações | revalidação após salvar e ao reabrir |
 | Conteúdo público | cache com invalidação por publicação |
+| Saúde de integrações | evento de transição, revalidação ao abrir/foco e intervalo por provider |
 
 Polling deve pausar quando a aba estiver oculta, respeitar limite do plano,
 usar backoff em falhas e impedir requisições concorrentes duplicadas. Dados
@@ -139,4 +140,4 @@ Cada módulo que exibir dados deve testar:
 - prefers-reduced-motion;
 - ausência de chamadas duplicadas;
 - detecção de nova versão sem perda de dados não salvos.
-
+- estado de integração com texto/ícone, última verificação e reduced motion.

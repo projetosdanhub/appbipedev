@@ -1,6 +1,6 @@
-# NexoFlow Rules - regra mestre
+# BipeSend Rules - regra mestre
 
-Versao: 0.1.0  
+Versao: 0.3.0  
 Status: proposta inicial  
 Comando de bootstrap: `!construibase`
 
@@ -32,6 +32,11 @@ Construir uma plataforma multitenant de CRM, atendimento omnichannel, automacao,
 20. `20_AI_AGENT_COMMANDS.md`
 21. `21_CONFIGURATION.md`
 22. `22_LAYOUT_COMPONENTS.md`
+23. `23_MODULAR_ARCHITECTURE.md`
+24. `24_INTERACTIONS_MOTION_DATA_REFRESH.md`
+25. `25_HTTPS_PROXY_FILE_SECURITY.md`
+26. `26_ERROR_CATALOG_AUDIT.md`
+27. `27_INTEGRATION_HEALTH.md`
 
 ## Contrato para qualquer agente de IA
 
@@ -71,7 +76,7 @@ Depois da edicao:
 
 ## Escopo do primeiro marco
 
-O primeiro marco e o painel do contratante com registro, verificacao de e-mail, login, logout, recuperacao de senha, criacao de tenant, convite inicial e shell responsivo. CRM, WhatsApp, IA, catalogo e pagamentos entram depois que a fundacao de identidade, tenant e auditoria estiverem testadas.
+O primeiro marco e a fundacao modular mais o painel do contratante com registro, verificacao de e-mail, login, logout, recuperacao de senha, criacao de tenant, convite inicial e shell responsivo. CRM, WhatsApp, IA, catalogo e pagamentos entram depois que a fundacao de identidade, tenant e auditoria estiverem testadas.
 
 ## Nao negociaveis
 
@@ -81,3 +86,8 @@ O primeiro marco e o painel do contratante com registro, verificacao de e-mail, 
 - o frontend nunca recebe segredos de integracao;
 - o banco e a fonte de verdade; cache e fila nao substituem transacoes;
 - toda integracao externa usa adaptador, timeout, retry, idempotencia e auditoria.
+- nenhum modulo cria um arquivo monolitico para concentrar dominio, banco, HTTP e regras de tela.
+- a ordem cronologica de construcao e representada por pastas de modulo e IDs do taskboard; arquivos de codigo usam nomes semanticos e estaveis.
+- acesso de navegador e webhook usa HTTPS; portas de banco, fila e storage sao internas e nunca entram no proxy publico.
+- codigo de aplicacao, dicionario de erros e estado de integracoes sao contratos separados do status HTTP e de segredos.
+- reportes de erro do tenant entram em auditoria do superadmin com minimizacao de PII e sem stack trace publico.

@@ -28,3 +28,11 @@ Planos controlam entitlements no backend. Nao duplicar limites em `.env`, fronte
 ## Mudancas
 
 Mudanca de configuracao sensivel exige permissao, confirmacao, auditoria e, quando possivel, preview/rollback. Nunca editar diretamente banco de producao para contornar o painel.
+
+## URLs e proxy
+
+As URLs canonicas de acesso sao HTTPS. Em local, usar os hosts `*.localhost`
+atraves do proxy em `3443`; `3000`, `3001`, `3002` e `4000` sao upstreams
+internos. `HTTPS_ENFORCE`, `TRUSTED_PROXY_COUNT` e `ALLOWED_ORIGINS` sao
+validados no boot. O ngrok nao recebe token por variavel versionada e sua URL
+publica e temporaria.

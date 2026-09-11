@@ -1,6 +1,6 @@
 # SETUP-01-LOCAL — Configuração local única do BipeSend
 
-Versão: 1.0.0  
+Versão: 1.1.0  
 Escopo: ambiente local no Windows/Antigravity  
 Execução: uma vez, com comportamento idempotente  
 Projeto: BipeSend
@@ -19,7 +19,8 @@ Abra o Gemini no Antigravity com a pasta do projeto aberta e envie:
     Leia integralmente SETUP-01-LOCAL.md e execute o setup local descrito nele.
     Antes de editar, leia rules/00_MASTER.md, todos os arquivos de rules/ na
     ordem definida pelo master, docs/taskboard.md, docs/decisions.md e
-    docs/module-map.md.
+    docs/module-map.md. Para a borda, leia também docs/error-catalog.md,
+    docs/integration-health.md e infra/nginx/README.md.
 
     Este setup deve ser idempotente: validar o que já existe, criar somente o
     que estiver ausente e nunca apagar código, regras, volumes Docker ou
@@ -58,10 +59,15 @@ Executar e registrar:
     docker compose version
     ngrok version
     git --version
+    mkcert -version
 
 Se pnpm não existir e Node.js estiver disponível:
 
-    npm install --global pnpm@10.0.0
+    npm install --global pnpm@12.4.1
+
+Se `mkcert` estiver ausente, parar e informar que ele precisa ser instalado
+pelo proprietario. Nao baixar executaveis ou instalar certificados
+silenciosamente.
 
 Não instalar Docker Desktop ou Node.js silenciosamente. Se estiverem ausentes,
 parar e informar que a instalação exige ação do usuário.
@@ -79,6 +85,18 @@ Garantir que:
 - banco, Redis, Mailpit e MinIO permaneçam acessíveis apenas localmente;
 - .env esteja ignorado pelo Git;
 - nenhuma chave real seja escrita em código, Markdown, fixture, log ou commit.
+
+As URLs publicas locais devem ser HTTPS e usar o proxy:
+
+    PUBLIC_BASE_URL=https://www.localhost:3443
+    TENANT_APP_URL=https://app.localhost:3443
+    SUPERADMIN_APP_URL=https://admin.localhost:3443
+    API_URL=https://api.localhost:3443
+    HOOKS_URL=https://hooks.localhost:3443
+
+As portas `3000`, `3001`, `3002` e `4000` sao upstreams locais, nao URLs para
+usuarios. Nao colocar essas portas no ngrok quando o objetivo for expor o
+painel completo; para callback, expor somente a API/webhook necessaria.
 
 Gerar valores locais para AUTH_SESSION_SECRET, DATA_ENCRYPTION_KEY e
 WEBHOOK_SIGNING_SECRET com o gerador criptográfico do Node:
@@ -125,7 +143,28 @@ Não executar:
 Não apagar volumes durante o setup. Não expor PostgreSQL, Redis ou MinIO pelo
 ngrok.
 
-## 6. Tarefas do taskboard nesta execução
+## 6. Certificado e proxy HTTPS local
+
+Depois de criar o `.env`, gerar o certificado somente na maquina local:
+
+    mkcert -install
+    New-Item -ItemType Directory -Force infra\certs | Out-Null
+    mkcert -cert-file infra\certs\localhost.pem -key-file infra\certs\localhost-key.pem localhost *.localhost 127.0.0.1 ::1
+
+Nao copiar os arquivos de `infra\certs` para GitHub. O `.gitignore` deve
+mante-los fora do commit.
+
+Subir o proxy junto com a infraestrutura:
+
+    docker compose -f docker-compose.yml -f docker-compose.https.yml --profile https config --quiet
+    docker compose -f docker-compose.yml -f docker-compose.https.yml --profile https up -d
+    docker compose -f docker-compose.yml -f docker-compose.https.yml --profile https ps
+
+O proxy usa `https://*.localhost:3443` e encaminha para os processos locais.
+Se a API ainda nao existir, o proxy pode subir, mas o `/health` so funcionara
+depois de INF-003.
+
+## 7. Tarefas do taskboard nesta execução
 
 Validar ou executar somente nesta ordem:
 
@@ -133,7 +172,9 @@ Validar ou executar somente nesta ordem:
 2. FND-008 — skeleton modular idempotente;
 3. INF-001 — infraestrutura local Docker;
 4. INF-002 — configuração validada por schema;
-5. INF-003 — health/readiness da API.
+5. INF-003 — health/readiness da API;
+6. INF-006 — proxy HTTPS local e forwarded headers;
+7. INF-007 — bloqueio de arquivos e portas internas.
 
 Para INF-003, se não existir API, criar a menor base modular em apps/api:
 
@@ -149,7 +190,7 @@ Para INF-003, se não existir API, criar a menor base modular em apps/api:
 Não iniciar ainda autenticação, CRM, WhatsApp, IA, catálogo, páginas,
 pagamentos ou integrações externas.
 
-## 7. Localhost
+## 8. Localhost
 
 Depois que a API for criada, garantir que funcione por:
 
@@ -157,14 +198,15 @@ Depois que a API for criada, garantir que funcione por:
 
 Validar:
 
-    http://localhost:4000/health
-    http://localhost:4000/ready
+    curl.exe --fail https://api.localhost:3443/health
+    curl.exe --fail https://api.localhost:3443/ready
 
-O painel do tenant em localhost:3000 só será iniciado quando as tarefas de
-identidade e shell do painel forem implementadas. Não criar um painel falso
-apenas para preencher a porta.
+O painel do tenant usa `https://app.localhost:3443` somente quando as tarefas
+de identidade e shell estiverem implementadas. Nao criar painel falso apenas
+para preencher uma porta. Acesso direto a `http://localhost:4000` e apenas
+diagnostico local e nao deve ser usado como URL publica.
 
-## 8. Ngrok com segurança
+## 9. Ngrok com segurança
 
 O token enviado anteriormente na conversa não deve ser reutilizado. Ele deve
 ser revogado no painel do ngrok e substituído por um novo token.
@@ -177,7 +219,7 @@ neste arquivo, no .env, no GitHub ou em logs:
 Substituir SEU_NOVO_TOKEN somente no terminal. Não salvar o valor no
 repositório.
 
-Depois que localhost:4000/health funcionar:
+Depois que `https://api.localhost:3443/health` funcionar:
 
     ngrok http 4000
 
@@ -186,10 +228,20 @@ Copiar a URL HTTPS gerada para o .env apenas se callbacks forem necessários:
     NGROK_PUBLIC_URL=https://URL-GERADA.ngrok.app
     HOOKS_URL=https://URL-GERADA.ngrok.app
 
-Reiniciar a API após alterar o .env. Não iniciar ngrok para portas de banco,
+Reiniciar a API apos alterar o `.env`. Nao iniciar ngrok para portas de banco,
 Redis ou armazenamento.
 
-## 9. Git
+O comando do ngrok entrega URL HTTPS publica, mesmo quando o upstream local e
+`127.0.0.1:4000`. Para um teste do painel por proxy, usar somente apos validar
+o certificado local e o host routing:
+
+    ngrok http https://api.localhost:3443 --host-header=api.localhost:3443
+
+Se o agente nao confiar no certificado local, voltar ao primeiro comando
+(`ngrok http 4000`); a borda publica continuara HTTPS e os servicos internos
+continuarao inacessiveis pela rede.
+
+## 10. Git
 
 Antes do primeiro commit:
 
@@ -205,7 +257,7 @@ repositório ainda não existir:
 
 Não fazer push remoto sem confirmação do proprietário.
 
-## 10. Critérios de conclusão
+## 11. Critérios de conclusão
 
 Concluir somente quando:
 
@@ -213,13 +265,15 @@ Concluir somente quando:
 - pnpm structure:scaffold terminar sem erro;
 - docker compose config --quiet passar;
 - PostgreSQL, Redis, Mailpit e MinIO estiverem em execução;
+- proxy HTTPS local passar em `nginx -t` e escutar somente em `127.0.0.1:3443`;
+- HTTP local redirecionar para HTTPS quando o proxy estiver habilitado;
 - .env existir e não estiver versionado;
-- /health responder sem segredos;
-- /ready informar corretamente as dependências;
+- /health e /ready responderem sem segredos pelo endpoint HTTPS;
+- arquivos sensiveis e listagem de diretorio serem bloqueados pelo proxy;
 - ngrok estiver configurado sem token no repositório;
-- nenhuma tarefa posterior ao INF-003 tiver sido iniciada.
+- nenhuma tarefa posterior ao INF-007 tiver sido iniciada.
 
-## Relatório obrigatório
+## 12. Relatório obrigatório
 
 Responder com:
 
@@ -228,7 +282,7 @@ Responder com:
 3. comandos executados;
 4. versões detectadas;
 5. serviços Docker e portas;
-6. URL local da API;
+6. URLs HTTPS locais e URL upstream usada somente para diagnostico;
 7. URL temporária do ngrok, sem token;
 8. testes e resultados;
 9. riscos ou bloqueios;
@@ -236,4 +290,3 @@ Responder com:
 
 Nunca declarar sucesso de um item cujo critério de aceite não tenha sido
 verificado.
-

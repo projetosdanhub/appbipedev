@@ -15,3 +15,8 @@ Cada modulo define retencao, exportacao e exclusao. Jobs de limpeza sao idempote
 ## Incidentes
 
 Ter runbook para segredo exposto, cross-tenant, conta comprometida, provider indisponivel, fila travada e documento malicioso. Preservar evidencias minimas sem ampliar exposicao.
+
+Reportes de erro e diagnosticos seguem minimizacao: redigir PII, tokens,
+cookies, Authorization, body de mensagens e prompts antes de persistir. O
+catalogo operacional pode ser compartilhado com o tenant somente pela mensagem
+segura; stack trace e runbook interno ficam restritos ao superadmin autorizado.

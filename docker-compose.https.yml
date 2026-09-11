@@ -1,0 +1,18 @@
+services:
+  https-proxy:
+    image: nginx:1.27-alpine
+    profiles: ["https"]
+    ports:
+      - "127.0.0.1:3443:443"
+      - "127.0.0.1:3080:80"
+    volumes:
+      - ./infra/nginx/nginx.local.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/nginx/snippets:/etc/nginx/snippets:ro
+      - ./infra/certs:/etc/nginx/certs:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD-SHELL", "nginx -t"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

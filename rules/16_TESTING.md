@@ -16,3 +16,11 @@ Tentar ler/criar/editar dados de tenant diferente; manager tentando elevar privi
 ## CI
 
 Lint, typecheck, testes, migration check, dependency audit, secret scan e build em pull request. E2E com servicos efemeros. Branch protegida exige revisao e checks verdes.
+
+## Borda e diagnostico
+
+Testar redirect HTTP->HTTPS, certificado/host allowlist, forwarded headers,
+CORS, cookies Secure, headers de seguranca, bloqueio de dotfiles e extensoes
+sensiveis, path traversal e download sem permissao. Testar tambem o contrato de
+erros, redacao de PII/segredos, reporte do tenant, deduplicacao e transicoes de
+saude das integracoes.
