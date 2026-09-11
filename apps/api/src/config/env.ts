@@ -17,6 +17,7 @@ config({ path: resolve(__dirname, "../../../../.env") });
 export interface EnvConfig {
   NODE_ENV: string;
   APP_NAME: string;
+  API_HOST: string;
   API_PORT: number;
   DATABASE_URL: string;
   REDIS_URL: string;
@@ -44,7 +45,12 @@ function requireEnvNotPlaceholder(key: string, placeholders: string[]): string {
 export function loadEnv(): EnvConfig {
   const nodeEnv = process.env["NODE_ENV"] || "development";
   const appName = process.env["APP_NAME"] || "BipeSend";
+  const apiHost = process.env["API_HOST"] || "127.0.0.1";
   const apiPort = parseInt(process.env["API_PORT"] || "4000", 10);
+
+  if (!/^[a-zA-Z0-9_.: -]+$/.test(apiHost) || apiHost.includes(" ")) {
+    throw new Error("[config] Invalid API_HOST");
+  }
 
   if (isNaN(apiPort) || apiPort < 1 || apiPort > 65535) {
     throw new Error(`[config] Invalid API_PORT: ${process.env["API_PORT"]}`);
@@ -59,6 +65,7 @@ export function loadEnv(): EnvConfig {
   return {
     NODE_ENV: nodeEnv,
     APP_NAME: appName,
+    API_HOST: apiHost,
     API_PORT: apiPort,
     DATABASE_URL: databaseUrl,
     REDIS_URL: redisUrl,

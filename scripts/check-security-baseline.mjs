@@ -24,6 +24,9 @@ const envExample = await textOf(".env.example");
 if (/\b(sk-[A-Za-z0-9]|ghp_[A-Za-z0-9]|3J6WfYSfSx8YOb7)\b/.test(envExample)) {
   failures.push("A credential-like value exists in .env.example");
 }
+if (!envExample.includes("API_HOST=127.0.0.1")) {
+  failures.push("Local API host is not explicitly loopback-bound");
+}
 
 const localProxy = await textOf("infra/nginx/nginx.local.conf");
 for (const marker of ["listen 443 ssl", "ssl_protocols TLSv1.2 TLSv1.3", "return 444", "deny-sensitive-files.conf"]) {

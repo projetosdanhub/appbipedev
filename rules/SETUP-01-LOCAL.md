@@ -85,6 +85,7 @@ Garantir que:
 - banco, Redis, Mailpit e MinIO permaneçam acessíveis apenas localmente;
 - .env esteja ignorado pelo Git;
 - nenhuma chave real seja escrita em código, Markdown, fixture, log ou commit.
+- `API_HOST=127.0.0.1` no ambiente local; nao alterar para `0.0.0.0` no host.
 
 As URLs publicas locais devem ser HTTPS e usar o proxy:
 
@@ -164,6 +165,10 @@ Subir o proxy junto com a infraestrutura:
 O proxy usa `https://*.localhost:3443` e encaminha para os processos locais.
 Se a API ainda nao existir, o proxy pode subir, mas o `/health` so funcionara
 depois de INF-003.
+
+Se o proxy for executado dentro de container e nao conseguir acessar um
+processo preso ao loopback do host, nao ampliar o bind do host. Nesse caso,
+executar o proxy no host ou containerizar o upstream na mesma rede privada.
 
 ## 7. Tarefas do taskboard nesta execução
 

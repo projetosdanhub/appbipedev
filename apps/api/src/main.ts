@@ -4,7 +4,7 @@
  * Responsabilidades nesta fase:
  * - Carregar e validar configuração (INF-002)
  * - Registrar GET /health e GET /ready (INF-003)
- * - Servir na porta 4000
+ * - Servir na porta configurada, com bind local em 127.0.0.1 por padrão
  */
 
 import Fastify from "fastify";
@@ -27,9 +27,13 @@ async function bootstrap(): Promise<void> {
   await registerHealthRoutes(app);
 
   try {
-    await app.listen({ port: env.API_PORT, host: "0.0.0.0" });
+    await app.listen({ port: env.API_PORT, host: env.API_HOST });
     app.log.info(
-      `${env.APP_NAME} API listening on http://localhost:${env.API_PORT}`
+      {
+        host: env.API_HOST,
+        port: env.API_PORT,
+      },
+      `${env.APP_NAME} API upstream is ready; public access must use the HTTPS proxy`
     );
   } catch (err) {
     app.log.error(err);
