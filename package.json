@@ -1,7 +1,7 @@
 {
   "name": "bipesend-platform",
   "private": true,
-  "packageManager": "pnpm@10.0.0",
+  "packageManager": "pnpm@12.4.1",
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
