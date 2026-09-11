@@ -20,6 +20,21 @@ http {
   upstream api_service { server api:4000; }
 
   server {
+    listen 80 default_server;
+    server_name _;
+    return 444;
+  }
+
+  server {
+    listen 443 ssl default_server;
+    http2 on;
+    server_name _;
+    ssl_certificate /etc/letsencrypt/live/bipesend.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/bipesend.com.br/privkey.pem;
+    return 444;
+  }
+
+  server {
     listen 80;
     server_name bipesend.com.br www.bipesend.com.br app.bipesend.com.br admin.bipesend.com.br api.bipesend.com.br hooks.bipesend.com.br;
     return 308 https://$host$request_uri;
