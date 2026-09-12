@@ -206,10 +206,8 @@
   background: var(--color-border-200);
   border-radius: 8px;
  }
- .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--color-ink-600);
- }
  /* O truque mágico: fundo fixo com gradiente. Quando a barra desce, revela a parte de baixo do gradiente! */
+ .custom-scrollbar::-webkit-scrollbar-thumb:hover,
  .custom-scrollbar::-webkit-scrollbar-thumb:active {
   background: linear-gradient(to bottom, var(--color-brand-700), var(--color-brand-600));
   background-attachment: fixed;

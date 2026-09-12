@@ -70,7 +70,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               CRM confiável para operações que não podem parar.
             </h2>
             <p className="text-white/80 text-[16px] leading-relaxed">
-              Segurança, estabilidade e controle para suas conversas.
+              Rapidez no atendimento, portabilidade e total controle
             </p>
           </div>
           
