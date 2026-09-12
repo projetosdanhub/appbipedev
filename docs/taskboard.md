@@ -39,14 +39,14 @@ Uma tarefa so pode entrar em `DONE` com criterio de aceite verificado, testes co
 
 | ID | Estado | Tarefa | Dependencias | Aceite |
 | --- | --- | --- | --- | --- |
-| AUTH-001 | READY | Modelar users, tenants, memberships e sessions | INF-001, FND-006 | migration, RLS e testes de isolamento |
-| AUTH-002 | READY | Implementar registro de conta | AUTH-001 | email valido, senha Argon2id, tenant pendente |
-| AUTH-003 | READY | Implementar verificacao de e-mail | AUTH-002 | token unico, expiracao e reenvio limitado |
-| AUTH-004 | READY | Implementar login/logout | AUTH-001 | cookie seguro, sessao persistida, logout invalida |
-| AUTH-005 | READY | Implementar recuperacao de senha | AUTH-004 | token de uso unico e logs sem token |
-| AUTH-006 | READY | Criar onboarding do tenant_admin | AUTH-003 | tenant, membership e slug criados atomicamente |
-| AUTH-007 | READY | Criar convite de membro | AUTH-006 | convite escopado ao tenant, expiracao e aceite auditado |
-| AUTH-008 | READY | Implementar RBAC/ABAC v1 | AUTH-001, FND-006 | manager nao eleva/remover admin |
+| AUTH-001 | DONE | Modelar users, tenants, memberships e sessions | INF-001, FND-006 | migration, RLS e testes de isolamento |
+| AUTH-002 | DONE | Implementar registro de conta | AUTH-001 | email valido, senha Argon2id, tenant pendente |
+| AUTH-003 | DONE | Implementar verificacao de e-mail | AUTH-002 | token unico, expiracao e reenvio limitado |
+| AUTH-004 | DONE | Implementar login/logout | AUTH-001 | cookie seguro, sessao persistida, logout invalida |
+| AUTH-005 | DONE | Implementar recuperacao de senha | AUTH-004 | token de uso unico e logs sem token |
+| AUTH-006 | DONE | Criar onboarding do tenant_admin | AUTH-003 | tenant, membership e slug criados atomicamente |
+| AUTH-007 | DONE | Criar convite de membro | AUTH-006 | convite escopado ao tenant, expiracao e aceite auditado |
+| AUTH-008 | DONE | Implementar RBAC/ABAC v1 | AUTH-001, FND-006 | manager nao eleva/remover admin |
 | AUTH-009 | READY | Criar shell do painel tenant | AUTH-004 | sidebar, topbar, rotas protegidas e mobile 360 px |
 | AUTH-010 | READY | Criar tela de login visual | AUTH-004, AUTH-009 | estados loading/erro/sucesso, acessibilidade e SEO noindex |
 | AUTH-011 | READY | Testar fluxos E2E | AUTH-002..AUTH-010 | registro, login, reset, convite e cross-tenant falham corretamente |
