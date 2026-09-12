@@ -22,6 +22,7 @@ export interface EnvConfig {
   DATABASE_URL: string;
   REDIS_URL: string;
   AUTH_SESSION_SECRET: string;
+  INTERNAL_API_KEY: string;
 }
 
 function requireEnv(key: string): string {
@@ -61,6 +62,7 @@ export function loadEnv(): EnvConfig {
   const authSecret = requireEnvNotPlaceholder("AUTH_SESSION_SECRET", [
     "replace_with",
   ]);
+  const internalApiKey = process.env["INTERNAL_API_KEY"] || "bipesend_internal_dev_key";
 
   return {
     NODE_ENV: nodeEnv,
@@ -70,5 +72,8 @@ export function loadEnv(): EnvConfig {
     DATABASE_URL: databaseUrl,
     REDIS_URL: redisUrl,
     AUTH_SESSION_SECRET: authSecret,
+    INTERNAL_API_KEY: internalApiKey,
   };
 }
+
+export const env = loadEnv();

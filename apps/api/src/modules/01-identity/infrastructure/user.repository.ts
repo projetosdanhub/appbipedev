@@ -6,17 +6,27 @@ export class UserRepository {
 
   async create(email: string, passwordHash: string, name: string): Promise<User> {
     const rows = await this.db.query(
-      `INSERT INTO users (email, password_hash, name) 
-       VALUES ($1, $2, $3) 
-       RETURNING id, email, password_hash as "passwordHash", name, created_at as "createdAt", updated_at as "updatedAt"`,
-      [email, passwordHash, name]
+      `INSERT INTO users (email, password_hash, name, is_superadmin) 
+       VALUES ($1, $2, $3, $4) 
+       RETURNING id, email, password_hash as "passwordHash", name, is_superadmin as "isSuperadmin", created_at as "createdAt", updated_at as "updatedAt"`,
+      [email, passwordHash, name, false]
+    );
+    return rows[0];
+  }
+
+  async createSuperadmin(email: string, passwordHash: string, name: string): Promise<User> {
+    const rows = await this.db.query(
+      `INSERT INTO users (email, password_hash, name, is_superadmin) 
+       VALUES ($1, $2, $3, $4) 
+       RETURNING id, email, password_hash as "passwordHash", name, is_superadmin as "isSuperadmin", created_at as "createdAt", updated_at as "updatedAt"`,
+      [email, passwordHash, name, true]
     );
     return rows[0];
   }
 
   async findById(id: string): Promise<User | null> {
     const rows = await this.db.query(
-      `SELECT id, email, password_hash as "passwordHash", name, created_at as "createdAt", updated_at as "updatedAt" 
+      `SELECT id, email, password_hash as "passwordHash", name, is_superadmin as "isSuperadmin", created_at as "createdAt", updated_at as "updatedAt" 
        FROM users WHERE id = $1`,
       [id]
     );
@@ -25,11 +35,18 @@ export class UserRepository {
 
   async findByEmail(email: string): Promise<User | null> {
     const rows = await this.db.query(
-      `SELECT id, email, password_hash as "passwordHash", name, created_at as "createdAt", updated_at as "updatedAt" 
+      `SELECT id, email, password_hash as "passwordHash", name, is_superadmin as "isSuperadmin", created_at as "createdAt", updated_at as "updatedAt" 
        FROM users WHERE email = $1`,
       [email]
     );
     return rows.length ? rows[0] : null;
+  }
+
+  async hasSuperadmin(): Promise<boolean> {
+    const rows = await this.db.query(
+      `SELECT 1 FROM users WHERE is_superadmin = true LIMIT 1`
+    );
+    return rows.length > 0;
   }
 
   async updatePassword(id: string, passwordHash: string): Promise<void> {

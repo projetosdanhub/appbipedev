@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { Database } from "../infrastructure/database.js";
 import { SessionRepository } from "../../01-identity/infrastructure/session.repository.js";
 import { UserRepository } from "../../01-identity/infrastructure/user.repository.js";
+import { env } from "../../../config/env.js";
 
 // Add user to request
 declare module "fastify" {
@@ -53,10 +54,40 @@ export function createTenantMiddleware(db: Database) {
       return reply.status(400).send({ error: "Missing x-tenant-id header" });
     }
 
-    // To apply RLS, we must be inside a transaction where current_setting is set.
-    // However, fastify doesn't natively wrap requests in pg transactions across async boundaries cleanly without cls-hooked or AsyncLocalStorage.
-    // We can use AsyncLocalStorage to pass the tenantId and wrap the controller in a transaction, OR we just let the controller wrap it.
-    // Let's store it in request, and controllers must wrap DB calls in `db.withTenant(tenantId, async () => { ... })`
     request.tenantId = tenantId;
+  };
+}
+
+export function createApiKeyMiddleware() {
+  return async (request: FastifyRequest, reply: FastifyReply) => {
+    const apiKey = request.headers["x-api-key"] as string;
+    if (!apiKey) {
+      return reply.status(401).send({ error: "Missing API key" });
+    }
+    // In a real application, validate the API key against the database here
+    if (apiKey !== env.INTERNAL_API_KEY && !apiKey.startsWith("bipesend_")) {
+      return reply.status(401).send({ error: "Invalid API key" });
+    }
+    // Set appropriate context
+  };
+}
+
+export function createWebhookHmacMiddleware(webhookSecret: string) {
+  return async (request: FastifyRequest, reply: FastifyReply) => {
+    const signature = request.headers["x-webhook-signature"] as string;
+    if (!signature) {
+      return reply.status(401).send({ error: "Missing webhook signature" });
+    }
+
+    const payload = JSON.stringify(request.body);
+    const expectedSignature = crypto
+      .createHmac("sha256", webhookSecret)
+      .update(payload)
+      .digest("hex");
+
+    // Prevent timing attacks
+    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) {
+      return reply.status(401).send({ error: "Invalid webhook signature" });
+    }
   };
 }

@@ -10,7 +10,8 @@
     "test": "node --import tsx --test src/tests/**/*.test.ts",
     "typecheck": "tsc --noEmit",
     "lint": "echo 'lint ok'",
-    "migrate": "node-pg-migrate -m src/infra/database/migrations"
+    "migrate": "node-pg-migrate -m src/infra/database/migrations",
+    "admin:bootstrap": "tsx src/modules/14-platform/presentation/cli.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.1.2",
