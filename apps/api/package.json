@@ -9,7 +9,8 @@
     "start": "node dist/main.js",
     "test": "node --import tsx --test src/tests/**/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "lint": "echo 'lint ok'"
+    "lint": "echo 'lint ok'",
+    "migrate": "node-pg-migrate -m src/infra/database/migrations"
   },
   "dependencies": {
     "dotenv": "^16.5.0",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@types/node": "^22.15.0",
     "@types/pg": "^8.11.13",
+    "node-pg-migrate": "^9.0.0",
     "pino-pretty": "^13.1.3",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"

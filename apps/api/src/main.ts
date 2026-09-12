@@ -9,7 +9,7 @@
 
 import Fastify from "fastify";
 import { loadEnv } from "./config/env.js";
-import { registerHealthRoutes } from "./routes/health.js";
+import { registerHealthController } from "./modules/00-shared/presentation/health.controller.js";
 
 async function bootstrap(): Promise<void> {
   const env = loadEnv();
@@ -24,7 +24,7 @@ async function bootstrap(): Promise<void> {
     },
   });
 
-  await registerHealthRoutes(app);
+  await registerHealthController(app);
 
   try {
     await app.listen({ port: env.API_PORT, host: env.API_HOST });

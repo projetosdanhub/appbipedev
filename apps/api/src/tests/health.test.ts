@@ -8,7 +8,7 @@
 import { describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
 import Fastify, { type FastifyInstance } from "fastify";
-import { registerHealthRoutes } from "../routes/health.js";
+import { registerHealthController } from "../modules/00-shared/presentation/health.controller.js";
 
 describe("/health and /ready endpoints", () => {
   let app: FastifyInstance;
@@ -22,7 +22,7 @@ describe("/health and /ready endpoints", () => {
       process.env["REDIS_URL"] || "redis://localhost:6379";
 
     app = Fastify({ logger: false });
-    await registerHealthRoutes(app);
+    await registerHealthController(app);
     await app.ready();
   });
 
