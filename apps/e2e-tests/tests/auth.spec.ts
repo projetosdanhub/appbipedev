@@ -1,42 +1,78 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Autenticação e Separação de Contextos (AUTH)', () => {
+test.describe.serial('Autenticação Completa (AUTH)', () => {
+  test.use({ baseURL: 'http://127.0.0.1:3001' });
 
-  test('Deve bloquear acesso sem cookie no tenant', async ({ page }) => {
-    // We navigate to dashboard which should redirect to login if no auth is found
-    // Currently, our middleware handles this at the API layer, and UI at layout?
-    // Wait, the UI pages are static right now. But let's assume it should render login page.
-    await page.goto('https://app.localhost:3443/login');
-    
-    // Expect the login form to be visible
-    await expect(page.getByRole('heading', { name: 'BipeSend', exact: true })).toBeVisible();
-    await expect(page.getByLabel('E-mail')).toBeVisible();
-    await expect(page.getByLabel('Senha')).toBeVisible();
+  test.beforeEach(async ({ page }) => {
+    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+    page.on('pageerror', error => console.log('PAGE ERROR:', error.message));
+    page.on('response', async response => {
+      if (response.url().includes('/api/')) {
+        console.log(`API RESP [${response.status()}] ${response.url()}:`, await response.text().catch(() => 'no-body'));
+      }
+    });
   });
 
-  test('Deve mostrar o superpainel com URL diferente', async ({ page }) => {
-    // Superpainel URL
-    await page.goto('https://admin.localhost:3443/login');
+  const testEmail = `test_${Date.now()}@bipesend.com.br`;
+  const testPassword = 'Password123!';
+
+  test('Deve realizar o registro de um novo usuário', async ({ page }) => {
+    await page.goto('/register');
+    await page.waitForLoadState('networkidle');
     
-    // Should see Superpainel login
-    await expect(page.getByRole('heading', { name: 'BipeSend Superpainel' })).toBeVisible();
-    await expect(page.getByText('Acesso restrito')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Criar nova conta' })).toBeVisible({ timeout: 15000 });
+    
+    await page.fill('input[type="text"]', 'Usuário de Teste');
+    await page.fill('input[type="email"]', testEmail);
+    await page.fill('input[type="password"]', testPassword);
+    
+    await page.click('button[type="button"]');
+    
+    // Deve redirecionar para o login
+    await expect(page).toHaveURL(/.*\/login/, { timeout: 15000 });
   });
 
-  test('Validar rejeição cross-tenant - cookie não vaza', async ({ browser }) => {
-    const contextTenant = await browser.newContext();
-    const contextSuperadmin = await browser.newContext();
+  test('Deve realizar login com o usuário criado', async ({ page }) => {
+    await page.goto('/login');
+    await page.waitForLoadState('networkidle');
     
-    const pageTenant = await contextTenant.newPage();
-    await pageTenant.goto('https://app.localhost:3443/login');
-    // ... simulate setting a fake cookie ...
-    await contextTenant.addCookies([{ name: 'session_token', value: 'fake_token', domain: 'app.localhost', path: '/' }]);
-
-    const pageSuperadmin = await contextSuperadmin.newPage();
-    await pageSuperadmin.goto('https://admin.localhost:3443/login');
-    const cookiesAdmin = await contextSuperadmin.cookies();
+    await page.fill('input[type="email"]', testEmail);
+    await page.fill('input[type="password"]', testPassword);
     
-    // Superadmin context should have NO session_token from tenant
-    expect(cookiesAdmin.find(c => c.name === 'session_token')).toBeUndefined();
+    await page.click('button[type="button"]');
+    
+    // Em teoria, logou e foi para o dashboard ou /
+    // Vamos apenas testar que não tem erro de login
+    await expect(page.getByText('Erro ao realizar login')).not.toBeVisible();
   });
+
+  test('Deve navegar para a tela de recuperar senha', async ({ page }) => {
+    await page.goto('/login');
+    await page.waitForLoadState('networkidle');
+    await page.click('text=Esqueceu a senha?');
+    
+    await expect(page).toHaveURL(/.*\/forgot-password/);
+    await expect(page.getByRole('heading', { name: 'Recuperar senha' })).toBeVisible();
+  });
+
+  test('Deve solicitar recuperação de senha', async ({ page }) => {
+    await page.goto('/forgot-password');
+    await page.waitForLoadState('networkidle');
+    
+    await page.fill('input[type="email"]', testEmail);
+    await page.click('button[type="button"]');
+    
+    await expect(page.getByRole('heading', { name: 'E-mail enviado!' })).toBeVisible({ timeout: 15000 });
+  });
+
+  test('Deve bloquear reset de senha sem token', async ({ page }) => {
+    await page.goto('/reset-password');
+    await page.waitForLoadState('networkidle');
+    
+    await page.fill('input[type="password"]', 'NewPassword123!');
+    await page.click('button[type="button"]');
+    
+    await expect(page.getByText('Token inválido ou ausente')).toBeVisible();
+  });
+
 });

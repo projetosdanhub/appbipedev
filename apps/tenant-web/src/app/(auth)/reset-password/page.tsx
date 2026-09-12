@@ -1,36 +1,42 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
+function ResetPasswordForm() {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!token) {
+      setError("Token inválido ou ausente. Solicite um novo link de recuperação.");
+      return;
+    }
+
     setError("");
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ token, newPassword: password }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Erro ao realizar login");
+        throw new Error(data.error || "Erro ao redefinir a senha");
       }
 
-      router.push("/");
+      setIsSuccess(true);
     } catch (err: any) {
       setError(err.message || "Ocorreu um erro inesperado");
     } finally {
@@ -38,14 +44,33 @@ export default function LoginPage() {
     }
   };
 
+  if (isSuccess) {
+    return (
+      <div className="w-full animate-in fade-in zoom-in-95 duration-500 fill-mode-both text-center">
+        <div className="flex justify-center mb-6">
+          <CheckCircle2 className="w-16 h-16 text-green-500" />
+        </div>
+        <h1 className="text-3xl font-bold text-[var(--color-ink-900)] dark:text-white tracking-tight mb-2">
+          Senha alterada!
+        </h1>
+        <p className="text-[15px] text-[var(--color-ink-500)] dark:text-gray-400 mb-8">
+          Sua senha foi redefinida com sucesso. Você já pode acessar a plataforma.
+        </p>
+        <Link href="/login" className="inline-flex justify-center px-6 py-2.5 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">
+          Ir para o login
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[var(--color-ink-900)] dark:text-white tracking-tight">
-          Entrar na sua conta
+          Criar nova senha
         </h1>
         <p className="mt-2 text-[15px] text-[var(--color-ink-500)] dark:text-gray-400">
-          Bem-vindo de volta! Por favor, insira seus dados.
+          Insira sua nova senha abaixo. Ela deve ter pelo menos 8 caracteres.
         </p>
       </div>
 
@@ -60,29 +85,9 @@ export default function LoginPage() {
         )}
 
         <div className="space-y-1.5">
-          <label htmlFor="email" className="block text-[14px] font-medium text-[var(--color-ink-700)] dark:text-gray-300">
-            E-mail
+          <label htmlFor="password" className="block text-[14px] font-medium text-[var(--color-ink-700)] dark:text-gray-300">
+            Nova senha
           </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all text-gray-900 dark:text-white shadow-sm"
-            placeholder="voce@empresa.com.br"
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <label htmlFor="password" className="block text-[14px] font-medium text-[var(--color-ink-700)] dark:text-gray-300">
-              Senha
-            </label>
-            <Link href="/forgot-password" className="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors">
-              Esqueceu a senha?
-            </Link>
-          </div>
           <input
             id="password"
             type="password"
@@ -96,27 +101,28 @@ export default function LoginPage() {
 
         <button
           type="button"
-          onClick={handleLogin}
+          onClick={handleReset}
           disabled={isLoading}
           className="relative flex items-center justify-center w-full py-2.5 px-4 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 focus:ring-offset-white dark:focus:ring-offset-gray-900 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-sm"
         >
           {isLoading ? (
             <Loader2 className="w-5 h-5 animate-spin absolute" />
           ) : (
-            <span>Entrar na conta</span>
+            <span>Redefinir senha</span>
           )}
           <span className={`transition-opacity ${isLoading ? 'opacity-0' : 'opacity-100'}`} aria-hidden="true">
             &nbsp;
           </span>
         </button>
       </form>
-      
-      <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
-        Não tem uma conta?{" "}
-        <Link href="/register" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
-          Criar conta agora
-        </Link>
-      </p>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-indigo-600" /></div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

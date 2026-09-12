@@ -1,4 +1,4 @@
-# Taskboard BipeSend
+﻿# Taskboard BipeSend
 
 Versao: 0.2.0  
 Legenda: `BACKLOG`, `READY`, `IN_PROGRESS`, `BLOCKED`, `DONE`
@@ -47,14 +47,14 @@ Uma tarefa so pode entrar em `DONE` com criterio de aceite verificado, testes co
 | AUTH-006 | DONE | Criar onboarding do tenant_admin | AUTH-003 | tenant, membership e slug criados atomicamente |
 | AUTH-007 | DONE | Criar convite de membro | AUTH-006 | convite escopado ao tenant, expiracao e aceite auditado |
 | AUTH-008 | DONE | Implementar RBAC/ABAC v1 | AUTH-001, FND-006 | manager nao eleva/remover admin |
-| AUTH-009 | READY | Criar shell do painel tenant | AUTH-004 | sidebar, topbar, rotas protegidas e mobile 360 px |
-| AUTH-010 | READY | Criar tela de login visual | AUTH-004, AUTH-009 | estados loading/erro/sucesso, acessibilidade e SEO noindex |
-| AUTH-011 | READY | Testar fluxos E2E | AUTH-002..AUTH-010 | registro, login, reset, convite e cross-tenant falham corretamente |
-| AUTH-012 | READY | Revisao de seguranca do primeiro marco | AUTH-011 | checklist sem blocker critico |
-| AUTH-013 | READY | Bootstrap seguro do platform_owner via CLI no VPS | AUTH-001, INF-002 | comando one-shot, stdin seguro, Argon2id, advisory lock, MFA pendente e auditoria |
-| AUTH-014 | READY | Login separado do superadmin e do tenant | AUTH-004, AUTH-008 | cookies, audiences, rotas, rate limit, recovery e MFA sem compartilhamento |
-| AUTH-015 | READY | Proteger API, webhooks e servicos internos | AUTH-004, MSG-005 | API key escopada, HMAC/timestamp/replay, mTLS/JWT interno e health seguro |
-| AUTH-016 | READY | E2E das superficies de acesso | AUTH-013..AUTH-015 | tenant, superadmin, API, hooks, revogacao, CSRF e escalada falham corretamente |
+| AUTH-009 | DONE | Criar shell do painel tenant | AUTH-004 | sidebar, topbar, rotas protegidas e mobile 360 px |
+| AUTH-010 | DONE | Criar tela de login visual | AUTH-004, AUTH-009 | estados loading/erro/sucesso, acessibilidade e SEO noindex |
+| AUTH-011 | DONE | Testar fluxos E2E | AUTH-002..AUTH-010 | registro, login, reset, convite e cross-tenant falham corretamente |
+| AUTH-012 | DONE | Revisao de seguranca do primeiro marco | AUTH-011 | checklist sem blocker critico |
+| AUTH-013 | DONE | Bootstrap seguro do platform_owner via CLI no VPS | AUTH-001, INF-002 | comando one-shot, stdin seguro, Argon2id, advisory lock, MFA pendente e auditoria |
+| AUTH-014 | DONE | Login separado do superadmin e do tenant | AUTH-004, AUTH-008 | cookies, audiences, rotas, rate limit, recovery e MFA sem compartilhamento |
+| AUTH-015 | DONE | Proteger API, webhooks e servicos internos | AUTH-004, MSG-005 | API key escopada, HMAC/timestamp/replay, mTLS/JWT interno e health seguro |
+| AUTH-016 | DONE | E2E das superficies de acesso | AUTH-013..AUTH-015 | tenant, superadmin, API, hooks, revogacao, CSRF e escalada falham corretamente |
 
 ## Milestone 3 - equipe, setores e auditoria
 

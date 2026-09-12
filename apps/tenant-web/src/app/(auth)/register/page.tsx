@@ -5,32 +5,33 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
-export default function LoginPage() {
+export default function RegisterPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, name }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Erro ao realizar login");
+        throw new Error(data.error || "Erro ao criar conta");
       }
 
-      router.push("/");
+      router.push("/login");
     } catch (err: any) {
       setError(err.message || "Ocorreu um erro inesperado");
     } finally {
@@ -42,10 +43,10 @@ export default function LoginPage() {
     <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[var(--color-ink-900)] dark:text-white tracking-tight">
-          Entrar na sua conta
+          Criar nova conta
         </h1>
         <p className="mt-2 text-[15px] text-[var(--color-ink-500)] dark:text-gray-400">
-          Bem-vindo de volta! Por favor, insira seus dados.
+          Comece agora mesmo a gerenciar seus negócios.
         </p>
       </div>
 
@@ -60,8 +61,23 @@ export default function LoginPage() {
         )}
 
         <div className="space-y-1.5">
+          <label htmlFor="name" className="block text-[14px] font-medium text-[var(--color-ink-700)] dark:text-gray-300">
+            Nome completo
+          </label>
+          <input
+            id="name"
+            type="text"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all text-gray-900 dark:text-white shadow-sm"
+            placeholder="João Silva"
+          />
+        </div>
+
+        <div className="space-y-1.5">
           <label htmlFor="email" className="block text-[14px] font-medium text-[var(--color-ink-700)] dark:text-gray-300">
-            E-mail
+            E-mail corporativo
           </label>
           <input
             id="email"
@@ -75,14 +91,9 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <label htmlFor="password" className="block text-[14px] font-medium text-[var(--color-ink-700)] dark:text-gray-300">
-              Senha
-            </label>
-            <Link href="/forgot-password" className="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors">
-              Esqueceu a senha?
-            </Link>
-          </div>
+          <label htmlFor="password" className="block text-[14px] font-medium text-[var(--color-ink-700)] dark:text-gray-300">
+            Senha
+          </label>
           <input
             id="password"
             type="password"
@@ -96,14 +107,14 @@ export default function LoginPage() {
 
         <button
           type="button"
-          onClick={handleLogin}
+          onClick={handleRegister}
           disabled={isLoading}
           className="relative flex items-center justify-center w-full py-2.5 px-4 font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 focus:ring-offset-white dark:focus:ring-offset-gray-900 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-sm"
         >
           {isLoading ? (
             <Loader2 className="w-5 h-5 animate-spin absolute" />
           ) : (
-            <span>Entrar na conta</span>
+            <span>Criar conta</span>
           )}
           <span className={`transition-opacity ${isLoading ? 'opacity-0' : 'opacity-100'}`} aria-hidden="true">
             &nbsp;
@@ -112,9 +123,9 @@ export default function LoginPage() {
       </form>
       
       <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
-        Não tem uma conta?{" "}
-        <Link href="/register" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
-          Criar conta agora
+        Já tem uma conta?{" "}
+        <Link href="/login" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
+          Fazer login
         </Link>
       </p>
     </div>

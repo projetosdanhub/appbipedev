@@ -12,7 +12,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'https://app.localhost:3443',
+    baseURL: 'http://127.0.0.1:3001',
     trace: 'on-first-retry',
     ignoreHTTPSErrors: true,
   },
@@ -22,4 +22,10 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
+  // webServer: {
+  //   command: 'pnpm --dir ../../ run dev',
+  //   url: 'http://127.0.0.1:3001',
+  //   reuseExistingServer: !process.env.CI,
+  //   timeout: 120 * 1000,
+  // },
 });
