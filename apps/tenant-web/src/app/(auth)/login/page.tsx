@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { AlertTriangle, Eye, EyeOff } from "lucide-react";
+import { AlertTriangle, Eye, EyeOff, Mail, Lock } from "lucide-react";
 import {
   Button,
   Input,
@@ -56,12 +56,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full animate-slide-up">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[var(--color-ink-900)] dark:text-white tracking-tight mb-1.5">
+        <h1 className="text-2xl font-bold text-[var(--color-ink-900)] tracking-tight mb-1.5">
           Bem-vindo de volta
         </h1>
-        <p className="text-[15px] text-[var(--color-ink-600)] dark:text-gray-400">
+        <p className="text-[15px] text-[var(--color-ink-600)]">
           Entre na sua conta para acessar o BipSend.
         </p>
       </div>
@@ -82,7 +82,11 @@ export default function LoginPage() {
               <FormItem>
                 <FormLabel>E-mail</FormLabel>
                 <FormControl>
-                  <Input placeholder="seuemail@empresa.com.br" {...field} />
+                  <Input 
+                    placeholder="seuemail@empresa.com.br" 
+                    leftIcon={<Mail className="h-4 w-4" />}
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -99,7 +103,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-ink-600)] dark:text-gray-400 hover:text-[var(--color-brand-600)] dark:hover:text-[var(--color-brand-600)] transition-colors focus:outline-none"
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-ink-600)] hover:text-[var(--color-brand-600)] transition-colors focus:outline-none"
                     aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                   >
                     {showPassword ? (
@@ -113,6 +117,7 @@ export default function LoginPage() {
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
+                    leftIcon={<Lock className="h-4 w-4" />}
                     {...field}
                   />
                 </FormControl>
@@ -136,7 +141,7 @@ export default function LoginPage() {
                       aria-label="Lembrar de mim"
                     />
                   </FormControl>
-                  <FormLabel className="text-sm font-normal text-[var(--color-ink-600)] dark:text-gray-400 cursor-pointer !mt-0">
+                  <FormLabel className="text-sm font-normal text-[var(--color-ink-600)] cursor-pointer !mt-0">
                     Lembrar de mim
                   </FormLabel>
                 </FormItem>
@@ -162,7 +167,7 @@ export default function LoginPage() {
         </form>
       </Form>
       
-      <p className="mt-8 text-center text-[14px] text-[var(--color-ink-600)] dark:text-gray-400">
+      <p className="mt-8 text-center text-[14px] text-[var(--color-ink-600)]">
         Ainda não tem conta?{" "}
         <Link href="/register" className="font-semibold text-[var(--color-brand-600)] hover:text-[var(--color-brand-700)] transition-colors">
           Crie sua conta agora

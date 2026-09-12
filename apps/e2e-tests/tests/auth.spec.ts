@@ -23,11 +23,9 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await expect(page.getByRole('heading', { name: 'Criar nova conta' })).toBeVisible({ timeout: 15000 });
     
     // Fill the new fields
-    await page.fill('#name', 'Usuário de Teste');
-    await page.fill('#email', testEmail);
-    await page.fill('#companyName', 'BipSend Inc.');
-    await page.fill('#password', testPassword);
-    await page.fill('#confirmPassword', testPassword);
+    await page.fill('input[name="name"]', 'Usuário de Teste');
+    await page.fill('input[name="email"]', testEmail);
+    await page.fill('input[name="password"]', testPassword);
     
     // Check the terms
     await page.check('#terms');
@@ -42,8 +40,8 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
     
-    await page.fill('#email', testEmail);
-    await page.fill('#password', testPassword);
+    await page.fill('input[name="email"]', testEmail);
+    await page.fill('input[name="password"]', testPassword);
     
     await page.click('button[type="submit"]');
     
@@ -65,7 +63,7 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await page.goto('/forgot-password');
     await page.waitForLoadState('networkidle');
     
-    await page.fill('#email', testEmail);
+    await page.fill('input[name="email"]', testEmail);
     await page.click('button[type="submit"]');
     
     await expect(page).toHaveURL(/.*\/forgot-password\/verify\?email=.*/, { timeout: 15000 });
@@ -78,12 +76,12 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     
     await expect(page.getByRole('heading', { name: 'Crie uma nova senha' })).toBeVisible();
 
-    await page.fill('#password', 'NewPassword123!');
-    await page.fill('#confirmPassword', 'DifferentPassword123!');
+    await page.fill('input[name="password"]', 'NewPassword123!');
+    await page.fill('input[name="confirmPassword"]', 'DifferentPassword123!');
     
-    // Button should be disabled
-    const btn = page.locator('button[type="submit"]');
-    await expect(btn).toBeDisabled();
+    await page.click('button[type="submit"]');
+    
+    await expect(page.getByText('As senhas não coincidem.')).toBeVisible();
   });
 
 });

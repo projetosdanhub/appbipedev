@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { AlertTriangle, Eye, EyeOff } from "lucide-react";
+import { AlertTriangle, Eye, EyeOff, User, Mail, Lock } from "lucide-react";
 import {
   Button,
   Input,
@@ -74,12 +74,12 @@ export default function RegisterPage() {
   const strength = getPasswordStrength(passwordValue);
 
   return (
-    <div className="w-full">
+    <div className="w-full animate-slide-up">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[var(--color-ink-900)] dark:text-white tracking-tight mb-1.5">
+        <h1 className="text-2xl font-bold text-[var(--color-ink-900)] tracking-tight mb-1.5">
           Criar nova conta
         </h1>
-        <p className="text-[15px] text-[var(--color-ink-600)] dark:text-gray-400">
+        <p className="text-[15px] text-[var(--color-ink-600)]">
           Comece agora mesmo a gerenciar seus negócios.
         </p>
       </div>
@@ -100,7 +100,11 @@ export default function RegisterPage() {
               <FormItem>
                 <FormLabel>Nome completo</FormLabel>
                 <FormControl>
-                  <Input placeholder="João Silva" {...field} />
+                  <Input 
+                    placeholder="João Silva" 
+                    leftIcon={<User className="h-4 w-4" />}
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -114,7 +118,12 @@ export default function RegisterPage() {
               <FormItem>
                 <FormLabel>E-mail corporativo</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="voce@empresa.com.br" {...field} />
+                  <Input 
+                    type="email" 
+                    placeholder="voce@empresa.com.br" 
+                    leftIcon={<Mail className="h-4 w-4" />}
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -131,7 +140,7 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-ink-600)] dark:text-gray-400 hover:text-[var(--color-brand-600)] dark:hover:text-[var(--color-brand-600)] transition-colors focus:outline-none"
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-ink-600)] hover:text-[var(--color-brand-600)] transition-colors focus:outline-none"
                     aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                   >
                     {showPassword ? (
@@ -145,6 +154,7 @@ export default function RegisterPage() {
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
+                    leftIcon={<Lock className="h-4 w-4" />}
                     {...field}
                   />
                 </FormControl>
@@ -157,7 +167,7 @@ export default function RegisterPage() {
                       <div className={`h-full transition-all duration-300 ${strength.score >= 3 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
                       <div className={`h-full transition-all duration-300 ${strength.score >= 4 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
                     </div>
-                    <p className="text-xs text-[var(--color-ink-600)] dark:text-gray-400 flex justify-between">
+                    <p className="text-xs text-[var(--color-ink-600)] flex justify-between">
                       <span>Força da senha:</span>
                       <span className="font-medium" style={{ color: strength.score > 0 ? `var(--color-${strength.score > 3 ? 'success' : strength.score > 1 ? 'warning' : 'danger'}-600)` : '' }}>
                         {strength.label}
@@ -177,7 +187,7 @@ export default function RegisterPage() {
                 required
                 className="toggle-round mt-0.5"
               />
-              <label htmlFor="terms" className="text-sm text-[var(--color-ink-600)] dark:text-gray-400 cursor-pointer leading-relaxed">
+              <label htmlFor="terms" className="text-sm text-[var(--color-ink-600)] cursor-pointer leading-relaxed">
                 Eu concordo com os{" "}
                 <Link href="/terms" className="text-[var(--color-brand-600)] hover:underline">Termos de Serviço</Link>
                 {" "}e a{" "}
@@ -197,7 +207,7 @@ export default function RegisterPage() {
         </form>
       </Form>
       
-      <p className="mt-8 text-center text-[14px] text-[var(--color-ink-600)] dark:text-gray-400">
+      <p className="mt-8 text-center text-[14px] text-[var(--color-ink-600)]">
         Já tem uma conta?{" "}
         <Link href="/login" className="font-semibold text-[var(--color-brand-600)] hover:text-[var(--color-brand-700)] transition-colors">
           Fazer login

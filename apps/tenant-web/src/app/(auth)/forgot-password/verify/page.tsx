@@ -127,31 +127,31 @@ function VerifyCodeContent() {
   };
 
   return (
-    <div className="w-full animate-fade-in-up">
+    <div className="w-full animate-slide-up">
       <div className="mb-8">
         <Link 
           href="/login" 
-          className="inline-flex items-center text-sm font-medium text-[var(--color-ink-600)] hover:text-[var(--color-ink-900)] dark:text-gray-400 dark:hover:text-white transition-colors mb-6 group"
+          className="inline-flex items-center text-sm font-medium text-[var(--color-ink-600)] hover:text-[var(--color-ink-900)] transition-colors mb-6 group"
         >
           <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
           Voltar para o login
         </Link>
-        <div className="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center mb-6">
+        <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-6">
           <MailCheck className="w-6 h-6 text-[var(--color-brand-600)]" />
         </div>
-        <h1 className="text-3xl font-bold text-[var(--color-ink-900)] dark:text-white tracking-tight mb-2">
+        <h1 className="text-3xl font-bold text-[var(--color-ink-900)] tracking-tight mb-2">
           Verifique seu e-mail
         </h1>
-        <p className="text-[15px] text-[var(--color-ink-600)] dark:text-gray-400">
+        <p className="text-[15px] text-[var(--color-ink-600)]">
           Enviamos um código de 6 dígitos para o e-mail{" "}
-          <span className="font-semibold text-[var(--color-ink-900)] dark:text-gray-200">
+          <span className="font-semibold text-[var(--color-ink-900)]">
             {email || "seu e-mail"}
           </span>
           .
         </p>
       </div>
 
-      <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-800 dark:text-indigo-300 rounded-lg text-sm mb-8 flex gap-3 animate-fade-in">
+      <div className="p-4 bg-indigo-50 text-indigo-800 rounded-lg text-sm mb-8 flex gap-3 animate-fade-in">
         <ShieldCheck className="w-5 h-5 flex-shrink-0" />
         <p>Se o e-mail existir no nosso sistema, um código seguro será enviado para você em instantes.</p>
       </div>
@@ -183,7 +183,7 @@ function VerifyCodeContent() {
                         value={digit}
                         onChange={(e) => handleCodeChange(index, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(index, e)}
-                        className="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-semibold bg-white dark:bg-[var(--color-surface-900)] border border-[var(--color-border-200)] dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-600)] focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white shadow-sm hover:border-gray-300"
+                        className="w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-semibold bg-white border border-[var(--color-border-200)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-600)] focus:border-transparent transition-all duration-200 text-gray-900 shadow-sm hover:border-gray-300"
                       />
                     ))}
                   </div>
@@ -205,7 +205,7 @@ function VerifyCodeContent() {
         </form>
       </Form>
       
-      <div className="mt-8 text-center text-[14px] text-[var(--color-ink-600)] dark:text-gray-400">
+      <div className="mt-8 text-center text-[14px] text-[var(--color-ink-600)]">
         Não recebeu o código?{" "}
         {canResend ? (
           <button 
@@ -216,7 +216,7 @@ function VerifyCodeContent() {
           </button>
         ) : (
           <span>
-            Reenviar em <span className="font-semibold text-[var(--color-ink-900)] dark:text-gray-300">{countdown}s</span>
+            Reenviar em <span className="font-semibold text-[var(--color-ink-900)]">{countdown}s</span>
           </span>
         )}
       </div>

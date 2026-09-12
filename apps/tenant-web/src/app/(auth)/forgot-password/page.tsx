@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { ArrowLeft, AlertTriangle } from "lucide-react";
+import { ArrowLeft, AlertTriangle, Mail } from "lucide-react";
 import {
   Button,
   Input,
@@ -53,19 +53,19 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="w-full animate-fade-in-up">
+    <div className="w-full animate-slide-up">
       <div className="mb-8">
         <Link 
           href="/login" 
-          className="inline-flex items-center text-sm font-medium text-[var(--color-ink-600)] hover:text-[var(--color-ink-900)] dark:text-gray-400 dark:hover:text-white transition-colors mb-6 group"
+          className="inline-flex items-center text-sm font-medium text-[var(--color-ink-600)] hover:text-[var(--color-ink-900)] transition-colors mb-6 group"
         >
           <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
           Voltar para o login
         </Link>
-        <h1 className="text-3xl font-bold text-[var(--color-ink-900)] dark:text-white tracking-tight mb-2">
+        <h1 className="text-3xl font-bold text-[var(--color-ink-900)] tracking-tight mb-2">
           Recupere sua senha
         </h1>
-        <p className="text-[15px] text-[var(--color-ink-600)] dark:text-gray-400">
+        <p className="text-[15px] text-[var(--color-ink-600)]">
           Informe seu e-mail corporativo. Enviaremos um código de 6 dígitos para você redefinir sua senha.
         </p>
       </div>
@@ -86,7 +86,12 @@ export default function ForgotPasswordPage() {
               <FormItem>
                 <FormLabel>E-mail corporativo</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="seuemail@empresa.com.br" {...field} />
+                  <Input 
+                    type="email" 
+                    placeholder="seuemail@empresa.com.br" 
+                    leftIcon={<Mail className="h-4 w-4" />}
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -83,16 +83,16 @@ function ResetPasswordContent() {
 
   if (isSuccess) {
     return (
-      <div className="w-full flex flex-col items-center justify-center py-10 animate-fade-in-up text-center">
-        <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-6">
-          <svg className="w-8 h-8 text-[var(--color-success-600)] dark:text-green-400 animate-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <div className="w-full flex flex-col items-center justify-center py-10 animate-slide-up text-center">
+        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-6">
+          <svg className="w-8 h-8 text-[var(--color-success-600)] animate-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
         </div>
-        <h1 className="text-3xl font-bold text-[var(--color-ink-900)] dark:text-white tracking-tight mb-2">
+        <h1 className="text-3xl font-bold text-[var(--color-ink-900)] tracking-tight mb-2">
           Senha redefinida!
         </h1>
-        <p className="text-[15px] text-[var(--color-ink-600)] dark:text-gray-400 mb-8 max-w-sm">
+        <p className="text-[15px] text-[var(--color-ink-600)] mb-8 max-w-sm">
           Sua senha foi alterada com sucesso. Você será redirecionado para a tela de login em instantes.
         </p>
         <Loader2 className="w-6 h-6 animate-spin text-[var(--color-brand-600)]" />
@@ -101,15 +101,15 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="w-full animate-fade-in-up">
+    <div className="w-full animate-slide-up">
       <div className="mb-8">
-        <div className="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center mb-6">
+        <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-6">
           <Lock className="w-6 h-6 text-[var(--color-brand-600)]" />
         </div>
-        <h1 className="text-3xl font-bold text-[var(--color-ink-900)] dark:text-white tracking-tight mb-2">
+        <h1 className="text-3xl font-bold text-[var(--color-ink-900)] tracking-tight mb-2">
           Crie uma nova senha
         </h1>
-        <p className="text-[15px] text-[var(--color-ink-600)] dark:text-gray-400">
+        <p className="text-[15px] text-[var(--color-ink-600)]">
           Sua nova senha deve ser diferente das senhas usadas anteriormente para maior segurança.
         </p>
       </div>
@@ -130,12 +130,17 @@ function ResetPasswordContent() {
               <FormItem>
                 <FormLabel>Nova senha</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <Input 
+                    type="password" 
+                    placeholder="••••••••" 
+                    leftIcon={<Lock className="h-4 w-4" />}
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
                 {field.value?.length > 0 && (
                   <div className="animate-fade-in space-y-1.5 pt-1">
-                    <div className="flex gap-1 h-1.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                    <div className="flex gap-1 h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                       <div className={`h-full transition-all duration-300 ${strength.score >= 1 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
                       <div className={`h-full transition-all duration-300 ${strength.score >= 2 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
                       <div className={`h-full transition-all duration-300 ${strength.score >= 3 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
@@ -160,7 +165,12 @@ function ResetPasswordContent() {
               <FormItem>
                 <FormLabel>Confirmar nova senha</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <Input 
+                    type="password" 
+                    placeholder="••••••••" 
+                    leftIcon={<Lock className="h-4 w-4" />}
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -178,7 +188,7 @@ function ResetPasswordContent() {
         </form>
       </Form>
       
-      <p className="mt-8 text-center text-[14px] text-[var(--color-ink-600)] dark:text-gray-400">
+      <p className="mt-8 text-center text-[14px] text-[var(--color-ink-600)]">
         Lembrou da sua senha?{" "}
         <Link href="/login" className="font-semibold text-[var(--color-brand-600)] hover:text-[var(--color-brand-700)] transition-colors">
           Fazer login
@@ -190,7 +200,7 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="animate-pulse w-full h-96 bg-gray-100 dark:bg-gray-800 rounded-xl" />}>
+    <Suspense fallback={<div className="animate-pulse w-full h-96 bg-gray-100 rounded-xl" />}>
       <ResetPasswordContent />
     </Suspense>
   );

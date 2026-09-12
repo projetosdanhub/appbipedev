@@ -41,6 +41,11 @@
   100% { opacity: 1; transform: translateY(0) scale(1); }
  }
  
+ @keyframes slide-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+ }
+ 
  @keyframes checkmark {
   0% { stroke-dashoffset: 24; opacity: 0; }
   100% { stroke-dashoffset: 0; opacity: 1; }
@@ -63,6 +68,10 @@
 
  .animate-card-enter {
   animation: card-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+ }
+
+ .animate-slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
  }
 
  .animate-checkmark {
@@ -88,20 +97,20 @@
 
  .toggle-round:checked {
   border-color: var(--color-brand-600);
-  background-color: var(--color-brand-600);
+  background-color: transparent;
   animation: checkbox-pulse 0.4s ease-out;
  }
 
  .toggle-round:checked::after {
   content: '';
   position: absolute;
-  top: 3px;
-  left: 5.5px;
-  width: 5px;
-  height: 9px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: var(--color-brand-600);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
  }
 
  .toggle-round:focus-visible {
