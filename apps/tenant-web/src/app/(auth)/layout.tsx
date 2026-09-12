@@ -31,23 +31,27 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         ════════════════════════════════════════ 
       */}
       <div className="
-        flex w-full lg:w-[520px] flex-shrink-0
-        flex-col items-center
+        w-full lg:w-[520px] flex-shrink-0
         bg-white lg:rounded-r-[2.5rem] lg:shadow-[20px_0_40px_-15px_rgba(0,0,0,0.3)]
-        px-5 sm:px-8 lg:px-12
-        h-[100dvh] overflow-y-auto custom-scrollbar relative z-20
+        h-[100dvh] overflow-hidden relative z-20
       ">
-        <div className="flex-1 min-h-[24px] lg:min-h-[48px]" aria-hidden="true" />
-        <div className="w-full max-w-[420px] flex flex-col items-center py-8">
-          <div className="mb-[28px] lg:mb-[32px] flex justify-center w-full">
-            <AuthLogo />
-          </div>
+        <div className="
+          w-full h-full overflow-y-auto custom-scrollbar
+          flex flex-col items-center
+          px-5 sm:px-8 lg:px-12
+        ">
+          <div className="flex-1 min-h-[24px] lg:min-h-[48px]" aria-hidden="true" />
+          <div className="w-full max-w-[420px] flex flex-col items-center py-8">
+            <div className="mb-[28px] lg:mb-[32px] flex justify-center w-full">
+              <AuthLogo />
+            </div>
 
-          <div className="w-full flex flex-col">
-            {children}
+            <div className="w-full flex flex-col">
+              {children}
+            </div>
           </div>
+          <div className="flex-1 min-h-[24px] lg:min-h-[48px]" aria-hidden="true" />
         </div>
-        <div className="flex-1 min-h-[24px] lg:min-h-[48px]" aria-hidden="true" />
       </div>
 
       {/* 
@@ -63,7 +67,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="relative z-10 flex flex-col gap-6 items-end">
           <div className="space-y-2 max-w-[480px]">
             <h2 className="text-white text-[28px] font-bold leading-[1.15]">
-              Tecnologia confiável para operações que não podem parar.
+              CRM confiável para operações que não podem parar.
             </h2>
             <p className="text-white/80 text-[16px] leading-relaxed">
               Segurança, estabilidade e controle para suas conversas e sua operação comercial.
