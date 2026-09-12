@@ -3,12 +3,12 @@
 import { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Loader2, Eye, EyeOff, Lock, CheckCircle2 } from "lucide-react";
+import { Loader2, Eye, EyeOff, Lock } from "lucide-react";
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
-  const email = searchParams.get('email') || "";
-  const token = searchParams.get('token') || "";
+  // const email = searchParams.get('email') || "";
+  // const token = searchParams.get('token') || "";
   
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -59,7 +59,7 @@ export default function ResetPasswordPage() {
         router.push("/login");
       }, 3000);
       
-    } catch (err: any) {
+    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       setError(err.message || "Erro ao redefinir a senha. Tente novamente.");
       setIsLoading(false);
     }

@@ -33,7 +33,7 @@ export default function LoginPage() {
       }
 
       router.push("/");
-    } catch (err: any) {
+    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       setError(err.message || "Ocorreu um erro inesperado");
     } finally {
       setIsLoading(false);

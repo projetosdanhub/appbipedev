@@ -26,7 +26,7 @@ export default function SuperadminLoginPage() {
 
       // Simulate successful login
       router.push("/");
-    } catch (err: any) {
+    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       setError(err.message || "Erro ao realizar login");
     } finally {
       setIsLoading(false);

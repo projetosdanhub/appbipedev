@@ -8,7 +8,7 @@ try {
   let envStr = "";
   try {
     envStr = fs.readFileSync(path.resolve(__dirname, "../../.env"), "utf8");
-  } catch (e) {}
+  } catch {}
 
   const match = envStr.match(/NGROK_PUBLIC_URL=(.+)/);
   if (match) {
@@ -16,7 +16,7 @@ try {
   } else if (process.env.NGROK_PUBLIC_URL) {
     ngrokHost = new URL(process.env.NGROK_PUBLIC_URL).hostname;
   }
-} catch (e) {}
+} catch {}
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ['127.0.0.1', 'localhost', '::1', ngrokHost].filter(Boolean),

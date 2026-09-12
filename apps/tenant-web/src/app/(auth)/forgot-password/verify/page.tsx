@@ -23,6 +23,7 @@ export default function VerifyCodePage() {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCanResend(true);
     }
   }, [countdown]);
@@ -111,7 +112,7 @@ export default function VerifyCodePage() {
       
       // Redirect to set new password, passing email and token
       router.push(`/forgot-password/reset?email=${encodeURIComponent(email)}&token=${fullCode}`);
-    } catch (err: any) {
+    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       setError(err.message || "Código inválido. Tente novamente.");
     } finally {
       setIsLoading(false);

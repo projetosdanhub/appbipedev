@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
       
       // Pass the email to the next screen via query param so we know which email to verify
       router.push(`/forgot-password/verify?email=${encodeURIComponent(email)}`);
-    } catch (err: any) {
+    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       setError(err.message || "Ocorreu um erro inesperado");
     } finally {
       setIsLoading(false);

@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     }
     
     return nextRes;
-  } catch (err: any) {
+  } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

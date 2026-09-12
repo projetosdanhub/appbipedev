@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2, Eye, EyeOff, Check, X } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -62,7 +62,7 @@ export default function RegisterPage() {
       }
 
       router.push("/login");
-    } catch (err: any) {
+    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       setError(err.message || "Ocorreu um erro inesperado");
     } finally {
       setIsLoading(false);
