@@ -6,14 +6,14 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Eye, EyeOff, Mail, Lock, User, Building, ArrowRight, AlertCircle, ArrowLeft, CheckCircle2, Circle } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Building, ArrowRight, AlertCircle, ArrowLeft, CheckCircle2, Circle, Loader2 } from "lucide-react";
 import {
   Button,
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
+  Input,
 } from "@bipesend/ui";
 
 import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
@@ -28,68 +28,6 @@ function GoogleIcon({ className }: { className?: string }) {
       <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
       <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
     </svg>
-  );
-}
-
-/* ─── Input com label flutuante ─── */
-function FloatingInput({
-  id, label, type = "text", autoComplete,
-  leftIcon, rightSlot, error, errorMessage, ...props
-}: {
-  id: string; label: string; type?: string; autoComplete?: string;
-  leftIcon: React.ReactNode; rightSlot?: React.ReactNode; error?: boolean;
-  errorMessage?: string;
-} & React.InputHTMLAttributes<HTMLInputElement>) {
-  const [focused, setFocused] = useState(false);
-  const hasValue = Boolean((props.value as string)?.length);
-  const lifted = focused || hasValue;
-
-  return (
-    <div className="relative">
-      <span
-        className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-150
-          ${lifted ? "text-[#007BFF]" : "text-slate-400"}`}
-      >
-        {leftIcon}
-      </span>
-
-      <input
-        id={id}
-        type={type}
-        autoComplete={autoComplete}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        aria-invalid={error ? true : undefined}
-        placeholder=" "
-        className={[
-          "peer w-full h-[48px] md:h-[52px] rounded-xl border bg-white/80",
-          "pl-10 md:pl-11 pt-4 md:pt-5 pb-1",
-          rightSlot ? "pr-10 md:pr-11" : "pr-4",
-          "text-[13.5px] md:text-[14px] text-[#0F172A] outline-none transition-all duration-200",
-          error
-            ? "border-red-400 focus:border-red-500 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
-            : "border-slate-200/80 focus:border-[#007BFF] focus:shadow-[0_0_0_3px_rgba(0,123,255,0.10)]",
-        ].join(" ")}
-        {...props}
-      />
-
-      <label
-        htmlFor={id}
-        className={[
-          "absolute left-10 md:left-11 pointer-events-none select-none transition-all duration-150",
-          lifted
-            ? "top-[6px] md:top-[8px] text-[9.5px] md:text-[10.5px] font-semibold tracking-wide"
-            : "top-1/2 -translate-y-1/2 text-[13px] md:text-[13.5px]",
-          error ? "text-red-400" : lifted ? "text-[#007BFF]" : "text-slate-400",
-        ].join(" ")}
-      >
-        {label}
-      </label>
-
-      {rightSlot && (
-        <div className="absolute right-3.5 top-1/2 -translate-y-1/2">{rightSlot}</div>
-      )}
-    </div>
   );
 }
 
@@ -114,7 +52,7 @@ function PasswordStrength({ password }: { password?: string }) {
 }
 
 export default function RegisterPage() {
-  const [authStep, setAuthStep] = useState<"choice" | "email" | "success">("choice");
+  const [authStep, setAuthStep] = useState<"choice" | "email" | "success-loading" | "success-done">("choice");
   const [serverError, setServerError] = useState("");
   const [globalValidationError, setGlobalValidationError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -145,35 +83,42 @@ export default function RegisterPage() {
       const response = await registerAction(data);
       if (!response.success) { setServerError(response.message || "Erro ao realizar cadastro"); return; }
       
-      setAuthStep("success");
+      setAuthStep("success-loading");
+      
       setTimeout(() => {
-        router.push("/login");
-      }, 2500);
+        setAuthStep("success-done");
+        
+        setTimeout(() => {
+          router.push("/login"); // in a real app this might go directly to dashboard or login
+        }, 1500);
+      }, 800);
     } catch {
       setServerError("Erro inesperado ao conectar ao servidor.");
     }
   };
 
+  const isSuccessView = authStep === "success-loading" || authStep === "success-done";
+
   return (
-    <div className="auth-content-enter space-y-4">
+    <div className="auth-content-enter w-full space-y-4">
 
       {/* ── Heading Dinâmico ── */}
-      {authStep !== "success" && (
-        <div className="space-y-1.5">
+      {!isSuccessView && (
+        <div className="space-y-2">
           {authStep === "email" && (
             <button 
               type="button" 
               onClick={() => setAuthStep("choice")}
-              className="flex items-center text-[13px] font-medium text-slate-500 hover:text-[#0F172A] mb-4 transition-colors"
+              className="flex items-center text-[14px] font-medium text-slate-500 hover:text-[#0F172A] mb-4 transition-colors"
             >
               <ArrowLeft className="h-4 w-4 mr-1.5" />
               Voltar
             </button>
           )}
-          <h1 className="text-[22px] md:text-[26px] font-bold text-[#0F172A] leading-snug">
+          <h1 className="text-[27px] md:text-[32px] font-bold text-[#0F172A] leading-[33px] md:leading-[38px] tracking-tight">
             {authStep === "choice" ? "Crie sua conta Grátis!" : "Crie sua conta"}
           </h1>
-          <p className="text-[13px] md:text-[14px] text-slate-500 leading-relaxed">
+          <p className="text-[15px] md:text-[16px] text-slate-500 leading-relaxed font-normal">
             {authStep === "choice" 
               ? "Aqui você vende mais, automatiza, facilita e cria relacionamentos pós vendas, tudo em um só lugar."
               : "Preencha seus dados profissionais para iniciar."}
@@ -181,10 +126,10 @@ export default function RegisterPage() {
         </div>
       )}
 
-      {authStep !== "success" && (
+      {!isSuccessView && (
         <div className="h-6 flex items-start -mt-2">
           {globalValidationError && (
-            <p className="text-[13px] font-medium text-red-500 animate-in fade-in zoom-in-95 duration-200">
+            <p className="text-[13px] font-medium text-[var(--color-danger-600)] animate-in fade-in zoom-in-95 duration-200">
               {globalValidationError}
             </p>
           )}
@@ -192,27 +137,28 @@ export default function RegisterPage() {
       )}
 
       {/* ── Erro de servidor ── */}
-      {serverError && (
+      {serverError && !isSuccessView && (
         <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 animate-error-enter">
-          <AlertCircle className="h-4 w-4 mt-0.5 text-red-500 flex-shrink-0" />
-          <p className="text-[13px] font-medium text-red-600">{serverError}</p>
+          <AlertCircle className="h-4 w-4 mt-0.5 text-[var(--color-danger-600)] flex-shrink-0" />
+          <p className="text-[13px] font-medium text-[var(--color-danger-600)]">{serverError}</p>
         </div>
       )}
 
       {/* ── Passo 1: Escolha ── */}
       {authStep === "choice" && (
-        <div className="space-y-4 animate-auth-card-enter">
+        <div className="space-y-4 animate-auth-card-enter w-full">
           <Button 
             type="button"
             onClick={() => setAuthStep("email")}
             variant="outline"
-            className="w-full h-[48px] md:h-[52px] rounded-full text-[13.5px] md:text-[14.5px] font-semibold bg-white border-[#007BFF] text-[#007BFF] hover:bg-blue-50 justify-center shadow-sm transition-all"
+            size="lg"
+            className="w-full text-[#007BFF] border-[#007BFF] hover:bg-blue-50"
           >
-            <Mail className="h-[18px] w-[18px] md:h-5 md:w-5 mr-2" />
+            <Mail className="h-5 w-5 mr-2" />
             Continuar com e-mail
           </Button>
 
-          <div className="flex items-center justify-center py-1">
+          <div className="flex items-center justify-center py-2">
             <span className="text-[11px] text-slate-400 font-medium uppercase tracking-widest">
               — ou —
             </span>
@@ -222,14 +168,15 @@ export default function RegisterPage() {
             type="button"
             onClick={() => toast.info("Cadastro com Google em breve 🚀")}
             variant="outline"
-            className="w-full h-[48px] md:h-[52px] rounded-full text-[13.5px] md:text-[14.5px] font-semibold bg-white border-slate-200 text-[#0F172A] hover:bg-slate-50 hover:border-[#4285F4]/40 hover:text-[#0F172A] justify-center shadow-sm transition-all"
+            size="lg"
+            className="w-full"
           >
-            <GoogleIcon className="h-[18px] w-[18px] md:h-5 md:w-5 mr-2 md:mr-3" />
+            <GoogleIcon className="h-5 w-5 mr-3" />
             Continuar com Google
           </Button>
 
           <div className="pt-6 text-center">
-            <p className="text-[13.5px] text-slate-500">
+            <p className="text-[14px] text-slate-500 font-medium">
               Já tem uma conta?{" "}
               <Link href="/login" className="font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors">
                 Entrar
@@ -242,18 +189,19 @@ export default function RegisterPage() {
       {/* ── Passo 2: Formulário de Email ── */}
       {authStep === "email" && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-auth-card-enter" noValidate>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-auth-card-enter w-full" noValidate>
             
-            <div className="space-y-3.5">
+            <div className="space-y-4">
               {/* Nome */}
               <FormField control={form.control} name="name"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-1.5">
+                  <FormItem className="!space-y-0">
                     <FormControl>
-                      <FloatingInput
+                      <Input
                         id="register-name" label="Nome completo"
-                        autoComplete="name" error={!!fieldState.error} errorMessage={fieldState.error?.message}
-                        leftIcon={<User className="h-[17px] w-[17px]" />}
+                        placeholder="Yasmin Araújo"
+                        autoComplete="name" error={!!fieldState.error}
+                        leftIcon={<User className="h-5 w-5" />}
                         {...field}
                       />
                     </FormControl>
@@ -264,12 +212,13 @@ export default function RegisterPage() {
               {/* Nome da Empresa */}
               <FormField control={form.control} name="companyName"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-1.5">
+                  <FormItem className="!space-y-0">
                     <FormControl>
-                      <FloatingInput
+                      <Input
                         id="register-company" label="Nome da empresa"
-                        autoComplete="organization" error={!!fieldState.error} errorMessage={fieldState.error?.message}
-                        leftIcon={<Building className="h-[17px] w-[17px]" />}
+                        placeholder="Sua empresa"
+                        autoComplete="organization" error={!!fieldState.error}
+                        leftIcon={<Building className="h-5 w-5" />}
                         {...field}
                       />
                     </FormControl>
@@ -280,12 +229,13 @@ export default function RegisterPage() {
               {/* E-mail */}
               <FormField control={form.control} name="email"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-1.5">
+                  <FormItem className="!space-y-0">
                     <FormControl>
-                      <FloatingInput
+                      <Input
                         id="register-email" label="E-mail profissional" type="email"
-                        autoComplete="email" error={!!fieldState.error} errorMessage={fieldState.error?.message}
-                        leftIcon={<Mail className="h-[17px] w-[17px]" />}
+                        placeholder="seuemail@provedor.com.br"
+                        autoComplete="email" error={!!fieldState.error}
+                        leftIcon={<Mail className="h-5 w-5" />}
                         {...field}
                       />
                     </FormControl>
@@ -296,19 +246,20 @@ export default function RegisterPage() {
               {/* Senha */}
               <FormField control={form.control} name="password"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-1.5">
+                  <FormItem className="!space-y-0">
                     <FormControl>
-                      <FloatingInput
+                      <Input
                         id="register-password" label="Crie uma senha"
+                        placeholder="123example@"
                         type={showPassword ? "text" : "password"}
-                        autoComplete="new-password" error={!!fieldState.error} errorMessage={fieldState.error?.message}
-                        leftIcon={<Lock className="h-[17px] w-[17px]" />}
-                        rightSlot={
+                        autoComplete="new-password" error={!!fieldState.error}
+                        leftIcon={<Lock className="h-5 w-5" />}
+                        rightIcon={
                           <button type="button" onClick={() => setShowPassword(v => !v)}
                             className="text-slate-400 hover:text-[#007BFF] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007BFF]"
                             aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                           >
-                            {showPassword ? <EyeOff className="h-[17px] w-[17px]" /> : <Eye className="h-[17px] w-[17px]" />}
+                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                           </button>
                         }
                         {...field}
@@ -321,24 +272,18 @@ export default function RegisterPage() {
             </div>
 
             {/* Botão principal */}
-            <div className="pt-2">
+            <div className="pt-4">
               <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
-                className="w-full h-[48px] md:h-[52px] rounded-xl text-[13.5px] md:text-[14.5px] font-semibold
-                  bg-gradient-to-r from-[#007BFF] to-[#6366F1]
-                  hover:from-[#0069e0] hover:to-[#5355e8]
-                  text-white border-0
-                  shadow-[0_4px_20px_rgba(0,123,255,0.30)]
-                  hover:shadow-[0_6px_28px_rgba(0,123,255,0.40)]
-                  transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
+                className="w-full"
               >
                 {form.formState.isSubmitting ? "Criando conta..." : (
-                  <> Criar minha conta <ArrowRight className="ml-1.5 md:ml-2 h-4 w-4 md:h-[17px] md:w-[17px]" /> </>
+                  <> Criar minha conta <ArrowRight className="ml-2 h-5 w-5" /> </>
                 )}
               </Button>
             </div>
 
             {/* Termos implícitos */}
-            <p className="text-[12px] text-center text-slate-400 pt-2 leading-relaxed px-4">
+            <p className="text-[13px] text-center text-slate-400 pt-2 leading-relaxed px-4">
               Ao criar a conta, você concorda com nossos{" "}
               <Link href="/terms" className="underline hover:text-[#0F172A] transition-colors">Termos de Serviço</Link> e{" "}
               <Link href="/privacy" className="underline hover:text-[#0F172A] transition-colors">Política de Privacidade</Link>.
@@ -348,17 +293,27 @@ export default function RegisterPage() {
       )}
 
       {/* ── Passo 3: Sucesso Animado ── */}
-      {authStep === "success" && (
-        <div className="flex flex-col items-center justify-center py-10 space-y-6 animate-in zoom-in duration-500 fade-in slide-in-from-bottom-4">
+      {isSuccessView && (
+        <div className="flex flex-col items-center justify-center py-12 space-y-6 animate-in zoom-in-95 duration-500 fade-in slide-in-from-bottom-4">
           <div className="relative flex items-center justify-center w-24 h-24">
-            <div className="absolute inset-0 bg-[#007BFF]/20 rounded-full animate-ping" style={{ animationDuration: "2s" }} />
-            <div className="relative flex items-center justify-center w-full h-full bg-gradient-to-tr from-[#007BFF] to-[#6366F1] rounded-full shadow-lg shadow-[#007BFF]/30">
-              <CheckCircle2 className="w-12 h-12 text-white animate-in zoom-in duration-300 delay-150 fill-white/20" />
-            </div>
+            {authStep === "success-loading" ? (
+              <Loader2 className="w-12 h-12 text-[#007BFF] animate-spin" />
+            ) : (
+              <>
+                <div className="absolute inset-0 bg-emerald-500/20 rounded-full animate-ping" style={{ animationDuration: "2s" }} />
+                <div className="relative flex items-center justify-center w-full h-full bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/30 animate-in zoom-in duration-300">
+                  <CheckCircle2 className="w-12 h-12 text-white animate-in zoom-in duration-300 delay-150" />
+                </div>
+              </>
+            )}
           </div>
           <div className="text-center space-y-2">
-            <h2 className="text-[24px] font-bold text-[#0F172A]">Conta Criada!</h2>
-            <p className="text-[14px] text-slate-500">Preparando seu ambiente...</p>
+            <h2 className="text-[24px] font-bold text-[#0F172A] animate-in slide-in-from-bottom-2 fade-in">
+              {authStep === "success-loading" ? "Criando ambiente..." : "Bem-vindo!"}
+            </h2>
+            <p className="text-[14px] text-slate-500 animate-in slide-in-from-bottom-2 fade-in delay-75">
+              {authStep === "success-loading" ? "Preparando tudo para você." : "Conta criada com sucesso."}
+            </p>
           </div>
         </div>
       )}

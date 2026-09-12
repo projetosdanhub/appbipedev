@@ -13,7 +13,7 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
+  Input,
 } from "@bipesend/ui";
 
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
@@ -31,68 +31,6 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
-/* ─── Input com label flutuante ─── */
-function FloatingInput({
-  id, label, type = "text", autoComplete,
-  leftIcon, rightSlot, error, errorMessage, ...props
-}: {
-  id: string; label: string; type?: string; autoComplete?: string;
-  leftIcon: React.ReactNode; rightSlot?: React.ReactNode; error?: boolean;
-  errorMessage?: string;
-} & React.InputHTMLAttributes<HTMLInputElement>) {
-  const [focused, setFocused] = useState(false);
-  const hasValue = Boolean((props.value as string)?.length);
-  const lifted = focused || hasValue;
-
-  return (
-    <div className="relative">
-      <span
-        className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-150
-          ${lifted ? "text-[#007BFF]" : "text-slate-400"}`}
-      >
-        {leftIcon}
-      </span>
-
-      <input
-        id={id}
-        type={type}
-        autoComplete={autoComplete}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        aria-invalid={error ? true : undefined}
-        placeholder=" "
-        className={[
-          "peer w-full h-[48px] md:h-[52px] rounded-xl border bg-white/80",
-          "pl-10 md:pl-11 pt-4 md:pt-5 pb-1",
-          rightSlot ? "pr-10 md:pr-11" : "pr-4",
-          "text-[13.5px] md:text-[14px] text-[#0F172A] outline-none transition-all duration-200",
-          error
-            ? "border-red-400 focus:border-red-500 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.12)]"
-            : "border-slate-200/80 focus:border-[#007BFF] focus:shadow-[0_0_0_3px_rgba(0,123,255,0.10)]",
-        ].join(" ")}
-        {...props}
-      />
-
-      <label
-        htmlFor={id}
-        className={[
-          "absolute left-10 md:left-11 pointer-events-none select-none transition-all duration-150",
-          lifted
-            ? "top-[6px] md:top-[8px] text-[9.5px] md:text-[10.5px] font-semibold tracking-wide"
-            : "top-1/2 -translate-y-1/2 text-[13px] md:text-[13.5px]",
-          error ? "text-red-400" : lifted ? "text-[#007BFF]" : "text-slate-400",
-        ].join(" ")}
-      >
-        {label}
-      </label>
-
-      {rightSlot && (
-        <div className="absolute right-3.5 top-1/2 -translate-y-1/2">{rightSlot}</div>
-      )}
-    </div>
-  );
-}
-
 export default function LoginPage() {
   const [authStep, setAuthStep] = useState<"choice" | "email">("choice");
   const [serverError, setServerError] = useState("");
@@ -106,7 +44,6 @@ export default function LoginPage() {
   useEffect(() => {
     if (!lockoutUntil) return;
 
-    // Função para atualizar o timer
     const updateTimer = () => {
       const now = Date.now();
       const diff = lockoutUntil - now;
@@ -121,7 +58,7 @@ export default function LoginPage() {
       }
     };
 
-    updateTimer(); // Atualiza instantaneamente ao invés de esperar 1s
+    updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
   }, [lockoutUntil]);
@@ -146,7 +83,6 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginInput) => {
     setServerError("");
     try {
-      // @ts-ignore - lockoutUntil may exist in the response
       const response = await loginAction({ ...data, rememberMe });
       if (!response.success) { 
         if ((response as any).lockoutUntil) {
@@ -165,24 +101,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-content-enter space-y-6">
+    <div className="auth-content-enter w-full space-y-6">
       
       {/* ── Heading Dinâmico ── */}
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {authStep === "email" && (
           <button 
             type="button" 
             onClick={() => setAuthStep("choice")}
-            className="flex items-center text-[13px] font-medium text-slate-500 hover:text-[#0F172A] mb-4 transition-colors"
+            className="flex items-center text-[14px] font-medium text-slate-500 hover:text-[#0F172A] mb-4 transition-colors"
           >
             <ArrowLeft className="h-4 w-4 mr-1.5" />
             Voltar
           </button>
         )}
-        <h1 className="text-[22px] md:text-[26px] font-bold text-[#0F172A] leading-snug">
+        <h1 className="text-[27px] md:text-[32px] font-bold text-[#0F172A] leading-[33px] md:leading-[38px] tracking-tight">
           {authStep === "choice" ? "Então você voltou! Acesse sua conta abaixo." : "Acessar com E-mail"}
         </h1>
-        <p className="text-[13px] md:text-[14px] text-slate-500 leading-relaxed">
+        <p className="text-[15px] md:text-[16px] text-slate-500 leading-relaxed font-normal">
           {authStep === "choice" 
             ? "Escolha a forma que deseja acessar sua conta na BipeSend."
             : "Preencha seus dados para entrar."}
@@ -191,7 +127,7 @@ export default function LoginPage() {
 
       <div className="h-6 flex items-start -mt-2">
         {globalValidationError && (
-          <p className="text-[13px] font-medium text-red-500 animate-in fade-in zoom-in-95 duration-200">
+          <p className="text-[13px] font-medium text-[var(--color-danger-600)] animate-in fade-in zoom-in-95 duration-200">
             {globalValidationError}
           </p>
         )}
@@ -200,11 +136,11 @@ export default function LoginPage() {
       {/* ── Erro de servidor / Lockout ── */}
       {serverError && (
         <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 animate-error-enter">
-          <AlertCircle className="h-4 w-4 mt-0.5 text-red-500 flex-shrink-0" />
+          <AlertCircle className="h-4 w-4 mt-0.5 text-[var(--color-danger-600)] flex-shrink-0" />
           <div className="flex flex-col">
-            <p className="text-[13px] font-medium text-red-600">{serverError}</p>
+            <p className="text-[13px] font-medium text-[var(--color-danger-600)]">{serverError}</p>
             {lockoutUntil && (
-              <p className="text-[12.5px] text-red-500 mt-1 font-semibold">
+              <p className="text-[12.5px] text-[var(--color-danger-600)] mt-1 font-semibold">
                 Tente novamente em {remainingTime}
               </p>
             )}
@@ -214,18 +150,19 @@ export default function LoginPage() {
 
       {/* ── Passo 1: Escolha ── */}
       {authStep === "choice" && (
-        <div className="space-y-4 animate-auth-card-enter">
+        <div className="space-y-4 animate-auth-card-enter w-full">
           <Button 
             type="button"
             onClick={() => setAuthStep("email")}
             variant="outline"
-            className="w-full h-[48px] md:h-[52px] rounded-full text-[13.5px] md:text-[14.5px] font-semibold bg-white border-[#007BFF] text-[#007BFF] hover:bg-blue-50 justify-center shadow-sm transition-all"
+            size="lg"
+            className="w-full text-[#007BFF] border-[#007BFF] hover:bg-blue-50"
           >
-            <Mail className="h-[18px] w-[18px] md:h-5 md:w-5 mr-2" />
+            <Mail className="h-5 w-5 mr-2" />
             Login com e-mail e senha
           </Button>
 
-          <div className="flex items-center justify-center py-1">
+          <div className="flex items-center justify-center py-2">
             <span className="text-[11px] text-slate-400 font-medium uppercase tracking-widest">
               — ou —
             </span>
@@ -235,16 +172,17 @@ export default function LoginPage() {
             type="button"
             onClick={() => toast.info("Login com Google em breve 🚀")}
             variant="outline"
-            className="w-full h-[48px] md:h-[52px] rounded-full text-[13.5px] md:text-[14.5px] font-semibold bg-white border-slate-200 text-[#0F172A] hover:bg-slate-50 hover:border-[#4285F4]/40 hover:text-[#0F172A] justify-center shadow-sm transition-all"
+            size="lg"
+            className="w-full"
           >
-            <GoogleIcon className="h-[18px] w-[18px] md:h-5 md:w-5 mr-2 md:mr-3" />
+            <GoogleIcon className="h-5 w-5 mr-3" />
             Login com Google
           </Button>
 
-          <div className="pt-4">
+          <div className="pt-5">
             <Link href="/register" className="block w-full">
-              <Button type="button" className="w-full h-[48px] md:h-[52px] rounded-xl text-[13.5px] md:text-[14.5px] font-semibold bg-gradient-to-r from-[#007BFF] to-[#6366F1] hover:from-[#0069e0] hover:to-[#5355e8] text-white shadow-[0_4px_20px_rgba(0,123,255,0.25)] hover:shadow-[0_6px_28px_rgba(0,123,255,0.35)] transition-all hover:scale-[1.01] active:scale-[0.99] border-0">
-                Cresça com a BipeSend - Criar Conta Grátis
+              <Button type="button" size="lg" className="w-full">
+                <span className="hidden sm:inline">Cresça com a BipeSend - </span>Criar Conta Grátis
               </Button>
             </Link>
           </div>
@@ -254,18 +192,18 @@ export default function LoginPage() {
       {/* ── Passo 2: Formulário de Email ── */}
       {authStep === "email" && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 animate-auth-card-enter" noValidate>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-auth-card-enter w-full" noValidate>
             
             <div className="space-y-4">
               {/* E-mail */}
               <FormField control={form.control} name="email"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-1.5">
+                  <FormItem className="!space-y-0">
                     <FormControl>
-                      <FloatingInput
+                      <Input
                         id="login-email" label="E-mail" type="email"
-                        autoComplete="email" error={!!fieldState.error} errorMessage={fieldState.error?.message}
-                        leftIcon={<Mail className="h-[17px] w-[17px]" />}
+                        autoComplete="email" error={!!fieldState.error}
+                        leftIcon={<Mail className="h-5 w-5" />}
                         {...field}
                       />
                     </FormControl>
@@ -276,19 +214,19 @@ export default function LoginPage() {
               {/* Senha */}
               <FormField control={form.control} name="password"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-1.5">
+                  <FormItem className="!space-y-0">
                     <FormControl>
-                      <FloatingInput
+                      <Input
                         id="login-password" label="Senha"
                         type={showPassword ? "text" : "password"}
-                        autoComplete="current-password" error={!!fieldState.error} errorMessage={fieldState.error?.message}
-                        leftIcon={<Lock className="h-[17px] w-[17px]" />}
-                        rightSlot={
+                        autoComplete="current-password" error={!!fieldState.error}
+                        leftIcon={<Lock className="h-5 w-5" />}
+                        rightIcon={
                           <button type="button" onClick={() => setShowPassword(v => !v)}
                             className="text-slate-400 hover:text-[#007BFF] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007BFF]"
                             aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                           >
-                            {showPassword ? <EyeOff className="h-[17px] w-[17px]" /> : <Eye className="h-[17px] w-[17px]" />}
+                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                           </button>
                         }
                         {...field}
@@ -300,44 +238,42 @@ export default function LoginPage() {
             </div>
 
             {/* Lembrar + Esqueci */}
-            <div className="flex items-center justify-between pt-1">
-              <label className="flex items-center gap-2.5 cursor-pointer group">
-                <input id="rememberMe" type="checkbox" checked={rememberMe}
-                  onChange={e => setRememberMe(e.target.checked)}
-                  className="auth-checkbox" aria-label="Lembrar de mim"
-                />
-                <span className="text-[13px] text-slate-500 group-hover:text-[#0F172A] transition-colors select-none">
+            <div className="flex items-center justify-between pt-2">
+              <label className="flex items-center gap-2.5 cursor-pointer group relative">
+                <div className="relative flex items-center justify-center">
+                  <input id="rememberMe" type="checkbox" checked={rememberMe}
+                    onChange={e => setRememberMe(e.target.checked)}
+                    className="peer sr-only" aria-label="Lembrar de mim"
+                  />
+                  <div className="w-[18px] h-[18px] rounded-full border-[1.5px] border-slate-300 bg-white transition-all peer-checked:border-[#007BFF] peer-checked:bg-[#007BFF] peer-focus-visible:ring-2 peer-focus-visible:ring-[#007BFF]/30 group-hover:border-[#007BFF]" />
+                  <div className={`absolute inset-0 rounded-full bg-[#007BFF] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
+                  <svg className="absolute w-3 h-3 text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <span className="text-[14px] text-slate-500 group-hover:text-[#0F172A] transition-colors select-none font-medium">
                   Lembrar de mim
                 </span>
               </label>
               <Link href="/forgot-password"
-                className="text-[13px] font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors"
+                className="text-[14px] font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors"
               >
                 Esqueci a senha
               </Link>
             </div>
 
             {/* Botão principal */}
-            <div className="pt-2">
+            <div className="pt-4">
               <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
                 disabled={!!lockoutUntil}
-                className="w-full h-[48px] md:h-[52px] rounded-xl text-[13.5px] md:text-[14.5px] font-semibold
-                  bg-gradient-to-r from-[#007BFF] to-[#6366F1]
-                  hover:from-[#0069e0] hover:to-[#5355e8]
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                  text-white border-0
-                  shadow-[0_4px_20px_rgba(0,123,255,0.30)]
-                  hover:shadow-[0_6px_28px_rgba(0,123,255,0.40)]
-                  transition-all duration-300 hover:scale-[1.015] active:scale-[0.985]"
+                className="w-full"
               >
                 {form.formState.isSubmitting ? "Entrando..." : (
-                  <> Entrar no BipeSend <ArrowRight className="ml-1.5 md:ml-2 h-4 w-4 md:h-[17px] md:w-[17px]" /> </>
+                  <> Entrar no BipeSend <ArrowRight className="ml-2 h-5 w-5" /> </>
                 )}
               </Button>
             </div>
 
             {/* Termos rodapé */}
-            <p className="text-[12px] text-center text-slate-400 pt-2 leading-relaxed px-4">
+            <p className="text-[13px] text-center text-slate-400 pt-2 leading-relaxed px-4">
               Ao entrar, você concorda com nossos{" "}
               <Link href="/terms" className="underline hover:text-[#0F172A] transition-colors">Termos de Serviço</Link> e{" "}
               <Link href="/privacy" className="underline hover:text-[#0F172A] transition-colors">Política de Privacidade</Link>.

@@ -60,6 +60,8 @@ Estas regras são a fonte de verdade para humanos e agentes de IA. Quando códig
 28. `28_AUTH_SURFACES_BOOTSTRAP.md`
 29. `29_AUTH_UX_FLOWS.md`
 30. `30_DESIGN_SYSTEM_IMPLEMENTATION.md`
+31. `31_DESIGN_TOKENS_AUTH.md`
+32. `32_UI_COMPONENTS_STANDARD.md`
 
 ## 4. Precedência em caso de conflito
 

@@ -4,22 +4,22 @@ import { cn } from "../lib/utils"
 import { Loader2 } from "lucide-react"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap text-[14px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 overflow-hidden relative",
+  "inline-flex items-center justify-center whitespace-nowrap text-[16px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 overflow-hidden relative",
   {
     variants: {
       variant: {
         default: "text-white shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 hover:brightness-110 active:scale-[0.985] focus-visible:ring-[var(--color-brand-600)]",
-        destructive: "bg-[var(--color-danger-600)] text-white hover:bg-red-700 focus-visible:ring-[var(--color-danger-600)] rounded-[10px]",
-        outline: "border border-[var(--color-border-200)] bg-[var(--color-surface-0)] hover:bg-[var(--color-surface-50)] text-[var(--color-ink-900)] focus-visible:ring-[var(--color-brand-600)] rounded-[10px]",
-        secondary: "bg-[var(--color-surface-50)] text-[var(--color-ink-900)] hover:bg-[#E3E8F1] focus-visible:ring-[var(--color-brand-600)] rounded-[10px]",
-        ghost: "hover:bg-[var(--color-surface-50)] text-[var(--color-ink-600)] hover:text-[var(--color-ink-900)] focus-visible:ring-[var(--color-brand-600)] rounded-[10px]",
-        link: "text-[var(--color-brand-600)] underline-offset-4 hover:underline focus-visible:ring-[var(--color-brand-600)] rounded-[10px]",
+        destructive: "bg-[var(--color-danger-600)] text-white hover:bg-red-700 focus-visible:ring-[var(--color-danger-600)] rounded-xl",
+        outline: "border border-[var(--color-border-200)] bg-[var(--color-surface-0)] hover:bg-[var(--color-surface-50)] text-[var(--color-ink-900)] focus-visible:ring-[var(--color-brand-600)] rounded-xl",
+        secondary: "bg-[var(--color-surface-50)] text-[var(--color-ink-900)] hover:bg-[#E3E8F1] focus-visible:ring-[var(--color-brand-600)] rounded-xl",
+        ghost: "hover:bg-[var(--color-surface-50)] text-[var(--color-ink-600)] hover:text-[var(--color-ink-900)] focus-visible:ring-[var(--color-brand-600)] rounded-xl",
+        link: "text-[var(--color-brand-600)] underline-offset-4 hover:underline focus-visible:ring-[var(--color-brand-600)] rounded-xl",
       },
       size: {
-        default: "h-11 px-4 py-2 rounded-[10px]",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-[52px] rounded-[14px] px-8 text-[15px]",
-        icon: "h-10 w-10 rounded-[10px]",
+        default: "h-[52px] md:h-[54px] px-5 rounded-xl",
+        sm: "h-[44px] rounded-lg px-4 text-[14px]",
+        lg: "h-[56px] rounded-xl px-8",
+        icon: "h-[52px] w-[52px] rounded-xl",
       },
     },
     defaultVariants: {

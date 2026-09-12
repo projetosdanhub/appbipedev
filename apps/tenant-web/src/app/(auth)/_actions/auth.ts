@@ -167,7 +167,7 @@ const resetPasswordServerSchema = z.object({
   password: z.string().min(8)
 });
 
-export async function resetPasswordAction(data: ResetPasswordInput) {
+export async function resetPasswordAction(data: ResetPasswordInput & { email: string; code: string }) {
   const parsed = resetPasswordServerSchema.safeParse(data);
   if (!parsed.success) {
     return { success: false, message: "Dados inválidos." };

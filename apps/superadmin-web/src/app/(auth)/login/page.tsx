@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { AlertCircle, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import {
   Button,
   Input,
-  Alert,
-  AlertDescription,
 } from "@bipesend/ui";
 
 export default function SuperadminLoginPage() {
@@ -41,83 +40,92 @@ export default function SuperadminLoginPage() {
   };
 
   return (
-    <div className="w-full animate-auth-content">
+    <div className="w-full animate-auth-content space-y-4">
       {/* Header */}
-      <div className="mb-7">
-        <h1 className="text-[30px] font-bold text-[var(--color-ink-900)] tracking-tight leading-tight mb-1.5">
+      <div className="space-y-2 mb-2">
+        <h1 className="text-[27px] md:text-[32px] font-bold text-[#0F172A] tracking-tight leading-[33px] md:leading-[38px]">
           BipeSend Superpainel
         </h1>
-        <p className="text-[15px] text-[var(--color-ink-600)] leading-relaxed">
+        <p className="text-[15px] md:text-[16px] text-slate-500 font-normal leading-relaxed">
           Acesso restrito ao painel administrativo.
         </p>
       </div>
 
-      <form onSubmit={handleLogin} className="space-y-5">
+      <form onSubmit={handleLogin} className="space-y-4 w-full" noValidate>
         {error && (
-          <Alert variant="destructive" className="animate-error-enter">
-            <AlertTriangle className="h-5 w-5" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 animate-error-enter mb-2">
+            <AlertCircle className="h-4 w-4 mt-0.5 text-[var(--color-danger-600)] flex-shrink-0" />
+            <p className="text-[13px] font-medium text-[var(--color-danger-600)]">{error}</p>
+          </div>
         )}
 
-        <div className="space-y-1.5">
-          <label htmlFor="sa-email" className="text-[14px] font-medium text-[var(--color-ink-900)]">
-            E-mail
-          </label>
+        <div className="space-y-0">
           <Input
             id="sa-email"
+            label="E-mail"
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="admin@bipesend.com.br"
             autoComplete="email"
-            leftIcon={<Mail className="h-[18px] w-[18px]" />}
+            leftIcon={<Mail className="h-5 w-5" />}
           />
         </div>
 
-        <div className="space-y-1.5">
-          <label htmlFor="sa-password" className="text-[14px] font-medium text-[var(--color-ink-900)]">
-            Senha
-          </label>
+        <div className="space-y-0">
           <Input
             id="sa-password"
+            label="Senha"
             type={showPassword ? "text" : "password"}
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Digite sua senha"
             autoComplete="current-password"
-            leftIcon={<Lock className="h-[18px] w-[18px]" />}
+            leftIcon={<Lock className="h-5 w-5" />}
             rightIcon={
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-gray-400 hover:text-[var(--color-ink-900)] transition-colors p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] rounded-md"
+                className="text-slate-400 hover:text-[#007BFF] transition-colors p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007BFF] rounded-md"
                 aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                 tabIndex={0}
               >
                 {showPassword ? (
-                  <EyeOff className="w-[18px] h-[18px]" />
+                  <EyeOff className="w-5 h-5" />
                 ) : (
-                  <Eye className="w-[18px] h-[18px]" />
+                  <Eye className="w-5 h-5" />
                 )}
               </button>
             }
           />
         </div>
 
-        <div className="flex items-center space-x-2 pt-1 pb-1">
-          <input
-            id="sa-remember"
-            type="checkbox"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-            className="auth-checkbox"
-          />
-          <label htmlFor="sa-remember" className="text-[13px] text-[var(--color-ink-600)] cursor-pointer select-none">
-            Lembrar de mim
-          </label>
+        <div className="flex items-center justify-between pt-1 pb-2">
+          <div className="flex items-center space-x-2">
+            <label className="flex items-center gap-2.5 cursor-pointer group relative">
+              <div className="relative flex items-center justify-center">
+                <input id="sa-remember" type="checkbox" checked={rememberMe}
+                  onChange={e => setRememberMe(e.target.checked)}
+                  className="peer sr-only" aria-label="Lembrar de mim"
+                />
+                <div className="w-[18px] h-[18px] rounded-full border-[1.5px] border-slate-300 bg-white transition-all peer-checked:border-[#007BFF] peer-checked:bg-[#007BFF] peer-focus-visible:ring-2 peer-focus-visible:ring-[#007BFF]/30 group-hover:border-[#007BFF]" />
+                <div className={`absolute inset-0 rounded-full bg-[#007BFF] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
+                <svg className="absolute w-3 h-3 text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <span className="text-[14px] text-slate-500 group-hover:text-[#0F172A] transition-colors select-none font-medium">
+                Lembrar de mim
+              </span>
+            </label>
+          </div>
+          
+          <Link 
+            href="/forgot-password" 
+            className="text-[14px] font-medium text-[#007BFF] hover:text-[#6366F1] transition-colors"
+          >
+            Esqueceu a senha?
+          </Link>
         </div>
 
         <Button
@@ -131,45 +139,11 @@ export default function SuperadminLoginPage() {
           ) : (
             <>
               Autenticar
-              <ArrowRight className="w-[18px] h-[18px] ml-1 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-0.5 transition-transform" />
             </>
           )}
         </Button>
       </form>
-
-      <div className="mt-6 flex items-center justify-center space-x-3">
-        <div className="h-px bg-[var(--color-border-200)] flex-1" />
-        <span className="text-[13px] text-[var(--color-ink-400)] font-medium uppercase tracking-wide">ou</span>
-        <div className="h-px bg-[var(--color-border-200)] flex-1" />
-      </div>
-
-      <div className="mt-6 flex justify-center">
-        <button
-          type="button"
-          onClick={() => toast.info("Login com Google em desenvolvimento")}
-          className="group flex h-[60px] w-[60px] items-center justify-center rounded-full border border-[var(--color-border-200)] bg-white shadow-sm transition-all duration-300 hover:scale-110 hover:border-blue-100 hover:bg-blue-50 hover:shadow-md"
-          aria-label="Entrar com Google"
-        >
-          <svg className="h-[26px] w-[26px] transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
-            <path
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              fill="#4285F4"
-            />
-            <path
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              fill="#34A853"
-            />
-            <path
-              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-              fill="#FBBC05"
-            />
-            <path
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-              fill="#EA4335"
-            />
-          </svg>
-        </button>
-      </div>
     </div>
   );
 }

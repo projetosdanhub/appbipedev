@@ -15,27 +15,30 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined)
 
     return (
-      <div className="flex flex-col gap-1.5 w-full">
+      <div className="flex flex-col gap-2 w-full">
         {label && (
           <label 
             htmlFor={inputId} 
-            className="text-[14px] font-medium text-[var(--color-ink-900)]"
+            className="text-[14px] font-medium text-[var(--color-ink-900)] leading-[20px]"
           >
             {label}
           </label>
         )}
         <div className="relative flex items-center w-full">
           {leftIcon && (
-            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none flex items-center justify-center">
-              {leftIcon}
+            <div className="absolute left-0 top-0 bottom-0 flex items-center justify-center pl-4 pr-3 text-slate-400 pointer-events-none">
+              <div className="flex items-center gap-3">
+                {leftIcon}
+                <div className="h-6 w-[1px] bg-[var(--color-border-200)]" />
+              </div>
             </div>
           )}
           <input
             id={inputId}
             type={type}
             className={cn(
-              "flex h-[50px] w-full rounded-[13px] border border-[var(--color-border-200)] bg-[var(--color-surface-50)] py-2 text-[15px] text-[var(--color-ink-900)] ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[#9BA1AC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]/40 focus-visible:border-[var(--color-brand-600)] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150 hover:border-[var(--color-brand-600)]/50",
-              leftIcon ? "pl-11" : "pl-4",
+              "flex h-[52px] md:h-[54px] w-full rounded-xl border border-[var(--color-border-200)] bg-[var(--color-surface-50)] py-2 text-[16px] text-[var(--color-ink-900)] ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[#9BA1AC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]/20 focus-visible:border-[var(--color-brand-600)] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150 hover:border-[var(--color-brand-600)]/50",
+              leftIcon ? "pl-[64px]" : "pl-4",
               rightIcon ? "pr-12" : "pr-4",
               error && "border-[var(--color-danger-600)] focus-visible:ring-[var(--color-danger-600)]/40 focus-visible:border-[var(--color-danger-600)]",
               className
@@ -44,14 +47,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {rightIcon && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center">
               {rightIcon}
             </div>
           )}
         </div>
         {helperText && (
           <span className={cn(
-            "text-[12px]",
+            "text-[13px] leading-[18px]",
             error ? "text-[var(--color-danger-600)]" : "text-[var(--color-ink-600)]"
           )}>
             {helperText}
