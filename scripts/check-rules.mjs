@@ -13,7 +13,8 @@ const expected = [
   "24_INTERACTIONS_MOTION_DATA_REFRESH.md",
   "25_HTTPS_PROXY_FILE_SECURITY.md",
   "26_ERROR_CATALOG_AUDIT.md",
-  "27_INTEGRATION_HEALTH.md",\n  "28_AUTH_SURFACES_BOOTSTRAP.md"
+  "27_INTEGRATION_HEALTH.md",
+  "28_AUTH_SURFACES_BOOTSTRAP.md"
 ];
 
 const files = new Set(await readdir(root));

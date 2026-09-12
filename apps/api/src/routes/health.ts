@@ -7,7 +7,7 @@
 
 import type { FastifyInstance } from "fastify";
 import { Client as PgClient } from "pg";
-import Redis from "ioredis";
+import { Redis } from "ioredis";
 
 interface DependencyStatus {
   name: string;
