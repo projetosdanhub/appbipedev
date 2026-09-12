@@ -88,7 +88,7 @@ export class AuthService {
       return;
     }
 
-    const token = crypto.randomBytes(32).toString("hex");
+    const token = crypto.randomInt(100000, 1000000).toString();
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
     const expiresAt = new Date(Date.now() + 1 * 60 * 60 * 1000); // 1 hour
 

@@ -22,11 +22,17 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     
     await expect(page.getByRole('heading', { name: 'Criar nova conta' })).toBeVisible({ timeout: 15000 });
     
-    await page.fill('input[type="text"]', 'Usuário de Teste');
-    await page.fill('input[type="email"]', testEmail);
-    await page.fill('input[type="password"]', testPassword);
+    // Fill the new fields
+    await page.fill('#name', 'Usuário de Teste');
+    await page.fill('#email', testEmail);
+    await page.fill('#companyName', 'BipSend Inc.');
+    await page.fill('#password', testPassword);
+    await page.fill('#confirmPassword', testPassword);
     
-    await page.click('button[type="button"]');
+    // Check the terms
+    await page.check('#terms');
+    
+    await page.click('button[type="submit"]');
     
     // Deve redirecionar para o login
     await expect(page).toHaveURL(/.*\/login/, { timeout: 15000 });
@@ -36,43 +42,48 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
     
-    await page.fill('input[type="email"]', testEmail);
-    await page.fill('input[type="password"]', testPassword);
+    await page.fill('#email', testEmail);
+    await page.fill('#password', testPassword);
     
-    await page.click('button[type="button"]');
+    await page.click('button[type="submit"]');
     
     // Em teoria, logou e foi para o dashboard ou /
     // Vamos apenas testar que não tem erro de login
-    await expect(page.getByText('Erro ao realizar login')).not.toBeVisible();
+    await expect(page.getByText('E-mail ou senha inválidos')).not.toBeVisible();
   });
 
   test('Deve navegar para a tela de recuperar senha', async ({ page }) => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
-    await page.click('text=Esqueceu a senha?');
+    await page.click('text=Esqueci minha senha');
     
     await expect(page).toHaveURL(/.*\/forgot-password/);
-    await expect(page.getByRole('heading', { name: 'Recuperar senha' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Recupere sua senha' })).toBeVisible();
   });
 
-  test('Deve solicitar recuperação de senha', async ({ page }) => {
+  test('Deve solicitar recuperação de senha e ir para verificação', async ({ page }) => {
     await page.goto('/forgot-password');
     await page.waitForLoadState('networkidle');
     
-    await page.fill('input[type="email"]', testEmail);
-    await page.click('button[type="button"]');
+    await page.fill('#email', testEmail);
+    await page.click('button[type="submit"]');
     
-    await expect(page.getByRole('heading', { name: 'E-mail enviado!' })).toBeVisible({ timeout: 15000 });
+    await expect(page).toHaveURL(/.*\/forgot-password\/verify\?email=.*/, { timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Verifique seu e-mail' })).toBeVisible();
   });
 
-  test('Deve bloquear reset de senha sem token', async ({ page }) => {
-    await page.goto('/reset-password');
+  test('Deve bloquear reset de senha com as senhas não coincidindo', async ({ page }) => {
+    await page.goto('/forgot-password/reset?email=test@test.com&token=123456');
     await page.waitForLoadState('networkidle');
     
-    await page.fill('input[type="password"]', 'NewPassword123!');
-    await page.click('button[type="button"]');
+    await expect(page.getByRole('heading', { name: 'Crie uma nova senha' })).toBeVisible();
+
+    await page.fill('#password', 'NewPassword123!');
+    await page.fill('#confirmPassword', 'DifferentPassword123!');
     
-    await expect(page.getByText('Token inválido ou ausente')).toBeVisible();
+    // Button should be disabled
+    const btn = page.locator('button[type="submit"]');
+    await expect(btn).toBeDisabled();
   });
 
 });

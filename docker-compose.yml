@@ -47,6 +47,20 @@ services:
     volumes:
       - bipesend-minio:/data
 
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "3443:443"
+      - "3080:80"
+    volumes:
+      - ./infra/nginx/nginx.local.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/nginx/snippets:/etc/nginx/snippets:ro
+      - ./infra/certs:/etc/nginx/certs:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 volumes:
   bipesend-postgres:
   bipesend-redis:

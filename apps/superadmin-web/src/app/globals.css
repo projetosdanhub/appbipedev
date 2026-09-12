@@ -18,8 +18,38 @@
  --font-sans: var(--font-inter), system-ui, sans-serif;
 }
 
-body {
- background: var(--color-background);
- color: var(--color-foreground);
- font-family: var(--font-sans);
-}
+ body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+ }
+
+ @keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+ }
+ 
+ @keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+ }
+ 
+ @keyframes checkmark {
+  0% { stroke-dashoffset: 24; opacity: 0; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+ }
+ 
+ .animate-fade-in-up {
+  animation: fade-in-up 0.25s ease-out forwards;
+ }
+ 
+ .animate-fade-in {
+  animation: fade-in 0.25s ease-out forwards;
+ }
+
+ .animate-checkmark {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: checkmark 0.4s ease-out forwards;
+ }
+

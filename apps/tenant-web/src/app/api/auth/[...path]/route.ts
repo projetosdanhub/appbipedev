@@ -23,7 +23,15 @@ export async function POST(req: NextRequest) {
       data = resText;
     }
     
-    return NextResponse.json(data, { status: res.status });
+    const nextRes = NextResponse.json(data, { status: res.status });
+    
+    // Repassa os cookies do Fastify (importante para o login funcionar)
+    const setCookieHeader = res.headers.get("Set-Cookie");
+    if (setCookieHeader) {
+      nextRes.headers.set("Set-Cookie", setCookieHeader);
+    }
+    
+    return nextRes;
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

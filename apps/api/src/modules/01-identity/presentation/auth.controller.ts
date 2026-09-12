@@ -1,12 +1,15 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { AuthService } from "../application/auth.service.js";
 
+import { OnboardingService } from "../../02-tenancy/application/onboarding.service.js";
+
 export function authRoutes(
   fastify: FastifyInstance,
-  authService: AuthService
+  authService: AuthService,
+  onboardingService: OnboardingService
 ) {
   fastify.post("/auth/register", async (request: FastifyRequest, reply: FastifyReply) => {
-    const { email, password, name } = request.body as any;
+    const { email, password, name, companyName } = request.body as any;
     
     if (!email || !password || !name) {
       return reply.status(400).send({ error: "Missing required fields" });
@@ -14,6 +17,15 @@ export function authRoutes(
 
     try {
       const user = await authService.register(email, password, name);
+      
+      // Create Tenant for user if companyName is provided
+      if (companyName) {
+        await onboardingService.createTenantForUser(user.id, companyName);
+      } else {
+        // Default to a generic workspace name if none provided to prevent blank spaces
+        await onboardingService.createTenantForUser(user.id, "Meu Espaço");
+      }
+
       return reply.status(201).send({ id: user.id, email: user.email, name: user.name });
     } catch (err: any) {
       return reply.status(400).send({ error: err.message });

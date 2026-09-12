@@ -62,33 +62,31 @@ async function bootstrap(): Promise<void> {
 
   const authMiddleware = createAuthMiddleware(sessionRepository, userRepository);
   
+  // Tenancy Module
+  const { TenantRepository } = await import("./modules/02-tenancy/infrastructure/tenant.repository.js");
+  const { MembershipRepository } = await import("./modules/02-tenancy/infrastructure/membership.repository.js");
+  const { InvitationRepository } = await import("./modules/02-tenancy/infrastructure/invitation.repository.js");
+  const { OnboardingService } = await import("./modules/02-tenancy/application/onboarding.service.js");
+  const { InvitationService } = await import("./modules/02-tenancy/application/invitation.service.js");
+  const { tenantRoutes } = await import("./modules/02-tenancy/presentation/tenant.controller.js");
+
+  const tenantRepository = new TenantRepository(db);
+  const membershipRepository = new MembershipRepository(db);
+  const invitationRepository = new InvitationRepository(db);
+  const onboardingService = new OnboardingService(db, tenantRepository, membershipRepository);
+  const invitationService = new InvitationService(invitationRepository, membershipRepository, mailService);
+
   // Register auth routes (no auth required for most, auth plugin handles middleware where needed)
-  // Actually, we can decorate fastify or use hooks for specific routes. We'll pass authMiddleware to the controllers if they need it.
   app.register(async (instance) => {
     // Add auth middleware hook to all tenant routes
     instance.addHook('onRequest', authMiddleware);
-    
-    // Tenancy Module
-    const { TenantRepository } = await import("./modules/02-tenancy/infrastructure/tenant.repository.js");
-    const { MembershipRepository } = await import("./modules/02-tenancy/infrastructure/membership.repository.js");
-    const { InvitationRepository } = await import("./modules/02-tenancy/infrastructure/invitation.repository.js");
-    const { OnboardingService } = await import("./modules/02-tenancy/application/onboarding.service.js");
-    const { InvitationService } = await import("./modules/02-tenancy/application/invitation.service.js");
-    const { tenantRoutes } = await import("./modules/02-tenancy/presentation/tenant.controller.js");
-
-    const tenantRepository = new TenantRepository(db);
-    const membershipRepository = new MembershipRepository(db);
-    const invitationRepository = new InvitationRepository(db);
-    const onboardingService = new OnboardingService(db, tenantRepository, membershipRepository);
-    const invitationService = new InvitationService(invitationRepository, membershipRepository, mailService);
-
     tenantRoutes(instance, db, onboardingService, invitationService);
   });
 
   // Auth routes are mostly public
   app.register(async (instance) => {
     // authMiddleware should only protect logout, but for now we put it inside the controller if needed or register without hook
-    authRoutes(instance, authService);
+    authRoutes(instance, authService, onboardingService);
   });
 
   try {
