@@ -19,7 +19,12 @@ try {
 } catch {}
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ['127.0.0.1', 'localhost', '::1', ngrokHost].filter(Boolean),
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['admin.localhost', ngrokHost].filter(Boolean),
+    },
+  },
+  allowedDevOrigins: ['127.0.0.1', 'localhost', '::1', ngrokHost, 'app.localhost', 'admin.localhost'].filter(Boolean),
 };
 
 export default nextConfig;

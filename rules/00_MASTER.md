@@ -140,3 +140,4 @@ O fluxo visual e comportamental dessas telas está em `29_AUTH_UX_FLOWS.md`.
 - O layout do SaaS deve seguir `12`, `14`, `22`, `24` e `30` sem criar variações ad hoc.
 - Gradiente pode reforçar marca; nunca é a única forma de comunicar estado.
 - Motion nunca bloqueia tarefa, foco, leitura ou navegação.
+- **Padrão Premium (Auth e UI)**: Novas superfícies devem adotar visual premium encapsulado em `packages/ui` (como o `AuthLayout` bi-partido, `GlassPill`, e `.custom-scrollbar` interativo com gradiente em `background-attachment: fixed`), unificando o design para Tenant e Superadmin.

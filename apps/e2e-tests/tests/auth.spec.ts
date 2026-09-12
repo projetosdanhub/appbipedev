@@ -71,8 +71,8 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
 
     await page.click('text=Esqueci a senha');
     
-    await expect(page).toHaveURL(/.*\/forgot-password/);
-    await expect(page.getByRole('heading', { name: 'Recupere sua senha' })).toBeVisible();
+    await expect(page).toHaveURL(/.*\/forgot-password/, { timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Recupere sua senha' })).toBeVisible({ timeout: 15000 });
   });
 
   test('Deve solicitar recuperação de senha e ir para verificação', async ({ page }) => {

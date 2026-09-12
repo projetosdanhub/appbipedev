@@ -46,3 +46,9 @@ Qualquer componente visual reutilizável (Botões, Inputs, Modais, Cards) DEVE r
 - Utilize prefixos como `animate-fade-in`, `animate-slide-up` para transições de entrada em modais, toasts e alertas de erro.
 - Animações de loading ("spinners") devem ser sutis.
 - Animações de sucesso (checkmarks) devem preencher o tempo de transição (ex: 2000-3000 milissegundos) antes do redirecionamento.
+
+## 6. Padrões Premium (Auth e Globais)
+A partir da versão premium da UI, o pacote `@bipesend/ui` conta com componentes globais focados em estética refinada:
+1. **AuthLayout**: Layout bi-partido com `Form` no lado esquerdo (branco, com cantos arredondados do lado direito `rounded-r-[2.5rem]`) e área de `Branding` no lado direito, contendo imagem de fundo em full-bleed com overlay opcional.
+2. **GlassPill**: Elementos de destaque visual usando "Glassmorphism" com classes como `backdrop-blur-md bg-white/10 border border-white/20`, utilizados para indicar funcionalidades chave da plataforma.
+3. **Scrollbar Interativa**: O scroll interno dos componentes e painéis de autenticação utiliza o `.custom-scrollbar`. É mandatório que o hover e active alterem as cores da barra com um fundo de `background-attachment: fixed` para revelar uma transição viva e orgânica do gradiente da marca.

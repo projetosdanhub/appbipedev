@@ -182,3 +182,35 @@
     transition-duration: 0.01ms !important;
   }
  }
+
+ /* ───── Custom Scrollbar ───── */
+ .custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+ }
+ .custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0; /* Keeps it away from the absolute edges */
+  border-radius: 8px;
+ }
+ .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-border-200);
+  border-radius: 8px;
+ }
+ /* O truque mágico: fundo fixo com gradiente. Quando a barra desce, revela a parte de baixo do gradiente! */
+ .custom-scrollbar::-webkit-scrollbar-thumb:hover,
+ .custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(to bottom, var(--color-brand-700), var(--color-brand-600));
+  background-attachment: fixed;
+ }
+
+ /* Fix for Input Autofill background color */
+ input:-webkit-autofill,
+ input:-webkit-autofill:hover, 
+ input:-webkit-autofill:focus, 
+ input:-webkit-autofill:active {
+   -webkit-box-shadow: 0 0 0 1000px #F8FAFC inset !important;
+   -webkit-text-fill-color: var(--color-ink-900) !important;
+   transition: background-color 5000s ease-in-out 0s;
+ }
+
