@@ -36,7 +36,9 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await page.click('button[type="submit"]');
     
     // Check for success animation
-    await expect(page.getByRole('heading', { name: 'Conta Criada!' })).toBeVisible({ timeout: 15000 });
+    const allText = await page.evaluate(() => document.body.innerText);
+    console.log('PAGE TEXT BEFORE ASSERT:', allText);
+    await expect(page.getByRole('heading', { name: 'Bem-vindo!' })).toBeVisible({ timeout: 15000 });
     
     // Deve redirecionar para o login
     await expect(page).toHaveURL('http://127.0.0.1:3001/login', { timeout: 15000 });

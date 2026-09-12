@@ -12,19 +12,25 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div className="relative h-[100dvh] w-full flex bg-white lg:bg-transparent overflow-hidden">
       {/* 
         ════════════════════════════════════════
-        PAINEL ESQUERDO — Imagem/Branding (Apenas Desktop)
+        BACKGROUND GLOBAL (Ocupa a tela inteira)
         ════════════════════════════════════════ 
       */}
-      <div className="hidden lg:flex lg:flex-1 relative flex-col justify-between p-12 h-full bg-[var(--color-surface-900)]">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50"
-          style={{ backgroundImage: "url(/bg-login.png)" }}
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-br from-[#007BFF]/25 via-black/40 to-[#6366F1]/25"
-        />
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat hidden lg:block"
+        style={{ backgroundImage: "url(/bg-login.png)" }}
+      />
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 z-0 bg-gradient-to-br from-[#007BFF]/25 via-black/60 to-[#6366F1]/25 hidden lg:block"
+      />
+
+      {/* 
+        ════════════════════════════════════════
+        PAINEL ESQUERDO — Branding (Apenas Desktop)
+        ════════════════════════════════════════ 
+      */}
+      <div className="hidden lg:flex lg:flex-1 relative z-10 flex-col justify-between p-12 h-full">
         
         <div className="relative z-10 flex items-start">
         </div>
@@ -63,12 +69,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       */}
       <div className="
         flex w-full lg:w-[520px] flex-shrink-0
-        flex-col items-center
+        flex-col items-center justify-center
         bg-white lg:rounded-l-[2.5rem] lg:shadow-[-20px_0_40px_-15px_rgba(0,0,0,0.3)]
         px-5 sm:px-8 lg:px-12
         h-[100dvh] overflow-y-auto relative z-20
       ">
-        <div className="w-full max-w-[420px] flex flex-col items-center my-auto py-12">
+        <div className="w-full max-w-[420px] flex flex-col items-center py-12">
           <div className="mb-[28px] lg:mb-[32px] flex justify-center w-full">
             <AuthLogo />
           </div>

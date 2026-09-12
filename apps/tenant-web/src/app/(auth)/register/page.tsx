@@ -55,7 +55,6 @@ function PasswordStrength({ password }: { password?: string }) {
 export default function RegisterPage() {
   const [authStep, setAuthStep] = useState<"choice" | "email" | "success-loading" | "success-done">("choice");
   const [showPassword, setShowPassword] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const form = useForm<RegisterInput>({
@@ -108,7 +107,7 @@ export default function RegisterPage() {
               Voltar
             </button>
           )}
-          <h1 className="text-[24px] md:text-[28px] font-bold text-[#0F172A] tracking-tight leading-[30px] md:leading-[34px]">
+          <h1 className="text-[20px] md:text-[24px] font-bold text-[#0F172A] tracking-tight leading-[28px] md:leading-[30px]">
             {authStep === "choice" ? "Crie sua conta Grátis!" : "Crie sua conta"}
           </h1>
           <p className="text-[15px] md:text-[16px] text-slate-500 leading-relaxed font-normal">
