@@ -112,7 +112,7 @@ export default function RegisterPage() {
           </h1>
           <p className="text-[15px] md:text-[16px] text-slate-500 leading-relaxed font-normal">
             {authStep === "choice" 
-              ? "Aqui você vende mais, automatiza, facilita e cria relacionamentos pós vendas, tudo em um só lugar."
+              ? "Aqui você faz tudo, aumenta as vendas, seu próprio atendente, automatizado, centralizado e no fim você sorri!"
               : "Preencha seus dados profissionais para iniciar."}
           </p>
         </div>

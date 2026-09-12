@@ -35,7 +35,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         flex-col items-center
         bg-white lg:rounded-r-[2.5rem] lg:shadow-[20px_0_40px_-15px_rgba(0,0,0,0.3)]
         px-5 sm:px-8 lg:px-12
-        h-[100dvh] overflow-y-auto relative z-20
+        h-[100dvh] overflow-y-auto custom-scrollbar relative z-20
       ">
         <div className="flex-1 min-h-[24px] lg:min-h-[48px]" aria-hidden="true" />
         <div className="w-full max-w-[420px] flex flex-col items-center py-8">
