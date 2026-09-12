@@ -70,18 +70,18 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             </p>
           </div>
           
-          <div className="flex flex-wrap justify-end gap-x-6 gap-y-3 mt-2">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-wrap justify-end gap-x-3 gap-y-3 mt-4">
+            <div className="flex items-center gap-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-4 py-2 shadow-lg shadow-black/5 transition-all hover:bg-white/20">
               <MessageCircle className="w-4 h-4 text-emerald-400" />
-              <span className="text-white/90 text-[13px] font-medium">Conversas centralizadas</span>
+              <span className="text-white/95 text-[13px] font-medium tracking-wide">Conversas centralizadas</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-4 py-2 shadow-lg shadow-black/5 transition-all hover:bg-white/20">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span className="text-white/90 text-[13px] font-medium">Operação confiável</span>
+              <span className="text-white/95 text-[13px] font-medium tracking-wide">Operação confiável</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-4 py-2 shadow-lg shadow-black/5 transition-all hover:bg-white/20">
               <KeyRound className="w-4 h-4 text-emerald-400" />
-              <span className="text-white/90 text-[13px] font-medium">Acesso protegido</span>
+              <span className="text-white/95 text-[13px] font-medium tracking-wide">Acesso protegido</span>
             </div>
           </div>
         </div>
