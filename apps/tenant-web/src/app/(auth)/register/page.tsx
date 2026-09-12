@@ -13,6 +13,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormMessage,
   Input,
 } from "@bipesend/ui";
 
@@ -53,8 +54,7 @@ function PasswordStrength({ password }: { password?: string }) {
 
 export default function RegisterPage() {
   const [authStep, setAuthStep] = useState<"choice" | "email" | "success-loading" | "success-done">("choice");
-  const [serverError, setServerError] = useState("");
-  const [globalValidationError, setGlobalValidationError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
@@ -64,24 +64,17 @@ export default function RegisterPage() {
     mode: "onTouched",
   });
 
-  useEffect(() => {
-    const firstError = Object.values(form.formState.errors)[0];
-    if (firstError?.message) {
-      setGlobalValidationError(firstError.message as string);
-      const t = setTimeout(() => setGlobalValidationError(""), 3000);
-      return () => clearTimeout(t);
-    } else {
-      setGlobalValidationError("");
-    }
-  }, [form.formState.errors]);
+
 
   const passwordValue = form.watch("password");
 
   const onSubmit = async (data: RegisterInput) => {
-    setServerError("");
     try {
       const response = await registerAction(data);
-      if (!response.success) { setServerError(response.message || "Erro ao realizar cadastro"); return; }
+      if (!response.success) { 
+        form.setError("email", { message: response.message || "Erro ao realizar cadastro" });
+        return; 
+      }
       
       setAuthStep("success-loading");
       
@@ -93,7 +86,7 @@ export default function RegisterPage() {
         }, 1500);
       }, 800);
     } catch {
-      setServerError("Erro inesperado ao conectar ao servidor.");
+      form.setError("email", { message: "Erro inesperado ao conectar ao servidor." });
     }
   };
 
@@ -115,7 +108,7 @@ export default function RegisterPage() {
               Voltar
             </button>
           )}
-          <h1 className="text-[27px] md:text-[32px] font-bold text-[#0F172A] leading-[33px] md:leading-[38px] tracking-tight">
+          <h1 className="text-[24px] md:text-[28px] font-bold text-[#0F172A] tracking-tight leading-[30px] md:leading-[34px]">
             {authStep === "choice" ? "Crie sua conta Grátis!" : "Crie sua conta"}
           </h1>
           <p className="text-[15px] md:text-[16px] text-slate-500 leading-relaxed font-normal">
@@ -123,24 +116,6 @@ export default function RegisterPage() {
               ? "Aqui você vende mais, automatiza, facilita e cria relacionamentos pós vendas, tudo em um só lugar."
               : "Preencha seus dados profissionais para iniciar."}
           </p>
-        </div>
-      )}
-
-      {!isSuccessView && (
-        <div className="h-6 flex items-start -mt-2">
-          {globalValidationError && (
-            <p className="text-[13px] font-medium text-[var(--color-danger-600)] animate-in fade-in zoom-in-95 duration-200">
-              {globalValidationError}
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* ── Erro de servidor ── */}
-      {serverError && !isSuccessView && (
-        <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 animate-error-enter">
-          <AlertCircle className="h-4 w-4 mt-0.5 text-[var(--color-danger-600)] flex-shrink-0" />
-          <p className="text-[13px] font-medium text-[var(--color-danger-600)]">{serverError}</p>
         </div>
       )}
 
@@ -195,7 +170,7 @@ export default function RegisterPage() {
               {/* Nome */}
               <FormField control={form.control} name="name"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-0">
+                  <FormItem className="!space-y-1">
                     <FormControl>
                       <Input
                         id="register-name" label="Nome completo"
@@ -205,6 +180,7 @@ export default function RegisterPage() {
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage className="animate-in fade-in zoom-in-95" />
                   </FormItem>
                 )}
               />
@@ -212,7 +188,7 @@ export default function RegisterPage() {
               {/* Nome da Empresa */}
               <FormField control={form.control} name="companyName"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-0">
+                  <FormItem className="!space-y-1">
                     <FormControl>
                       <Input
                         id="register-company" label="Nome da empresa"
@@ -222,6 +198,7 @@ export default function RegisterPage() {
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage className="animate-in fade-in zoom-in-95" />
                   </FormItem>
                 )}
               />
@@ -229,7 +206,7 @@ export default function RegisterPage() {
               {/* E-mail */}
               <FormField control={form.control} name="email"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-0">
+                  <FormItem className="!space-y-1">
                     <FormControl>
                       <Input
                         id="register-email" label="E-mail profissional" type="email"
@@ -239,6 +216,7 @@ export default function RegisterPage() {
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage className="animate-in fade-in zoom-in-95" />
                   </FormItem>
                 )}
               />
@@ -246,7 +224,7 @@ export default function RegisterPage() {
               {/* Senha */}
               <FormField control={form.control} name="password"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-0">
+                  <FormItem className="!space-y-1">
                     <FormControl>
                       <Input
                         id="register-password" label="Crie uma senha"
@@ -265,7 +243,8 @@ export default function RegisterPage() {
                         {...field}
                       />
                     </FormControl>
-                    <PasswordStrength password={passwordValue} />
+                    {!fieldState.error && <PasswordStrength password={passwordValue} />}
+                    <FormMessage className="animate-in fade-in zoom-in-95" />
                   </FormItem>
                 )}
               />

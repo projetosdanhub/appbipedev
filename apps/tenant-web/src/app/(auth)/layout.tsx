@@ -64,9 +64,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="
         flex w-full lg:w-[520px] flex-shrink-0
         flex-col items-center
-        bg-white
+        bg-white lg:rounded-l-[2.5rem] lg:shadow-[-20px_0_40px_-15px_rgba(0,0,0,0.3)]
         px-5 sm:px-8 lg:px-12
-        h-[100dvh] overflow-y-auto
+        h-[100dvh] overflow-y-auto relative z-20
       ">
         <div className="w-full max-w-[420px] flex flex-col items-center my-auto py-12">
           <div className="mb-[28px] lg:mb-[32px] flex justify-center w-full">

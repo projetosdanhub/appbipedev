@@ -107,7 +107,7 @@ export default function LoginPage() {
             Voltar
           </button>
         )}
-        <h1 className="text-[27px] md:text-[32px] font-bold text-[#0F172A] leading-[33px] md:leading-[38px] tracking-tight">
+        <h1 className="text-[24px] md:text-[28px] font-bold text-[#0F172A] tracking-tight leading-[30px] md:leading-[34px]">
           {authStep === "choice" ? "Então você voltou! Acesse sua conta abaixo." : "Acessar com E-mail"}
         </h1>
         <p className="text-[15px] md:text-[16px] text-slate-500 leading-relaxed font-normal">
