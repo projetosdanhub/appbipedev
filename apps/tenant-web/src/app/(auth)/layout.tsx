@@ -68,7 +68,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         px-5 sm:px-8 lg:px-12
         h-[100dvh] overflow-y-auto
       ">
-        <div className="w-full max-w-[420px] flex flex-col items-center pt-[24px] lg:pt-[48px] pb-12">
+        <div className="w-full max-w-[420px] flex flex-col items-center my-auto py-12">
           <div className="mb-[28px] lg:mb-[32px] flex justify-center w-full">
             <AuthLogo />
           </div>

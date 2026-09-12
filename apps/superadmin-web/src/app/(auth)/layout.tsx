@@ -31,8 +31,8 @@ export default function AuthLayout({
       {/* Center — Auth panel */}
       <div className="relative z-10 flex w-full min-h-[100dvh] lg:min-h-screen items-center justify-center lg:p-4">
         <div className="w-full lg:max-w-[520px]">
-          <div className="w-full flex flex-col justify-center bg-white lg:rounded-2xl lg:shadow-2xl lg:shadow-black/10 px-5 py-8 sm:px-8 lg:px-12 lg:py-12 relative overflow-hidden min-h-[100dvh] lg:min-h-0">
-            <div className="relative z-10 w-full max-w-[420px] mx-auto flex flex-col items-center flex-1 lg:flex-none pt-[24px] lg:pt-0">
+          <div className="w-full flex flex-col justify-center bg-white lg:rounded-2xl lg:shadow-2xl lg:shadow-black/10 px-5 sm:px-8 lg:px-12 relative overflow-hidden min-h-[100dvh] lg:min-h-0">
+            <div className="relative z-10 w-full max-w-[420px] mx-auto flex flex-col items-center flex-1 lg:flex-none my-auto py-12">
               {/* Logo */}
               <div className="flex items-center justify-center mb-[28px] lg:mb-[32px] w-full">
                 <AuthLogo />
