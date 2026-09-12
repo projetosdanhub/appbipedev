@@ -27,7 +27,30 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
       {/* 
         ════════════════════════════════════════
-        PAINEL ESQUERDO — Branding (Apenas Desktop)
+        PAINEL ESQUERDO — Autenticação (Mobile + Desktop)
+        ════════════════════════════════════════ 
+      */}
+      <div className="
+        flex w-full lg:w-[520px] flex-shrink-0
+        flex-col items-center justify-center
+        bg-white lg:rounded-r-[2.5rem] lg:shadow-[20px_0_40px_-15px_rgba(0,0,0,0.3)]
+        px-5 sm:px-8 lg:px-12
+        h-[100dvh] overflow-y-auto relative z-20
+      ">
+        <div className="w-full max-w-[420px] flex flex-col items-center py-12">
+          <div className="mb-[28px] lg:mb-[32px] flex justify-center w-full">
+            <AuthLogo />
+          </div>
+
+          <div className="w-full flex flex-col">
+            {children}
+          </div>
+        </div>
+      </div>
+
+      {/* 
+        ════════════════════════════════════════
+        PAINEL DIREITO — Branding (Apenas Desktop)
         ════════════════════════════════════════ 
       */}
       <div className="hidden lg:flex lg:flex-1 relative z-10 flex-col justify-between p-12 h-full">
@@ -58,29 +81,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               <KeyRound className="w-4 h-4 text-emerald-400" />
               <span className="text-white/90 text-[13px] font-medium">Acesso protegido</span>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 
-        ════════════════════════════════════════
-        PAINEL DIREITO — Autenticação (Mobile + Desktop)
-        ════════════════════════════════════════ 
-      */}
-      <div className="
-        flex w-full lg:w-[520px] flex-shrink-0
-        flex-col items-center justify-center
-        bg-white lg:rounded-l-[2.5rem] lg:shadow-[-20px_0_40px_-15px_rgba(0,0,0,0.3)]
-        px-5 sm:px-8 lg:px-12
-        h-[100dvh] overflow-y-auto relative z-20
-      ">
-        <div className="w-full max-w-[420px] flex flex-col items-center py-12">
-          <div className="mb-[28px] lg:mb-[32px] flex justify-center w-full">
-            <AuthLogo />
-          </div>
-
-          <div className="w-full flex flex-col">
-            {children}
           </div>
         </div>
       </div>
