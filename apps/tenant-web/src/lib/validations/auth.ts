@@ -7,6 +7,7 @@ export const loginSchema = z.object({
   password: z.string().min(8, {
     message: "A senha deve ter pelo menos 8 caracteres.",
   }),
+  rememberMe: z.boolean().optional(),
 });
 
 export const registerSchema = z
@@ -14,22 +15,15 @@ export const registerSchema = z
     name: z.string().min(3, {
       message: "O nome deve ter pelo menos 3 caracteres.",
     }),
+    companyName: z.string().min(2, {
+      message: "O nome da empresa deve ter pelo menos 2 caracteres.",
+    }),
     email: z.string().email({
       message: "Digite um endereço de e-mail válido.",
     }),
-    password: z.string().min(8, {
-      message: "A senha deve ter pelo menos 8 caracteres.",
-    }),
-    confirmPassword: z.string().min(8, {
-      message: "A confirmação deve ter pelo menos 8 caracteres.",
-    }),
-    acceptTerms: z.boolean().refine((val) => val === true, {
-      message: "Você deve aceitar os termos para continuar.",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "As senhas não coincidem.",
-    path: ["confirmPassword"],
+    password: z.string()
+      .min(8, { message: "A senha deve ter pelo menos 8 caracteres." })
+      .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: "A senha deve conter pelo menos 1 caractere especial." }),
   });
 
 export const forgotPasswordSchema = z.object({

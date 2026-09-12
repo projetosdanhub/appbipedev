@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
 
   // Se não tem token e tenta acessar página protegida (qualquer uma exceto as de auth e api)
   if (!sessionToken && !isAuthPage) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/register', request.url));
   }
 
   // Se já tem token e tenta acessar login/registro, joga pro dashboard (raiz)

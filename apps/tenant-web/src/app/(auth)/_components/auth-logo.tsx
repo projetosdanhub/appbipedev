@@ -21,9 +21,9 @@ export function AuthLogo() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src="/assets/brand/bipesend-logo-horizontal.png"
+      src="/logo-bip-bgt-white-vertical.webp"
       alt="BipeSend"
-      className="h-9 w-auto object-contain"
+      className="h-[52px] w-auto object-contain"
       onError={() => setHasError(true)}
     />
   );

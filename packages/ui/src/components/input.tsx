@@ -19,7 +19,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label 
             htmlFor={inputId} 
-            className="text-[14px] font-medium text-[var(--color-ink-900)] dark:text-gray-300"
+            className="text-[14px] font-medium text-[var(--color-ink-900)]"
           >
             {label}
           </label>
@@ -34,9 +34,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             type={type}
             className={cn(
-              "flex h-[50px] w-full rounded-[13px] border border-[var(--color-border-200)] dark:border-gray-700 bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-900)] px-4 py-2 text-[15px] text-[var(--color-ink-900)] dark:text-white ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[#9BA1AC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]/40 focus-visible:border-[var(--color-brand-600)] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150 hover:border-gray-300 dark:hover:border-gray-600",
-              leftIcon && "pl-11",
-              rightIcon && "pr-12",
+              "flex h-[50px] w-full rounded-[13px] border border-[var(--color-border-200)] bg-[var(--color-surface-50)] py-2 text-[15px] text-[var(--color-ink-900)] ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[#9BA1AC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]/40 focus-visible:border-[var(--color-brand-600)] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150 hover:border-[var(--color-brand-600)]/50",
+              leftIcon ? "pl-11" : "pl-4",
+              rightIcon ? "pr-12" : "pr-4",
               error && "border-[var(--color-danger-600)] focus-visible:ring-[var(--color-danger-600)]/40 focus-visible:border-[var(--color-danger-600)]",
               className
             )}
@@ -52,7 +52,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {helperText && (
           <span className={cn(
             "text-[12px]",
-            error ? "text-[var(--color-danger-600)]" : "text-[var(--color-ink-600)] dark:text-gray-400"
+            error ? "text-[var(--color-danger-600)]" : "text-[var(--color-ink-600)]"
           )}>
             {helperText}
           </span>

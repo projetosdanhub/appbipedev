@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../../../../packages/ui";
 
 @theme inline {
   --color-brand-600: #007BFF;
@@ -30,29 +31,38 @@
  }
 
  /* ───── Auth card entrance ───── */
- @keyframes auth-card-enter {
-  0% { opacity: 0; transform: translateY(12px) scale(0.99); }
+ @keyframes auth-card-enter-kf {
+  0% { opacity: 0; transform: translateY(24px) scale(0.97); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
  }
 
- .animate-auth-card-enter {
-  animation: auth-card-enter 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+ .auth-card-enter {
+  animation: auth-card-enter-kf 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
  }
 
  /* ───── Content fade slide ───── */
- @keyframes auth-content-enter {
-  0% { opacity: 0; transform: translateX(-8px); }
-  100% { opacity: 1; transform: translateX(0); }
+ @keyframes auth-content-enter-kf {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
  }
 
- .animate-auth-content {
-  animation: auth-content-enter 220ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+ .auth-content-enter {
+  animation: auth-content-enter-kf 280ms 80ms cubic-bezier(0.22, 1, 0.36, 1) both;
  }
+
+ /* ───── Legacy aliases ───── */
+ .animate-auth-card-enter { animation: auth-card-enter-kf 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+ .animate-auth-content { animation: auth-content-enter-kf 220ms cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
  /* ───── Fade animations ───── */
  @keyframes fade-in-up {
   0% { opacity: 0; transform: translateY(16px); }
   100% { opacity: 1; transform: translateY(0); }
+ }
+
+ @keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
  }
  
  @keyframes fade-in {

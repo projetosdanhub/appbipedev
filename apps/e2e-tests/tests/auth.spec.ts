@@ -20,27 +20,36 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await page.goto('/register');
     await page.waitForLoadState('networkidle');
     
-    await expect(page.getByRole('heading', { name: 'Comece a crescer com o BipeSend' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Crie sua conta Grátis!' })).toBeVisible({ timeout: 15000 });
+    
+    // Click email continuation
+    await page.click('button:has-text("Continuar com e-mail")');
+
+    await expect(page.getByRole('heading', { name: 'Crie sua conta' })).toBeVisible({ timeout: 15000 });
     
     // Fill the fields
     await page.fill('input[name="name"]', 'Usuário de Teste');
+    await page.fill('input[name="companyName"]', 'Empresa de Teste');
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
-    await page.fill('input[name="confirmPassword"]', testPassword);
-    
-    // Check the terms
-    await page.check('#terms');
     
     await page.click('button[type="submit"]');
     
+    // Check for success animation
+    await expect(page.getByRole('heading', { name: 'Conta Criada!' })).toBeVisible({ timeout: 15000 });
+    
     // Deve redirecionar para o login
-    await expect(page).toHaveURL(/.*\/login/, { timeout: 15000 });
+    await expect(page).toHaveURL('http://127.0.0.1:3001/login', { timeout: 15000 });
   });
 
   test('Deve realizar login com o usuário criado', async ({ page }) => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
     
+    await expect(page.getByRole('heading', { name: /Então você voltou/ })).toBeVisible({ timeout: 15000 });
+    await page.click('button:has-text("Login com e-mail e senha")');
+    await expect(page.getByRole('heading', { name: 'Acessar com E-mail' })).toBeVisible({ timeout: 15000 });
+
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
     
@@ -54,7 +63,11 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
   test('Deve navegar para a tela de recuperar senha', async ({ page }) => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
-    await page.click('text=Esqueci minha senha');
+    
+    await expect(page.getByRole('heading', { name: /Então você voltou/ })).toBeVisible({ timeout: 15000 });
+    await page.click('button:has-text("Login com e-mail e senha")');
+
+    await page.click('text=Esqueci a senha');
     
     await expect(page).toHaveURL(/.*\/forgot-password/);
     await expect(page.getByRole('heading', { name: 'Recupere sua senha' })).toBeVisible();

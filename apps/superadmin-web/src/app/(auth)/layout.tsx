@@ -16,16 +16,16 @@ export default function AuthLayout({
 }) {
   return (
     <div
-      className="relative flex min-h-screen w-full overflow-x-hidden overflow-y-auto bg-cover bg-center bg-no-repeat"
+      className="relative flex min-h-[100dvh] lg:h-[100dvh] w-full overflow-x-hidden overflow-y-auto lg:overflow-hidden bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: "url(/bg-login.png)" }}
     >
       {/* Subtle dark overlay for card contrast */}
       <div className="absolute inset-0 bg-black/10 pointer-events-none" />
 
-      {/* Left side — Auth card */}
-      <div className="relative z-10 flex w-full min-h-screen lg:w-auto items-center justify-center lg:justify-start py-8 px-4 sm:px-8 lg:pl-16 xl:pl-24">
-        <div className="animate-auth-card-enter w-full max-w-[540px]">
-          <div className="w-full bg-white/90 md:bg-white/[0.96] backdrop-blur-[20px] rounded-[26px] shadow-2xl shadow-black/8 p-8 sm:p-10 border border-white/60 relative overflow-hidden">
+      {/* Center — Auth card */}
+      <div className="relative z-10 flex w-full min-h-screen items-center justify-center p-4">
+        <div className="animate-auth-card-enter w-full max-w-[420px]">
+          <div className="w-full flex flex-col justify-center bg-white/[0.85] lg:bg-white/[0.96] backdrop-blur-[20px] rounded-[26px] shadow-2xl shadow-black/10 p-8 sm:p-10 border border-white/60 relative overflow-hidden">
             {/* Inner glass sheen */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-white/30 pointer-events-none" />
 
