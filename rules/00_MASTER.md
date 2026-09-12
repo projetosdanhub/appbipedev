@@ -62,6 +62,7 @@ Estas regras são a fonte de verdade para humanos e agentes de IA. Quando códig
 30. `30_DESIGN_SYSTEM_IMPLEMENTATION.md`
 31. `31_DESIGN_TOKENS_AUTH.md`
 32. `32_UI_COMPONENTS_STANDARD.md`
+33. `33_ENVIRONMENT_VARIABLES_GUIDELINES.md`
 
 ## 4. Precedência em caso de conflito
 
