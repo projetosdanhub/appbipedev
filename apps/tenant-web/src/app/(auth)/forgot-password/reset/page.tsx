@@ -76,7 +76,7 @@ function ResetPasswordContent() {
         router.push("/login");
       }, 3000);
       
-    } catch (err: any) {
+    } catch {
       setError("Ocorreu um erro inesperado ao conectar ao servidor.");
     }
   };

@@ -29,7 +29,7 @@ function VerifyCodeContent() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [countdown, setCountdown] = useState(60);
-  const [canResend, setCanResend] = useState(false);
+  const canResend = countdown === 0;
   
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
@@ -45,13 +45,10 @@ function VerifyCodeContent() {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
-    } else {
-      setCanResend(true);
     }
   }, [countdown]);
 
   const handleResend = () => {
-    setCanResend(false);
     setCountdown(60);
     toast.success("Código reenviado para o seu e-mail.");
   };
@@ -124,7 +121,7 @@ function VerifyCodeContent() {
       
       toast.success(response.message);
       router.push(`/forgot-password/reset?email=${encodeURIComponent(email)}&token=${data.code}`);
-    } catch (err: any) {
+    } catch {
       setError("Ocorreu um erro inesperado ao conectar ao servidor.");
     }
   };

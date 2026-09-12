@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
       
       toast.success(response.message);
       router.push(`/forgot-password/verify?email=${encodeURIComponent(data.email)}`);
-    } catch (err: any) {
+    } catch {
       setError("Ocorreu um erro inesperado ao conectar ao servidor.");
     }
   };
