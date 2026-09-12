@@ -7,20 +7,30 @@ export const loginSchema = z.object({
   password: z.string().min(8, {
     message: "A senha deve ter pelo menos 8 caracteres.",
   }),
-  rememberMe: z.boolean().default(false).optional(),
 });
 
-export const registerSchema = z.object({
-  name: z.string().min(3, {
-    message: "O nome deve ter pelo menos 3 caracteres.",
-  }),
-  email: z.string().email({
-    message: "Digite um endereço de e-mail válido.",
-  }),
-  password: z.string().min(8, {
-    message: "A senha deve ter pelo menos 8 caracteres.",
-  }),
-});
+export const registerSchema = z
+  .object({
+    name: z.string().min(3, {
+      message: "O nome deve ter pelo menos 3 caracteres.",
+    }),
+    email: z.string().email({
+      message: "Digite um endereço de e-mail válido.",
+    }),
+    password: z.string().min(8, {
+      message: "A senha deve ter pelo menos 8 caracteres.",
+    }),
+    confirmPassword: z.string().min(8, {
+      message: "A confirmação deve ter pelo menos 8 caracteres.",
+    }),
+    acceptTerms: z.boolean().refine((val) => val === true, {
+      message: "Você deve aceitar os termos para continuar.",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas não coincidem.",
+    path: ["confirmPassword"],
+  });
 
 export const forgotPasswordSchema = z.object({
   email: z.string().email({
@@ -28,17 +38,19 @@ export const forgotPasswordSchema = z.object({
   }),
 });
 
-export const resetPasswordSchema = z.object({
-  password: z.string().min(8, {
-    message: "A senha deve ter pelo menos 8 caracteres.",
-  }),
-  confirmPassword: z.string().min(8, {
-    message: "A senha deve ter pelo menos 8 caracteres.",
-  }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "As senhas não coincidem.",
-  path: ["confirmPassword"],
-});
+export const resetPasswordSchema = z
+  .object({
+    password: z.string().min(8, {
+      message: "A senha deve ter pelo menos 8 caracteres.",
+    }),
+    confirmPassword: z.string().min(8, {
+      message: "A senha deve ter pelo menos 8 caracteres.",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas não coincidem.",
+    path: ["confirmPassword"],
+  });
 
 export const verifyCodeSchema = z.object({
   code: z.string().min(6, {

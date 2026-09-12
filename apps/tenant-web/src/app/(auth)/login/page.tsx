@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { AlertTriangle, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { AlertTriangle, Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
 import {
   Button,
   Input,
@@ -33,7 +33,6 @@ export default function LoginPage() {
     defaultValues: {
       email: "",
       password: "",
-      rememberMe: false,
     },
   });
 
@@ -56,20 +55,34 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full animate-slide-up">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[var(--color-ink-900)] tracking-tight mb-1.5">
+    <div className="w-full animate-auth-content">
+      {/* Segmented tabs */}
+      <div className="flex bg-[var(--color-surface-50)] rounded-[12px] p-1 mb-8 border border-[var(--color-border-200)]/60">
+        <div className="flex-1 py-2.5 text-center text-[14px] font-semibold text-[var(--color-ink-900)] bg-white rounded-[10px] shadow-sm cursor-default transition-all duration-200">
+          Login
+        </div>
+        <Link
+          href="/register"
+          className="flex-1 py-2.5 text-center text-[14px] font-medium text-[var(--color-ink-600)] hover:text-[var(--color-ink-900)] rounded-[10px] transition-all duration-200"
+        >
+          Cadastro
+        </Link>
+      </div>
+
+      {/* Header */}
+      <div className="mb-7">
+        <h1 className="text-[30px] font-bold text-[var(--color-ink-900)] tracking-tight leading-tight mb-1.5">
           Bem-vindo de volta
         </h1>
-        <p className="text-[15px] text-[var(--color-ink-600)]">
-          Entre na sua conta para acessar o BipSend.
+        <p className="text-[15px] text-[var(--color-ink-600)] leading-relaxed">
+          Entre na sua conta para continuar no BipeSend.
         </p>
       </div>
 
       <Form {...form}>
         <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
           {error && (
-            <Alert variant="destructive" className="animate-fade-in">
+            <Alert variant="destructive" className="animate-error-enter">
               <AlertTriangle className="h-5 w-5" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
@@ -83,8 +96,10 @@ export default function LoginPage() {
                 <FormLabel>E-mail</FormLabel>
                 <FormControl>
                   <Input 
+                    type="email"
                     placeholder="seuemail@empresa.com.br" 
-                    leftIcon={<Mail className="h-4 w-4" />}
+                    autoComplete="email"
+                    leftIcon={<Mail className="h-[18px] w-[18px]" />}
                     {...field} 
                   />
                 </FormControl>
@@ -98,26 +113,28 @@ export default function LoginPage() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <div className="flex items-center justify-between h-5">
-                  <FormLabel className="!mt-0">Senha</FormLabel>
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-ink-600)] hover:text-[var(--color-brand-600)] transition-colors focus:outline-none"
-                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                  >
-                    {showPassword ? (
-                      <><EyeOff className="w-3.5 h-3.5" /> Ocultar</>
-                    ) : (
-                      <><Eye className="w-3.5 h-3.5" /> Mostrar</>
-                    )}
-                  </button>
-                </div>
+                <FormLabel>Senha</FormLabel>
                 <FormControl>
                   <Input
                     type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    leftIcon={<Lock className="h-4 w-4" />}
+                    placeholder="Digite sua senha"
+                    autoComplete="current-password"
+                    leftIcon={<Lock className="h-[18px] w-[18px]" />}
+                    rightIcon={
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="text-gray-400 hover:text-[var(--color-ink-900)] transition-colors p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] rounded-md"
+                        aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                        tabIndex={0}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-[18px] h-[18px]" />
+                        ) : (
+                          <Eye className="w-[18px] h-[18px]" />
+                        )}
+                      </button>
+                    }
                     {...field}
                   />
                 </FormControl>
@@ -126,31 +143,10 @@ export default function LoginPage() {
             )}
           />
 
-          <div className="flex items-center justify-between">
-            <FormField
-              control={form.control}
-              name="rememberMe"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center gap-2.5 space-y-0">
-                  <FormControl>
-                    <input
-                      type="checkbox"
-                      checked={field.value}
-                      onChange={field.onChange}
-                      className="toggle-round"
-                      aria-label="Lembrar de mim"
-                    />
-                  </FormControl>
-                  <FormLabel className="text-sm font-normal text-[var(--color-ink-600)] cursor-pointer !mt-0">
-                    Lembrar de mim
-                  </FormLabel>
-                </FormItem>
-              )}
-            />
-
+          <div className="flex justify-end">
             <Link
               href="/forgot-password"
-              className="text-sm font-medium text-[var(--color-brand-600)] hover:text-[var(--color-brand-700)] transition-colors"
+              className="text-[13px] font-medium text-[var(--color-brand-600)] hover:text-[var(--color-brand-700)] transition-colors"
             >
               Esqueci minha senha
             </Link>
@@ -159,10 +155,17 @@ export default function LoginPage() {
           <Button
             type="submit"
             isLoading={form.formState.isSubmitting}
-            className="w-full hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200"
+            className="w-full"
             size="lg"
           >
-            {form.formState.isSubmitting ? "Entrando..." : "Entrar no BipSend"}
+            {form.formState.isSubmitting ? (
+              "Entrando..."
+            ) : (
+              <>
+                Entrar no BipeSend
+                <ArrowRight className="w-[18px] h-[18px] ml-1 group-hover:translate-x-0.5 transition-transform" />
+              </>
+            )}
           </Button>
         </form>
       </Form>
@@ -170,7 +173,7 @@ export default function LoginPage() {
       <p className="mt-8 text-center text-[14px] text-[var(--color-ink-600)]">
         Ainda não tem conta?{" "}
         <Link href="/register" className="font-semibold text-[var(--color-brand-600)] hover:text-[var(--color-brand-700)] transition-colors">
-          Crie sua conta agora
+          Criar minha conta
         </Link>
       </p>
     </div>

@@ -29,6 +29,26 @@
   font-family: var(--font-heading);
  }
 
+ /* ───── Auth card entrance ───── */
+ @keyframes auth-card-enter {
+  0% { opacity: 0; transform: translateY(12px) scale(0.99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+ }
+
+ .animate-auth-card-enter {
+  animation: auth-card-enter 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+ }
+
+ /* ───── Content fade slide ───── */
+ @keyframes auth-content-enter {
+  0% { opacity: 0; transform: translateX(-8px); }
+  100% { opacity: 1; transform: translateX(0); }
+ }
+
+ .animate-auth-content {
+  animation: auth-content-enter 220ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+ }
+
  /* ───── Fade animations ───── */
  @keyframes fade-in-up {
   0% { opacity: 0; transform: translateY(16px); }
@@ -40,26 +60,14 @@
   100% { opacity: 1; }
  }
 
- @keyframes card-enter {
-  0% { opacity: 0; transform: translateY(24px) scale(0.98); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
- }
- 
  @keyframes slide-up {
-  0% { opacity: 0; transform: translateY(20px); }
+  0% { opacity: 0; transform: translateY(12px); }
   100% { opacity: 1; transform: translateY(0); }
  }
- 
- @keyframes checkmark {
-  0% { stroke-dashoffset: 24; opacity: 0; }
-  100% { stroke-dashoffset: 0; opacity: 1; }
- }
 
- /* ───── Checkbox pulse ───── */
- @keyframes checkbox-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(53, 106, 230, 0.4); }
-  70% { box-shadow: 0 0 0 8px rgba(53, 106, 230, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(53, 106, 230, 0); }
+ @keyframes error-enter {
+  0% { opacity: 0; transform: translateY(-4px); }
+  100% { opacity: 1; transform: translateY(0); }
  }
  
  .animate-fade-in-up {
@@ -70,21 +78,57 @@
   animation: fade-in 0.25s ease-out forwards;
  }
 
- .animate-card-enter {
-  animation: card-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
- }
-
  .animate-slide-up {
-  animation: slide-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
  }
 
- .animate-checkmark {
-  stroke-dasharray: 24;
-  stroke-dashoffset: 24;
-  animation: checkmark 0.4s ease-out forwards;
+ .animate-error-enter {
+  animation: error-enter 0.2s ease-out forwards;
  }
 
- /* ───── Custom round toggle / checkbox ───── */
+ /* ───── Custom checkbox (squared, rounded corners) ───── */
+ .auth-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--color-border-200);
+  background: white;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  flex-shrink: 0;
+ }
+
+ .auth-checkbox:hover {
+  border-color: var(--color-brand-600);
+ }
+
+ .auth-checkbox:checked {
+  border-color: var(--color-brand-600);
+  background-color: var(--color-brand-600);
+ }
+
+ .auth-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 6px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+ }
+
+ .auth-checkbox:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+ }
+
+ /* ───── Legacy toggle (keep for backward compat) ───── */
  .toggle-round {
   appearance: none;
   -webkit-appearance: none;
@@ -102,7 +146,6 @@
  .toggle-round:checked {
   border-color: var(--color-brand-600);
   background-color: transparent;
-  animation: checkbox-pulse 0.4s ease-out;
  }
 
  .toggle-round:checked::after {
@@ -120,4 +163,21 @@
  .toggle-round:focus-visible {
   outline: 2px solid var(--color-brand-600);
   outline-offset: 2px;
+ }
+
+ /* ───── Reduced motion ───── */
+ @media (prefers-reduced-motion: reduce) {
+  .animate-auth-card-enter,
+  .animate-auth-content,
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-error-enter {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
  }

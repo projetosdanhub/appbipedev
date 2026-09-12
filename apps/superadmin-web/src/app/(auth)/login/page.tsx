@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { AlertTriangle, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import {
   Button,
   Input,
@@ -24,7 +24,6 @@ export default function SuperadminLoginPage() {
     setIsLoading(true);
 
     try {
-      // Fake API call for now
       await new Promise((resolve) => setTimeout(resolve, 1000));
       
       if (!email || !password) {
@@ -40,75 +39,86 @@ export default function SuperadminLoginPage() {
   };
 
   return (
-    <div className="w-full animate-slide-up">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[var(--color-ink-900)] tracking-tight mb-1.5">
+    <div className="w-full animate-auth-content">
+      {/* Header */}
+      <div className="mb-7">
+        <h1 className="text-[30px] font-bold text-[var(--color-ink-900)] tracking-tight leading-tight mb-1.5">
           BipeSend Superpainel
         </h1>
-        <p className="text-[15px] text-[var(--color-ink-600)]">
+        <p className="text-[15px] text-[var(--color-ink-600)] leading-relaxed">
           Acesso restrito ao painel administrativo.
         </p>
       </div>
 
       <form onSubmit={handleLogin} className="space-y-5">
         {error && (
-          <Alert variant="destructive" className="animate-fade-in">
+          <Alert variant="destructive" className="animate-error-enter">
             <AlertTriangle className="h-5 w-5" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
-        <div className="space-y-2">
-          <label htmlFor="email" className="text-[14px] font-medium text-[var(--color-ink-900)] dark:text-gray-300">
+        <div className="space-y-1.5">
+          <label htmlFor="sa-email" className="text-[14px] font-medium text-[var(--color-ink-900)]">
             E-mail
           </label>
           <Input
-            id="email"
+            id="sa-email"
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="admin@bipesend.com.br"
-            leftIcon={<Mail className="h-4 w-4" />}
+            autoComplete="email"
+            leftIcon={<Mail className="h-[18px] w-[18px]" />}
           />
         </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between h-5">
-            <label htmlFor="password" className="text-[14px] font-medium text-[var(--color-ink-900)] dark:text-gray-300">
-              Senha
-            </label>
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-ink-600)] hover:text-[var(--color-brand-600)] transition-colors focus:outline-none"
-              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-            >
-              {showPassword ? (
-                <><EyeOff className="w-3.5 h-3.5" /> Ocultar</>
-              ) : (
-                <><Eye className="w-3.5 h-3.5" /> Mostrar</>
-              )}
-            </button>
-          </div>
+        <div className="space-y-1.5">
+          <label htmlFor="sa-password" className="text-[14px] font-medium text-[var(--color-ink-900)]">
+            Senha
+          </label>
           <Input
-            id="password"
+            id="sa-password"
             type={showPassword ? "text" : "password"}
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            leftIcon={<Lock className="h-4 w-4" />}
+            placeholder="Digite sua senha"
+            autoComplete="current-password"
+            leftIcon={<Lock className="h-[18px] w-[18px]" />}
+            rightIcon={
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-400 hover:text-[var(--color-ink-900)] transition-colors p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)] rounded-md"
+                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                tabIndex={0}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-[18px] h-[18px]" />
+                ) : (
+                  <Eye className="w-[18px] h-[18px]" />
+                )}
+              </button>
+            }
           />
         </div>
 
         <Button
           type="submit"
           isLoading={isLoading}
-          className="w-full hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200"
+          className="w-full"
           size="lg"
         >
-          {isLoading ? "Autenticando..." : "Autenticar"}
+          {isLoading ? (
+            "Autenticando..."
+          ) : (
+            <>
+              Autenticar
+              <ArrowRight className="w-[18px] h-[18px] ml-1 group-hover:translate-x-0.5 transition-transform" />
+            </>
+          )}
         </Button>
       </form>
     </div>

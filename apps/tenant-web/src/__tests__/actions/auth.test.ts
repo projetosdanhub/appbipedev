@@ -13,7 +13,6 @@ describe("Server Actions — Auth", () => {
       const result = await loginAction({
         email: "user@test.com",
         password: "12345678",
-        rememberMe: false,
       });
       expect(result.success).toBe(true);
       expect(result.message).toBeTruthy();
@@ -26,6 +25,8 @@ describe("Server Actions — Auth", () => {
         name: "João",
         email: "joao@test.com",
         password: "12345678",
+        confirmPassword: "12345678",
+        acceptTerms: true,
       });
       expect(result.success).toBe(true);
       expect(result.message).toBeTruthy();

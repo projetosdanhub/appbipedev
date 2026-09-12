@@ -20,12 +20,13 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await page.goto('/register');
     await page.waitForLoadState('networkidle');
     
-    await expect(page.getByRole('heading', { name: 'Criar nova conta' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Comece a crescer com o BipeSend' })).toBeVisible({ timeout: 15000 });
     
-    // Fill the new fields
+    // Fill the fields
     await page.fill('input[name="name"]', 'Usuário de Teste');
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
+    await page.fill('input[name="confirmPassword"]', testPassword);
     
     // Check the terms
     await page.check('#terms');
