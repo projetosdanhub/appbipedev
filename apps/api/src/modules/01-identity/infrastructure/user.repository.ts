@@ -22,4 +22,20 @@ export class UserRepository {
     );
     return rows.length ? rows[0] : null;
   }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const rows = await this.db.query(
+      `SELECT id, email, password_hash as "passwordHash", name, created_at as "createdAt", updated_at as "updatedAt" 
+       FROM users WHERE email = $1`,
+      [email]
+    );
+    return rows.length ? rows[0] : null;
+  }
+
+  async updatePassword(id: string, passwordHash: string): Promise<void> {
+    await this.db.query(
+      `UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2`,
+      [passwordHash, id]
+    );
+  }
 }

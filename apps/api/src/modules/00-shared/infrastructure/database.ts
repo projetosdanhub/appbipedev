@@ -3,12 +3,20 @@ import { Pool, PoolClient } from "pg";
 export class Database {
   private pool: Pool;
 
-  constructor(connectionString: string) {
-    this.pool = new Pool({ connectionString });
+  private client?: PoolClient;
+
+  constructor(connectionStringOrPool: string | Pool, client?: PoolClient) {
+    if (typeof connectionStringOrPool === "string") {
+      this.pool = new Pool({ connectionString: connectionStringOrPool });
+    } else {
+      this.pool = connectionStringOrPool;
+    }
+    this.client = client;
   }
 
   async query<T = any>(text: string, params: any[] = []): Promise<T[]> {
-    const result = await this.pool.query(text, params);
+    const executor = this.client || this.pool;
+    const result = await executor.query(text, params);
     return result.rows;
   }
 
@@ -17,10 +25,11 @@ export class Database {
    * If tenantId is provided, it sets the RLS context for that transaction.
    */
   async withTransaction<T>(
-    callback: (client: PoolClient) => Promise<T>,
+    callback: (db: Database) => Promise<T>,
     tenantId?: string
   ): Promise<T> {
     const client = await this.pool.connect();
+    const txDb = new Database(this.pool, client);
     try {
       await client.query("BEGIN");
       
@@ -28,7 +37,7 @@ export class Database {
         await client.query(`SELECT set_config('app.current_tenant_id', $1, true)`, [tenantId]);
       }
 
-      const result = await callback(client);
+      const result = await callback(txDb);
       await client.query("COMMIT");
       return result;
     } catch (e) {
@@ -40,6 +49,8 @@ export class Database {
   }
 
   async close() {
-    await this.pool.end();
+    if (this.pool && !this.client) {
+      await this.pool.end();
+    }
   }
 }

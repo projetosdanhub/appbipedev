@@ -24,8 +24,9 @@ describe("RLS Tenancy and Identity", () => {
   });
 
   it("should block reading or writing memberships outside a tenant context", async () => {
-    const user = await userRepo.create("test1@example.com", "hash", "Test 1");
-    const tenant = await tenantRepo.create("Tenant 1");
+    const ts = Date.now();
+    const user = await userRepo.create(`test1_${ts}@example.com`, "hash", "Test 1");
+    const tenant = await tenantRepo.create(`Tenant 1 ${ts}`);
     
     await assert.rejects(
       async () => {
@@ -42,40 +43,46 @@ describe("RLS Tenancy and Identity", () => {
   });
 
   it("should allow writing memberships when inside correct tenant transaction", async () => {
-    const user = await userRepo.create("test2@example.com", "hash", "Test 2");
-    const tenant = await tenantRepo.create("Tenant 2");
+    const ts = Date.now();
+    const user = await userRepo.create(`test2_${ts}@example.com`, "hash", "Test 2");
+    const tenant = await tenantRepo.create(`Tenant 2 ${ts}`);
     
-    await db.withTransaction(async (client) => {
-      const membership = await membershipRepo.createWithinContext(client, user.id, "owner");
+    await db.withTransaction(async (txDb) => {
+      const txMembershipRepo = new MembershipRepository(txDb);
+      const membership = await txMembershipRepo.create(tenant.id, user.id, "owner");
       assert.equal(membership.tenantId, tenant.id);
       assert.equal(membership.userId, user.id);
       assert.equal(membership.role, "owner");
 
-      const all = await membershipRepo.findAllWithinContext(client);
+      const all = await txMembershipRepo.findAllByTenant(tenant.id);
       assert.equal(all.length, 1);
     }, tenant.id);
   });
 
   it("should isolate reads between different tenants", async () => {
-    const user3 = await userRepo.create("test3@example.com", "hash", "Test 3");
-    const tenantA = await tenantRepo.create("Tenant A");
-    const tenantB = await tenantRepo.create("Tenant B");
+    const ts = Date.now();
+    const user3 = await userRepo.create(`test3_${ts}@example.com`, "hash", "Test 3");
+    const tenantA = await tenantRepo.create(`Tenant A ${ts}`);
+    const tenantB = await tenantRepo.create(`Tenant B ${ts}`);
 
     // Add user3 to Tenant A
-    await db.withTransaction(async (client) => {
-      await membershipRepo.createWithinContext(client, user3.id, "owner");
+    await db.withTransaction(async (txDb) => {
+      const txMembershipRepo = new MembershipRepository(txDb);
+      await txMembershipRepo.create(tenantA.id, user3.id, "owner");
     }, tenantA.id);
 
     // Read from Tenant A (Should see 1)
-    await db.withTransaction(async (client) => {
-      const all = await membershipRepo.findAllWithinContext(client);
+    await db.withTransaction(async (txDb) => {
+      const txMembershipRepo = new MembershipRepository(txDb);
+      const all = await txMembershipRepo.findAllByTenant(tenantA.id);
       assert.equal(all.length, 1);
       assert.equal(all[0].tenantId, tenantA.id);
     }, tenantA.id);
 
     // Read from Tenant B (Should see 0)
-    await db.withTransaction(async (client) => {
-      const all = await membershipRepo.findAllWithinContext(client);
+    await db.withTransaction(async (txDb) => {
+      const txMembershipRepo = new MembershipRepository(txDb);
+      const all = await txMembershipRepo.findAllByTenant(tenantB.id);
       assert.equal(all.length, 0); // Isolated
     }, tenantB.id);
   });

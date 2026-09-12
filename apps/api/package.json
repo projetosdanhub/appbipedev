@@ -13,14 +13,18 @@
     "migrate": "node-pg-migrate -m src/infra/database/migrations"
   },
   "dependencies": {
+    "@fastify/cookie": "^11.1.2",
+    "argon2": "^0.45.1",
     "dotenv": "^16.5.0",
     "fastify": "^5.3.3",
     "ioredis": "^5.6.1",
+    "nodemailer": "^10.0.3",
     "pg": "^8.14.1",
     "pino": "^9.6.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
+    "@types/nodemailer": "^8.0.1",
     "@types/pg": "^8.11.13",
     "node-pg-migrate": "^9.0.0",
     "pino-pretty": "^13.1.3",
