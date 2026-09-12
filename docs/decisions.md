@@ -87,3 +87,29 @@ polling de fallback controlado e refresh manual preservando o contexto da tela.
 rascunhos e atualizacoes que interrompam o trabalho do usuario.
 
 **Status:** aprovada para a fundacao.
+
+
+## ADR-0010 - superficies separadas e bootstrap do platform_owner
+
+**Decisao:** tenant, superadmin, API, hooks e servicos internos terao contratos
+de autenticacao separados. O primeiro platform_owner sera criado somente por
+CLI no VPS, com acesso OS/SSH autorizado, janela/nonce de secret manager,
+advisory lock, hash Argon2id, MFA pendente e auditoria.
+
+**Motivo:** dominio ou URL nao provam identidade do terminal. O controle real e
+o acesso ao ambiente de controle, segredo fora do banco, transacao one-shot e
+ausencia de endpoint publico.
+
+**Status:** contrato aprovado; implementacao em AUTH-013 a AUTH-016.
+
+## ADR-0011 - readiness sem mensagens de infraestrutura
+
+**Decisao:** /health retorna somente liveness; /ready retorna estado e latencia
+sanitizados. Mensagens brutas de Postgres, Redis, SDK e stack trace nao entram
+na resposta. Diagnostico detalhado fica em logs internos com redacao e acesso
+restrito.
+
+**Motivo:** erros de conexão podem carregar host, usuario, DSN ou detalhes de
+infraestrutura e não devem ser expostos por uma rota de health.
+
+**Status:** corrigido na fundacao; manter teste de contrato.

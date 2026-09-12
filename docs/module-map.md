@@ -85,3 +85,12 @@ Se o arquivo atende uma regra de negocio, ele fica no modulo do dominio. Se aten
   `13-integrations`;
 - componentes `ErrorState`, `ReportErrorButton` e `IntegrationStatusBadge`:
   `packages/ui`, com comportamento conectado pela feature da superficie.
+
+
+## Auth surfaces e bootstrap
+
+- login do tenant: feature identity em apps/tenant-web e modulo 01-identity;
+- login do superadmin: feature platform em apps/superadmin-web, com contexto separado;
+- API/hooks: presentation por contrato no modulo dono; nenhum login HTML;
+- bootstrap do platform_owner: use case de identity + CLI/control plane em 14-platform;
+- health/readiness: contrato shared, sem mensagens de infraestrutura na resposta.

@@ -44,3 +44,9 @@ Propor migration, RLS, indices, backfill, rollback e testes de isolamento. Parar
 ## Formato de saida
 
 Sempre responder com: resumo, arquivos alterados, regras aplicadas, testes rodados, riscos pendentes e proximo item do taskboard. Nunca inventar credenciais ou afirmar que uma integracao externa foi validada sem executar um teste autorizado.
+
+
+Para AUTH-013 a AUTH-016, o agente deve ler docs/auth-surfaces.md e
+28_AUTH_SURFACES_BOOTSTRAP.md, declarar audience/cookie/token, migration/RLS,
+permissões, auditoria e testes antes de codificar. Não criar login mock, endpoint
+de bootstrap, senha em seed ou superadmin por variável pública.

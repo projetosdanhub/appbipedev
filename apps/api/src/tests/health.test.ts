@@ -60,12 +60,12 @@ describe("/health and /ready endpoints", () => {
         ["ok", "error"].includes(dep.status),
         "dependency status should be ok or error"
       );
-      // Credenciais nunca no response
+      // Mensagens brutas de infraestrutura nunca chegam ao response
+      assert.equal("message" in dep, false);
       const depStr = JSON.stringify(dep);
-      assert.ok(
-        !depStr.includes("bipesend_dev"),
-        "must not expose db password"
-      );
+      assert.ok(!depStr.includes("bipesend_dev"), "must not expose db password");
+      assert.ok(!depStr.includes("ECONN"), "must not expose raw network errors");
+      assert.ok(!depStr.includes("/var/"), "must not expose filesystem paths");
     }
   });
 

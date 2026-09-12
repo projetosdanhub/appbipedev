@@ -24,3 +24,12 @@ CORS, cookies Secure, headers de seguranca, bloqueio de dotfiles e extensoes
 sensiveis, path traversal e download sem permissao. Testar tambem o contrato de
 erros, redacao de PII/segredos, reporte do tenant, deduplicacao e transicoes de
 saude das integracoes.
+
+
+## Bootstrap e autenticação de superfícies
+
+Testar que platform_owner não pode nascer por signup, endpoint, seed ou
+migration com credencial fixa; testar CLI one-shot, concorrência, advisory lock,
+stdin, Argon2id, MFA pendente e auditoria. Testar também que tenant e
+superadmin não compartilham cookies, que API keys têm escopo e que hooks
+rejeitam assinatura inválida/replay/duplicata.
