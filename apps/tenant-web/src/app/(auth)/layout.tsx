@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { AuthLogo } from "./_components/auth-logo";
 
-import { MessageCircle, ShieldCheck, KeyRound } from "lucide-react";
+import { MessageCircle, TrendingUp, KeyRound } from "lucide-react";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -70,7 +70,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               CRM confiável para operações que não podem parar.
             </h2>
             <p className="text-white/80 text-[16px] leading-relaxed">
-              Segurança, estabilidade e controle para suas conversas e sua operação comercial.
+              Segurança, estabilidade e controle para suas conversas.
             </p>
           </div>
           
@@ -80,8 +80,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               <span className="text-white/95 text-[13px] font-medium tracking-wide">Conversas centralizadas</span>
             </div>
             <div className="flex items-center gap-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-4 py-2 shadow-lg shadow-black/5 transition-all hover:bg-white/20">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span className="text-white/95 text-[13px] font-medium tracking-wide">Operação confiável</span>
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <span className="text-white/95 text-[13px] font-medium tracking-wide">Aumento de vendas</span>
             </div>
             <div className="flex items-center gap-2 backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-4 py-2 shadow-lg shadow-black/5 transition-all hover:bg-white/20">
               <KeyRound className="w-4 h-4 text-emerald-400" />
