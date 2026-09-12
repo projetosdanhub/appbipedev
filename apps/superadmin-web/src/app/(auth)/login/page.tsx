@@ -2,13 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { AlertTriangle, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import {
+  Button,
+  Input,
+  Alert,
+  AlertDescription,
+} from "@bipesend/ui";
 
 export default function SuperadminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -17,14 +24,13 @@ export default function SuperadminLoginPage() {
     setIsLoading(true);
 
     try {
-      // Fake API call for now (Will connect to API backend later)
+      // Fake API call for now
       await new Promise((resolve) => setTimeout(resolve, 1000));
       
       if (!email || !password) {
         throw new Error("E-mail e senha são obrigatórios");
       }
 
-      // Simulate successful login
       router.push("/");
     } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       setError(err.message || "Erro ao realizar login");
@@ -34,62 +40,76 @@ export default function SuperadminLoginPage() {
   };
 
   return (
-    <div className="w-full max-w-md px-8 py-10 bg-[var(--color-surface-0)] rounded-[12px] border border-[var(--color-border-200)] shadow-sm">
-      <div className="mb-8 text-center">
-        <h1 className="text-[28px] font-bold text-[var(--color-ink-900)]">BipeSend Superpainel</h1>
-        <p className="mt-2 text-[16px] text-[var(--color-ink-600)]">
-          Acesso restrito
+    <div className="w-full animate-slide-up">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-[var(--color-ink-900)] tracking-tight mb-1.5">
+          BipeSend Superpainel
+        </h1>
+        <p className="text-[15px] text-[var(--color-ink-600)]">
+          Acesso restrito ao painel administrativo.
         </p>
       </div>
 
       <form onSubmit={handleLogin} className="space-y-5">
         {error && (
-          <div className="p-3 text-[14px] text-[var(--color-danger-600)] bg-[var(--color-danger-600)]/10 rounded-[8px]">
-            {error}
-          </div>
+          <Alert variant="destructive" className="animate-fade-in">
+            <AlertTriangle className="h-5 w-5" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
-        <div className="space-y-1">
-          <label htmlFor="email" className="block text-[14px] font-semibold text-[var(--color-ink-900)]">
+        <div className="space-y-2">
+          <label htmlFor="email" className="text-[14px] font-medium text-[var(--color-ink-900)] dark:text-gray-300">
             E-mail
           </label>
-          <input
+          <Input
             id="email"
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--color-border-200)] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[var(--color-ink-900)]/50 focus:border-[var(--color-ink-900)] transition-colors"
             placeholder="admin@bipesend.com.br"
+            leftIcon={<Mail className="h-4 w-4" />}
           />
         </div>
 
-        <div className="space-y-1">
-          <label htmlFor="password" className="block text-[14px] font-semibold text-[var(--color-ink-900)]">
-            Senha
-          </label>
-          <input
+        <div className="space-y-2">
+          <div className="flex items-center justify-between h-5">
+            <label htmlFor="password" className="text-[14px] font-medium text-[var(--color-ink-900)] dark:text-gray-300">
+              Senha
+            </label>
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-ink-600)] hover:text-[var(--color-brand-600)] transition-colors focus:outline-none"
+              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+            >
+              {showPassword ? (
+                <><EyeOff className="w-3.5 h-3.5" /> Ocultar</>
+              ) : (
+                <><Eye className="w-3.5 h-3.5" /> Mostrar</>
+              )}
+            </button>
+          </div>
+          <Input
             id="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--color-border-200)] rounded-[8px] focus:outline-none focus:ring-2 focus:ring-[var(--color-ink-900)]/50 focus:border-[var(--color-ink-900)] transition-colors"
             placeholder="••••••••"
+            leftIcon={<Lock className="h-4 w-4" />}
           />
         </div>
 
-        <button
+        <Button
           type="submit"
-          disabled={isLoading}
-          className="flex items-center justify-center w-full h-[40px] px-4 font-semibold text-white bg-[var(--color-ink-900)] rounded-[8px] hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-ink-900)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          isLoading={isLoading}
+          className="w-full hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200"
+          size="lg"
         >
-          {isLoading ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            "Autenticar"
-          )}
-        </button>
+          {isLoading ? "Autenticando..." : "Autenticar"}
+        </Button>
       </form>
     </div>
   );

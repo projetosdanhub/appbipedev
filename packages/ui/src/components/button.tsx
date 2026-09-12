@@ -8,7 +8,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[var(--color-brand-600)] text-white hover:bg-[var(--color-brand-700)] focus-visible:ring-[var(--color-brand-600)]",
+        default: "bg-gradient-to-r from-[var(--color-brand-600)] to-[var(--color-brand-700)] text-white hover:opacity-90 focus-visible:ring-[var(--color-brand-600)]",
         destructive: "bg-[var(--color-danger-600)] text-white hover:bg-red-700 focus-visible:ring-[var(--color-danger-600)]",
         outline: "border border-[var(--color-border-200)] bg-[var(--color-surface-0)] hover:bg-[var(--color-surface-50)] text-[var(--color-ink-900)] focus-visible:ring-[var(--color-brand-600)]",
         secondary: "bg-[var(--color-surface-50)] text-[var(--color-ink-900)] hover:bg-[#E3E8F1] focus-visible:ring-[var(--color-brand-600)]",

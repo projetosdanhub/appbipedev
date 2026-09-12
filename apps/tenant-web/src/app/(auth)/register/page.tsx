@@ -135,8 +135,8 @@ export default function RegisterPage() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <div className="flex items-center justify-between">
-                  <FormLabel>Senha</FormLabel>
+                <div className="flex items-center justify-between h-5">
+                  <FormLabel className="!mt-0">Senha</FormLabel>
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -199,7 +199,7 @@ export default function RegisterPage() {
           <Button
             type="submit"
             isLoading={form.formState.isSubmitting}
-            className="w-full"
+            className="w-full hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200"
             size="lg"
           >
             {form.formState.isSubmitting ? "Criando..." : "Criar minha conta"}
