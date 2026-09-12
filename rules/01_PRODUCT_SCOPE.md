@@ -1,28 +1,74 @@
 # Escopo de produto
 
-## Modulos
+## 1. Produto
 
-- Identidade: conta, tenant, sessoes, verificacao, recuperacao, MFA futuro.
-- Equipe: membros, cargos, permissoes, setores, convites e auditoria.
-- Inbox: conversas, mensagens, anexos, atribuicao, tags e tempo real.
-- CRM: contatos, campos customizados, pipelines, etapas, listas, kanban e visualizacao inbox.
-- Automacoes: gatilhos, condicoes, acoes, agendamento, aprovacoes e historico.
-- WhatsApp: conexao por QR, recebimento, envio, status e provider adapter.
-- IA: copiloto, RAG por tenant, politicas, provedores e trilhas de auditoria.
-- Catalogo: categorias, produtos, adicionais, imagens, videos, carrinho e pedidos.
-- Pagamentos: Stripe Connect e Mercado Pago OAuth em modo sandbox primeiro.
-- Pages: editor de blocos, temas, SEO, dominios, pixel e catalogo publicado.
-- Billing: planos, assinaturas, entitlements, uso, upgrade, downgrade e faturas.
-- Superadmin: tenants, planos, plataforma, docs/rules, suporte, integracoes e observabilidade.
+O BipeSend é uma plataforma SaaS multitenant para centralizar relacionamento, operação comercial e atendimento. O produto deve crescer por módulos independentes sobre uma fundação comum de identidade, tenant, autorização, auditoria, design system, eventos e billing.
 
-## MVP realista
+## 2. Superfícies oficiais
 
-Entra no MVP: identidade, tenant, RBAC, painel base, contatos, inbox manual com dados de teste, auditoria, limites simples, Docker local e testes de isolamento.
+- `www`: marketing e conteúdo público.
+- `app`: painel do tenant/cliente.
+- `admin`: superadmin da plataforma.
+- `api`: contratos de negócio e integrações autorizadas.
+- `hooks`: entrada de webhooks.
+- serviços internos: rede privada, sem login de navegador.
 
-Fica para a fase seguinte: WhatsApp real, automacoes, RAG, catalogo publico, pagamentos e editor de paginas.
+Não criar login universal entre essas superfícies.
 
-Nao entra antes de uma revisao de produto: marketplace de extensoes, marketplace de agentes, execucao de MCP arbitrario, anti-bloqueio de WhatsApp e personalizacao com JavaScript livre.
+## 3. Módulos de negócio previstos
 
-## Regra de produto
+- autenticação e onboarding;
+- home/dashboard;
+- inbox omnichannel;
+- contatos;
+- CRM/pipeline;
+- automações;
+- catálogo;
+- páginas/publicação;
+- conhecimento/RAG;
+- integrações;
+- equipe, setores, cargos e permissões;
+- billing e planos;
+- configurações;
+- notificações;
+- auditoria e suporte;
+- painel superadmin.
 
-Cada modulo deve ter: objetivo, entidades, permissoes, eventos, limites, estados, telas, criterios de aceite, estrategia de erro e cobertura de testes.
+## 4. Fundação transversal obrigatória
+
+Antes de qualquer módulo ser considerado pronto, deve reutilizar:
+
+- contexto de tenant;
+- sessão e autorização;
+- catálogo de permissões;
+- contratos de API;
+- catálogo de erros;
+- design tokens;
+- componentes compartilhados;
+- auditoria;
+- observabilidade;
+- política de dados;
+- testes.
+
+## 5. Objetivo de experiência
+
+A interface deve parecer uma única aplicação, mesmo com dezenas de módulos. A pessoa não deve perceber diferenças de espaçamento, botões, mensagens, animações, formulários ou padrões de navegação entre equipes de desenvolvimento.
+
+## 6. Fora de escopo por padrão
+
+Sem decisão explícita, não implementar:
+
+- execução arbitrária de código pelo usuário ou IA;
+- SQL arbitrário;
+- scripts de terceiros irrestritos;
+- armazenamento de cartão;
+- compartilhamento de credencial entre usuários;
+- acesso cross-tenant;
+- login do superadmin pelo painel do tenant;
+- bypass de política de canal;
+- recursos que prometam evitar bloqueios de provedores;
+- dark patterns de consentimento, cobrança ou cancelamento.
+
+## 7. Definição de pronto de um módulo
+
+Um módulo só está pronto quando possui fluxo feliz e falhas, autorização, auditoria, acessibilidade, responsividade, loading/empty/error, testes e observabilidade proporcionais ao risco.

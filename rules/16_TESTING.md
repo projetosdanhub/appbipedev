@@ -1,35 +1,41 @@
-# Testes e qualidade
+# Testes
 
-## Camadas
+## 1. Pirâmide orientada a risco
 
-- unitarios: regras puras, policies, entitlements e normalizadores;
-- integracao: repositorios, RLS, filas, webhooks e storage;
-- contrato: DTOs, eventos e adapters;
-- E2E: registro, login, recuperacao, tenant isolation e onboarding;
-- visual/a11y: componentes criticos e fluxos de teclado;
-- carga: inbox, webhook e filas antes de escala.
+- unitários para domínio e utilitários;
+- integração para DB, auth, contratos e providers;
+- contrato para API/eventos;
+- E2E para jornadas críticas;
+- testes visuais/a11y para design system.
 
-## Casos obrigatorios
+## 2. Jornadas obrigatórias
 
-Tentar ler/criar/editar dados de tenant diferente; manager tentando elevar privilegio; usuario suspenso; token expirado/reutilizado; webhook duplicado; retry de erro permanente; limite de plano; arquivo malicioso; prompt injection em documento; tentativa de ferramenta fora do escopo; pagamento confirmado somente por redirect.
+- registro;
+- verificação de e-mail;
+- login sucesso/erro;
+- logout;
+- recuperação de senha;
+- código correto, incorreto, expirado, colagem e reenvio;
+- nova senha e confirmação;
+- revogação de sessão;
+- cross-tenant negado;
+- RBAC negado;
+- upload inválido;
+- webhook duplicado/replay;
+- billing idempotente.
 
-## CI
+## 3. UI
 
-Lint, typecheck, testes, migration check, dependency audit, secret scan e build em pull request. E2E com servicos efemeros. Branch protegida exige revisao e checks verdes.
+Testar 360, 768, 1024 e desktop representativo. Teclado, foco, zoom e reduced motion fazem parte da cobertura.
 
-## Borda e diagnostico
+## 4. Segurança
 
-Testar redirect HTTP->HTTPS, certificado/host allowlist, forwarded headers,
-CORS, cookies Secure, headers de seguranca, bloqueio de dotfiles e extensoes
-sensiveis, path traversal e download sem permissao. Testar tambem o contrato de
-erros, redacao de PII/segredos, reporte do tenant, deduplicacao e transicoes de
-saude das integracoes.
+Testes negativos são obrigatórios para IDOR, enumeração de conta, brute force, CSRF, XSS em campos ricos, assinatura inválida e escalada de privilégio.
 
+## 5. Design system
 
-## Bootstrap e autenticação de superfícies
+Componentes compartilhados devem ter testes de estados e, quando adotado, snapshots/visual regression controlados. Mudança de token deve ser revisada pelo impacto global.
 
-Testar que platform_owner não pode nascer por signup, endpoint, seed ou
-migration com credencial fixa; testar CLI one-shot, concorrência, advisory lock,
-stdin, Argon2id, MFA pendente e auditoria. Testar também que tenant e
-superadmin não compartilham cookies, que API keys têm escopo e que hooks
-rejeitam assinatura inválida/replay/duplicata.
+## 6. CI
+
+PR não deve ser mergeada com lint/typecheck/build/teste relevante quebrado sem exceção registrada.

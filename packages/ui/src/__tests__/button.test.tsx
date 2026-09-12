@@ -1,0 +1,26 @@
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { Button } from "../components/button";
+
+describe("Button", () => {
+  it("renders children text", () => {
+    render(<Button>Click me</Button>);
+    expect(screen.getByRole("button")).toHaveTextContent("Click me");
+  });
+
+  it("applies the default variant classes", () => {
+    render(<Button>Default</Button>);
+    const btn = screen.getByRole("button");
+    expect(btn.className).toContain("bg-");
+  });
+
+  it("renders as disabled when disabled prop is true", () => {
+    render(<Button disabled>Disabled</Button>);
+    expect(screen.getByRole("button")).toBeDisabled();
+  });
+
+  it("renders loading state", () => {
+    render(<Button isLoading>Loading</Button>);
+    expect(screen.getByRole("button")).toBeDisabled();
+  });
+});

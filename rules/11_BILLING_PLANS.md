@@ -1,34 +1,30 @@
-# Planos, limites e billing
+# Billing e planos
 
-## Modelo
+## 1. Princípios
 
-- `plans`: produto comercial configuravel pelo superadmin.
-- `plan_features`: feature key, tipo, valor e modo de bloqueio.
-- `subscriptions`: tenant, plano, ciclo, status, periodo e provedor.
-- `usage_counters`: consumo por janela, tenant e recurso.
-- `entitlement_overrides`: excecoes auditadas e temporarias.
+Billing é controle de entitlement, não apenas tela de preço. Backend é responsável por validar limites e capacidades.
 
-## Chaves de feature
+## 2. Entitlements
 
-Exemplos: `team.members.max`, `whatsapp.instances.max`, `contacts.max`, `messages.outbound.monthly`, `ai.copilot.enabled`, `ai.rag.storage_bytes`, `pages.published.max`, `catalog.products.max`.
+Plano define capacidades, quantidades e política. UI pode esconder/desabilitar recurso para orientar, mas backend sempre valida.
 
-## Planos de referencia
+## 3. Webhooks de pagamento
 
-Os nomes abaixo sao comerciais provisiorios e os precos nao estao definidos:
+Assinados, idempotentes, com replay protection quando suportado. Redirect de checkout nunca confirma pagamento.
 
-| Plano | Perfil | Exemplo de limite |
-| --- | --- | --- |
-| Nexo Start | equipe pequena | 3 membros, 1 numero, CRM basico, sem automacao avancada |
-| Nexo Growth | vendas em crescimento | 10 membros, 3 numeros, automacoes, copiloto de IA |
-| Nexo Scale | operacao multicanal | 30 membros, 10 numeros, RAG, catalogo e paginas |
-| Nexo Enterprise | contrato customizado | limites e integracoes negociados, SSO futuro, suporte dedicado |
+## 4. Mudanças de plano
 
-O superadmin pode criar planos personalizados por feature. O backend calcula entitlement; o frontend apenas exibe o que o backend autoriza.
+Upgrade/downgrade, trial, cancelamento, grace period e suspensão precisam de estado explícito. Limite excedido não apaga dados.
 
-## Mudanca de plano
+## 5. UX
 
-Upgrade aplica apos confirmacao do provedor e pode liberar limite imediatamente. Downgrade normalmente vigora no proximo ciclo; nao apagar dados acima do novo limite. Bloquear novas criacoes e oferecer caminho de ajuste/exportacao.
+- preço e periodicidade claros;
+- sem dark pattern;
+- confirmação para ação financeira;
+- mostrar efeito e data;
+- falha de pagamento orienta sem expor detalhes sensíveis;
+- acessibilidade completa.
 
-## Pagamentos
+## 6. Segurança
 
-Stripe Connect e Mercado Pago entram com OAuth, sandbox, state/PKCE quando aplicavel, redirect allowlist, tokens criptografados, webhooks verificados e idempotencia. O redirect do navegador nao confirma pagamento; o webhook do provedor atualiza o estado.
+Nunca armazenar dados de cartão se o PSP pode tokenizar. Segredos do PSP não chegam ao navegador.

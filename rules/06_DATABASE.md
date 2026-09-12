@@ -1,30 +1,46 @@
 # Banco de dados
 
-## Convencoes
+## 1. Fonte de verdade
 
-- PostgreSQL como fonte de verdade.
-- IDs UUID ou UUIDv7 quando suportado; timestamps em UTC.
-- tabelas e colunas em `snake_case`; codigo TypeScript em `camelCase`.
-- toda tabela tenant-owned: `id`, `tenant_id`, `created_at`, `updated_at`, e quando necessario `deleted_at`.
-- dinheiro em menor unidade inteira + moeda ISO; nunca float.
-- status usando enum de dominio ou tabela de referencia, nao strings livres em regras criticas.
+PostgreSQL é a fonte de verdade de negócio. Redis/cache/fila não substituem persistência transacional.
 
-## RLS
+## 2. Modelagem
 
-Cada migration tenant-owned deve habilitar RLS, criar policy de `select/insert/update/delete` e garantir que o contexto de tenant seja aplicado na transacao. O usuario de aplicacao nao deve ser owner das tabelas. Policies inexistentes significam deny-by-default.
+- IDs estáveis e não previsíveis quando expostos;
+- `tenant_id` em entidades do tenant;
+- timestamps em UTC;
+- soft delete somente quando houver necessidade real;
+- constraints no banco para invariantes importantes;
+- enums de domínio controlados;
+- evitar JSON sem schema para dados centrais.
 
-## Integridade
+## 3. Migrações
 
-Unique e foreign keys devem incluir tenant quando o relacionamento for interno ao tenant. Indices comecam por `tenant_id` e pelos filtros mais frequentes. Soft delete nao substitui foreign key nem auditoria.
+- migration versionada e revisável;
+- expand/contract para mudanças incompatíveis;
+- backfill separado quando pesado;
+- índice criado conscientemente;
+- rollback/documentação quando rollback automático não for seguro;
+- migration nunca inclui credencial inicial.
 
-## Migrations
+## 4. Queries
 
-Uma migration por mudanca coerente, reversivel quando possivel, com dados de backfill separado de DDL pesada. Nao editar migration aplicada. Seed local nao pode conter segredos ou PII real.
+- parametrizadas;
+- paginação;
+- índices guiados por uso;
+- proibir N+1 conhecido;
+- transação para alterações relacionadas;
+- locks/advisory locks quando concorrência exigir;
+- idempotência protegida por constraint quando possível.
 
-## Auditoria
+## 5. Tenant
 
-`audit_logs` registra actor, tenant, acao, recurso, resultado, request_id, motivo quando exigido e diff minimizado. Nunca gravar senha, token completo ou conteudo sensivel sem necessidade aprovada.
+Toda query de dado tenant-aware deve receber contexto confiável de tenant. Testes devem tentar acesso cruzado com IDs válidos.
 
-## Entidades iniciais
+## 6. Dados sensíveis
 
-`tenants`, `users`, `memberships`, `roles`, `permissions`, `role_permissions`, `sessions`, `email_verifications`, `password_resets`, `audit_logs`, `plans`, `subscriptions`, `entitlements`.
+Senha é hash; segredo recuperável usa envelope encryption; PII segue minimização e retenção. Não armazenar payload bruto de provider sem propósito e retenção definidos.
+
+## 7. Auditoria
+
+Eventos de auditoria devem ser resistentes a alteração comum, conter ator, ação, alvo, tenant, horário, resultado e metadados mínimos.

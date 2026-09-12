@@ -7,6 +7,7 @@
  --color-ink-600: #536078;
  --color-surface-0: #FFFFFF;
  --color-surface-50: #F7F9FC;
+ --color-surface-900: #0F172A;
  --color-border-200: #E3E8F1;
  --color-success-600: #16845B;
  --color-warning-600: #A96B05;
@@ -24,8 +25,9 @@
   font-family: var(--font-sans);
  }
 
+ /* ───── Fade animations ───── */
  @keyframes fade-in-up {
-  0% { opacity: 0; transform: translateY(10px); }
+  0% { opacity: 0; transform: translateY(16px); }
   100% { opacity: 1; transform: translateY(0); }
  }
  
@@ -33,18 +35,34 @@
   0% { opacity: 0; }
   100% { opacity: 1; }
  }
+
+ @keyframes card-enter {
+  0% { opacity: 0; transform: translateY(24px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+ }
  
  @keyframes checkmark {
   0% { stroke-dashoffset: 24; opacity: 0; }
   100% { stroke-dashoffset: 0; opacity: 1; }
  }
+
+ /* ───── Checkbox pulse ───── */
+ @keyframes checkbox-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(53, 106, 230, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(53, 106, 230, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(53, 106, 230, 0); }
+ }
  
  .animate-fade-in-up {
-  animation: fade-in-up 0.25s ease-out forwards;
+  animation: fade-in-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
  }
  
  .animate-fade-in {
   animation: fade-in 0.25s ease-out forwards;
+ }
+
+ .animate-card-enter {
+  animation: card-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
  }
 
  .animate-checkmark {
@@ -53,3 +71,40 @@
   animation: checkmark 0.4s ease-out forwards;
  }
 
+ /* ───── Custom round toggle / checkbox ───── */
+ .toggle-round {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  border: 2px solid var(--color-border-200);
+  background: white;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  flex-shrink: 0;
+ }
+
+ .toggle-round:checked {
+  border-color: var(--color-brand-600);
+  background-color: var(--color-brand-600);
+  animation: checkbox-pulse 0.4s ease-out;
+ }
+
+ .toggle-round:checked::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 5.5px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+ }
+
+ .toggle-round:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+ }

@@ -1,80 +1,37 @@
-# Arquitetura modular e organizacao de arquivos
+# Arquitetura modular
 
-## Objetivo
+## 1. Módulo
 
-Manter o BipeSend responsivo, testavel, evolutivo e compreensivel para pessoas e agentes de IA. Nenhum arquivo deve concentrar tela, regra de negocio, acesso a banco, integracao externa e tratamento de erro ao mesmo tempo.
+Cada módulo possui contratos claros de UI, aplicação, domínio e infraestrutura. Importações entre módulos passam por APIs públicas internas, não por arquivos privados.
 
-## Limites de modulo
+## 2. Organização
 
-Cada modulo representa um dominio de negocio e possui quatro camadas quando aplicavel:
-
-```text
-<module>/
-  domain/          entidades, value objects, policies e eventos
-  application/     use cases, commands, queries e ports
-  infrastructure/  repositorios, adapters, filas e persistencia
-  presentation/    controllers, routes, DTOs e serializers
-  tests/            unit, integration e contract
-```
-
-O modulo publica somente contratos necessarios. A camada de dominio nao importa framework, ORM, Redis, HTTP ou SDK de provedor. A camada de infraestrutura implementa ports definidos pela aplicacao.
-
-## Mapa cronologico
+Referência:
 
 ```text
-00-shared -> 01-identity -> 02-tenancy -> 03-authorization -> 04-team
-          -> 05-crm -> 06-inbox -> 07-messaging -> 08-automation
-          -> 09-knowledge -> 10-catalog -> 11-pages -> 12-billing
-          -> 13-integrations -> 14-platform -> 99-test-support
+module/
+  domain/
+  application/
+  infrastructure/
+  http/
+  ui/
+  tests/
 ```
 
-Um modulo pode depender de modulos anteriores por contrato. Nao criar importacao circular. Se a dependencia apontar para frente, extrair um contrato para `00-shared` ou publicar um evento.
+A forma exata pode variar por app, mantendo separação de responsabilidades.
 
-## Frontends
+## 3. Shared
 
-Cada frontend segue feature slices, nao pastas globais gigantes:
+Só mover para shared quando há reutilização real e semântica estável. "Shared" não pode virar depósito de utilitários.
 
-```text
-src/
-  app/                 rotas e layouts finos
-  features/            cada feature com api, components, hooks e schemas
-  components/          componentes visuais compartilhados da aplicacao
-  lib/                 clients, formatters e config local
-  styles/              tokens e estilos globais
-  tests/               E2E, visual e acessibilidade
-```
+## 4. UI
 
-`app/` compoe; `features/` implementa comportamento; `packages/ui` fornece componentes genericos. Nenhuma pagina deve conter query SQL, regra de billing ou chamada direta de provider.
+Primitives globais em `packages/ui`. Componentes específicos permanecem no módulo e compõem primitives.
 
-## API e workers
+## 5. Contratos
 
-API organiza rotas por modulo e use case. Workers organizam jobs por dominio e usam os mesmos contratos/eventos. Integracoes externas ficam em `13-integrations` ou em adapters de `07-messaging`, nunca espalhadas por controllers.
+Schemas e tipos que cruzam app/pacote vivem em `packages/contracts` ou local equivalente. Evitar duplicar DTO manual.
 
-## Python/FastAPI
+## 6. Eventos
 
-O `services/ai-service` segue a mesma ideia:
-
-```text
-app/
-  00_shared/
-  01_ingestion/
-  02_retrieval/
-  03_generation/
-  04_tools/
-  05_evaluation/
-  99_test_support/
-```
-
-O servico Python nao importa codigo interno do Node. Ambos compartilham contratos versionados, exemplos de payload e testes de contrato.
-
-## Regra contra arquivo monolitico
-
-Se um arquivo comeca a receber responsabilidades de outro modulo, o agente deve parar, propor a divisao e atualizar o mapa de modulos. Nao resolver crescimento com `utils`, `misc`, `common` ou `helpers` sem dominio definido.
-
-## Checklist de novo modulo
-
-Antes de criar um modulo, declarar: objetivo, dependencia cronologica, entidades, permissoes, eventos, endpoints, jobs, limites de plano, telas, testes e owner. Depois criar somente os arquivos necessarios e registrar a decisao.
-
-## Scaffolding
-
-O script `scripts/create-modular-skeleton.mjs` cria somente diretorios e marcadores vazios, e pode ser executado mais de uma vez. Ele nao sobrescreve codigo, nao cria migrations e nao inventa entidades. A criacao de arquivos de negocio acontece somente por tarefa do taskboard.
+Módulos se desacoplam por eventos quando assíncrono fizer sentido, sem usar evento para esconder dependência síncrona obrigatória.

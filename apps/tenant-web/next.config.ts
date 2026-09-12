@@ -25,6 +25,7 @@ const nextConfig: NextConfig = {
     // next-intl usa isso
   },
   allowedDevOrigins: ['127.0.0.1', 'localhost', '::1', ngrokHost].filter(Boolean),
+  transpilePackages: ["@bipesend/ui"],
 };
 
 export default nextConfig;

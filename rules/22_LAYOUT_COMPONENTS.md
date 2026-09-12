@@ -1,37 +1,152 @@
-# Regras de layout e componentes
+# Layout e componentes canônicos
 
-## Shell
+## 1. Regra
 
-Desktop: sidebar 240 px, topbar 64 px, conteudo com largura maxima e padding 24-32 px. Mobile: drawer ou bottom navigation, topbar compacta e acao primaria acessivel. A largura da sidebar nao deve quebrar o conteudo principal.
+Primitives reutilizáveis vivem em `packages/ui`. Feature pode compor componentes, mas não recriar Button/Input/Dialog localmente por conveniência.
 
-## Grid
+## 2. App shell
 
-Usar grid de 4 px para espacamento; cards alinhados por baseline; tabelas com colunas previsiveis; nao usar posicionamento absoluto para informacao essencial. Evitar layout shift reservando dimensao de imagens e skeletons.
+### Desktop
+- sidebar expandida: 256 px;
+- sidebar recolhida: 72 px;
+- topbar: 64 px;
+- conteúdo: padding 24–32 px;
+- largura fluida; páginas de leitura podem limitar linha, páginas de dados podem usar largura total;
+- sidebar não sobrepõe conteúdo em desktop.
 
-## Componentes canonicos
+### Tablet
+- sidebar recolhida ou drawer conforme largura/contexto;
+- padding 20–24 px.
 
-Button, IconButton, Input, Select, Combobox, Dialog, Drawer, Tabs, Table, DataCard, MetricCard, EmptyState, ErrorState, Skeleton, Toast e ConfirmDialog ficam em `packages/ui`. Cada componente tem estados default, hover, focus, disabled, loading e error.
+### Mobile
+- drawer para navegação;
+- topbar 56 px;
+- padding 16 px;
+- uma coluna por padrão;
+- ações críticas não ficam fora da viewport.
 
-## Formularios
+## 3. Auth shell
 
-Labels visiveis, ajuda contextual, erro junto ao campo e resumo de erro no topo quando houver varios campos. Nao usar placeholder como label. Botoes de envio mostram estado de processamento e impedem duplo envio.
+`AuthShell`, `AuthCard`, `AuthHeader`, `AuthFooter` e `AuthIllustrationPanel`.
 
-## Dados densos
+Desktop:
+- min-height viewport;
+- painel visual 42–46%;
+- painel de formulário 54–58%;
+- card/form max-width aproximada 440–480 px;
+- controles confortáveis 44–48 px.
 
-Inbox pode usar tres colunas em desktop, duas em tablet e uma em mobile. Kanban tem alternativa de lista e comandos de teclado. Drag-and-drop nunca e a unica forma de ordenar, atribuir ou mover.
+Mobile:
+- painel visual removido ou reduzido;
+- logo no topo;
+- formulário largura total com margens 16–24 px;
+- conteúdo scrollável com teclado virtual.
 
-## Skeleton e lazy loading
+## 4. Componentes base
 
-Skeleton representa a forma real do conteudo, nao um spinner global. Lazy load para imagens, editor, graficos e modulos pesados; conteudo critico e acessivel sem depender de JavaScript tardio. Erro de um painel nao derruba a pagina inteira.
+- Button
+- IconButton
+- Input
+- PasswordInput
+- Textarea
+- Select
+- Combobox
+- Checkbox
+- Radio
+- Switch
+- OtpInput
+- Badge
+- Tooltip
+- Popover
+- DropdownMenu
+- Tabs
+- Breadcrumb
+- Dialog
+- ConfirmDialog
+- Drawer
+- Sheet
+- Toast
+- Alert
+- InlineMessage
+- Skeleton
+- EmptyState
+- ErrorState
+- DataTable
+- Pagination
+- DataCard
+- MetricCard
+- Avatar
+- TenantSwitcher
+- SearchField
+- FilterBar
+- FileUpload
+- Progress
+- StatusBadge
+- IntegrationStatusBadge
+- LastCheckedLabel
 
-## Iconografia
+## 5. Estados
 
-Usar biblioteca SVG aprovada, com `aria-hidden` quando decorativa e label quando interativa. Nao usar emoji, caracteres Unicode ou imagens sem semantica como substitutos de icones.
+Todo componente interativo deve cobrir quando aplicável:
+`default`, `hover`, `focus-visible`, `pressed/selected`, `disabled`, `loading`, `success`, `warning`, `error`.
 
-## Diagnostico e saude
+## 6. Button
 
-`ErrorState`, `ReportErrorButton`, `IntegrationStatusBadge` e `LastCheckedLabel`
-sao componentes compartilhados quando o comportamento for igual. Eles devem
-exibir estado textual, possuir foco e labels acessiveis, suportar retry sem
-duplicacao e respeitar reduced motion. A pagina nao deve implementar outro
-formato de erro ou outra bolinha de status local.
+Variantes:
+- primary;
+- secondary;
+- subtle/ghost;
+- danger;
+- link.
+
+Não ter duas ações `primary` competindo no mesmo bloco. Loading preserva largura e mantém label compreensível.
+
+## 7. Input
+
+Altura canônica, label, descrição, prefix/suffix opcional, estado de erro e foco. Ícone não reduz área de texto. Error text não causa salto excessivo em formulários previsíveis.
+
+## 8. PasswordInput
+
+Inclui toggle acessível de visibilidade. `autocomplete` correto (`current-password` ou `new-password`). Medidor de força é orientação, não única regra de validação.
+
+## 9. OtpInput
+
+Implementação preferencial é um único input semanticamente coerente com visual segmentado, ou grupo robusto equivalente.
+
+Requisitos:
+- 6 dígitos por padrão, configurável;
+- teclado numérico mobile (`inputmode=numeric`);
+- colagem do código completo via Ctrl/Cmd+V e menu de colar;
+- avançar automaticamente;
+- Backspace previsível;
+- setas/foco acessíveis;
+- não bloquear password managers;
+- erro não apaga código automaticamente;
+- permite selecionar tudo e substituir;
+- `autocomplete="one-time-code"` quando aplicável.
+
+## 10. Dialog/Drawer
+
+Foco preso, ESC quando seguro, overlay, restauração de foco, título semântico. Ação destrutiva nomeada. Mobile pode trocar dialog grande por sheet.
+
+## 11. DataTable
+
+Sort, filtros, paginação, loading/empty/error, seleção e ações. Mobile escolhe entre scroll explícito ou card view conforme tarefa.
+
+## 12. Componentes de feedback
+
+`Alert` para mensagem persistente; `Toast` para confirmação breve; `InlineMessage` junto do contexto; `ErrorState` para falha de bloco/página.
+
+## 13. Skeleton
+
+Representa forma real. Sem shimmer agressivo; animação reduzida/desligada em reduced motion.
+
+## 14. Não permitido
+
+- criar botão via `<div onClick>`;
+- modal sem focus trap;
+- ícone sem nome acessível quando ação;
+- hardcode de token;
+- tooltip como única forma de entender função essencial;
+- dropdown para ação primária frequente;
+- componente duplicado com aparência ligeiramente diferente.

@@ -1,14 +1,34 @@
-# BipeSend Rules - regra mestre
+# BipeSend Rules — regra mestre
 
-Versao: 0.3.0  
-Status: proposta inicial  
-Comando de bootstrap: `!construibase`
+Versão: 1.0.0  
+Status: contrato oficial de engenharia, UX/UI e segurança  
+Bootstrap de agente: `!construibase`
 
-## Missao
+## 1. Missão
 
-Construir uma plataforma multitenant de CRM, atendimento omnichannel, automacao, catalogo e paginas publicadas, com isolamento forte de dados, limites por plano e IA controlada por politicas.
+Construir e evoluir o BipeSend como uma plataforma SaaS multitenant moderna para CRM, atendimento omnichannel, automações, catálogo, páginas, integrações e recursos com IA, com segurança por padrão, forte isolamento entre tenants, experiência consistente e operação auditável.
 
-## Ordem obrigatoria de leitura
+Estas regras são a fonte de verdade para humanos e agentes de IA. Quando código existente divergir deste contrato, a divergência deve ser registrada e corrigida de forma planejada — nunca silenciosamente.
+
+## 2. Princípios inegociáveis
+
+1. Segurança, privacidade e isolamento de tenant acima de conveniência.
+2. Autorização no servidor; esconder elemento no frontend nunca é controle de acesso. (Mutações críticas via Server Actions no Next.js).
+3. Banco é a fonte de verdade de negócio; cache, fila e realtime são derivados.
+4. Componentes, tokens e padrões compartilhados precedem implementações locais.
+5. Toda tela precisa de estados `loading`, `empty`, `error`, `success` e `disabled` quando aplicáveis. Formulários devem usar `react-hook-form` e `zod` para validação robusta.
+6. WCAG 2.2 AA é requisito de produto. Componentes interativos complexos (Dialog, Dropdown, Select) devem usar primitivas de acessibilidade (como `@radix-ui`).
+7. Responsividade obrigatória desde 360 px.
+8. Motion é funcional, curto e opcional via `prefers-reduced-motion`. Feedback transiente (sucesso/erro não bloqueante) deve usar sistema unificado de Toasts (Sonner).
+9. Segredos nunca chegam ao frontend, logs públicos, URLs ou repositório.
+10. Toda ação sensível gera auditoria segura e minimizada.
+11. Integrações externas usam adaptador, timeout, retry, idempotência e observabilidade.
+12. Suporte nativo a temas (Light/Dark) via `next-themes` sem "FOUC", lendo a preferência do sistema operacional por padrão.
+12. IA nunca recebe autoridade implícita para executar ações destrutivas ou acessar dados fora do escopo.
+13. Nenhum módulo concentra domínio, banco, HTTP e UI em arquivo monolítico.
+14. Não inventar novo padrão visual se já existir token, componente ou fluxo equivalente.
+
+## 3. Ordem obrigatória de leitura
 
 1. `01_PRODUCT_SCOPE.md`
 2. `02_ARCHITECTURE.md`
@@ -38,60 +58,82 @@ Construir uma plataforma multitenant de CRM, atendimento omnichannel, automacao,
 26. `26_ERROR_CATALOG_AUDIT.md`
 27. `27_INTEGRATION_HEALTH.md`
 28. `28_AUTH_SURFACES_BOOTSTRAP.md`
+29. `29_AUTH_UX_FLOWS.md`
+30. `30_DESIGN_SYSTEM_IMPLEMENTATION.md`
 
-## Contrato para qualquer agente de IA
+## 4. Precedência em caso de conflito
 
-Antes de editar:
-
-- identificar o modulo, tenant e superfice afetada;
-- consultar o taskboard e as decisoes existentes;
-- verificar se ja existe entidade, evento, permissao, token de design ou variavel com o mesmo objetivo;
-- declarar arquivos que serao criados, alterados e testes esperados;
-- parar se houver conflito de regra, ambiguidade de dominio ou requisito de seguranca nao resolvido.
-
-Durante a edicao:
-
-- reutilizar nomes canonicos;
-- nao criar SQL, endpoint, evento, tabela, permissao, claim ou segredo fora do contrato;
-- validar entrada no limite do sistema e novamente no dominio;
-- aplicar `tenant_id` e autorizacao em toda operacao de dados do tenant;
-- nao colocar segredos, tokens ou dados pessoais em frontend, logs, fixtures publicas ou mensagens de erro;
-- escrever testes de unidade, integracao ou contrato proporcionais a mudanca.
-
-Depois da edicao:
-
-- rodar lint, typecheck e testes relevantes;
-- conferir migracoes para frente e rollback/documentacao;
-- atualizar `docs/taskboard.md` e `docs/decisions.md` se houver mudanca de design;
-- registrar riscos e itens deixados para depois;
-- nunca declarar concluido sem criterio de aceite verificavel.
-
-## Prioridade em caso de conflito
-
-1. seguranca, isolamento de tenant e privacidade;
-2. integridade dos dados e autorizacao;
-3. comportamento documentado e contratos publicos;
+1. segurança, privacidade, LGPD e isolamento de tenant;
+2. integridade, autorização e contratos de dados;
+3. arquitetura e limites de módulo;
 4. acessibilidade e confiabilidade;
-5. experiencia visual e performance;
-6. velocidade de implementacao.
+5. design system e consistência de experiência;
+6. performance;
+7. velocidade de entrega.
 
-## Escopo do primeiro marco
+Regra mais específica prevalece sobre regra genérica desde que não reduza segurança, privacidade ou acessibilidade.
 
-O primeiro marco e a fundacao modular mais o painel do contratante com registro, verificacao de e-mail, login, logout, recuperacao de senha, criacao de tenant, convite inicial e shell responsivo. CRM, WhatsApp, IA, catalogo e pagamentos entram depois que a fundacao de identidade, tenant e auditoria estiverem testadas.
+## 5. Contrato para qualquer agente de IA
 
-## Nao negociaveis
+### Antes de editar
 
-- o superadmin e uma superficie e um contexto de autenticacao separados;
-- o administrador do tenant nunca pode ser removido por um cargo inferior;
-- a IA nao executa codigo, SQL arbitrario, comandos de sistema ou edicao direta de arquivos;
-- o frontend nunca recebe segredos de integracao;
-- o banco e a fonte de verdade; cache e fila nao substituem transacoes;
-- toda integracao externa usa adaptador, timeout, retry, idempotencia e auditoria.
-- nenhum modulo cria um arquivo monolitico para concentrar dominio, banco, HTTP e regras de tela.
-- a ordem cronologica de construcao e representada por pastas de modulo e IDs do taskboard; arquivos de codigo usam nomes semanticos e estaveis.
-- acesso de navegador e webhook usa HTTPS; portas de banco, fila e storage sao internas e nunca entram no proxy publico.
-- codigo de aplicacao, dicionario de erros e estado de integracoes sao contratos separados do status HTTP e de segredos.
-- reportes de erro do tenant entram em auditoria do superadmin com minimizacao de PII e sem stack trace publico.
+- identificar módulo, superfície, tenant e usuário afetado;
+- ler as regras relacionadas;
+- verificar componentes, tokens, eventos, permissões, tabelas e erros já existentes;
+- declarar arquivos a criar/alterar e critérios de aceite;
+- identificar risco de segurança, migração, compatibilidade e acessibilidade;
+- parar e pedir decisão quando houver conflito real de domínio.
 
+### Durante a edição
 
-- `platform_owner` so nasce pelo bootstrap controlado no VPS; nenhum endpoint, seed ou frontend pode cria-lo.
+- reutilizar nomes canônicos;
+- não criar endpoints, SQL, permissões, claims ou segredos fora do contrato;
+- validar entrada na borda e no domínio;
+- aplicar tenant context e autorização em cada operação;
+- usar componentes de `packages/ui` antes de criar componente local;
+- usar tokens semânticos em vez de valores soltos;
+- impedir duplo submit e operações concorrentes não idempotentes;
+- escrever testes proporcionais ao risco.
+
+### Depois da edição
+
+- rodar lint, typecheck, testes e build relevantes;
+- conferir acessibilidade por teclado e reduced motion;
+- verificar responsividade em 360, 768, 1024 e desktop;
+- revisar logs e erros para ausência de segredo/PII desnecessária;
+- documentar decisão relevante em `docs/decisions.md`;
+- atualizar taskboard quando aplicável;
+- não declarar concluído sem critério de aceite verificável.
+
+## 6. Stack de referência observada no repositório
+
+- monorepo com pnpm + Turborepo;
+- frontends em Next.js + React + TypeScript;
+- Tailwind CSS como infraestrutura de estilos;
+- `apps/tenant-web` para painel do contratante;
+- `apps/superadmin-web` para operação da plataforma;
+- `apps/marketing-web` para presença pública;
+- `apps/api`, workers e pacotes compartilhados;
+- `packages/ui` é a casa dos componentes compartilhados;
+- `packages/auth`, `packages/security`, `packages/contracts` e `packages/db` concentram contratos transversais.
+
+A implementação pode evoluir, mas alterações estruturais exigem decisão registrada.
+
+## 7. Primeiro marco de experiência
+
+A fundação de identidade deve ficar completa antes de expandir módulos operacionais:
+
+registro → verificação de e-mail → onboarding → criação/seleção de tenant → login → logout → recuperação de senha → nova senha → revogação de sessão → shell responsivo.
+
+O fluxo visual e comportamental dessas telas está em `29_AUTH_UX_FLOWS.md`.
+
+## 8. Não negociáveis adicionais
+
+- `platform_owner` nasce apenas por bootstrap controlado no servidor.
+- Superadmin e tenant usam superfícies, cookies e audiences separados.
+- Nenhum token de integração é retornado por endpoint de leitura.
+- Recuperação de senha não revela se um e-mail existe.
+- OTP/código de verificação é de uso único, expira e possui proteção contra brute force.
+- O layout do SaaS deve seguir `12`, `14`, `22`, `24` e `30` sem criar variações ad hoc.
+- Gradiente pode reforçar marca; nunca é a única forma de comunicar estado.
+- Motion nunca bloqueia tarefa, foco, leitura ou navegação.

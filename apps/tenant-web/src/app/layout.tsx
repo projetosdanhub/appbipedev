@@ -12,14 +12,20 @@ export const metadata: Metadata = {
   description: "BipeSend Tenant Dashboard",
 };
 
+import { Providers } from "@/components/providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} antialiased h-full`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="pt-BR" suppressHydrationWarning className={`${inter.variable} antialiased h-full`}>
+      <body className="min-h-full flex flex-col">
+        <Providers attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }

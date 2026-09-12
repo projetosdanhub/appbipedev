@@ -3,33 +3,52 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2, ArrowLeft, Mail } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { ArrowLeft, AlertTriangle } from "lucide-react";
+import {
+  Button,
+  Input,
+  Alert,
+  AlertDescription,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@bipesend/ui";
+
+import { forgotPasswordSchema, type ForgotPasswordInput } from "@/lib/validations/auth";
+import { forgotPasswordAction } from "../_actions/auth";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<ForgotPasswordInput>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const onSubmit = async (data: ForgotPasswordInput) => {
     setError("");
-    setIsLoading(true);
 
     try {
-      // API call to send OTP would go here
-      // For now, we simulate success and move to verify step
-      // In a real app we would call: await fetch('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) })
+      const response = await forgotPasswordAction(data);
       
-      // We simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      if (!response.success) {
+        setError(response.message || "Erro ao solicitar recuperação");
+        return;
+      }
       
-      // Pass the email to the next screen via query param so we know which email to verify
-      router.push(`/forgot-password/verify?email=${encodeURIComponent(email)}`);
-    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-      setError(err.message || "Ocorreu um erro inesperado");
-    } finally {
-      setIsLoading(false);
+      toast.success(response.message);
+      router.push(`/forgot-password/verify?email=${encodeURIComponent(data.email)}`);
+    } catch (err: any) {
+      setError("Ocorreu um erro inesperado ao conectar ao servidor.");
     }
   };
 
@@ -51,47 +70,39 @@ export default function ForgotPasswordPage() {
         </p>
       </div>
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        {error && (
-          <div className="p-4 text-[14px] text-[var(--color-danger-600)] bg-red-50 dark:bg-red-900/30 dark:text-red-400 rounded-lg border border-red-100 dark:border-red-800 flex items-center gap-3 animate-fade-in">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 flex-shrink-0">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-            </svg>
-            <span>{error}</span>
-          </div>
-        )}
+      <Form {...form}>
+        <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+          {error && (
+            <Alert variant="destructive" className="animate-fade-in">
+              <AlertTriangle className="h-5 w-5" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-        <div className="space-y-2 group">
-          <label htmlFor="email" className="block text-[14px] font-medium text-[var(--color-ink-900)] dark:text-gray-300">
-            E-mail corporativo
-          </label>
-          <div className="relative">
-            <input
-              id="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-white dark:bg-[var(--color-surface-900)] border border-[var(--color-border-200)] dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-600)] focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white shadow-sm hover:border-gray-300"
-              placeholder="seuemail@empresa.com.br"
-            />
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[var(--color-brand-600)] transition-colors" />
-          </div>
-        </div>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>E-mail corporativo</FormLabel>
+                <FormControl>
+                  <Input type="email" placeholder="seuemail@empresa.com.br" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <button
-          type="submit"
-          disabled={isLoading || !email}
-          className="relative flex items-center justify-center w-full py-3.5 px-4 font-semibold text-white bg-[var(--color-brand-600)] rounded-xl hover:bg-[var(--color-brand-700)] hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-brand-600)] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none transition-all duration-200 overflow-hidden group"
-        >
-          <span className={`absolute inset-0 w-full h-full bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out`} />
-          
-          <div className="flex items-center gap-2 relative z-10">
-            {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
-            <span>{isLoading ? "Enviando..." : "Enviar código"}</span>
-          </div>
-        </button>
-      </form>
+          <Button
+            type="submit"
+            isLoading={form.formState.isSubmitting}
+            className="w-full"
+            size="lg"
+          >
+            {form.formState.isSubmitting ? "Enviando..." : "Enviar código"}
+          </Button>
+        </form>
+      </Form>
     </div>
   );
 }

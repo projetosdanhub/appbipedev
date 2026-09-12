@@ -1,67 +1,59 @@
 # Arquitetura
 
-## Aplicacoes
+## 1. Direção
 
-```text
-apps/
-  tenant-web       painel app.bipesend.com.br
-  superadmin-web   painel admin.bipesend.com.br
-  marketing-web    landing www.bipesend.com.br
-  api              API NestJS/Fastify e WebSockets
-  worker           BullMQ, webhooks, mensagens e automacoes
-  ai-worker        jobs assincronos de ingestao e avaliacao
-services/
-  ai-service       microsservico Python/FastAPI para RAG e LLM
-```
+Usar monorepo modular com fronteiras explícitas. Aplicações coordenam casos de uso; pacotes compartilhados concentram contratos transversais; domínio não depende de detalhes visuais ou de provider externo.
 
-## Modulos cronologicos
+## 2. Estrutura de referência
 
-Cada aplicacao organiza seus dominios na mesma ordem de construcao:
+- `apps/tenant-web`: UI autenticada do tenant.
+- `apps/superadmin-web`: UI administrativa da plataforma.
+- `apps/marketing-web`: páginas públicas.
+- `apps/api`: HTTP/API e orquestração.
+- `apps/worker`: jobs assíncronos.
+- `apps/ai-worker`: processamento de IA isolado.
+- `apps/e2e-tests`: jornadas críticas.
+- `packages/ui`: design system e componentes.
+- `packages/auth`: sessão, autenticação e autorização compartilhada.
+- `packages/security`: primitives e políticas.
+- `packages/contracts`: schemas, DTOs e eventos.
+- `packages/db`: acesso ao banco e migrações.
+- `packages/events`: contratos e infraestrutura de eventos.
+- `packages/config`: configuração tipada.
 
-```text
-00-shared          contratos internos, erros, observabilidade e config
-01-identity        usuarios, sessoes, email e recuperacao
-02-tenancy         tenants, memberships e onboarding
-03-authorization   roles, permissions e policies
-04-team            membros, setores, convites e cargos
-05-crm             contatos, campos, tags e pipelines
-06-inbox           conversas, mensagens e atribuicao
-07-messaging       providers, QR, webhooks e envio
-08-automation      gatilhos, workflows e execucoes
-09-knowledge       documentos, chunks, embeddings e retrieval
-10-catalog         categorias, produtos, pedidos e storefront
-11-pages           blocos, temas, SEO, dominios e publicacao
-12-billing         planos, entitlements, subscriptions e uso
-13-integrations    Stripe, Mercado Pago, IA, tracking e MCP
-14-platform        branding, superadmin, suporte e docs
-99-test-support    factories, fixtures e harnesses de teste
-```
+## 3. Fronteiras
 
-Os numeros mostram a ordem de dependencia e ajudam a localizar cada arquivo. Eles nao devem ser usados para renumerar arquivos individuais a cada mudanca.
+- UI não acessa banco diretamente.
+- Rotas de UI não contêm regra de negócio complexa.
+- Adaptador de provider não vaza payload bruto para domínio.
+- Domínio não depende de framework HTTP.
+- Componente visual não decide autorização.
+- Worker não cria regra alternativa à API; reutiliza serviços/casos de uso.
+- Eventos carregam IDs e dados mínimos; evitar PII desnecessária.
 
-## Pacotes compartilhados
+## 4. Fluxo recomendado
 
-```text
-packages/
-  ui, db, auth, contracts, events, security, config
-```
+UI → contrato HTTP → autorização → caso de uso → domínio/repositório → transação → evento/outbox → integrações/worker → atualização de UI.
 
-## Fluxo de requisicao
+## 5. Dependências
 
-`web -> api gateway -> autenticacao -> tenant context -> permissao -> caso de uso -> repositorio -> PostgreSQL`.
+Dependências apontam para dentro: aplicação pode usar domínio e contratos; domínio não depende de UI, banco concreto ou provider. Ciclos entre módulos são proibidos.
 
-O caso de uso nao deve consultar tabelas aleatorias. O repositorio recebe o contexto autorizado e toda query tenant-owned inclui isolamento por banco e por aplicacao.
+## 6. Idempotência e consistência
 
-Node.js e a autoridade para identidade, tenant, permissoes, CRM, WebSockets, billing, webhooks e envio. O `ai-service` Python/FastAPI fica em rede interna, recebe chamadas autenticadas de Node, consulta apenas conhecimento permitido e devolve resposta, fontes, confianca e eventuais propostas de ferramenta. Ele nao pode alterar CRM, enviar mensagens ou executar codigo.
+Operações com efeito externo devem aceitar/gerar chave idempotente. Eventos derivados de transação crítica devem preferir outbox. Não publicar evento de sucesso antes da persistência confirmar.
 
-## Separacao de superficies
+## 7. Performance
 
-O painel de tenant, superpainel e landing publica possuem builds e politicas de seguranca distintas. Compartilham tokens visuais e contratos, mas nao compartilham cookies, sessions ou rotas de autorizacao.
+- paginação em listas;
+- cache apenas com estratégia de invalidação;
+- queries observáveis;
+- evitar N+1;
+- payloads enxutos;
+- lazy load de módulos pesados;
+- imagens dimensionadas;
+- sem polling global indiscriminado.
 
-## Comunicacao interna
+## 8. Evolução
 
-REST versionada para comandos e consultas; eventos de dominio para efeitos assincronos; WebSocket para notificacao de interface. Nao usar chamadas HTTP entre modulos internos quando um caso de uso local ou evento for suficiente.
-
-## Fonte de verdade
-
-PostgreSQL guarda estado de negocio. Redis guarda fila, locks, cache curto e rate limit. Object storage guarda binarios. Logs e auditoria tem retencao definida por politica.
+Mudança estrutural exige ADR/decisão documentada, plano de migração e compatibilidade. Não trocar framework ou arquitetura por conveniência local.

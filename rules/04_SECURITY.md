@@ -1,51 +1,89 @@
-# Seguranca
+# Segurança
 
-## Baseline
+## 1. Baseline
 
-Usar OWASP ASVS como checklist tecnico, threat model por modulo e revisao de dependencias. O objetivo de acessibilidade e WCAG 2.2 AA; o objetivo de seguranca inclui defesa contra IDOR, SQL injection, XSS, CSRF, SSRF, upload malicioso, abuso de webhooks, prompt injection e sequestro de conta.
+Adotar OWASP ASVS como checklist técnico, threat model por módulo e revisão de dependências. Proteger contra IDOR/BOLA, injection, XSS, CSRF, SSRF, path traversal, upload malicioso, abuso de webhook, brute force, credential stuffing, replay, sequestro de conta, prompt injection e vazamento cross-tenant.
 
-## Segredos e chaves
+## 2. Senhas
 
-- nenhum segredo em frontend, Git, fixture, URL, log ou erro;
-- env local apenas para desenvolvimento;
-- producao deve usar secret manager e rotacao;
-- chaves armazenadas no banco usam envelope encryption, chave mestra fora do banco, AES-256-GCM, nonce/tag separados e versao de chave;
-- tokens de provedor sao mascarados na interface e nunca retornam em APIs de leitura;
-- acesso a segredo exige permissao, motivo e auditoria.
+- armazenar somente hash Argon2id com salt aleatório;
+- política favorece comprimento e bloqueia senhas comprometidas quando possível;
+- nunca logar senha, hash ou confirmação;
+- troca de senha revoga sessões de acordo com política;
+- mostrar/ocultar senha é controle local e acessível;
+- confirmação de senha é comparação no cliente para UX e validação no servidor para contrato.
 
-## Autenticacao
+## 3. Sessão
 
-Argon2id para senhas; cookies HttpOnly, Secure e SameSite; sessao curta com rotacao; invalidacao apos troca de senha; verificacao de e-mail; rate limit e deteccao de tentativas; MFA/WebAuthn como prioridade apos o MVP.
+- cookies `HttpOnly`, `Secure`, `SameSite` apropriado e domínio mínimo;
+- sessão server-side ou token revogável conforme arquitetura aprovada;
+- rotação após login e elevação de privilégio;
+- idle timeout e absolute timeout;
+- CSRF para operações autenticadas por cookie;
+- proteção contra fixation;
+- logout invalida servidor e cookie;
+- alterações sensíveis podem exigir reautenticação.
 
-## API e webhooks
+## 4. Login e recuperação
 
-Validar schema, tamanho e content-type; usar idempotency key; timeout; limite de pagina; resposta generica para credenciais invalidas; assinatura e timestamp em webhooks; raw body quando o provedor exigir; nunca confiar no redirect de pagamento como confirmacao.
+- mensagem de credencial inválida deve ser genérica;
+- recuperação de senha nunca revela existência do e-mail;
+- envio de código/link tem rate limit por IP, identidade e device signal quando disponível;
+- código de verificação é aleatório, uso único, expira em curto prazo e é armazenado de forma segura;
+- limitar tentativas por desafio; após exceder, invalidar desafio e exigir novo;
+- reenvio cria política clara: substituir/invalidar código anterior conforme implementação;
+- após redefinição, invalidar tokens de recuperação e sessões conforme política;
+- registrar auditoria sem guardar código, senha ou payload sensível.
 
-## Uploads
+## 5. MFA
 
-Quarentena, limite de tamanho, allowlist de MIME/extensao, nome gerado pelo sistema, scan antimalware, storage privado e URL assinada curta. PDF, texto, imagem e video entram em pipelines diferentes.
+MFA/WebAuthn é obrigatório para `platform_owner`. Para tenant admins, suportar ativação progressiva e política por organização/plano sem enfraquecer login básico.
 
-## Mensageria
+## 6. Browser security
 
-Opt-in, opt-out e lista de supressao. Limites por tenant, numero e contato. Nao prometer que o envio em massa evita bloqueio de plataforma. Mensagens fora de politica devem ser bloqueadas ou encaminhadas para revisao.
+- CSP progressiva sem `unsafe-eval`;
+- `frame-ancestors`/proteção contra clickjacking;
+- `nosniff`, referrer policy e headers adequados;
+- sanitização/escaping de conteúdo rico;
+- URLs externas validadas;
+- nunca inserir HTML arbitrário de tenant sem sanitização;
+- source maps públicos somente com decisão explícita e sem segredo.
 
-## HTTPS, proxy e arquivos
+## 7. Segredos
 
-Todo acesso de usuario e webhook usa HTTPS na borda. O proxy confiavel termina
-TLS, adiciona headers e encaminha somente para upstreams privados; a API valida
-host, origem, forwarded headers e contexto de sessao. PostgreSQL, Redis, MinIO
-e Mailpit nao sao expostos pelo proxy ou ngrok.
+- segredo nunca em frontend, Git, URL, log ou mensagem de erro;
+- produção usa secret manager/infra equivalente;
+- tokens recuperáveis de provider usam envelope encryption AES-256-GCM ou mecanismo aprovado;
+- chaves emitidas pelo BipeSend preferem armazenamento por hash quando só precisam ser validadas;
+- rotação e revogação fazem parte do contrato.
 
-A raiz publica aceita somente build/assets allowlisted. Dotfiles, `.env`,
-backups, dumps, logs, chaves, certificados, configuracoes, source maps
-publicos e codigo-fonte sao bloqueados. Downloads usam autorizacao por tenant,
-allowlist de recurso e URL assinada curta; nunca montar caminho de arquivo com
-entrada do usuario. Detalhes completos estao em
-`25_HTTPS_PROXY_FILE_SECURITY.md`.
+## 8. API
 
-## Erros e diagnostico
+- validar schema, tamanho, content-type, enum e limites;
+- autorização por ação e recurso;
+- rate limit por risco;
+- paginação limitada;
+- idempotency key em operações apropriadas;
+- respostas de erro seguras com `requestId`;
+- não retornar stack, SQL, segredo ou payload bruto de provider.
 
-Respostas usam codigo de aplicacao BipeSend separado do status HTTP, mensagem
-segura e `requestId`. Stack trace, SQL, tokens, prompts e PII nao chegam ao
-cliente. Reportes do tenant entram em fluxo auditado do superadmin e seguem o
-catalogo de `26_ERROR_CATALOG_AUDIT.md`.
+## 9. Webhooks
+
+Validar assinatura, timestamp, janela de replay e idempotência sobre raw body quando provider exigir. Responder rápido e enfileirar processamento pesado.
+
+## 10. Uploads
+
+Quarentena, limite de tamanho, allowlist de tipo, nome gerado pelo sistema, scan quando aplicável, storage privado, autorização por tenant e URL assinada curta.
+
+## 11. Segurança de UX
+
+- não usar mensagem que confirme conta existente em recuperação;
+- não esconder ação destrutiva apenas por CSS;
+- ações críticas têm contexto e confirmação proporcional;
+- clipboard não deve copiar segredo automaticamente sem intenção do usuário;
+- campos sensíveis não devem usar autocomplete inadequado;
+- UI não exibe token completo depois do momento de criação quando o contrato for "show once".
+
+## 12. Auditoria
+
+Auditar login relevante, falhas suspeitas, mudança de senha, MFA, alteração de permissão, exportação, integração, API key, billing e suporte. Auditoria é append-only lógico e protegida contra edição comum.

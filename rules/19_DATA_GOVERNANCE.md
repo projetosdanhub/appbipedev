@@ -1,22 +1,29 @@
-# Governanca de dados
+# Governança de dados e LGPD
 
-## Classificacao
+## 1. Princípios
 
-Publico, interno, pessoal, sensivel e segredo. Cada campo novo declara classificacao, finalidade, retencao, acesso e se entra em logs/IA.
+Finalidade, minimização, necessidade, retenção limitada, transparência, segurança e rastreabilidade.
 
-## PII e IA
+## 2. Classificação
 
-Minimizar contexto enviado a provedores. Tenant escolhe politicas de uso quando aplicavel; superadmin define limites globais. Mensagens e documentos nao devem treinar modelos por padrao. Redacao e exclusao devem respeitar o fluxo de dados.
+Classificar ao menos: público, interno, confidencial, PII e segredo. Segredo possui controles mais restritos que PII.
 
-## Retencao
+## 3. Coleta
 
-Cada modulo define retencao, exportacao e exclusao. Jobs de limpeza sao idempotentes e auditados. Backups sao criptografados, com acesso restrito e teste de restore.
+Não coletar dado "para talvez usar". Campos opcionais devem ter motivo de produto.
 
-## Incidentes
+## 4. Retenção
 
-Ter runbook para segredo exposto, cross-tenant, conta comprometida, provider indisponivel, fila travada e documento malicioso. Preservar evidencias minimas sem ampliar exposicao.
+Definir retenção por classe: auditoria, mensagens, arquivos, logs, prompts e backups. Exclusão lógica não substitui política de expurgo quando exigida.
 
-Reportes de erro e diagnosticos seguem minimizacao: redigir PII, tokens,
-cookies, Authorization, body de mensagens e prompts antes de persistir. O
-catalogo operacional pode ser compartilhado com o tenant somente pela mensagem
-segura; stack trace e runbook interno ficam restritos ao superadmin autorizado.
+## 5. Direitos do titular
+
+Exportação, correção e exclusão seguem identidade, autorização e escopo. Ação é auditada.
+
+## 6. Logs e analytics
+
+Evitar conteúdo de mensagem, token, documento e PII em logs/analytics. Identificadores devem ser minimizados/pseudonimizados quando possível.
+
+## 7. IA
+
+Envio a provider de IA requer finalidade, minimização e contrato de retenção conhecido.

@@ -1,25 +1,25 @@
-# Integracoes externas
+# Integrações
 
-## Adapter boundary
+## 1. Adaptadores
 
-Cada provedor implementa uma interface interna, com DTO normalizado, timeout, retry, circuit breaker, health check e telemetria. SDK do provedor fica somente no pacote/servico do adapter.
+Cada provider possui adaptador próprio sob contrato interno estável. UI e domínio não dependem do payload bruto do provider.
 
-## Pagamento
+## 2. Credenciais
 
-Stripe Connect e Mercado Pago OAuth usam ambiente sandbox local/staging. Callback valida `state`, PKCE quando suportado, origem, redirect allowlist e expiracao. Webhook valida assinatura, persiste evento bruto minimizado, deduplica e processa assincronamente.
+Segredos ficam no backend e são mascarados na UI. Leitura comum nunca devolve token completo.
 
-## IA
+## 3. Conexão
 
-Provedores de chat e embeddings entram como configuracao do backend. Nunca chamar API por chave enviada ao browser. Restringir modelos por plano, custo e politica de dados.
+Fluxo: iniciar → autorização/provider → callback validado → persistir credencial segura → health check → ativo.
 
-## Observabilidade de provedor
+## 4. Operação
 
-Guardar `provider_request_id`, status, latencia, tipo de erro e correlation id. Nao guardar payload completo com segredo ou PII sem necessidade. Painel mostra saude, nao tokens.
+Timeout, retry com backoff, circuit breaker quando adequado, rate limit, idempotência e observabilidade. Falha externa não pode derrubar processo inteiro.
 
-## Saude operacional
+## 5. Desconexão
 
-Cada adapter publica um health check com timeout, retry, backoff e circuit
-breaker. O registro diferencia `connected`, `degraded`, `disconnected`,
-`misconfigured`, `not_entitled`, `disabled` e `unknown`; ausencia de recurso por
-plano nao e desconexao. O detalhe seguro e definido em
-`27_INTEGRATION_HEALTH.md`.
+Revogar localmente e, quando disponível, no provider. Limpar caches e marcar estado. Histórico de negócio não é apagado automaticamente.
+
+## 6. UX
+
+Status normalizado: `connected`, `degraded`, `action_required`, `disconnected`, `unknown`. Mostrar última verificação e ação recomendada.

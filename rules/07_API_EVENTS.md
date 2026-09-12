@@ -1,48 +1,41 @@
-# API, contratos e eventos
+# API e eventos
 
-## API
+## 1. HTTP
 
-Prefixo `/v1`. Schemas de entrada e saida versionados em `packages/contracts`. Erros usam formato estavel com `code`, `message` seguro, `requestId` e `details` somente quando nao expuserem dados.
+Contratos são tipados e versionados quando houver quebra. Entrada deve ser validada na borda; domínio valida regras sem confiar no cliente.
 
-O codigo de aplicacao usa `BPS-<DOMINIO>-<NUMERO>` e nao substitui o status
-HTTP. Nunca tratar HTTP `201` como codigo de erro. O servidor redige segredos e
-PII antes de logar ou devolver qualquer detalhe.
+## 2. Envelope de erro
 
-Endpoints de autenticacao nunca retornam tokens de provedor. Recursos tenant-owned exigem contexto autenticado. Operacoes mutaveis sensiveis aceitam idempotency key.
+Formato de referência:
 
-## Eventos canonicos
+```json
+{
+  "error": {
+    "code": "AUTH_INVALID_CREDENTIALS",
+    "message": "Não foi possível entrar com os dados informados.",
+    "requestId": "req_..."
+  }
+}
+```
 
-- `identity.user.created`
-- `identity.email.verified`
-- `tenant.created`
-- `tenant.member.invited`
-- `conversation.created`
-- `message.received`
-- `message.send.requested`
-- `message.send.succeeded`
-- `message.send.failed`
-- `automation.run.requested`
-- `knowledge.document.index.requested`
-- `billing.subscription.updated`
-- `integration.webhook.received`
+Status HTTP e código de aplicação são contratos separados. Mensagem pública é segura e acionável.
 
-Eventos sao fatos, nao comandos genericos. Cada evento tem `event_id`, `type`, `version`, `occurred_at`, `tenant_id`, `actor`, `correlation_id` e payload tipado. Consumidores sao idempotentes.
+## 3. Idempotência
 
-## Tempo real
+Criação de pagamento, envio, integração, webhook e mutações suscetíveis a retry devem suportar idempotência. Mesma chave + mesmo payload retorna resultado compatível; mesma chave + payload diferente falha.
 
-WebSocket com rooms por tenant e usuario. O servidor autoriza a entrada na room. Eventos de UI sao notificacoes; o comando original continua sendo validado pela API.
+## 4. Paginação e filtros
 
-## Saude de integracoes
+Usar limites máximos. Filtros são allowlisted. Ordenação só por campos aprovados.
 
-O estado exibido para Stripe, Mercado Pago, WhatsApp e IA vem de verificacao
-server-side e usa os estados de `27_INTEGRATION_HEALTH.md`. Eventos de
-transicao sao idempotentes, auditaveis e nunca carregam tokens.
+## 5. Eventos
 
+Nome semântico e versionável: `domain.entity.action.v1`. Evento carrega somente dados necessários, tenant quando aplicável, actor/correlation IDs e timestamp.
 
-## Health e superficies de maquina
+## 6. Outbox
 
-/health e liveness minimalista. /ready informa apenas estado/latencia
-sanitizados e nao devolve mensagens de exception, DSN, stack ou segredo. API e
-hooks nao possuem login HTML: API usa credencial escopada e hooks usam assinatura
-do provider, timestamp, replay protection, idempotencia e processamento
-assíncrono.
+Eventos críticos derivados de transação devem usar outbox ou padrão equivalente para evitar "DB confirmou, evento sumiu".
+
+## 7. Realtime
+
+WebSocket/SSE não é fonte de verdade. Ao reconectar, cliente revalida estado. Eventos são autorizados por contexto e não podem vazar dados entre tenants.

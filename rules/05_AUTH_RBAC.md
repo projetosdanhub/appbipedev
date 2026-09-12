@@ -1,36 +1,52 @@
-# Autenticacao, cargos e permissoes
+# Autenticação, RBAC e ABAC
 
-## Papeis de referencia
+## 1. Papéis de referência
 
-- `platform_owner`: equipe proprietaria; contexto superadmin separado.
-- `tenant_admin`: administrador do contratante; primeiro membro do tenant.
-- `manager`: cargo configuravel, sempre limitado pelo tenant_admin.
-- `agent`: atendimento e operacao conforme permissoes.
+- `platform_owner`: equipe proprietária; contexto superadmin separado.
+- `tenant_admin`: administrador máximo do tenant.
+- `manager`: gestão delegada.
+- `agent`: operação/atendimento.
 - `viewer`: leitura limitada.
 
-Os nomes exibidos podem ser personalizados, mas as capacidades internas usam chaves estaveis. Setores e cargos sao criados inicialmente pelo tenant_admin; essa funcao pode ser delegada somente por uma permissao explicita como `team.roles.manage` ou `team.departments.manage`. Um cargo de tenant nunca pode criar ou conceder uma permissao que nao possui. Nao pode criar, editar, igualar ou remover o tenant_admin.
+Nome exibido pode ser customizado, mas capacidades internas usam chaves estáveis.
 
-## Autorizacao
+## 2. Autorização
 
-Usar RBAC para capacidades estaveis e ABAC para escopo: tenant, setor, equipe, conversa, proprietario do registro e acao sensivel. As permissoes sao chaves canonicas, por exemplo `inbox.conversations.assign`, `integrations.whatsapp.manage`, `billing.subscription.manage`.
+RBAC define capacidades estáveis; ABAC restringe por tenant, setor, equipe, ownership, estado do recurso e sensibilidade.
 
-## Fluxos de conta
+Exemplos:
 
-Registro -> verificacao de e-mail -> onboarding -> tenant criado -> convite de equipe. Login -> sessao -> selecao de tenant quando necessario. Recuperacao -> token de uso unico, expiracao curta, invalidacao apos uso. Logout invalida a sessao no servidor.
+- `inbox.conversations.read`
+- `inbox.conversations.assign`
+- `crm.deals.move`
+- `integrations.whatsapp.manage`
+- `team.roles.manage`
+- `billing.subscription.manage`
+- `settings.security.manage`
 
-## Superadmin e suporte
+Um cargo nunca concede permissão que não possui. Nenhum cargo de tenant pode criar, igualar, editar ou remover `tenant_admin` sem fluxo explicitamente autorizado.
 
-Nao existe link de login do superadmin dentro do painel do tenant. Suporte usa acesso temporario, justificativa, banner visivel e auditoria. Segredos de tenants nunca ficam visiveis por padrao.
+## 3. Fluxos humanos
 
-## Excecoes
+Registro → verificação de e-mail → onboarding → tenant.  
+Login → sessão → contexto de tenant → shell.  
+Recuperação → desafio → código/link → nova senha → revogação conforme política.  
+Logout → invalidar sessão no servidor.
 
-Conta suspensa nao pode operar. Tenant sem assinatura ativa pode entrar apenas no billing e suporte, conforme politica. Limite de plano bloqueia criacao/execucao, mas nao deve apagar dados.
+Detalhes de UX ficam em `29_AUTH_UX_FLOWS.md`.
 
+## 4. Superadmin
 
-## Bootstrap e superficies
+Não existe link de superadmin no painel do tenant. `platform_owner` usa domínio, cookie, audience e MFA separados. Suporte temporário exige justificativa, auditoria, duração e indicador visível quando houver impersonation/assistance.
 
-O platform_owner nasce apenas pelo procedimento de bootstrap controlado no VPS,
-conforme 28_AUTH_SURFACES_BOOTSTRAP.md. O painel superadmin e o painel tenant
-nao compartilham cookie, audience ou rota de login. API e hooks sao superficies
-de maquina: API exige sessao/API key escopada; hooks exigem assinatura, timestamp,
-replay protection e idempotencia.
+## 5. Estados de conta
+
+Estados canônicos: `pending_verification`, `active`, `locked`, `suspended`, `disabled`. O frontend recebe estado necessário, sem detalhes que facilitem enumeração ou bypass.
+
+## 6. Reautenticação
+
+Ações como alterar e-mail, senha, MFA, API key, permissão crítica ou billing podem exigir prova recente de autenticação.
+
+## 7. Sessões
+
+Usuário deve poder encerrar sessão atual; admins podem ter gerenciamento de sessões conforme política. Troca de senha, comprometimento e remoção de acesso devem revogar sessões afetadas.

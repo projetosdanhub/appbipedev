@@ -1,78 +1,82 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2, Eye, EyeOff } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { AlertTriangle, Eye, EyeOff } from "lucide-react";
+import {
+  Button,
+  Input,
+  Alert,
+  AlertDescription,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@bipesend/ui";
+
+import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
+import { registerAction } from "../_actions/auth";
 
 export default function RegisterPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  // Password strength calculation
-  const passwordStrength = useMemo(() => {
+  const form = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (data: RegisterInput) => {
+    setError("");
+
+    try {
+      const response = await registerAction(data);
+      
+      if (!response.success) {
+        setError(response.message || "Erro ao criar conta");
+        return;
+      }
+      
+      toast.success(response.message);
+      router.push("/login");
+    } catch (err: any) {
+      setError("Ocorreu um erro inesperado ao conectar ao servidor.");
+    }
+  };
+
+  const passwordValue = form.watch("password");
+  
+  const getPasswordStrength = (pass: string) => {
     let score = 0;
-    if (!password) return { score, label: "", color: "bg-gray-200" };
-    if (password.length > 7) score += 1;
-    if (/[A-Z]/.test(password)) score += 1;
-    if (/[0-9]/.test(password)) score += 1;
-    if (/[^A-Za-z0-9]/.test(password)) score += 1;
+    if (!pass) return { score, label: "", color: "bg-gray-200" };
+    if (pass.length > 7) score += 1;
+    if (/[A-Z]/.test(pass)) score += 1;
+    if (/[0-9]/.test(pass)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pass)) score += 1;
     
     if (score <= 1) return { score, label: "Fraca", color: "bg-red-500" };
     if (score === 2) return { score, label: "Razoável", color: "bg-yellow-500" };
     if (score === 3) return { score, label: "Boa", color: "bg-blue-500" };
     return { score, label: "Forte", color: "bg-[var(--color-success-600)]" };
-  }, [password]);
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (password !== confirmPassword) {
-      return setError("As senhas não coincidem.");
-    }
-    if (!termsAccepted) {
-      return setError("Você precisa aceitar os Termos de Serviço.");
-    }
-
-    setIsLoading(true);
-
-    try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name, companyName }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Erro ao criar conta");
-      }
-
-      router.push("/login");
-    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
-      setError(err.message || "Ocorreu um erro inesperado");
-    } finally {
-      setIsLoading(false);
-    }
   };
 
+  const strength = getPasswordStrength(passwordValue);
+
   return (
-    <div className="w-full animate-fade-in-up">
-      <div className="mb-10 text-center lg:text-left">
-        <h1 className="text-3xl font-bold text-[var(--color-ink-900)] dark:text-white tracking-tight mb-2">
+    <div className="w-full">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-[var(--color-ink-900)] dark:text-white tracking-tight mb-1.5">
           Criar nova conta
         </h1>
         <p className="text-[15px] text-[var(--color-ink-600)] dark:text-gray-400">
@@ -80,148 +84,100 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      <form className="space-y-5" onSubmit={handleRegister}>
-        {error && (
-          <div className="p-4 text-[14px] text-[var(--color-danger-600)] bg-red-50 dark:bg-red-900/30 dark:text-red-400 rounded-lg border border-red-100 dark:border-red-800 flex items-center gap-3 animate-fade-in">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 flex-shrink-0">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-            </svg>
-            <span>{error}</span>
-          </div>
-        )}
+      <Form {...form}>
+        <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
+          {error && (
+            <Alert variant="destructive" className="animate-fade-in">
+              <AlertTriangle className="h-5 w-5" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="space-y-2 group">
-            <label htmlFor="name" className="block text-[14px] font-medium text-[var(--color-ink-900)] dark:text-gray-300">
-              Nome completo
-            </label>
-            <input
-              id="name"
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 bg-white dark:bg-[var(--color-surface-900)] border border-[var(--color-border-200)] dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-600)] focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white shadow-sm hover:border-gray-300"
-              placeholder="João Silva"
-            />
-          </div>
-
-          <div className="space-y-2 group">
-            <label htmlFor="companyName" className="block text-[14px] font-medium text-[var(--color-ink-900)] dark:text-gray-300">
-              Nome da Empresa
-            </label>
-            <input
-              id="companyName"
-              type="text"
-              required
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              className="w-full px-4 py-3 bg-white dark:bg-[var(--color-surface-900)] border border-[var(--color-border-200)] dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-600)] focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white shadow-sm hover:border-gray-300"
-              placeholder="Minha Empresa Ltda"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2 group">
-          <label htmlFor="email" className="block text-[14px] font-medium text-[var(--color-ink-900)] dark:text-gray-300">
-            E-mail corporativo
-          </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 bg-white dark:bg-[var(--color-surface-900)] border border-[var(--color-border-200)] dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-600)] focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white shadow-sm hover:border-gray-300"
-            placeholder="voce@empresa.com.br"
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nome completo</FormLabel>
+                <FormControl>
+                  <Input placeholder="João Silva" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="space-y-2 group">
-            <label htmlFor="password" className="block text-[14px] font-medium text-[var(--color-ink-900)] dark:text-gray-300">
-              Senha
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white dark:bg-[var(--color-surface-900)] border border-[var(--color-border-200)] dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-600)] focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white shadow-sm hover:border-gray-300 pr-12"
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors focus:outline-none"
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
-            </div>
-          </div>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>E-mail corporativo</FormLabel>
+                <FormControl>
+                  <Input type="email" placeholder="voce@empresa.com.br" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="space-y-2 group">
-            <label htmlFor="confirmPassword" className="block text-[14px] font-medium text-[var(--color-ink-900)] dark:text-gray-300">
-              Confirmar Senha
-            </label>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white dark:bg-[var(--color-surface-900)] border border-[var(--color-border-200)] dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-600)] focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white shadow-sm hover:border-gray-300 pr-12"
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors focus:outline-none"
-                tabIndex={-1}
-              >
-                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
-            </div>
-          </div>
-        </div>
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Senha</FormLabel>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-ink-600)] dark:text-gray-400 hover:text-[var(--color-brand-600)] dark:hover:text-[var(--color-brand-600)] transition-colors focus:outline-none"
+                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  >
+                    {showPassword ? (
+                      <><EyeOff className="w-3.5 h-3.5" /> Ocultar</>
+                    ) : (
+                      <><Eye className="w-3.5 h-3.5" /> Mostrar</>
+                    )}
+                  </button>
+                </div>
+                <FormControl>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+                {field.value?.length > 0 && (
+                  <div className="animate-fade-in space-y-1.5 pt-1">
+                    <div className="flex gap-1 h-1.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                      <div className={`h-full transition-all duration-300 ${strength.score >= 1 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
+                      <div className={`h-full transition-all duration-300 ${strength.score >= 2 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
+                      <div className={`h-full transition-all duration-300 ${strength.score >= 3 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
+                      <div className={`h-full transition-all duration-300 ${strength.score >= 4 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
+                    </div>
+                    <p className="text-xs text-[var(--color-ink-600)] dark:text-gray-400 flex justify-between">
+                      <span>Força da senha:</span>
+                      <span className="font-medium" style={{ color: strength.score > 0 ? `var(--color-${strength.score > 3 ? 'success' : strength.score > 1 ? 'warning' : 'danger'}-600)` : '' }}>
+                        {strength.label}
+                      </span>
+                    </p>
+                  </div>
+                )}
+              </FormItem>
+            )}
+          />
 
-        {/* Password Strength Indicator */}
-        {password.length > 0 && (
-          <div className="animate-fade-in space-y-1.5 pt-1">
-            <div className="flex gap-1 h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-              <div className={`h-full transition-all duration-300 ${passwordStrength.score >= 1 ? passwordStrength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-              <div className={`h-full transition-all duration-300 ${passwordStrength.score >= 2 ? passwordStrength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-              <div className={`h-full transition-all duration-300 ${passwordStrength.score >= 3 ? passwordStrength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-              <div className={`h-full transition-all duration-300 ${passwordStrength.score >= 4 ? passwordStrength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-            </div>
-            <p className="text-xs text-[var(--color-ink-600)] flex justify-between">
-              <span>Força da senha:</span>
-              <span className="font-medium" style={{ color: passwordStrength.score > 0 ? `var(--color-${passwordStrength.score > 3 ? 'success' : passwordStrength.score > 1 ? 'warning' : 'danger'}-600)` : '' }}>
-                {passwordStrength.label}
-              </span>
-            </p>
-          </div>
-        )}
-
-        <div className="pt-2">
-          <div className="flex items-start">
-            <div className="flex items-center h-5">
+          <div className="pt-1">
+            <div className="flex items-start gap-2.5">
               <input
                 id="terms"
-                name="terms"
                 type="checkbox"
                 required
-                checked={termsAccepted}
-                onChange={(e) => setTermsAccepted(e.target.checked)}
-                className="w-4 h-4 rounded border-gray-300 text-[var(--color-brand-600)] focus:ring-[var(--color-brand-600)] transition-colors cursor-pointer"
+                className="toggle-round mt-0.5"
               />
-            </div>
-            <div className="ml-3 text-sm">
-              <label htmlFor="terms" className="text-[var(--color-ink-600)] dark:text-gray-400 cursor-pointer">
+              <label htmlFor="terms" className="text-sm text-[var(--color-ink-600)] dark:text-gray-400 cursor-pointer leading-relaxed">
                 Eu concordo com os{" "}
                 <Link href="/terms" className="text-[var(--color-brand-600)] hover:underline">Termos de Serviço</Link>
                 {" "}e a{" "}
@@ -229,21 +185,17 @@ export default function RegisterPage() {
               </label>
             </div>
           </div>
-        </div>
 
-        <button
-          type="submit"
-          disabled={isLoading || !termsAccepted || password !== confirmPassword || password.length === 0}
-          className="relative flex items-center justify-center w-full py-3.5 px-4 mt-2 font-semibold text-white bg-[var(--color-brand-600)] rounded-xl hover:bg-[var(--color-brand-700)] hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-brand-600)] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none transition-all duration-200 overflow-hidden group"
-        >
-          <span className={`absolute inset-0 w-full h-full bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out`} />
-          
-          <div className="flex items-center gap-2 relative z-10">
-            {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
-            <span>{isLoading ? "Criando..." : "Criar minha conta"}</span>
-          </div>
-        </button>
-      </form>
+          <Button
+            type="submit"
+            isLoading={form.formState.isSubmitting}
+            className="w-full"
+            size="lg"
+          >
+            {form.formState.isSubmitting ? "Criando..." : "Criar minha conta"}
+          </Button>
+        </form>
+      </Form>
       
       <p className="mt-8 text-center text-[14px] text-[var(--color-ink-600)] dark:text-gray-400">
         Já tem uma conta?{" "}
@@ -254,4 +206,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-

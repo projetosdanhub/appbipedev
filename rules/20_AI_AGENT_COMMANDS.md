@@ -1,52 +1,54 @@
-# Comandos para agentes de IA
+# Comandos e contrato para agentes de IA
 
-## `!construibase`
+## 1. Bootstrap
 
-`!construibase` e um comando idempotente de bootstrap e contexto. Na primeira execucao, cria a fundacao. Nas seguintes, valida o que ja existe e implementa somente a tarefa informada; nunca recria o projeto inteiro.
+`!construibase` significa:
 
-1. Ler `rules/00_MASTER.md` e os arquivos de regras na ordem.
-2. Ler `docs/taskboard.md` e `docs/decisions.md`.
-3. Ler `docs/module-map.md` e identificar o modulo/submodulo afetado.
-4. Inspecionar somente o modulo pedido e seus contratos. Para borda, erro ou integracao, ler tambem `docs/error-catalog.md`, `docs/integration-health.md` e os exemplos de `infra/nginx/` quando aplicavel.
-5. Propor plano com arquivos, riscos e testes.
-6. Se a tarefa for FND-008 ou a fundacao nao tiver skeleton, executar `pnpm structure:scaffold` ou criar a mesma estrutura de forma idempotente.
-7. Implementar a menor mudanca que atende o criterio de aceite.
-8. Rodar checks relevantes.
-9. Atualizar taskboard/decisoes.
+1. ler `00_MASTER.md`;
+2. ler regras específicas do módulo;
+3. inspecionar implementação existente;
+4. propor plano curto;
+5. implementar sem violar contratos;
+6. validar com testes/checks;
+7. relatar arquivos e riscos.
 
-Na fundacao de infraestrutura, `pnpm rules:check` e
-`pnpm security:check` sao obrigatorios antes de declarar sucesso.
+## 2. Proibições
 
-Quando o pedido nao informar uma tarefa, o agente deve apenas validar a fundacao e indicar o proximo item READY do taskboard. Nao deve implementar todos os itens automaticamente.
+Agente não deve:
+- inventar credencial;
+- remover segurança para "fazer funcionar";
+- criar bypass temporário sem aprovação;
+- misturar tenants;
+- criar componente duplicado quando existe canônico;
+- hardcodar cores/tamanhos para imitar screenshot;
+- colocar lógica de autorização apenas na UI;
+- afirmar que teste passou sem executar;
+- alterar migration histórica aplicada;
+- expor segredo em exemplo.
 
-Uso recomendado para uma tarefa especifica:
+## 3. Regras de UI para IA
 
-```text
-!construibase <ID-da-tarefa>
-Leia integralmente rules/00_MASTER.md, as rules na ordem, docs/taskboard.md,
-docs/decisions.md e os contratos do modulo. Execute somente <ID-da-tarefa>,
-respeite os criterios de aceite, rode os testes e relate arquivos, riscos e
-proximo item READY.
-```
+Antes de criar tela, consultar `12`, `14`, `22`, `24`, `29` quando auth e `30`.
 
-## `!planejar <modulo>`
+A IA deve:
+- montar tela com primitives canônicas;
+- usar tokens;
+- implementar todos os estados;
+- incluir responsividade;
+- incluir teclado/a11y;
+- aplicar motion canônico;
+- não criar "design próprio" por página.
 
-Gerar um plano de implementacao sem editar codigo. Identificar entidades, permissoes, eventos, estados, limites, telas, testes e riscos.
+## 4. Formato de entrega
 
-## `!auditar <modulo>`
+Ao finalizar, informar:
+- o que mudou;
+- arquivos;
+- contratos alterados;
+- testes executados;
+- riscos/pendências;
+- se houve mudança de design system.
 
-Procurar violacoes de tenant, segredo, autorizacao, validacao, acessibilidade, SEO, contrato e testes. Nao corrigir automaticamente mudancas de alto risco sem plano.
+## 5. Mudança de design system
 
-## `!migrar <mudanca>`
-
-Propor migration, RLS, indices, backfill, rollback e testes de isolamento. Parar se a mudanca puder apagar ou expor dados.
-
-## Formato de saida
-
-Sempre responder com: resumo, arquivos alterados, regras aplicadas, testes rodados, riscos pendentes e proximo item do taskboard. Nunca inventar credenciais ou afirmar que uma integracao externa foi validada sem executar um teste autorizado.
-
-
-Para AUTH-013 a AUTH-016, o agente deve ler docs/auth-surfaces.md e
-28_AUTH_SURFACES_BOOTSTRAP.md, declarar audience/cookie/token, migration/RLS,
-permissões, auditoria e testes antes de codificar. Não criar login mock, endpoint
-de bootstrap, senha em seed ou superadmin por variável pública.
+Novo token, componente base ou padrão global exige justificar reutilização, impacto e migração. Não adicionar só para uma tela.

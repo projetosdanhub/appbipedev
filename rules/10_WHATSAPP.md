@@ -1,23 +1,27 @@
 # WhatsApp e mensageria
 
-## Provider adapter
+## 1. Providers
 
-O dominio depende de uma interface `MessagingProvider`; a implementacao inicial pode usar Evolution API em ambiente controlado, por QR code, atras de um servico de adaptacao. A API do provedor nunca e chamada pelo browser.
+Integrações de WhatsApp ficam atrás de adaptadores. Payload específico de provider não deve contaminar o domínio.
 
-A camada normaliza contatos, mensagens, anexos, status, QR, reconexao e erros. A troca futura para API oficial exige novo adapter, sem reescrever CRM e automacoes.
+## 2. Política
 
-## Riscos
+Respeitar opt-in, opt-out, janela de atendimento, templates e regras vigentes do provider. Não criar mecanismo para contornar bloqueios, limites ou políticas.
 
-Integracao nao oficial pode quebrar, perder sessao, sofrer bloqueio ou violar termos do provedor. O produto nao deve prometer anti-bloqueio. O roadmap deve manter uma rota oficial e uma chave de feature para desativar o provider instavel.
+## 3. Envio
 
-## Conexao
+- idempotência;
+- fila;
+- status normalizado;
+- retry somente quando seguro;
+- correlação com provider message ID;
+- limites por tenant/canal;
+- auditoria de ações administrativas.
 
-Somente tenant_admin ou permissao `integrations.whatsapp.manage`. QR com expiracao, uso unico quando possivel, status de conexao, reconexao limitada e auditoria. Segredos e identificadores ficam criptografados/mascarados.
+## 4. Recebimento
 
-## Entrada e saida
+Webhook validado, deduplicado e enfileirado. Anexos passam pela política de arquivo. Conteúdo é potencialmente malicioso para renderização, IA e links.
 
-Webhook recebe assinatura/secret, valida timestamp, idempotencia e tamanho. Mensagem recebida passa por normalizacao, anti-abuso, persistencia, evento e notificacao. Envio passa por consentimento, supressao, limite, fila, provider, retry e status.
+## 5. UX
 
-## Massa
-
-A funcionalidade e protegida por opt-in, lista de supressao, janela de envio, limite por numero/contato, pausa automatica em erros e aprovacao para campanhas de risco. Nao implementar tecnicas para burlar deteccao ou politicas de plataforma.
+Status de mensagem não depende apenas de cor. Falha deve mostrar motivo seguro/normalizado e ação possível, sem expor payload secreto do provider.

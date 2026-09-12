@@ -28,10 +28,10 @@ export const config = {
     /*
      * Intercepta todas as rotas exceto:
      * - api (Rotas de API / Webhooks)
-     * - _next/static (Arquivos estáticos do Next)
-     * - _next/image (Otimização de imagens do Next)
+     * - _next (Arquivos do Next, static, image, data, etc)
      * - favicon.ico (ícone)
+     * - Extensões de imagem comuns
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!api|_next|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

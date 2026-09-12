@@ -1,31 +1,31 @@
-# Multitenancy e isolamento
+# Tenancy
 
-## Modelo
+## 1. Regra principal
 
-- `tenants` representa a empresa contratante.
-- `users` representa identidade global, sem dados operacionais de tenant.
-- `memberships` liga user a tenant e contem status, cargo e preferencias.
-- toda entidade de negocio tenant-owned tem `tenant_id NOT NULL`.
-- recursos publicos usam IDs opacos/UUID e nunca expoem sequencias previsiveis.
+Todo dado pertencente a cliente deve possuir contexto de tenant explícito. `tenant_id` nunca é confiado a partir de campo livre enviado pelo frontend quando puder ser derivado da sessão/credencial.
 
-## Defesa em profundidade
+## 2. Isolamento
 
-1. o token/session informa o tenant ativo;
-2. middleware valida membership e status;
-3. caso de uso recebe `TenantContext` tipado;
-4. queries incluem filtro tenant;
-5. PostgreSQL aplica RLS e `FORCE ROW LEVEL SECURITY` onde aplicavel;
-6. testes tentam acessar dados de outro tenant e devem falhar;
-7. logs registram tenant sem revelar payload sensivel.
+- autorização e filtro por tenant em toda leitura/mutação;
+- joins precisam preservar tenant;
+- cache e chave de fila incluem tenant;
+- storage usa namespace/prefixo não enumerável e autorização;
+- eventos incluem tenant quando necessário ao consumidor;
+- busca/RAG nunca mistura corpus de tenants;
+- logs evitam payloads e identificadores desnecessários.
 
-## Troca de tenant
+## 3. Defesa em profundidade
 
-Nao aceitar `tenant_id` enviado pelo frontend como autoridade. A troca so pode ocorrer entre memberships ativas. O novo contexto deve emitir evento de auditoria e atualizar a sessao.
+A aplicação deve impedir cross-tenant mesmo se um ID válido de outro tenant for fornecido. RLS pode ser usada como camada adicional, mas não substitui autorização no serviço.
 
-## Superadmin
+## 4. Seleção de tenant
 
-O superadmin acessa recursos por servico de suporte explicitamente autorizado, com escopo, motivo, prazo e auditoria. Nao reutilizar o token do tenant nem permitir consulta global por uma flag enviada pelo cliente.
+Usuário com acesso a múltiplos tenants deve selecionar contexto de forma explícita. Troca de tenant invalida caches de UI, escopos de consulta e dados sensíveis da superfície anterior.
 
-## Exclusoes e exportacoes
+## 5. Convites
 
-Exclusao de tenant exige confirmacao forte, janela de retencao e job rastreavel. Exportacoes devem ter filtro de tenant, link assinado com expiracao e registro de quem exportou.
+Convite tem tenant, papel/capacidades permitidas, expiração, uso único e auditoria. Aceitar convite não concede permissão maior do que a emitida.
+
+## 6. Exclusão e suspensão
+
+Suspensão bloqueia operação sem apagar dados. Exclusão segue retenção, exportação, billing e LGPD; operações destrutivas exigem autorização forte e registro.

@@ -1,21 +1,25 @@
-# Filas e processamento assincrono
+# Filas e jobs
 
-## Redis e BullMQ
+## 1. Princípios
 
-BullMQ processa jobs de webhook, mensagens, agendamentos, automacoes, indexacao RAG, thumbnails e notificacoes. Redis nao guarda o estado definitivo do negocio.
+Jobs devem ser idempotentes, observáveis e tolerantes a retry. Fila não é banco de negócio.
 
-## Outbox
+## 2. Payload
 
-Transacao de negocio grava mudanca e outbox na mesma transacao. Um dispatcher publica jobs/eventos depois do commit. Isso evita publicar uma mensagem que nao foi persistida ou perder um evento apos o commit.
+Payload mínimo, com IDs, tenant/contexto e correlation ID. Evitar segredo e PII. Dados grandes ficam em storage/banco e são referenciados.
 
-## Regras de job
+## 3. Retry
 
-Todo job tem nome canonico, schema, timeout, retry com backoff, limite de tentativas, dead-letter, correlation id, tenant id e politica de concorrencia. Jobs externos usam idempotency key. Nunca fazer retry cego de erro permanente ou de opt-out.
+- backoff exponencial com jitter;
+- número máximo por tipo;
+- erros permanentes não entram em loop;
+- DLQ para inspeção;
+- reprocessamento auditado.
 
-## Agendamento
+## 4. Concorrência
 
-Horario armazenado em UTC mais timezone do tenant. Mudanca de timezone deve ser explicita. Mensagem agendada pode ser cancelada; o worker verifica permissao, assinatura, limite e supressao antes de enviar.
+Usar chave de deduplicação/lock quando duas execuções causarem efeito duplicado. Provedor externo deve receber idempotency key quando suportar.
 
-## Observabilidade
+## 5. UX
 
-Metricas por fila: enqueued, started, succeeded, failed, retried, delayed, latency e age of oldest job. Alertar dead-letter e crescimento anormal.
+Processos longos expõem estado `queued`, `processing`, `completed`, `failed` e progresso quando confiável. UI pode usar evento ou polling controlado; não fingir percentual.
