@@ -13,6 +13,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormMessage,
   Input,
 } from "@bipesend/ui";
 
@@ -34,7 +35,6 @@ function GoogleIcon({ className }: { className?: string }) {
 export default function LoginPage() {
   const [authStep, setAuthStep] = useState<"choice" | "email">("choice");
   const [serverError, setServerError] = useState("");
-  const [globalValidationError, setGlobalValidationError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
@@ -69,17 +69,6 @@ export default function LoginPage() {
     mode: "onTouched",
   });
 
-  useEffect(() => {
-    const firstError = Object.values(form.formState.errors)[0];
-    if (firstError?.message) {
-      setGlobalValidationError(firstError.message as string);
-      const t = setTimeout(() => setGlobalValidationError(""), 3000);
-      return () => clearTimeout(t);
-    } else {
-      setGlobalValidationError("");
-    }
-  }, [form.formState.errors]);
-
   const onSubmit = async (data: LoginInput) => {
     setServerError("");
     try {
@@ -89,14 +78,17 @@ export default function LoginPage() {
           setLockoutUntil((response as any).lockoutUntil);
           setServerError("Conta temporariamente bloqueada por segurança.");
         } else {
-          setServerError(response.message || "Erro ao realizar login"); 
+          // Set form error so it appears inside the field
+          const msg = response.message || "Erro ao realizar login";
+          form.setError("email", { message: msg });
+          form.setError("password", { message: msg });
         }
         return; 
       }
       toast.success("Bem-vindo de volta! 🎉");
       router.push("/");
     } catch {
-      setServerError("Erro inesperado ao conectar ao servidor.");
+      form.setError("email", { message: "Erro inesperado ao conectar ao servidor." });
     }
   };
 
@@ -125,16 +117,8 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <div className="h-6 flex items-start -mt-2">
-        {globalValidationError && (
-          <p className="text-[13px] font-medium text-[var(--color-danger-600)] animate-in fade-in zoom-in-95 duration-200">
-            {globalValidationError}
-          </p>
-        )}
-      </div>
-
       {/* ── Erro de servidor / Lockout ── */}
-      {serverError && (
+      {serverError && lockoutUntil && (
         <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 animate-error-enter">
           <AlertCircle className="h-4 w-4 mt-0.5 text-[var(--color-danger-600)] flex-shrink-0" />
           <div className="flex flex-col">
@@ -198,15 +182,17 @@ export default function LoginPage() {
               {/* E-mail */}
               <FormField control={form.control} name="email"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-0">
+                  <FormItem className="!space-y-1">
                     <FormControl>
                       <Input
                         id="login-email" label="E-mail" type="email"
+                        placeholder="seuemail@provedor.com.br"
                         autoComplete="email" error={!!fieldState.error}
                         leftIcon={<Mail className="h-5 w-5" />}
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage className="animate-in fade-in zoom-in-95" />
                   </FormItem>
                 )}
               />
@@ -214,10 +200,11 @@ export default function LoginPage() {
               {/* Senha */}
               <FormField control={form.control} name="password"
                 render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-0">
+                  <FormItem className="!space-y-1">
                     <FormControl>
                       <Input
                         id="login-password" label="Senha"
+                        placeholder="123example@"
                         type={showPassword ? "text" : "password"}
                         autoComplete="current-password" error={!!fieldState.error}
                         leftIcon={<Lock className="h-5 w-5" />}
@@ -232,6 +219,7 @@ export default function LoginPage() {
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage className="animate-in fade-in zoom-in-95" />
                   </FormItem>
                 )}
               />

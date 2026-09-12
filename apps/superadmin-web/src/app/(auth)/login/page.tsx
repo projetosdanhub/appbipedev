@@ -52,14 +52,8 @@ export default function SuperadminLoginPage() {
       </div>
 
       <form onSubmit={handleLogin} className="space-y-4 w-full" noValidate>
-        {error && (
-          <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 animate-error-enter mb-2">
-            <AlertCircle className="h-4 w-4 mt-0.5 text-[var(--color-danger-600)] flex-shrink-0" />
-            <p className="text-[13px] font-medium text-[var(--color-danger-600)]">{error}</p>
-          </div>
-        )}
 
-        <div className="space-y-0">
+        <div className="space-y-1">
           <Input
             id="sa-email"
             label="E-mail"
@@ -67,13 +61,14 @@ export default function SuperadminLoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="admin@bipesend.com.br"
+            placeholder="seuemail@provedor.com.br"
             autoComplete="email"
+            error={!!error}
             leftIcon={<Mail className="h-5 w-5" />}
           />
         </div>
 
-        <div className="space-y-0">
+        <div className="space-y-1">
           <Input
             id="sa-password"
             label="Senha"
@@ -81,8 +76,9 @@ export default function SuperadminLoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Digite sua senha"
+            placeholder="123example@"
             autoComplete="current-password"
+            error={!!error}
             leftIcon={<Lock className="h-5 w-5" />}
             rightIcon={
               <button
@@ -100,6 +96,11 @@ export default function SuperadminLoginPage() {
               </button>
             }
           />
+          {error && (
+            <p className="text-[12px] font-medium text-[var(--color-danger-600)] animate-in fade-in zoom-in-95">
+              {error}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center justify-between pt-1 pb-2">
