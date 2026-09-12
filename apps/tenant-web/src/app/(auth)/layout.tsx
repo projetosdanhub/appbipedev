@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { AuthLogo } from "./_components/auth-logo";
 
+import { MessageCircle, ShieldCheck, KeyRound } from "lucide-react";
+
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
@@ -27,12 +29,29 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="relative z-10 flex items-start">
         </div>
 
-        <div className="relative z-10 flex flex-col gap-4">
-          <div className="flex items-center gap-2.5 bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-2.5 shadow-xl w-fit">
-            <div className="w-2 h-2 rounded-full bg-[#10B981] shadow-[0_0_6px_rgba(16,185,129,0.7)] animate-pulse flex-shrink-0" />
-            <span className="text-white/90 text-[13px] font-medium" style={{ fontFamily: "Poppins, sans-serif" }}>
-              Plataforma 100% segura e criptografada
-            </span>
+        <div className="relative z-10 flex flex-col gap-6">
+          <div className="space-y-2 max-w-[480px]">
+            <h2 className="text-white text-[28px] font-bold leading-[1.15]">
+              Tecnologia confiável para operações que não podem parar.
+            </h2>
+            <p className="text-white/80 text-[16px] leading-relaxed">
+              Segurança, estabilidade e controle para suas conversas e sua operação comercial.
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap gap-x-6 gap-y-3 mt-2">
+            <div className="flex items-center gap-2">
+              <MessageCircle className="w-4 h-4 text-emerald-400" />
+              <span className="text-white/90 text-[13px] font-medium">Conversas centralizadas</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span className="text-white/90 text-[13px] font-medium">Operação confiável</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <KeyRound className="w-4 h-4 text-emerald-400" />
+              <span className="text-white/90 text-[13px] font-medium">Acesso protegido</span>
+            </div>
           </div>
         </div>
       </div>
@@ -43,14 +62,14 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         ════════════════════════════════════════ 
       */}
       <div className="
-        flex w-full lg:w-[480px] xl:w-[560px] flex-shrink-0
+        flex w-full lg:w-[520px] flex-shrink-0
         flex-col items-center
         bg-white
-        px-5 sm:px-8 lg:px-12 xl:px-16
+        px-5 sm:px-8 lg:px-12
         h-[100dvh] overflow-y-auto
       ">
-        <div className="w-full max-w-[420px] flex flex-col items-center py-12 lg:py-16 my-auto">
-          <div className="mb-10 lg:mb-12 flex justify-center w-full mt-4 lg:mt-0">
+        <div className="w-full max-w-[420px] flex flex-col items-center pt-[24px] lg:pt-[48px] pb-12">
+          <div className="mb-[28px] lg:mb-[32px] flex justify-center w-full">
             <AuthLogo />
           </div>
 

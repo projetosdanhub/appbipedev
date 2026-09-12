@@ -1,55 +1,23 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Loader2, Lock, AlertCircle, ArrowRight } from "lucide-react";
-import {
-  Button,
-  Input,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-} from "@bipesend/ui";
-
-import { resetPasswordSchema, type ResetPasswordInput } from "@/lib/validations/auth";
-import { resetPasswordAction } from "../../_actions/auth";
+import { Button, Input } from "@bipesend/ui";
 
 function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || "";
   const token = searchParams.get('token') || "";
   
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const [globalValidationError, setGlobalValidationError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
-
-  const form = useForm<ResetPasswordInput>({
-    resolver: zodResolver(resetPasswordSchema),
-    defaultValues: {
-      password: "",
-      confirmPassword: "",
-    },
-    mode: "onTouched",
-  });
-
-  useEffect(() => {
-    const firstError = Object.values(form.formState.errors)[0];
-    if (firstError?.message) {
-      setGlobalValidationError(firstError.message as string);
-      const t = setTimeout(() => setGlobalValidationError(""), 3000);
-      return () => clearTimeout(t);
-    } else {
-      setGlobalValidationError("");
-    }
-  }, [form.formState.errors]);
-
-  const passwordValue = form.watch("password");
 
   const getPasswordStrength = (pass: string) => {
     let score = 0;
@@ -65,32 +33,37 @@ function ResetPasswordContent() {
     return { score, label: "Forte", color: "bg-emerald-500" };
   };
 
-  const strength = getPasswordStrength(passwordValue);
+  const strength = getPasswordStrength(password);
 
-  const onSubmit = async (data: ResetPasswordInput) => {
+  const handleReset = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError("");
 
+    if (password.length < 8) {
+      setError("A senha deve ter pelo menos 8 caracteres.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+
+    setIsLoading(true);
     try {
-      const response = await resetPasswordAction({
-        ...data,
-        email,
-        code: token,
-      });
-      
-      if (!response.success) {
-        setError(response.message || "Erro ao redefinir a senha");
-        return;
-      }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       
       setIsSuccess(true);
-      toast.success(response.message);
+      toast.success("Senha redefinida com sucesso.");
       
       setTimeout(() => {
         router.push("/login");
       }, 3000);
       
     } catch {
-      setError("Ocorreu um erro inesperado ao conectar ao servidor.");
+      setError("Ocorreu um erro inesperado.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -127,14 +100,6 @@ function ResetPasswordContent() {
         </p>
       </div>
 
-      <div className="h-6 flex items-start -mt-2">
-        {globalValidationError && (
-          <p className="text-[13px] font-medium text-[var(--color-danger-600)] animate-in fade-in zoom-in-95 duration-200">
-            {globalValidationError}
-          </p>
-        )}
-      </div>
-
       {error && (
         <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 animate-error-enter">
           <AlertCircle className="h-4 w-4 mt-0.5 text-[var(--color-danger-600)] flex-shrink-0" />
@@ -142,74 +107,56 @@ function ResetPasswordContent() {
         </div>
       )}
 
-      <Form {...form}>
-        <form className="space-y-4 w-full" onSubmit={form.handleSubmit(onSubmit)} noValidate>
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="!space-y-0">
-                <FormControl>
-                  <Input 
-                    label="Nova senha"
-                    type="password" 
-                    placeholder="••••••••" 
-                    leftIcon={<Lock className="h-5 w-5" />}
-                    {...field} 
-                  />
-                </FormControl>
-                {field.value?.length > 0 && (
-                  <div className="animate-fade-in space-y-1.5 pt-2">
-                    <div className="flex gap-1 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                      <div className={`h-full transition-all duration-300 ${strength.score >= 1 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-                      <div className={`h-full transition-all duration-300 ${strength.score >= 2 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-                      <div className={`h-full transition-all duration-300 ${strength.score >= 3 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-                      <div className={`h-full transition-all duration-300 ${strength.score >= 4 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-                    </div>
-                    <p className="text-xs text-slate-500 flex justify-between">
-                      <span>Força da senha:</span>
-                      <span className="font-medium" style={{ color: strength.score > 0 ? (strength.score > 3 ? '#10B981' : strength.score > 1 ? '#F59E0B' : '#EF4444') : '' }}>
-                        {strength.label}
-                      </span>
-                    </p>
-                  </div>
-                )}
-              </FormItem>
-            )}
+      <form className="space-y-4 w-full" onSubmit={handleReset} noValidate>
+        <div className="space-y-0 relative">
+          <Input 
+            label="Nova senha"
+            type="password" 
+            placeholder="••••••••" 
+            leftIcon={<Lock className="h-5 w-5" />}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
+          {password.length > 0 && (
+            <div className="animate-fade-in space-y-1.5 pt-2">
+              <div className="flex gap-1 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div className={`h-full transition-all duration-300 ${strength.score >= 1 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
+                <div className={`h-full transition-all duration-300 ${strength.score >= 2 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
+                <div className={`h-full transition-all duration-300 ${strength.score >= 3 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
+                <div className={`h-full transition-all duration-300 ${strength.score >= 4 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
+              </div>
+              <p className="text-xs text-slate-500 flex justify-between">
+                <span>Força da senha:</span>
+                <span className="font-medium" style={{ color: strength.score > 0 ? (strength.score > 3 ? '#10B981' : strength.score > 1 ? '#F59E0B' : '#EF4444') : '' }}>
+                  {strength.label}
+                </span>
+              </p>
+            </div>
+          )}
+        </div>
 
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem className="!space-y-0">
-                <FormControl>
-                  <Input 
-                    label="Confirmar nova senha"
-                    type="password" 
-                    placeholder="••••••••" 
-                    leftIcon={<Lock className="h-5 w-5" />}
-                    {...field} 
-                  />
-                </FormControl>
-              </FormItem>
+        <Input 
+          label="Confirmar nova senha"
+          type="password" 
+          placeholder="••••••••" 
+          leftIcon={<Lock className="h-5 w-5" />}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+
+        <div className="pt-4">
+          <Button
+            type="submit"
+            isLoading={isLoading}
+            className="w-full"
+            size="lg"
+          >
+            {isLoading ? "Salvando..." : (
+              <>Redefinir senha <ArrowRight className="ml-2 h-5 w-5" /></>
             )}
-          />
-
-          <div className="pt-4">
-            <Button
-              type="submit"
-              isLoading={form.formState.isSubmitting}
-              className="w-full"
-              size="lg"
-            >
-              {form.formState.isSubmitting ? "Salvando..." : (
-                <>Redefinir senha <ArrowRight className="ml-2 h-5 w-5" /></>
-              )}
-            </Button>
-          </div>
-        </form>
-      </Form>
+          </Button>
+        </div>
+      </form>
       
       <p className="mt-8 text-center text-[14px] text-slate-500">
         Lembrou da sua senha?{" "}

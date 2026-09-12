@@ -121,7 +121,7 @@ function VerifyCodeContent() {
     setError("");
 
     try {
-      const response = await verifyAction(data);
+      const response = await verifyAction({ ...data, email });
       
       if (!response.success) {
         setError(response.message || "Código inválido. Tente novamente.");

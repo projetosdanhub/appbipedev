@@ -191,7 +191,7 @@ export default function RegisterPage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-auth-card-enter w-full" noValidate>
             
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Nome */}
               <FormField control={form.control} name="name"
                 render={({ field, fieldState }) => (
@@ -272,7 +272,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Botão principal */}
-            <div className="pt-4">
+            <div className="pt-2">
               <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
                 className="w-full"
               >

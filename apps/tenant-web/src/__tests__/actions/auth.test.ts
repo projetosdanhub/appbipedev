@@ -23,10 +23,9 @@ describe("Server Actions — Auth", () => {
     it("returns success with a valid payload", async () => {
       const result = await registerAction({
         name: "João",
+        companyName: "João Company",
         email: "joao@test.com",
-        password: "12345678",
-        confirmPassword: "12345678",
-        acceptTerms: true,
+        password: "NewPass123!",
       });
       expect(result.success).toBe(true);
       expect(result.message).toBeTruthy();
@@ -46,6 +45,8 @@ describe("Server Actions — Auth", () => {
   describe("resetPasswordAction", () => {
     it("returns success with matching passwords", async () => {
       const result = await resetPasswordAction({
+        email: "user@test.com",
+        code: "123456",
         password: "NewPass123!",
         confirmPassword: "NewPass123!",
       });
@@ -56,6 +57,7 @@ describe("Server Actions — Auth", () => {
   describe("verifyAction", () => {
     it("returns success with a valid code", async () => {
       const result = await verifyAction({
+        email: "user@test.com",
         code: "123456",
       });
       expect(result.success).toBe(true);

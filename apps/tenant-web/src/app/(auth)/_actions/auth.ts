@@ -212,7 +212,7 @@ const verifyCodeServerSchema = z.object({
   code: z.string().min(6)
 });
 
-export async function verifyAction(data: VerifyCodeInput) {
+export async function verifyAction(data: VerifyCodeInput & { email: string }) {
   const parsed = verifyCodeServerSchema.safeParse(data);
   if (!parsed.success) {
     return { success: false, message: "Dados inválidos." };
