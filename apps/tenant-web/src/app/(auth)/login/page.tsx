@@ -214,32 +214,32 @@ export default function LoginPage() {
           </div>
 
           {/* Divisor OU */}
-          <div className="flex items-center justify-center mt-[20px]">
+          <div className="flex items-center justify-center mt-[20px] py-2">
             <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
-            <span className="px-3 text-[14px] text-[#8A96B3] font-medium">
+            <span className="px-4 text-[14px] text-[#8E9AB4] font-medium">
               ou
             </span>
             <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
           </div>
 
-          <div className="mt-[18px] pb-6">
+          <div className="mt-[10px] pb-6">
             <Button 
               type="button"
               onClick={() => toast.info("Login com Google em breve 🚀")}
               variant="outline"
               size="lg"
-              className="w-full h-[52px] rounded-[14px] border-[#DCE5F2] bg-white text-[#07113F] font-medium shadow-none hover:bg-slate-50"
+              className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-slate-50 transition-colors"
             >
               <GoogleIcon className="h-5 w-5 mr-3" />
-              Continuar com Google
+              Google
             </Button>
           </div>
 
           {/* Termos rodapé */}
-          <p className="text-[13px] text-center text-[#A1A8B6] pt-2 leading-relaxed px-4">
+          <p className="text-[13px] text-center text-[#8E9AB4] pt-2 leading-relaxed px-4">
             Ao entrar, você concorda com nossos{" "}
-            <Link href="/terms" className="underline hover:text-[#0F172A] transition-colors">Termos de Serviço</Link> e{" "}
-            <Link href="/privacy" className="underline hover:text-[#0F172A] transition-colors">Política de Privacidade</Link>.
+            <Link href="/terms" className="text-[#0A74FF] hover:underline font-medium transition-colors">Termos de Serviço</Link> e{" "}
+            <Link href="/privacy" className="text-[#0A74FF] hover:underline font-medium transition-colors">Política de Privacidade</Link>.
           </p>
         </form>
       </Form>

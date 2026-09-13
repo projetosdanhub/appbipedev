@@ -39,14 +39,14 @@ function PasswordStrength({ password }: { password?: string }) {
   const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(p);
   
   return (
-    <div className="flex flex-col gap-2 pt-1 px-1">
-      <div className={`flex items-center gap-2 text-[12px] transition-colors ${hasLength ? "text-emerald-500 font-medium" : "text-[#A1A8B6]"}`}>
+    <div className="flex items-center gap-6 pt-1 px-1">
+      <div className={`flex items-center gap-2 text-[14px] transition-colors ${hasLength ? "text-[#1478FF] font-medium" : "text-[#8E9AB4]"}`}>
         {hasLength ? <CheckCircle2 className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
         <span>Mínimo 8 caracteres</span>
       </div>
-      <div className={`flex items-center gap-2 text-[12px] transition-colors ${hasSpecial ? "text-emerald-500 font-medium" : "text-[#A1A8B6]"}`}>
+      <div className={`flex items-center gap-2 text-[14px] transition-colors ${hasSpecial ? "text-[#1478FF] font-medium" : "text-[#8E9AB4]"}`}>
         {hasSpecial ? <CheckCircle2 className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
-        <span>1 caractere especial (ex: !@#$)</span>
+        <span>1 especial</span>
       </div>
     </div>
   );
@@ -94,12 +94,12 @@ export default function RegisterPage() {
 
       {/* ── Heading Dinâmico ── */}
       {!isSuccessView && (
-        <div className="space-y-2 text-center md:text-left">
-          <h1 className="text-[24px] md:text-[30px] font-bold text-[#0F172A] tracking-tight leading-[1.2]">
-            Crie sua conta Grátis
+        <div className="space-y-2 text-center md:text-left mb-6">
+          <h1 className="text-[30px] md:text-[34px] font-bold text-[#07113F] tracking-tight leading-[1.15]">
+            Crie sua conta
           </h1>
-          <p className="text-[15px] md:text-[16px] text-[#A1A8B6] leading-relaxed font-normal">
-            Aqui você faz tudo, aumenta as vendas, seu próprio atendente, automatizado, centralizado e no fim você sorri!
+          <p className="text-[16px] md:text-[18px] text-[#68789A] leading-[1.45] font-normal">
+            Comece com a BipeSend e centralize seu atendimento em um só lugar.
           </p>
         </div>
       )}
@@ -117,7 +117,7 @@ export default function RegisterPage() {
                     <FormControl>
                       <Input
                         id="register-name" label="Nome completo"
-                        placeholder="Yasmin Araújo"
+                        placeholder="Ex.: Yasmin Araújo"
                         autoComplete="name" error={!!fieldState.error}
                         leftIcon={<User className="h-5 w-5" />}
                         {...field}
@@ -135,7 +135,7 @@ export default function RegisterPage() {
                     <FormControl>
                       <Input
                         id="register-company" label="Nome da empresa (opcional)"
-                        placeholder="Sua empresa"
+                        placeholder="Ex.: Sua empresa"
                         autoComplete="organization" error={!!fieldState.error}
                         leftIcon={<Building className="h-5 w-5" />}
                         {...field}
@@ -152,8 +152,8 @@ export default function RegisterPage() {
                   <FormItem className="!space-y-1">
                     <FormControl>
                       <Input
-                        id="register-email" label="E-mail profissional" type="email"
-                        placeholder="seuemail@provedor.com.br"
+                        id="register-email" label="E-mail" type="email"
+                        placeholder="seuemail@empresa.com.br"
                         autoComplete="email" error={!!fieldState.error}
                         leftIcon={<Mail className="h-5 w-5" />}
                         {...field}
@@ -170,14 +170,14 @@ export default function RegisterPage() {
                   <FormItem className="!space-y-1">
                     <FormControl>
                       <Input
-                        id="register-password" label="Crie uma senha"
-                        placeholder="Sua senha"
+                        id="register-password" label="Senha"
+                        placeholder="Ex.: MinhaSenha@123"
                         type={showPassword ? "text" : "password"}
                         autoComplete="new-password" error={!!fieldState.error}
                         leftIcon={<Lock className="h-5 w-5" />}
                         rightIcon={
                           <button type="button" onClick={() => setShowPassword(v => !v)}
-                            className="text-[#A1A8B6] hover:text-[#007BFF] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007BFF]"
+                            className="text-[#8E9AB4] hover:text-[#07113F] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1478FF]/30"
                             aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                           >
                             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -196,17 +196,32 @@ export default function RegisterPage() {
             {/* Botão principal */}
             <div className="pt-3">
               <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
-                className="w-full text-[16px]"
+                className="w-full h-[56px] rounded-[16px] bg-gradient-to-r from-[#079CF5] via-[#1478FF] to-[#A827F5] border-0 text-white font-semibold text-[16px] shadow-[0_10px_24px_rgba(50,80,220,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
               >
-                {form.formState.isSubmitting ? "Criando conta..." : "Criar minha conta"}
+                {form.formState.isSubmitting ? "Criando conta..." : (
+                  <span className="flex items-center gap-2">
+                    Criar conta
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-1">
+                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </span>
+                )}
               </Button>
             </div>
 
+            {/* Termos implícitos */}
+            <div className="pt-4 text-center px-2">
+              <p className="text-[13px] text-[#8E9AB4] leading-relaxed">
+                Ao criar a conta, você concorda com nossos <br className="hidden md:block" />
+                <Link href="/terms" className="text-[#0A74FF] hover:underline font-medium transition-colors">Termos de Serviço</Link> e <Link href="/privacy" className="text-[#0A74FF] hover:underline font-medium transition-colors">Política de Privacidade</Link>.
+              </p>
+            </div>
+
             {/* Login Link */}
-            <div className="pt-2 text-center">
-              <p className="text-[14px] text-slate-500 font-medium">
+            <div className="pt-1 pb-2 text-center">
+              <p className="text-[14px] text-[#6E7D9E] font-medium">
                 Já tem uma conta?{" "}
-                <Link href="/login" className="font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors">
+                <Link href="/login" className="font-semibold text-[#0A74FF] hover:text-[#0A74FF]/80 transition-colors">
                   Entrar
                 </Link>
               </p>
@@ -215,7 +230,7 @@ export default function RegisterPage() {
             {/* Divisor OU */}
             <div className="flex items-center justify-center py-2">
               <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
-              <span className="px-3 text-[12px] text-[#A1A8B6] font-medium uppercase tracking-widest">
+              <span className="px-4 text-[14px] text-[#8E9AB4] font-medium">
                 ou
               </span>
               <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
@@ -224,20 +239,13 @@ export default function RegisterPage() {
             <Button 
               type="button"
               onClick={() => toast.info("Cadastro com Google em breve 🚀")}
-              variant="google"
+              variant="outline"
               size="lg"
-              className="w-full"
+              className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-slate-50 transition-colors"
             >
               <GoogleIcon className="h-5 w-5 mr-3" />
-              Continuar com Google
+              Google
             </Button>
-
-            {/* Termos implícitos */}
-            <p className="text-[13px] text-center text-[#A1A8B6] pt-2 leading-relaxed px-4">
-              Ao criar a conta, você concorda com nossos{" "}
-              <Link href="/terms" className="underline hover:text-[#0F172A] transition-colors">Termos de Serviço</Link> e{" "}
-              <Link href="/privacy" className="underline hover:text-[#0F172A] transition-colors">Política de Privacidade</Link>.
-            </p>
           </form>
         </Form>
       )}
