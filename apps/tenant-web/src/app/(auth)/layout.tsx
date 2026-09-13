@@ -13,7 +13,7 @@ export default function TenantAuthLayout({ children }: { children: React.ReactNo
       logo={<AuthLogo />}
       backgroundImage="/bg-login.png"
       brandingTitle="CRM confiável para operações que não podem parar."
-      brandingDescription="Rapidez no atendimento, portabilidade e total controle"
+      brandingDescription="Qualidade no atendimento, Portabilidade e Total Controle"
       brandingPills={
         <>
           <GlassPill icon={<MessageCircle />}>Conversas centralizadas</GlassPill>

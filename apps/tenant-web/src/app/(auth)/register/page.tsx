@@ -137,7 +137,7 @@ export default function RegisterPage() {
             {authStep === "choice" ? "Crie sua conta" : "Cadastro"}
           </h1>
           <p className="text-[15px] md:text-[16px] text-[#68789A] leading-[1.45] font-normal">
-            Comece com a BipeSend e centralize seu atendimento em um só lugar.
+            Em apenas um Bipe você organiza tudo, aumenta as vendas e cresce o seu negócio.
           </p>
         </div>
       )}
