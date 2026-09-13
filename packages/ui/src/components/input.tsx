@@ -19,7 +19,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label 
             htmlFor={inputId} 
-            className="text-[14px] font-medium text-[var(--color-ink-900)] leading-[20px]"
+            className="text-[15px] font-semibold text-[#07113F]"
           >
             {label}
           </label>
@@ -37,8 +37,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             type={type}
             className={cn(
-              "flex h-[54px] md:h-[56px] w-full rounded-[14px] border border-[#DCE5F2] bg-[#FFFFFF] py-2 text-[16px] text-[#07113F] ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[#A1A8B6] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#1478FF]/10 focus-visible:border-[#1478FF] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150 hover:border-[#1478FF]/50",
-              leftIcon ? "pl-[64px]" : "pl-4",
+              "flex h-[54px] w-full rounded-[14px] border border-[#DCE5F2] bg-[#FFFFFF] py-2 text-[16px] text-[#07113F] ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[#A1A8B6] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#1478FF]/10 focus-visible:border-[#1478FF] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150 hover:border-[#1478FF]/50",
+              leftIcon ? "pl-[58px]" : "pl-4",
               rightIcon ? "pr-12" : "pr-4",
               error && "border-red-500 focus-visible:ring-red-500/10 focus-visible:border-red-500",
               className

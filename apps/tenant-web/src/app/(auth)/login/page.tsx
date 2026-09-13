@@ -91,15 +91,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-content-enter w-full space-y-6">
+    <div className="auth-content-enter w-full space-y-[28px]">
       
       {/* ── Heading Dinâmico ── */}
-      <div className="space-y-2 text-center md:text-left">
-        <h1 className="text-[24px] md:text-[30px] font-bold text-[#0F172A] tracking-tight leading-[1.2]">
+      <div className="space-y-2.5 text-center">
+        <h1 className="text-[30px] md:text-[34px] font-bold text-[#07113F] tracking-tight leading-[1.15]">
           Entre na sua conta
         </h1>
-        <p className="text-[15px] md:text-[16px] text-[#A1A8B6] leading-relaxed font-normal">
-          Acesse seu CRM e continue suas conversas e oportunidades.
+        <p className="text-[16px] md:text-[18px] text-[#68789A] leading-[1.45] font-normal">
+          Acesse seu CRM e continue suas conversas com agilidade.
         </p>
       </div>
 
@@ -126,13 +126,13 @@ export default function LoginPage() {
             {/* E-mail */}
             <FormField control={form.control} name="email"
               render={({ field, fieldState }) => (
-                <FormItem className="!space-y-1">
+                <FormItem className="!space-y-2">
                   <FormControl>
                     <Input
                       id="login-email" label="E-mail" type="email"
-                      placeholder="seuemail@provedor.com.br"
-                      autoComplete="email" error={!!fieldState.error}
-                      leftIcon={<Mail className="h-5 w-5" />}
+                      placeholder="seuemail@empresa.com.br"
+                      autoComplete="username" error={!!fieldState.error}
+                      leftIcon={<Mail className="h-5 w-5 text-[#7F90B2]" />}
                       {...field}
                     />
                   </FormControl>
@@ -144,17 +144,17 @@ export default function LoginPage() {
             {/* Senha */}
             <FormField control={form.control} name="password"
               render={({ field, fieldState }) => (
-                <FormItem className="!space-y-1">
+                <FormItem className="!space-y-2 mt-[18px]">
                   <FormControl>
                     <Input
                       id="login-password" label="Senha"
-                      placeholder="Sua senha"
+                      placeholder="Ex.: MinhaSenha@123"
                       type={showPassword ? "text" : "password"}
                       autoComplete="current-password" error={!!fieldState.error}
-                      leftIcon={<Lock className="h-5 w-5" />}
+                      leftIcon={<Lock className="h-5 w-5 text-[#7F90B2]" />}
                       rightIcon={
                         <button type="button" onClick={() => setShowPassword(v => !v)}
-                          className="text-[#A1A8B6] hover:text-[#007BFF] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007BFF]"
+                          className="text-[#7F90B2] hover:text-[#079CF5] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#079CF5]"
                           aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                         >
                           {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -170,66 +170,70 @@ export default function LoginPage() {
           </div>
 
           {/* Lembrar + Esqueci */}
-          <div className="flex items-center justify-between pt-1">
+          <div className="flex items-center justify-between pt-4 mt-[16px]">
             <label className="flex items-center gap-2.5 cursor-pointer group relative">
               <div className="relative flex items-center justify-center">
                 <input id="rememberMe" type="checkbox" checked={rememberMe}
                   onChange={e => setRememberMe(e.target.checked)}
                   className="peer sr-only" aria-label="Lembrar de mim"
                 />
-                <div className="w-[20px] h-[20px] rounded-md border-2 border-[#DCE5F2] bg-white transition-all peer-checked:border-[#007BFF] peer-checked:bg-[#007BFF] peer-focus-visible:ring-2 peer-focus-visible:ring-[#007BFF]/30 group-hover:border-[#007BFF]" />
-                <div className={`absolute inset-0 rounded-md bg-[#007BFF] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
-                <svg className="absolute w-3.5 h-3.5 text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <div className="w-[22px] h-[22px] rounded-md border-2 border-[#DCE5F2] bg-white transition-all peer-checked:border-[#087CF5] peer-checked:bg-[#087CF5] peer-focus-visible:ring-2 peer-focus-visible:ring-[#087CF5]/30 group-hover:border-[#087CF5]" />
+                <div className={`absolute inset-0 rounded-md bg-[#087CF5] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
+                <svg className="absolute w-4 h-4 text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </div>
-              <span className="text-[14px] text-slate-500 group-hover:text-[#0F172A] transition-colors select-none font-medium">
+              <span className="text-[15px] text-[#07113F] font-medium transition-colors select-none">
                 Continuar conectado
               </span>
             </label>
             <Link href="/forgot-password"
-              className="text-[14px] font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors"
+              className="text-[15px] font-medium text-[#0A74FF] hover:opacity-80 transition-opacity"
             >
               Recuperar senha
             </Link>
           </div>
 
           {/* Botão principal */}
-          <div className="pt-3">
+          <div className="mt-[20px]">
             <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
               disabled={!!lockoutUntil}
-              className="w-full text-[16px]"
+              className="w-full text-[16px] md:text-[18px] font-semibold text-white h-[56px] rounded-[16px] border-0 shadow-[0_10px_24px_rgba(50,80,220,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
+              style={{ background: "linear-gradient(100deg, #079CF5 0%, #1478FF 38%, #5759F5 70%, #A827F5 100%)" }}
             >
-              {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
+              {form.formState.isSubmitting ? "Entrando..." : "Entrar com e-mail e senha"}
+              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </Button>
           </div>
 
-          <div className="pt-2 text-center">
-            <p className="text-[14px] text-slate-500 font-medium">
+          <div className="text-center mt-[20px]">
+            <p className="text-[15px] md:text-[16px] text-[#68789A] font-medium">
               Ainda não tem uma conta?{" "}
-              <Link href="/register" className="font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors">
+              <Link href="/register" className="font-semibold text-[#0A74FF] hover:opacity-80 transition-opacity">
                 Criar conta
               </Link>
             </p>
           </div>
 
           {/* Divisor OU */}
-          <div className="flex items-center justify-center py-2">
+          <div className="flex items-center justify-center mt-[20px]">
             <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
-            <span className="px-3 text-[12px] text-[#A1A8B6] font-medium uppercase tracking-widest">
+            <span className="px-3 text-[14px] text-[#8A96B3] font-medium">
               ou
             </span>
             <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
           </div>
 
-          <Button 
-            type="button"
-            onClick={() => toast.info("Login com Google em breve 🚀")}
-            variant="google"
-            size="lg"
-            className="w-full"
-          >
-            <GoogleIcon className="h-5 w-5 mr-3" />
-            Continuar com Google
-          </Button>
+          <div className="mt-[18px] pb-6">
+            <Button 
+              type="button"
+              onClick={() => toast.info("Login com Google em breve 🚀")}
+              variant="outline"
+              size="lg"
+              className="w-full h-[52px] rounded-[14px] border-[#DCE5F2] bg-white text-[#07113F] font-medium shadow-none hover:bg-slate-50"
+            >
+              <GoogleIcon className="h-5 w-5 mr-3" />
+              Continuar com Google
+            </Button>
+          </div>
 
           {/* Termos rodapé */}
           <p className="text-[13px] text-center text-[#A1A8B6] pt-2 leading-relaxed px-4">

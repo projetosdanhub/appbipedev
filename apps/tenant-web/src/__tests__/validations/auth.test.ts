@@ -36,11 +36,10 @@ describe("loginSchema", () => {
 describe("registerSchema", () => {
   it("validates a correct registration payload", () => {
     const result = registerSchema.safeParse({
-      name: "João Silva",
+      name: "Joǜo Silva",
+      companyName: "Empresa do Joǜo",
       email: "joao@empresa.com",
       password: "Senh@Forte1",
-      confirmPassword: "Senh@Forte1",
-      acceptTerms: true,
     });
     expect(result.success).toBe(true);
   });
@@ -48,42 +47,18 @@ describe("registerSchema", () => {
   it("rejects a short name", () => {
     const result = registerSchema.safeParse({
       name: "Jo",
+      companyName: "Empresa do Joǜo",
       email: "joao@empresa.com",
-      password: "12345678",
-      confirmPassword: "12345678",
-      acceptTerms: true,
+      password: "Senh@Forte1",
     });
     expect(result.success).toBe(false);
   });
 
   it("rejects missing email", () => {
     const result = registerSchema.safeParse({
-      name: "João",
-      password: "12345678",
-      confirmPassword: "12345678",
-      acceptTerms: true,
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it("rejects non-matching passwords", () => {
-    const result = registerSchema.safeParse({
-      name: "João Silva",
-      email: "joao@empresa.com",
-      password: "12345678",
-      confirmPassword: "87654321",
-      acceptTerms: true,
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it("rejects when acceptTerms is false", () => {
-    const result = registerSchema.safeParse({
-      name: "João Silva",
-      email: "joao@empresa.com",
-      password: "12345678",
-      confirmPassword: "12345678",
-      acceptTerms: false,
+      name: "Joǜo",
+      companyName: "Empresa do Joǜo",
+      password: "Senh@Forte1",
     });
     expect(result.success).toBe(false);
   });
