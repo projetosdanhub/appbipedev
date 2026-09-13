@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   alternates: {
-    canonical: "/login",
+    canonical: "https://bipesend.com.br/login",
   }
 };
 
