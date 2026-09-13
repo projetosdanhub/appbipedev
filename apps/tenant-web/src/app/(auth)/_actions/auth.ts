@@ -20,7 +20,7 @@ import {
 } from "@/lib/validations/auth";
 import { z } from "zod";
 
-export async function loginAction(data: LoginInput) {
+export async function loginAction(data: LoginInput & { code?: string }) {
   const parsed = loginSchema.safeParse(data);
   if (!parsed.success) {
     return { success: false, message: "Dados inválidos." };
@@ -54,16 +54,51 @@ export async function loginAction(data: LoginInput) {
     await signIn("credentials", {
       email: data.email,
       password: data.password,
+      code: data.code,
+      rememberMe: data.rememberMe?.toString() || "false",
       redirect: false, // We handle redirection on the client
     });
 
     // Se sucesso, reseta as tentativas
     cookieStore.delete("bipesend_auth_attempts");
     cookieStore.delete("bipesend_auth_lockout");
+
+    // Gerenciar cookie de Sessão vs 7 Dias
+    const isSecure = process.env.NODE_ENV === "production";
+    const tokenName = isSecure ? "__Secure-authjs.session-token" : "authjs.session-token";
+    const sessionToken = cookieStore.get(tokenName);
+
+    if (sessionToken) {
+      if (data.rememberMe === true) {
+        cookieStore.set(tokenName, sessionToken.value, {
+          httpOnly: true,
+          secure: isSecure,
+          sameSite: "lax",
+          path: "/",
+          maxAge: 7 * 24 * 60 * 60, // 7 dias
+        });
+      } else {
+        cookieStore.set(tokenName, sessionToken.value, {
+          httpOnly: true,
+          secure: isSecure,
+          sameSite: "lax",
+          path: "/",
+          // Sem maxAge e expires = Session Cookie (fecha ao fechar o navegador)
+        });
+      }
+    }
     
     return { success: true, message: "Login realizado com sucesso!" };
   } catch (error) {
     if (error instanceof AuthError) {
+      const errorMsg = (error.cause as any)?.err?.message || error.type;
+      if (errorMsg === "2FA_REQUIRED") {
+        return { success: false, message: "2FA_REQUIRED" };
+      }
+      if (errorMsg === "INVALID_2FA_CODE") {
+        return { success: false, message: "Código inválido." };
+      }
+
       let attempts = attemptsCookie ? parseInt(attemptsCookie, 10) : 0;
       attempts += 1;
 

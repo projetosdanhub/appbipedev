@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, Shield } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Shield, Smartphone, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input } from "@bipesend/ui";
+import { loginAction } from "../_actions";
 
 const GoogleIcon = ({ className }: { className?: string }) => (
   <svg
@@ -36,6 +37,8 @@ const GoogleIcon = ({ className }: { className?: string }) => (
 export default function SuperadminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [requires2FA, setRequires2FA] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -49,13 +52,22 @@ export default function SuperadminLoginPage() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      if (!email || !password) {
+
+      if (!requires2FA && (!email || !password)) {
         throw new Error("E-mail e senha são obrigatórios");
+      }
+      if (requires2FA && !code) {
+        throw new Error("O código de autenticação é obrigatório");
+      }
+
+      // Mock 2FA required for testing ui
+      if (!requires2FA && email === "2fa@bipesend.com.br") {
+        setRequires2FA(true);
+        return;
       }
 
       router.push("/");
-    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
+    } catch (err: any) {
       setError(err.message || "Erro ao realizar login");
     } finally {
       setIsLoading(false);
@@ -76,55 +88,80 @@ export default function SuperadminLoginPage() {
 
       <form onSubmit={handleLogin} className="space-y-0 w-full" noValidate>
 
-        <div className="!space-y-2 mt-[24px]">
-          <Input
-            id="sa-email"
-            label="E-mail"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="seuemail@empresa.com.br"
-            autoComplete="username"
-            error={!!error}
-            leftIcon={<Mail className="h-5 w-5 text-[#7F90B2]" />}
-          />
-        </div>
+        {!requires2FA ? (
+          <>
+            <div className="!space-y-2 mt-[24px]">
+              <Input
+                id="sa-email"
+                label="E-mail"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="seuemail@empresa.com.br"
+                autoComplete="username"
+                error={!!error}
+                leftIcon={<Mail className="h-5 w-5 text-[#7F90B2]" />}
+              />
+            </div>
 
-        <div className="!space-y-2 mt-[18px]">
-          <Input
-            id="sa-password"
-            label="Senha"
-            type={showPassword ? "text" : "password"}
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Ex.: MinhaSenha@123"
-            autoComplete="current-password"
-            error={!!error}
-            leftIcon={<Lock className="h-5 w-5 text-[#7F90B2]" />}
-            rightIcon={
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-[#7F90B2] hover:text-[#079CF5] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#079CF5]"
-                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                tabIndex={0}
-              >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
-              </button>
-            }
-          />
-          {error && (
-            <p className="text-[12px] font-medium text-[var(--color-danger-600)] animate-in fade-in zoom-in-95 mt-1">
-              {error}
-            </p>
-          )}
-        </div>
+            <div className="!space-y-2 mt-[18px]">
+              <Input
+                id="sa-password"
+                label="Senha"
+                type={showPassword ? "text" : "password"}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Ex.: MinhaSenha@123"
+                autoComplete="current-password"
+                error={!!error && !requires2FA}
+                leftIcon={<Lock className="h-5 w-5 text-[#7F90B2]" />}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-[#7F90B2] hover:text-[#079CF5] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#079CF5]"
+                    aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                    tabIndex={0}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                }
+              />
+              {error && (
+                <p className="text-[12px] font-medium text-[var(--color-danger-600)] animate-in fade-in zoom-in-95 mt-1">
+                  {error}
+                </p>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="!space-y-2 mt-[24px]">
+            <Input
+              id="sa-code"
+              label="Código de Autenticação (2FA)"
+              type="text"
+              required
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="Digite o código de 6 dígitos"
+              autoComplete="one-time-code"
+              error={!!error}
+              leftIcon={<KeyRound className="h-5 w-5 text-[#7F90B2]" />}
+              autoFocus
+            />
+            {error && (
+              <p className="text-[12px] font-medium text-[var(--color-danger-600)] animate-in fade-in zoom-in-95 mt-1">
+                {error}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Botão principal */}
         <div className="mt-[22px]">
@@ -140,61 +177,65 @@ export default function SuperadminLoginPage() {
           </Button>
         </div>
 
-        {/* Lembrar + Esqueci */}
-        <div className="flex items-center justify-between mt-[14px]">
-          <label className="flex items-center gap-3 cursor-pointer group relative">
-            <div className="relative flex items-center justify-center">
-              <input id="sa-remember" type="checkbox" checked={rememberMe}
-                onChange={e => setRememberMe(e.target.checked)}
-                className="peer sr-only" aria-label="Lembrar de mim"
-              />
-              <div className="w-[18px] h-[18px] rounded-[5px] border-2 border-[#DCE5F2] bg-white transition-all peer-checked:border-[#087CF5] peer-checked:bg-[#087CF5] peer-focus-visible:ring-2 peer-focus-visible:ring-[#087CF5]/30 group-hover:border-[#087CF5]" />
-              <div className={`absolute inset-0 rounded-[5px] bg-[#087CF5] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
-              <svg className="absolute w-[14px] h-[14px] text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        {!requires2FA && (
+          <>
+            {/* Lembrar + Esqueci */}
+            <div className="flex items-center justify-between mt-[14px]">
+              <label className="flex items-center gap-3 cursor-pointer group relative">
+                <div className="relative flex items-center justify-center">
+                  <input id="sa-remember" type="checkbox" checked={rememberMe}
+                    onChange={e => setRememberMe(e.target.checked)}
+                    className="peer sr-only" aria-label="Lembrar de mim"
+                  />
+                  <div className="w-[18px] h-[18px] rounded-[5px] border-2 border-[#DCE5F2] bg-white transition-all peer-checked:border-[#087CF5] peer-checked:bg-[#087CF5] peer-focus-visible:ring-2 peer-focus-visible:ring-[#087CF5]/30 group-hover:border-[#087CF5]" />
+                  <div className={`absolute inset-0 rounded-[5px] bg-[#087CF5] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
+                  <svg className="absolute w-[14px] h-[14px] text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <span className="text-[13px] text-[#68789A] font-medium transition-colors select-none">
+                  Continuar conectado
+                </span>
+              </label>
+              <Link 
+                href="/forgot-password" 
+                className="text-[13px] font-medium text-[#0A74FF] hover:opacity-80 transition-opacity"
+              >
+                Recuperar senha
+              </Link>
             </div>
-            <span className="text-[13px] text-[#68789A] font-medium transition-colors select-none">
-              Continuar conectado
-            </span>
-          </label>
-          <Link 
-            href="/forgot-password" 
-            className="text-[13px] font-medium text-[#0A74FF] hover:opacity-80 transition-opacity"
-          >
-            Recuperar senha
-          </Link>
-        </div>
 
-        {/* Divisor OU */}
-        <div className="flex items-center justify-center mt-[20px] py-2">
-          <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
-          <span className="px-4 text-[14px] text-[#8E9AB4] font-medium">
-            ou
-          </span>
-          <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
-        </div>
+            {/* Divisor OU */}
+            <div className="flex items-center justify-center mt-[20px] py-2">
+              <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
+              <span className="px-4 text-[14px] text-[#8E9AB4] font-medium">
+                ou
+              </span>
+              <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
+            </div>
 
-        <div className="grid grid-cols-2 gap-3 mt-[10px] pb-6">
-          <Button 
-            type="button"
-            onClick={() => toast.info("Autenticação com Google em breve 🚀")}
-            variant="outline"
-            size="lg"
-            className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-[#F9FBFE] hover:border-[#C4D1E2] transition-colors"
-          >
-            <GoogleIcon className="h-[22px] w-[22px] md:mr-2" />
-            <span className="hidden md:inline text-[15px]">Google</span>
-          </Button>
-          <Button 
-            type="button"
-            onClick={() => toast.info("Autenticação com Código em breve 🚀")}
-            variant="outline"
-            size="lg"
-            className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-[#F9FBFE] hover:border-[#C4D1E2] transition-colors"
-          >
-            <Shield className="h-[21px] w-[21px] md:mr-2 text-[#07113F] stroke-[1.8]" />
-            <span className="hidden md:inline text-[15px]">Código</span>
-          </Button>
-        </div>
+            <div className="grid grid-cols-2 gap-3 mt-[10px] pb-6">
+              <Button 
+                type="button"
+                onClick={() => toast.info("Autenticação com Google em breve 🚀")}
+                variant="outline"
+                size="lg"
+                className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-[#F9FBFE] hover:border-[#C4D1E2] transition-colors"
+              >
+                <GoogleIcon className="h-[22px] w-[22px] md:mr-2" />
+                <span className="hidden md:inline text-[15px]">Google</span>
+              </Button>
+              <Button 
+                type="button"
+                onClick={() => setRequires2FA(true)}
+                variant="outline"
+                size="lg"
+                className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-[#F9FBFE] hover:border-[#C4D1E2] transition-colors"
+              >
+                <Smartphone className="h-[21px] w-[21px] md:mr-2 text-[#07113F] stroke-[1.8]" />
+                <span className="hidden md:inline text-[15px]">Código</span>
+              </Button>
+            </div>
+          </>
+        )}
 
       </form>
     </div>

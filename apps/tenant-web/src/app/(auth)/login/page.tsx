@@ -1,19 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Eye, EyeOff, Mail, Lock, AlertCircle, Shield } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, AlertCircle, ArrowRight, Smartphone, KeyRound, Loader2, ArrowLeft } from "lucide-react";
 import {
   Button,
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
   Input,
 } from "@bipesend/ui";
 
@@ -32,13 +31,34 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
-export default function LoginPage() {
+function LoginContent() {
+  const [authStep, setAuthStep] = useState<"choice" | "email">("choice");
   const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
-  const [remainingTime, setRemainingTime] = useState<string>("");
+  const [requires2FA, setRequires2FA] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState("");
+  const [remainingTime, setRemainingTime] = useState("");
+  const [emailPlaceholder, setEmailPlaceholder] = useState("E-mail (ex: seuemail@empresa.com.br)");
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setEmailPlaceholder(window.innerWidth < 768 ? "ex: seuemail@empresa.com.br" : "E-mail (ex: seuemail@empresa.com.br)");
+    };
+    handleResize(); // set on mount
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const errorParam = searchParams?.get("error");
+    if (errorParam === "OAuthAccountNotLinked") {
+      toast.error("Este e-mail já está associado a outra conta.");
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (!lockoutUntil) return;
@@ -65,46 +85,63 @@ export default function LoginPage() {
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "", rememberMe: false },
-    mode: "onTouched",
+    mode: "onBlur",
   });
+
+  // Função auxiliar para classes dos ícones
+  const getIconClass = (val: string | undefined, isTouched: boolean, invalid: boolean) => {
+    const base = "h-5 w-5 md:h-[18px] md:w-[18px] transition-colors duration-300";
+    if (invalid) return `text-red-500 ${base}`;
+    if (val && isTouched) return `text-[#1478FF] ${base}`;
+    return `text-[#7F90B2] ${base}`;
+  };
 
   const onSubmit = async (data: LoginInput) => {
     setServerError("");
     try {
-      const response = await loginAction({ ...data, rememberMe });
+      const response = await loginAction({ ...data, rememberMe, code: requires2FA ? twoFactorCode : undefined });
       if (!response.success) { 
+        if (response.message === "2FA_REQUIRED") {
+          setRequires2FA(true);
+          toast.info("Código de autenticação necessário.");
+          return;
+        }
+
         if ((response as any).lockoutUntil) {
           setLockoutUntil((response as any).lockoutUntil);
           setServerError("Conta temporariamente bloqueada por segurança.");
         } else {
           const msg = response.message || "Erro ao realizar login";
-          form.setError("email", { message: msg });
-          form.setError("password", { message: msg });
+          if (requires2FA) {
+            setServerError(msg); // Exibe erro do 2FA
+          } else {
+            setServerError("Confira os dados inseridos.");
+          }
         }
         return; 
       }
       toast.success("Bem-vindo de volta! 🎉");
       router.push("/");
     } catch {
-      form.setError("email", { message: "Erro inesperado ao conectar ao servidor." });
+      setServerError("Erro inesperado ao conectar ao servidor.");
     }
   };
 
   return (
-    <div className="auth-content-enter w-full space-y-[28px]">
+    <div className="auth-content-enter w-full space-y-[24px]">
       
       {/* ── Heading Dinâmico ── */}
-      <div className="space-y-2.5 text-center">
-        <h1 className="text-[30px] md:text-[34px] font-bold text-[#07113F] tracking-tight leading-[1.15]">
-          Entre na sua conta
+      <div className="space-y-2 text-center md:text-left mb-6">
+        <h1 className="text-[26px] md:text-[30px] font-bold text-[#07113F] tracking-tight leading-[1.15]">
+          {authStep === "choice" ? "Entre na sua conta" : "Entrar com E-mail"}
         </h1>
-        <p className="text-[16px] md:text-[18px] text-[#68789A] leading-[1.45] font-normal">
+        <p className="text-[15px] md:text-[16px] text-[#68789A] leading-[1.45] font-normal">
           Acesse seu CRM e continue suas conversas com agilidade.
         </p>
       </div>
 
       {/* ── Erro de servidor / Lockout ── */}
-      {serverError && lockoutUntil && (
+      {serverError && (
         <div className="flex items-start gap-2.5 rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 animate-error-enter">
           <AlertCircle className="h-4 w-4 mt-0.5 text-red-600 flex-shrink-0" />
           <div className="flex flex-col">
@@ -118,71 +155,47 @@ export default function LoginPage() {
         </div>
       )}
 
-      {/* ── Formulário Principal ── */}
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 animate-auth-card-enter w-full" noValidate>
+      {/* ── Passo 1: Escolha ── */}
+      {authStep === "choice" && (
+        <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300 w-full">
+          <Button 
+            type="button"
+            onClick={() => setAuthStep("email")}
+            size="lg"
+            className="w-full h-[54px] rounded-[14px] border-0 text-white font-semibold text-[16px] shadow-[0_10px_26px_rgba(63,79,215,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
+            style={{ background: "linear-gradient(100deg, #08A6F8 0%, #1478FF 38%, #575AF8 70%, #B132F4 100%)" }}
+          >
+            <Mail className="mr-2 h-5 w-5" />
+            Logar com E-mail e Senha
+          </Button>
+
+          <Button 
+            type="button"
+            onClick={() => {
+              toast.info("A autenticação por código é integrada. Use seu e-mail e senha, e pediremos o código caso o 2FA esteja ativado.");
+              setAuthStep("email");
+            }}
+            variant="outline"
+            size="lg"
+            className="w-full h-[54px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-[#F9FBFE] hover:border-[#C4D1E2] transition-colors"
+          >
+            <Smartphone className="h-5 w-5 mr-3 text-[#07113F]" />
+            <span className="text-[15px]">Login por código</span>
+          </Button>
           
-          <div className="space-y-4">
-            {/* E-mail */}
-            <FormField control={form.control} name="email"
-              render={({ field, fieldState }) => (
-                <FormItem className="!space-y-2">
-                  <FormControl>
-                    <Input
-                      id="login-email" label="E-mail" type="email"
-                      placeholder="seuemail@empresa.com.br"
-                      autoComplete="username" error={!!fieldState.error}
-                      leftIcon={<Mail className="h-5 w-5 text-[#7F90B2]" />}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="animate-in fade-in zoom-in-95" />
-                </FormItem>
-              )}
-            />
+          <Button 
+            type="button"
+            onClick={() => toast.info("Login com Google em breve 🚀")}
+            variant="outline"
+            size="lg"
+            className="w-full h-[54px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-[#F9FBFE] hover:border-[#C4D1E2] transition-colors"
+          >
+            <GoogleIcon className="h-5 w-5 mr-3" />
+            <span className="text-[15px]">Continuar com Google</span>
+          </Button>
 
-            {/* Senha */}
-            <FormField control={form.control} name="password"
-              render={({ field, fieldState }) => (
-                <FormItem className="!space-y-2 mt-[18px]">
-                  <FormControl>
-                    <Input
-                      id="login-password" label="Senha"
-                      placeholder="Ex.: MinhaSenha@123"
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="current-password" error={!!fieldState.error}
-                      leftIcon={<Lock className="h-5 w-5 text-[#7F90B2]" />}
-                      rightIcon={
-                        <button type="button" onClick={() => setShowPassword(v => !v)}
-                          className="text-[#7F90B2] hover:text-[#079CF5] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#079CF5]"
-                          aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                        >
-                          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                        </button>
-                      }
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="animate-in fade-in zoom-in-95" />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* Botão principal */}
-          <div className="mt-[22px]">
-            <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
-              disabled={!!lockoutUntil}
-              className="w-full text-[17px] font-semibold text-white h-[56px] rounded-[16px] border-0 shadow-[0_10px_26px_rgba(63,79,215,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
-              style={{ background: "linear-gradient(100deg, #08A6F8 0%, #1478FF 38%, #575AF8 70%, #B132F4 100%)" }}
-            >
-              {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
-              <svg className="ml-2 w-[20px] h-[20px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-            </Button>
-          </div>
-
-          {/* Lembrar + Esqueci */}
-          <div className="flex items-center justify-between mt-[14px]">
+          {/* Lembrar me (apenas no passo 1) */}
+          <div className="pt-2 flex justify-center">
             <label className="flex items-center gap-3 cursor-pointer group relative">
               <div className="relative flex items-center justify-center">
                 <input id="rememberMe" type="checkbox" checked={rememberMe}
@@ -197,62 +210,156 @@ export default function LoginPage() {
                 Continuar conectado
               </span>
             </label>
-            <Link href="/forgot-password"
-              className="text-[13px] font-medium text-[#0A74FF] hover:opacity-80 transition-opacity"
-            >
-              Recuperar senha
-            </Link>
           </div>
 
-          <div className="text-center mt-[22px]">
-            <p className="text-[14px] text-[#68789A] font-medium">
+          <div className="pt-2 text-center">
+            <p className="text-[14px] text-[#6E7D9E] font-medium">
               Ainda não tem uma conta?{" "}
-              <Link href="/register" className="font-semibold text-[#0A74FF] hover:opacity-80 transition-opacity">
+              <Link href="/register" className="font-semibold text-[#0A74FF] hover:text-[#0A74FF]/80 transition-colors">
                 Criar conta
               </Link>
             </p>
           </div>
+        </div>
+      )}
 
-          {/* Divisor OU */}
-          <div className="flex items-center justify-center mt-[20px] py-2">
-            <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
-            <span className="px-4 text-[14px] text-[#8E9AB4] font-medium">
-              ou
-            </span>
-            <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
-          </div>
+      {/* ── Passo 2: Formulário de Email ── */}
+      {authStep === "email" && (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300 w-full" noValidate>
+            
+            <div className="space-y-3">
+              {requires2FA ? (
+                <div className="!space-y-2 animate-in fade-in slide-in-from-right-4">
+                  <div className="text-center mb-6">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#F0F5FF] mb-4">
+                      <Smartphone className="w-6 h-6 text-[#0A74FF]" />
+                    </div>
+                    <h3 className="text-[18px] font-semibold text-[#07113F]">Verificação em Duas Etapas</h3>
+                    <p className="text-[14px] text-[#68789A] mt-1">
+                      Digite o código gerado pelo seu aplicativo autenticador.
+                    </p>
+                  </div>
+                  <Input
+                    id="login-code" type="text"
+                    placeholder="000000"
+                    maxLength={6}
+                    value={twoFactorCode}
+                    onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ''))}
+                    autoComplete="one-time-code"
+                    className="text-center tracking-[0.2em] font-medium text-[18px] h-[50px]"
+                  />
+                  {serverError && <p className="text-red-500 text-[12px] text-center">{serverError}</p>}
+                </div>
+              ) : (
+                <>
+                  {/* E-mail */}
+                  <FormField control={form.control} name="email"
+                    render={({ field, fieldState }) => (
+                      <FormItem className="!space-y-1">
+                        <FormControl>
+                          <Input
+                            id="login-email" type="email"
+                            placeholder={emailPlaceholder}
+                            autoComplete="username" error={!!fieldState.error}
+                            errorMessage={fieldState.error?.message}
+                            leftIcon={<Mail className={getIconClass(field.value, fieldState.isTouched, fieldState.invalid)} />}
+                            className="h-[50px] text-[15px] md:h-[46px] md:text-[14px]"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
 
-          <div className="grid grid-cols-2 gap-3 mt-[10px] pb-6">
-            <Button 
-              type="button"
-              onClick={() => toast.info("Login com Google em breve 🚀")}
-              variant="outline"
-              size="lg"
-              className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-slate-50 transition-colors"
-            >
-              <GoogleIcon className="h-5 w-5 md:mr-2" />
-              <span className="hidden md:inline">Google</span>
-            </Button>
-            <Button 
-              type="button"
-              onClick={() => toast.info("Login com Código em breve 🚀")}
-              variant="outline"
-              size="lg"
-              className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-slate-50 transition-colors"
-            >
-              <Shield className="h-5 w-5 md:mr-2 text-[#07113F]" />
-              <span className="hidden md:inline">Código</span>
-            </Button>
-          </div>
+                  {/* Senha */}
+                  <FormField control={form.control} name="password"
+                    render={({ field, fieldState }) => (
+                      <FormItem className="!space-y-1">
+                        <FormControl>
+                          <Input
+                            id="login-password"
+                            placeholder="Sua senha"
+                            type={showPassword ? "text" : "password"}
+                            autoComplete="current-password" error={!!fieldState.error}
+                            errorMessage={fieldState.error?.message}
+                            leftIcon={<Lock className={getIconClass(field.value, fieldState.isTouched, fieldState.invalid)} />}
+                            className="h-[50px] text-[15px] md:h-[46px] md:text-[14px]"
+                            rightIcon={
+                              <button type="button" onClick={() => setShowPassword(v => !v)}
+                                className="text-[#7F90B2] hover:text-[#079CF5] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#079CF5]"
+                                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                              >
+                                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                              </button>
+                            }
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <div className="flex justify-end pt-1">
+                    <Link href="/forgot-password"
+                      className="text-[13px] font-medium text-[#0A74FF] hover:opacity-80 transition-opacity"
+                    >
+                      Esqueceu a senha?
+                    </Link>
+                  </div>
+                </>
+              )}
+            </div>
 
-          {/* Termos rodapé */}
-          <p className="text-[13px] text-center text-[#8E9AB4] pt-2 leading-relaxed px-4">
-            Ao entrar, você concorda com nossos{" "}
-            <Link href="/terms" className="text-[#0A74FF] hover:underline font-medium transition-colors">Termos de Serviço</Link> e{" "}
-            <Link href="/privacy" className="text-[#0A74FF] hover:underline font-medium transition-colors">Política de Privacidade</Link>.
-          </p>
-        </form>
-      </Form>
+            {/* Botão principal */}
+            <div className="pt-2">
+              <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
+                disabled={!!lockoutUntil || (requires2FA && twoFactorCode.length < 6)}
+                className="w-full text-[17px] font-semibold text-white h-[52px] rounded-[14px] border-0 shadow-[0_10px_26px_rgba(63,79,215,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
+                style={{ background: "linear-gradient(100deg, #08A6F8 0%, #1478FF 38%, #575AF8 70%, #B132F4 100%)" }}
+              >
+                {form.formState.isSubmitting ? "Entrando..." : (requires2FA ? "Verificar código" : "Entrar")}
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              {requires2FA && (
+                <Button type="button" variant="ghost" onClick={() => { setRequires2FA(false); setServerError(""); }} className="w-full mt-2 text-[#68789A]">
+                  Voltar
+                </Button>
+              )}
+            </div>
+            
+            {/* Termos rodapé */}
+            <div className="pt-3 pb-1 text-center">
+              <p className="text-[12px] text-[#68789A] leading-relaxed">
+                Ao entrar, você concorda com nossos{" "}
+                <Link href="/terms" className="text-[#0A74FF] hover:underline font-medium transition-colors">Termos de Serviço</Link> e{" "}
+                <Link href="/privacy" className="text-[#0A74FF] hover:underline font-medium transition-colors">Política de Privacidade</Link>.
+              </p>
+            </div>
+
+            <div className="pt-1 text-center">
+              <p className="text-[14px] text-[#6E7D9E] font-medium">
+                Crie sua conta agora!{" "}
+                <Link href="/register" className="font-semibold text-[#0A74FF] hover:text-[#0A74FF]/80 transition-colors">
+                  Criar Conta
+                </Link>
+              </p>
+            </div>
+          </form>
+        </Form>
+      )}
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-full w-full items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-[#007BFF]" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }

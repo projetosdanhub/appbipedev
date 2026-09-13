@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const sessionToken = request.cookies.get('session_token')?.value;
+  const isSecure = process.env.NODE_ENV === 'production';
+  const tokenName = isSecure ? '__Secure-authjs.session-token' : 'authjs.session-token';
+  const sessionToken = request.cookies.get(tokenName)?.value || request.cookies.get('authjs.session-token')?.value || request.cookies.get('__Secure-authjs.session-token')?.value;
   
   const isAuthPage = 
     request.nextUrl.pathname.startsWith('/login') || 

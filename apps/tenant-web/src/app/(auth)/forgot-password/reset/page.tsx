@@ -49,24 +49,6 @@ function ResetPasswordContent() {
     }
   }, [form.formState.errors]);
 
-  const passwordValue = form.watch("password");
-
-  const getPasswordStrength = (pass: string) => {
-    let score = 0;
-    if (!pass) return { score, label: "", color: "bg-slate-200" };
-    if (pass.length > 7) score += 1;
-    if (/[A-Z]/.test(pass)) score += 1;
-    if (/[0-9]/.test(pass)) score += 1;
-    if (/[^A-Za-z0-9]/.test(pass)) score += 1;
-    
-    if (score <= 1) return { score, label: "Fraca", color: "bg-red-500" };
-    if (score === 2) return { score, label: "Razoável", color: "bg-yellow-500" };
-    if (score === 3) return { score, label: "Boa", color: "bg-blue-500" };
-    return { score, label: "Forte", color: "bg-emerald-500" };
-  };
-
-  const strength = getPasswordStrength(passwordValue);
-
   const onSubmit = async (data: ResetPasswordInput) => {
     setError("");
 
@@ -159,20 +141,7 @@ function ResetPasswordContent() {
                   />
                 </FormControl>
                 {field.value?.length > 0 && (
-                  <div className="animate-fade-in space-y-1.5 pt-2">
-                    <div className="flex gap-1 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                      <div className={`h-full transition-all duration-300 ${strength.score >= 1 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-                      <div className={`h-full transition-all duration-300 ${strength.score >= 2 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-                      <div className={`h-full transition-all duration-300 ${strength.score >= 3 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-                      <div className={`h-full transition-all duration-300 ${strength.score >= 4 ? strength.color : 'bg-transparent'}`} style={{ width: '25%' }} />
-                    </div>
-                    <p className="text-xs text-slate-500 flex justify-between">
-                      <span>Força da senha:</span>
-                      <span className="font-medium" style={{ color: strength.score > 0 ? (strength.score > 3 ? '#10B981' : strength.score > 1 ? '#F59E0B' : '#EF4444') : '' }}>
-                        {strength.label}
-                      </span>
-                    </p>
-                  </div>
+                  <PasswordStrength password={field.value} />
                 )}
               </FormItem>
             )}
@@ -217,6 +186,38 @@ function ResetPasswordContent() {
           Fazer login
         </Link>
       </p>
+    </div>
+  );
+}
+
+/* ─── Password Strength Indicator ─── */
+function PasswordStrength({ password }: { password?: string }) {
+  const p = password || "";
+  const hasLength = p.length >= 9;
+  const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(p);
+  
+  let score = 0;
+  if (p.length > 0) score = 1;
+  if (hasLength || hasSpecial) score = 2;
+  if (hasLength && hasSpecial) score = 3;
+  
+  return (
+    <div className="flex flex-col gap-2 pt-1.5 px-1 w-full">
+      {/* Barra de força fina */}
+      <div className="flex items-center gap-1.5 w-full">
+        <div className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${score >= 1 ? (score === 3 ? 'bg-[#10B981]' : score === 2 ? 'bg-[#F59E0B]' : 'bg-[#EF4444]') : 'bg-[#E2E8F0]'}`} />
+        <div className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${score >= 2 ? (score === 3 ? 'bg-[#10B981]' : 'bg-[#F59E0B]') : 'bg-[#E2E8F0]'}`} />
+        <div className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${score >= 3 ? 'bg-[#10B981]' : 'bg-[#E2E8F0]'}`} />
+      </div>
+      {/* Textos de requisitos */}
+      <div className="relative flex items-center w-full h-[18px]">
+        <div className={`absolute left-1/2 -translate-x-1/2 text-[11.5px] whitespace-nowrap transition-colors duration-300 ${hasLength ? "text-[#10B981] font-medium" : "text-[#8E9AB4]"}`}>
+          Mínimo 9 caracteres
+        </div>
+        <div className={`ml-auto text-[11.5px] whitespace-nowrap transition-colors duration-300 ${hasSpecial ? "text-[#10B981] font-medium" : "text-[#8E9AB4]"}`}>
+          1 especial (ex: !@#)
+        </div>
+      </div>
     </div>
   );
 }

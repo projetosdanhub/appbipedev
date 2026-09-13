@@ -4,8 +4,8 @@ export const loginSchema = z.object({
   email: z.string().email({
     message: "Digite um endereço de e-mail válido.",
   }),
-  password: z.string().min(8, {
-    message: "A senha deve ter pelo menos 8 caracteres.",
+  password: z.string().min(9, {
+    message: "A senha deve ter pelo menos 9 caracteres.",
   }),
   rememberMe: z.boolean().optional(),
 });
@@ -22,7 +22,7 @@ export const registerSchema = z
       message: "Digite um endereço de e-mail válido.",
     }),
     password: z.string()
-      .min(8, { message: "A senha deve ter pelo menos 8 caracteres." })
+      .min(9, { message: "A senha deve ter pelo menos 9 caracteres." })
       .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: "A senha deve conter pelo menos 1 caractere especial." }),
   });
 
@@ -34,11 +34,11 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z
   .object({
-    password: z.string().min(8, {
-      message: "A senha deve ter pelo menos 8 caracteres.",
+    password: z.string().min(9, {
+      message: "A senha deve ter pelo menos 9 caracteres.",
     }),
-    confirmPassword: z.string().min(8, {
-      message: "A senha deve ter pelo menos 8 caracteres.",
+    confirmPassword: z.string().min(9, {
+      message: "A senha deve ter pelo menos 9 caracteres.",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {

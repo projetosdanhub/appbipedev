@@ -20,7 +20,10 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await page.goto('/register');
     await page.waitForLoadState('networkidle');
     
-    await expect(page.getByRole('heading', { name: 'Crie sua conta Grátis' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Crie sua conta' })).toBeVisible({ timeout: 15000 });
+    
+    // Click 'Criar conta com E-mail'
+    await page.getByRole('button', { name: 'Criar conta com E-mail' }).click();
     
     // Fill the fields
     await page.fill('input[name="name"]', 'Usuário de Teste');
@@ -35,8 +38,8 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     console.log('PAGE TEXT BEFORE ASSERT:', allText);
     await expect(page.getByRole('heading', { name: 'Bem-vindo!' })).toBeVisible({ timeout: 15000 });
     
-    // Deve redirecionar para o login
-    await expect(page).toHaveURL('http://127.0.0.1:3001/login', { timeout: 15000 });
+    // Deve redirecionar para a home (dashboard) após registro e autologin
+    await expect(page).toHaveURL('http://127.0.0.1:3001/', { timeout: 15000 });
   });
 
   test('Deve realizar login com o usuário criado', async ({ page }) => {
@@ -44,6 +47,9 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await page.waitForLoadState('networkidle');
     
     await expect(page.getByRole('heading', { name: 'Entre na sua conta' })).toBeVisible({ timeout: 15000 });
+
+    // Click 'Logar com E-mail e Senha'
+    await page.getByRole('button', { name: 'Logar com E-mail e Senha' }).click();
 
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
@@ -61,7 +67,8 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     
     await expect(page.getByRole('heading', { name: 'Entre na sua conta' })).toBeVisible({ timeout: 15000 });
 
-    await page.click('text=Recuperar senha');
+    await page.click('text=Logar com E-mail e Senha');
+    await page.click('text=Esqueceu a senha?');
     
     await expect(page).toHaveURL(/.*\/forgot-password/, { timeout: 15000 });
     await expect(page.getByRole('heading', { name: 'Recupere sua senha' })).toBeVisible({ timeout: 15000 });

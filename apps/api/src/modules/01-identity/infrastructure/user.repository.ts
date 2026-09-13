@@ -6,8 +6,8 @@ export class UserRepository {
 
   async create(email: string, passwordHash: string, name: string): Promise<User> {
     const rows = await this.db.query(
-      `INSERT INTO users (email, password_hash, name, is_superadmin) 
-       VALUES ($1, $2, $3, $4) 
+      `INSERT INTO users (email, password_hash, name, is_superadmin, updated_at) 
+       VALUES ($1, $2, $3, $4, NOW()) 
        RETURNING id, email, password_hash as "passwordHash", name, is_superadmin as "isSuperadmin", created_at as "createdAt", updated_at as "updatedAt"`,
       [email, passwordHash, name, false]
     );
@@ -16,8 +16,8 @@ export class UserRepository {
 
   async createSuperadmin(email: string, passwordHash: string, name: string): Promise<User> {
     const rows = await this.db.query(
-      `INSERT INTO users (email, password_hash, name, is_superadmin) 
-       VALUES ($1, $2, $3, $4) 
+      `INSERT INTO users (email, password_hash, name, is_superadmin, updated_at) 
+       VALUES ($1, $2, $3, $4, NOW()) 
        RETURNING id, email, password_hash as "passwordHash", name, is_superadmin as "isSuperadmin", created_at as "createdAt", updated_at as "updatedAt"`,
       [email, passwordHash, name, true]
     );

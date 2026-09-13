@@ -39,20 +39,22 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  password      String?   @map("password_hash")
-  companyName   String?   @map("company_name")
-  isSuperadmin  Boolean   @default(false) @map("is_superadmin")
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String?
+  email            String?   @unique
+  emailVerified    DateTime? @map("email_verified")
+  image            String?
+  password         String?   @map("password_hash")
+  companyName      String?   @map("company_name")
+  isSuperadmin     Boolean   @default(false) @map("is_superadmin")
+  twoFactorEnabled Boolean   @default(false) @map("two_factor_enabled")
+  twoFactorSecret  String?   @map("two_factor_secret")
   
-  accounts      Account[]
-  sessions      Session[]
+  accounts         Account[]
+  sessions         Session[]
 
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
 
   @@map("users")
 }

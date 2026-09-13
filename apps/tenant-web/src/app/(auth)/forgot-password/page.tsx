@@ -21,27 +21,32 @@ import { forgotPasswordAction } from "../_actions/auth";
 
 export default function ForgotPasswordPage() {
   const [error, setError] = useState("");
-  const [globalValidationError, setGlobalValidationError] = useState("");
+  const [emailPlaceholder, setEmailPlaceholder] = useState("E-mail (ex: seuemail@empresa.com.br)");
   const router = useRouter();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setEmailPlaceholder(window.innerWidth < 768 ? "ex: seuemail@empresa.com.br" : "E-mail (ex: seuemail@empresa.com.br)");
+    };
+    handleResize(); // set on mount
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const form = useForm<ForgotPasswordInput>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
     },
-    mode: "onTouched",
+    mode: "onBlur",
   });
 
-  useEffect(() => {
-    const firstError = Object.values(form.formState.errors)[0];
-    if (firstError?.message) {
-      setGlobalValidationError(firstError.message as string);
-      const t = setTimeout(() => setGlobalValidationError(""), 3000);
-      return () => clearTimeout(t);
-    } else {
-      setGlobalValidationError("");
-    }
-  }, [form.formState.errors]);
+  const getIconClass = (val: string | undefined, isTouched: boolean, invalid: boolean) => {
+    const base = "h-5 w-5 md:h-[18px] md:w-[18px] transition-colors duration-300";
+    if (invalid) return `text-red-500 ${base}`;
+    if (val && isTouched) return `text-[#1478FF] ${base}`;
+    return `text-[#7F90B2] ${base}`;
+  };
 
   const onSubmit = async (data: ForgotPasswordInput) => {
     setError("");
@@ -64,13 +69,6 @@ export default function ForgotPasswordPage() {
   return (
     <div className="auth-content-enter w-full space-y-4">
       <div className="space-y-2">
-        <Link 
-          href="/login" 
-          className="flex items-center text-[14px] font-medium text-slate-500 hover:text-[#0F172A] mb-4 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4 mr-1.5" />
-          Voltar para o login
-        </Link>
         <h1 className="text-[27px] md:text-[32px] font-bold text-[#0F172A] tracking-tight leading-[33px] md:leading-[38px]">
           Recupere sua senha
         </h1>
@@ -80,11 +78,6 @@ export default function ForgotPasswordPage() {
       </div>
 
       <div className="h-6 flex items-start -mt-2">
-        {globalValidationError && (
-          <p className="text-[13px] font-medium text-[var(--color-danger-600)] animate-in fade-in zoom-in-95 duration-200">
-            {globalValidationError}
-          </p>
-        )}
       </div>
 
       {error && (
@@ -105,10 +98,11 @@ export default function ForgotPasswordPage() {
                   <Input 
                     type="email" 
                     id="forgot-email"
-                    label="E-mail profissional"
-                    placeholder=" " 
-                    leftIcon={<Mail className="h-5 w-5" />}
+                    placeholder={emailPlaceholder} 
+                    leftIcon={<Mail className={getIconClass(field.value, fieldState.isTouched, fieldState.invalid)} />}
                     error={!!fieldState.error}
+                    errorMessage={fieldState.error?.message}
+                    className="h-[50px] text-[15px] md:h-[46px] md:text-[14px]"
                     {...field} 
                   />
                 </FormControl>
@@ -127,6 +121,15 @@ export default function ForgotPasswordPage() {
                 <>Enviar código <ArrowRight className="ml-2 h-5 w-5" /></>
               )}
             </Button>
+          </div>
+
+          <div className="pt-4 text-center">
+            <p className="text-[14px] text-[#6E7D9E] font-medium">
+              Hm, sem conta ainda é?{" "}
+              <Link href="/register" className="font-semibold text-[#0A74FF] hover:text-[#0A74FF]/80 transition-colors">
+                Criar Conta Grátis
+              </Link>
+            </p>
           </div>
         </form>
       </Form>

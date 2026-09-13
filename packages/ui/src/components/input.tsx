@@ -6,13 +6,25 @@ export interface InputProps
   error?: boolean
   label?: string
   helperText?: string
+  errorMessage?: string
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, error, label, helperText, leftIcon, rightIcon, id, ...props }, ref) => {
+  ({ className, type, error, label, helperText, errorMessage, leftIcon, rightIcon, id, ...props }, ref) => {
     const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined)
+    const [showError, setShowError] = React.useState(false)
+
+    React.useEffect(() => {
+      if (errorMessage) {
+        setShowError(true)
+        const timer = setTimeout(() => setShowError(false), 4000)
+        return () => clearTimeout(timer)
+      } else {
+        setShowError(false)
+      }
+    }, [errorMessage])
 
     return (
       <div className="flex flex-col gap-2 w-full">
@@ -40,7 +52,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               "flex h-[54px] w-full rounded-[14px] border border-[#DCE5F2] bg-[#FFFFFF] py-2 text-[16px] text-[#07113F] ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[#A1A8B6] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#1478FF]/10 focus-visible:border-[#1478FF] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150 hover:border-[#1478FF]/50",
               leftIcon ? "pl-[58px]" : "pl-4",
               rightIcon ? "pr-12" : "pr-4",
-              error && "border-red-500 focus-visible:ring-red-500/10 focus-visible:border-red-500",
+              (error || errorMessage) && "border-red-400 focus-visible:ring-red-400/10 focus-visible:border-red-400",
               className
             )}
             ref={ref}
@@ -51,11 +63,25 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               {rightIcon}
             </div>
           )}
+          {/* Error Message inside the input covering the text/placeholder */}
+          {showError && errorMessage && (
+            <div 
+              className={cn(
+                "absolute inset-y-[2px] flex items-center bg-white pointer-events-none animate-in fade-in zoom-in-95 duration-200 z-10",
+                leftIcon ? "left-[58px]" : "left-[14px]",
+                rightIcon ? "right-[48px]" : "right-[2px] rounded-r-[12px]"
+              )}
+            >
+              <span className="text-[13px] md:text-[14px] font-medium text-red-500 truncate w-full">
+                {errorMessage}
+              </span>
+            </div>
+          )}
         </div>
         {helperText && (
           <span className={cn(
             "text-[13px] leading-[18px]",
-            error ? "text-[var(--color-danger-600)]" : "text-[var(--color-ink-600)]"
+            (error || errorMessage) ? "text-[var(--color-danger-600)]" : "text-[var(--color-ink-600)]"
           )}>
             {helperText}
           </span>
