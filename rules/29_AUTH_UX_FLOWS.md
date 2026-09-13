@@ -25,7 +25,17 @@ Ações:
 - botão `Entrar no BipeSend`;
 - link `Criar conta`.
 
-### Comportamento
+### Comportamento Visual e Validação (Global para Auth)
+
+- **Tamanhos Desktop**: Campos (Inputs) devem ter altura de `46px` (`h-[46px]`), fonte de `14px` (`text-[14px]`), e ícones de `18px` (`w-[18px] h-[18px]`).
+- **Comportamento de Validação**: Validação de formulários deve ser disparada no evento de **onBlur** (quando o usuário sai do campo ou clica em Enviar), e **NÃO no onChange** (durante a digitação).
+- **Cores dos Ícones**: 
+  - Se o campo possui erro, o ícone fica **Vermelho** (`text-red-500`).
+  - Se o campo está preenchido corretamente e foi tocado, o ícone fica **Azul** (`text-[#1478FF]`).
+  - Estado inicial/padrão: **Cinza** (`text-[#7F90B2]`).
+- **Erros de Servidor (Login/Recuperação)**: Em caso de falha de login (credenciais inválidas), exibir uma mensagem genérica no topo do formulário ("Confira os dados inseridos."). **Não** exibir os erros inline dentro de cada input para evitar vazar informações sobre qual campo exatamente falhou.
+
+### Comportamento (Login)
 
 - e-mail usa `autocomplete="email"`;
 - senha usa `autocomplete="current-password"`;
@@ -79,7 +89,11 @@ Mostrar requisitos em tempo real:
 
 Evitar regras artificiais excessivas. O frontend deve refletir exatamente a política do servidor.
 
-Medidor de força é informativo e textual: `Fraca`, `Razoável`, `Forte`. Nunca permitir senha só porque o medidor acha forte se contrato falhar.
+Medidor de força de senha:
+- Exigir no mínimo **9 caracteres** totais e **1 caractere especial** (ex: `!@#`).
+- Barra indicadora de força deve possuir **3 segmentos** de cores crescendo conforme a força (Vermelho, Amarelo, Verde).
+- Os textos informativos ("Mínimo 9 caracteres" centralizado, "1 especial (ex: !@#)" à direita) devem ficar visíveis permanentemente abaixo da barra.
+- Quando as condições forem atendidas, o respectivo texto fica com cor verde e estilo bold/semibold.
 
 ### Submit
 
