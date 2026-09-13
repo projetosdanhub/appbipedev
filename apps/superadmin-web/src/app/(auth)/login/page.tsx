@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AlertCircle, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import {
   Button,
@@ -42,11 +42,11 @@ export default function SuperadminLoginPage() {
   return (
     <div className="w-full animate-auth-content space-y-4">
       {/* Header */}
-      <div className="space-y-2 mb-2">
-        <h1 className="text-[24px] md:text-[28px] font-bold text-[#0F172A] tracking-tight leading-[30px] md:leading-[34px]">
+      <div className="space-y-2 mb-2 text-center md:text-left">
+        <h1 className="text-[24px] md:text-[30px] font-bold text-[#0F172A] tracking-tight leading-[1.2]">
           BipeSend Superpainel
         </h1>
-        <p className="text-[15px] md:text-[16px] text-slate-500 font-normal leading-relaxed">
+        <p className="text-[15px] md:text-[16px] text-[#A1A8B6] font-normal leading-relaxed">
           Acesso restrito ao painel administrativo.
         </p>
       </div>
@@ -76,7 +76,7 @@ export default function SuperadminLoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="123example@"
+            placeholder="Sua senha"
             autoComplete="current-password"
             error={!!error}
             leftIcon={<Lock className="h-5 w-5" />}
@@ -84,7 +84,7 @@ export default function SuperadminLoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-slate-400 hover:text-[#007BFF] transition-colors p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007BFF] rounded-md"
+                className="text-[#A1A8B6] hover:text-[#007BFF] transition-colors p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007BFF] rounded-md"
                 aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                 tabIndex={0}
               >
@@ -111,8 +111,8 @@ export default function SuperadminLoginPage() {
                   onChange={e => setRememberMe(e.target.checked)}
                   className="peer sr-only" aria-label="Lembrar de mim"
                 />
-                <div className="w-[18px] h-[18px] rounded-full border-[1.5px] border-slate-300 bg-white transition-all peer-checked:border-[#007BFF] peer-checked:bg-[#007BFF] peer-focus-visible:ring-2 peer-focus-visible:ring-[#007BFF]/30 group-hover:border-[#007BFF]" />
-                <div className={`absolute inset-0 rounded-full bg-[#007BFF] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
+                <div className="w-[18px] h-[18px] rounded-[6px] border-[1.5px] border-[#DCE5F2] bg-white transition-all peer-checked:border-[#007BFF] peer-checked:bg-[#007BFF] peer-focus-visible:ring-2 peer-focus-visible:ring-[#007BFF]/30 group-hover:border-[#007BFF]" />
+                <div className={`absolute inset-0 rounded-[6px] bg-[#007BFF] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
                 <svg className="absolute w-3 h-3 text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </div>
               <span className="text-[14px] text-slate-500 group-hover:text-[#0F172A] transition-colors select-none font-medium">
@@ -129,21 +129,16 @@ export default function SuperadminLoginPage() {
           </Link>
         </div>
 
-        <Button
-          type="submit"
-          isLoading={isLoading}
-          className="w-full"
-          size="lg"
-        >
-          {isLoading ? (
-            "Autenticando..."
-          ) : (
-            <>
-              Autenticar
-              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-0.5 transition-transform" />
-            </>
-          )}
-        </Button>
+        <div className="pt-2">
+          <Button
+            type="submit"
+            isLoading={isLoading}
+            className="w-full text-[16px]"
+            size="lg"
+          >
+            {isLoading ? "Autenticando..." : "Autenticar"}
+          </Button>
+        </div>
       </form>
     </div>
   );

@@ -37,10 +37,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             type={type}
             className={cn(
-              "flex h-[52px] md:h-[54px] w-full rounded-xl border border-[var(--color-border-200)] bg-[var(--color-surface-50)] py-2 text-[16px] text-[var(--color-ink-900)] ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[#9BA1AC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-600)]/20 focus-visible:border-[var(--color-brand-600)] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150 hover:border-[var(--color-brand-600)]/50",
+              "flex h-[54px] md:h-[56px] w-full rounded-[14px] border border-[#DCE5F2] bg-[#FFFFFF] py-2 text-[16px] text-[#07113F] ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[#A1A8B6] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#1478FF]/10 focus-visible:border-[#1478FF] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150 hover:border-[#1478FF]/50",
               leftIcon ? "pl-[64px]" : "pl-4",
               rightIcon ? "pr-12" : "pr-4",
-              error && "border-[var(--color-danger-600)] focus-visible:ring-[var(--color-danger-600)]/40 focus-visible:border-[var(--color-danger-600)]",
+              error && "border-red-500 focus-visible:ring-red-500/10 focus-visible:border-red-500",
               className
             )}
             ref={ref}

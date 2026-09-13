@@ -20,12 +20,7 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await page.goto('/register');
     await page.waitForLoadState('networkidle');
     
-    await expect(page.getByRole('heading', { name: 'Crie sua conta Grátis!' })).toBeVisible({ timeout: 15000 });
-    
-    // Click email continuation
-    await page.click('button:has-text("Continuar com e-mail")');
-
-    await expect(page.getByRole('heading', { name: 'Crie sua conta' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Crie sua conta Grátis' })).toBeVisible({ timeout: 15000 });
     
     // Fill the fields
     await page.fill('input[name="name"]', 'Usuário de Teste');
@@ -48,9 +43,7 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
     
-    await expect(page.getByRole('heading', { name: /Então você voltou/ })).toBeVisible({ timeout: 15000 });
-    await page.click('button:has-text("Login com e-mail e senha")');
-    await expect(page.getByRole('heading', { name: 'Acessar com E-mail' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Entre na sua conta' })).toBeVisible({ timeout: 15000 });
 
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
@@ -66,10 +59,9 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
     
-    await expect(page.getByRole('heading', { name: /Então você voltou/ })).toBeVisible({ timeout: 15000 });
-    await page.click('button:has-text("Login com e-mail e senha")');
+    await expect(page.getByRole('heading', { name: 'Entre na sua conta' })).toBeVisible({ timeout: 15000 });
 
-    await page.click('text=Esqueci a senha');
+    await page.click('text=Recuperar senha');
     
     await expect(page).toHaveURL(/.*\/forgot-password/, { timeout: 15000 });
     await expect(page.getByRole('heading', { name: 'Recupere sua senha' })).toBeVisible({ timeout: 15000 });

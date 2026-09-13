@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Eye, EyeOff, Mail, Lock, User, Building, ArrowRight, AlertCircle, ArrowLeft, CheckCircle2, Circle, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Building, AlertCircle, CheckCircle2, Circle, Loader2 } from "lucide-react";
 import {
   Button,
   Form,
@@ -39,21 +39,21 @@ function PasswordStrength({ password }: { password?: string }) {
   const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(p);
   
   return (
-    <div className="flex gap-4 pt-1 px-1">
-      <div className={`flex items-center gap-1.5 text-[12px] transition-colors ${hasLength ? "text-emerald-500 font-medium" : "text-slate-400"}`}>
-        {hasLength ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
+    <div className="flex flex-col gap-2 pt-1 px-1">
+      <div className={`flex items-center gap-2 text-[12px] transition-colors ${hasLength ? "text-emerald-500 font-medium" : "text-[#A1A8B6]"}`}>
+        {hasLength ? <CheckCircle2 className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
         <span>Mínimo 8 caracteres</span>
       </div>
-      <div className={`flex items-center gap-1.5 text-[12px] transition-colors ${hasSpecial ? "text-emerald-500 font-medium" : "text-slate-400"}`}>
-        {hasSpecial ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
-        <span>1 especial (ex: !@#$)</span>
+      <div className={`flex items-center gap-2 text-[12px] transition-colors ${hasSpecial ? "text-emerald-500 font-medium" : "text-[#A1A8B6]"}`}>
+        {hasSpecial ? <CheckCircle2 className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
+        <span>1 caractere especial (ex: !@#$)</span>
       </div>
     </div>
   );
 }
 
 export default function RegisterPage() {
-  const [authStep, setAuthStep] = useState<"choice" | "email" | "success-loading" | "success-done">("choice");
+  const [authStep, setAuthStep] = useState<"form" | "success-loading" | "success-done">("form");
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
@@ -62,8 +62,6 @@ export default function RegisterPage() {
     defaultValues: { name: "", companyName: "", email: "", password: "" },
     mode: "onTouched",
   });
-
-
 
   const passwordValue = form.watch("password");
 
@@ -96,76 +94,22 @@ export default function RegisterPage() {
 
       {/* ── Heading Dinâmico ── */}
       {!isSuccessView && (
-        <div className="space-y-2">
-          {authStep === "email" && (
-            <button 
-              type="button" 
-              onClick={() => setAuthStep("choice")}
-              className="flex items-center text-[14px] font-medium text-slate-500 hover:text-[#0F172A] mb-4 transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4 mr-1.5" />
-              Voltar
-            </button>
-          )}
-          <h1 className="text-[20px] md:text-[24px] font-bold text-[#0F172A] tracking-tight leading-[28px] md:leading-[30px]">
-            {authStep === "choice" ? "Crie sua conta Grátis!" : "Crie sua conta"}
+        <div className="space-y-2 text-center md:text-left">
+          <h1 className="text-[24px] md:text-[30px] font-bold text-[#0F172A] tracking-tight leading-[1.2]">
+            Crie sua conta Grátis
           </h1>
-          <p className="text-[15px] md:text-[16px] text-slate-500 leading-relaxed font-normal">
-            {authStep === "choice" 
-              ? "Aqui você faz tudo, aumenta as vendas, seu próprio atendente, automatizado, centralizado e no fim você sorri!"
-              : "Preencha seus dados profissionais para iniciar."}
+          <p className="text-[15px] md:text-[16px] text-[#A1A8B6] leading-relaxed font-normal">
+            Aqui você faz tudo, aumenta as vendas, seu próprio atendente, automatizado, centralizado e no fim você sorri!
           </p>
         </div>
       )}
 
-      {/* ── Passo 1: Escolha ── */}
-      {authStep === "choice" && (
-        <div className="space-y-4 animate-auth-card-enter w-full">
-          <Button 
-            type="button"
-            onClick={() => setAuthStep("email")}
-            variant="outline"
-            size="lg"
-            className="w-full text-[#007BFF] border-[#007BFF] hover:bg-blue-50"
-          >
-            <Mail className="h-5 w-5 mr-2" />
-            Continuar com e-mail
-          </Button>
-
-          <div className="flex items-center justify-center py-2">
-            <span className="text-[11px] text-slate-400 font-medium uppercase tracking-widest">
-              — ou —
-            </span>
-          </div>
-
-          <Button 
-            type="button"
-            onClick={() => toast.info("Cadastro com Google em breve 🚀")}
-            variant="outline"
-            size="lg"
-            className="w-full"
-          >
-            <GoogleIcon className="h-5 w-5 mr-3" />
-            Continuar com Google
-          </Button>
-
-          <div className="pt-6 text-center">
-            <p className="text-[14px] text-slate-500 font-medium">
-              Já tem uma conta?{" "}
-              <Link href="/login" className="font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors">
-                Entrar
-              </Link>
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* ── Passo 2: Formulário de Email ── */}
-      {authStep === "email" && (
+      {/* ── Formulário de Email ── */}
+      {authStep === "form" && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-auth-card-enter w-full" noValidate>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 animate-auth-card-enter w-full" noValidate>
             
-            <div className="space-y-3">
+            <div className="space-y-4">
               {/* Nome */}
               <FormField control={form.control} name="name"
                 render={({ field, fieldState }) => (
@@ -190,7 +134,7 @@ export default function RegisterPage() {
                   <FormItem className="!space-y-1">
                     <FormControl>
                       <Input
-                        id="register-company" label="Nome da empresa"
+                        id="register-company" label="Nome da empresa (opcional)"
                         placeholder="Sua empresa"
                         autoComplete="organization" error={!!fieldState.error}
                         leftIcon={<Building className="h-5 w-5" />}
@@ -227,13 +171,13 @@ export default function RegisterPage() {
                     <FormControl>
                       <Input
                         id="register-password" label="Crie uma senha"
-                        placeholder="123example@"
+                        placeholder="Sua senha"
                         type={showPassword ? "text" : "password"}
                         autoComplete="new-password" error={!!fieldState.error}
                         leftIcon={<Lock className="h-5 w-5" />}
                         rightIcon={
                           <button type="button" onClick={() => setShowPassword(v => !v)}
-                            className="text-slate-400 hover:text-[#007BFF] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007BFF]"
+                            className="text-[#A1A8B6] hover:text-[#007BFF] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007BFF]"
                             aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                           >
                             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -250,18 +194,46 @@ export default function RegisterPage() {
             </div>
 
             {/* Botão principal */}
-            <div className="pt-2">
+            <div className="pt-3">
               <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
-                className="w-full"
+                className="w-full text-[16px]"
               >
-                {form.formState.isSubmitting ? "Criando conta..." : (
-                  <> Criar minha conta <ArrowRight className="ml-2 h-5 w-5" /> </>
-                )}
+                {form.formState.isSubmitting ? "Criando conta..." : "Criar minha conta"}
               </Button>
             </div>
 
+            {/* Login Link */}
+            <div className="pt-2 text-center">
+              <p className="text-[14px] text-slate-500 font-medium">
+                Já tem uma conta?{" "}
+                <Link href="/login" className="font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors">
+                  Entrar
+                </Link>
+              </p>
+            </div>
+
+            {/* Divisor OU */}
+            <div className="flex items-center justify-center py-2">
+              <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
+              <span className="px-3 text-[12px] text-[#A1A8B6] font-medium uppercase tracking-widest">
+                ou
+              </span>
+              <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
+            </div>
+
+            <Button 
+              type="button"
+              onClick={() => toast.info("Cadastro com Google em breve 🚀")}
+              variant="google"
+              size="lg"
+              className="w-full"
+            >
+              <GoogleIcon className="h-5 w-5 mr-3" />
+              Continuar com Google
+            </Button>
+
             {/* Termos implícitos */}
-            <p className="text-[13px] text-center text-slate-400 pt-2 leading-relaxed px-4">
+            <p className="text-[13px] text-center text-[#A1A8B6] pt-2 leading-relaxed px-4">
               Ao criar a conta, você concorda com nossos{" "}
               <Link href="/terms" className="underline hover:text-[#0F172A] transition-colors">Termos de Serviço</Link> e{" "}
               <Link href="/privacy" className="underline hover:text-[#0F172A] transition-colors">Política de Privacidade</Link>.

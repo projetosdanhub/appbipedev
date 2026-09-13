@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Eye, EyeOff, Mail, Lock, ArrowRight, AlertCircle, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
 import {
   Button,
   Form,
@@ -33,7 +33,6 @@ function GoogleIcon({ className }: { className?: string }) {
 }
 
 export default function LoginPage() {
-  const [authStep, setAuthStep] = useState<"choice" | "email">("choice");
   const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -78,7 +77,6 @@ export default function LoginPage() {
           setLockoutUntil((response as any).lockoutUntil);
           setServerError("Conta temporariamente bloqueada por segurança.");
         } else {
-          // Set form error so it appears inside the field
           const msg = response.message || "Erro ao realizar login";
           form.setError("email", { message: msg });
           form.setError("password", { message: msg });
@@ -96,35 +94,23 @@ export default function LoginPage() {
     <div className="auth-content-enter w-full space-y-6">
       
       {/* ── Heading Dinâmico ── */}
-      <div className="space-y-2">
-        {authStep === "email" && (
-          <button 
-            type="button" 
-            onClick={() => setAuthStep("choice")}
-            className="flex items-center text-[14px] font-medium text-slate-500 hover:text-[#0F172A] mb-4 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4 mr-1.5" />
-            Voltar
-          </button>
-        )}
-        <h1 className="text-[20px] md:text-[24px] font-bold text-[#0F172A] tracking-tight leading-[28px] md:leading-[30px]">
-          {authStep === "choice" ? "Então você voltou! Acesse sua conta abaixo." : "Acessar com E-mail"}
+      <div className="space-y-2 text-center md:text-left">
+        <h1 className="text-[24px] md:text-[30px] font-bold text-[#0F172A] tracking-tight leading-[1.2]">
+          Entre na sua conta
         </h1>
-        <p className="text-[15px] md:text-[16px] text-slate-500 leading-relaxed font-normal">
-          {authStep === "choice" 
-            ? "Escolha a forma que deseja acessar sua conta na BipeSend."
-            : "Preencha seus dados para entrar."}
+        <p className="text-[15px] md:text-[16px] text-[#A1A8B6] leading-relaxed font-normal">
+          Acesse seu CRM e continue suas conversas e oportunidades.
         </p>
       </div>
 
       {/* ── Erro de servidor / Lockout ── */}
       {serverError && lockoutUntil && (
-        <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 animate-error-enter">
-          <AlertCircle className="h-4 w-4 mt-0.5 text-[var(--color-danger-600)] flex-shrink-0" />
+        <div className="flex items-start gap-2.5 rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 animate-error-enter">
+          <AlertCircle className="h-4 w-4 mt-0.5 text-red-600 flex-shrink-0" />
           <div className="flex flex-col">
-            <p className="text-[13px] font-medium text-[var(--color-danger-600)]">{serverError}</p>
+            <p className="text-[13px] font-medium text-red-600">{serverError}</p>
             {lockoutUntil && (
-              <p className="text-[12.5px] text-[var(--color-danger-600)] mt-1 font-semibold">
+              <p className="text-[12.5px] text-red-600 mt-1 font-semibold">
                 Tente novamente em {remainingTime}
               </p>
             )}
@@ -132,143 +118,127 @@ export default function LoginPage() {
         </div>
       )}
 
-      {/* ── Passo 1: Escolha ── */}
-      {authStep === "choice" && (
-        <div className="space-y-4 animate-auth-card-enter w-full">
-          <Button 
-            type="button"
-            onClick={() => setAuthStep("email")}
-            variant="outline"
-            size="lg"
-            className="w-full text-[#007BFF] border-[#007BFF] hover:bg-blue-50"
-          >
-            <Mail className="h-5 w-5 mr-2" />
-            Login com e-mail e senha
-          </Button>
+      {/* ── Formulário Principal ── */}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 animate-auth-card-enter w-full" noValidate>
+          
+          <div className="space-y-4">
+            {/* E-mail */}
+            <FormField control={form.control} name="email"
+              render={({ field, fieldState }) => (
+                <FormItem className="!space-y-1">
+                  <FormControl>
+                    <Input
+                      id="login-email" label="E-mail" type="email"
+                      placeholder="seuemail@provedor.com.br"
+                      autoComplete="email" error={!!fieldState.error}
+                      leftIcon={<Mail className="h-5 w-5" />}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="animate-in fade-in zoom-in-95" />
+                </FormItem>
+              )}
+            />
 
+            {/* Senha */}
+            <FormField control={form.control} name="password"
+              render={({ field, fieldState }) => (
+                <FormItem className="!space-y-1">
+                  <FormControl>
+                    <Input
+                      id="login-password" label="Senha"
+                      placeholder="Sua senha"
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="current-password" error={!!fieldState.error}
+                      leftIcon={<Lock className="h-5 w-5" />}
+                      rightIcon={
+                        <button type="button" onClick={() => setShowPassword(v => !v)}
+                          className="text-[#A1A8B6] hover:text-[#007BFF] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007BFF]"
+                          aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                        >
+                          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        </button>
+                      }
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="animate-in fade-in zoom-in-95" />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Lembrar + Esqueci */}
+          <div className="flex items-center justify-between pt-1">
+            <label className="flex items-center gap-2.5 cursor-pointer group relative">
+              <div className="relative flex items-center justify-center">
+                <input id="rememberMe" type="checkbox" checked={rememberMe}
+                  onChange={e => setRememberMe(e.target.checked)}
+                  className="peer sr-only" aria-label="Lembrar de mim"
+                />
+                <div className="w-[20px] h-[20px] rounded-md border-2 border-[#DCE5F2] bg-white transition-all peer-checked:border-[#007BFF] peer-checked:bg-[#007BFF] peer-focus-visible:ring-2 peer-focus-visible:ring-[#007BFF]/30 group-hover:border-[#007BFF]" />
+                <div className={`absolute inset-0 rounded-md bg-[#007BFF] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
+                <svg className="absolute w-3.5 h-3.5 text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <span className="text-[14px] text-slate-500 group-hover:text-[#0F172A] transition-colors select-none font-medium">
+                Continuar conectado
+              </span>
+            </label>
+            <Link href="/forgot-password"
+              className="text-[14px] font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors"
+            >
+              Recuperar senha
+            </Link>
+          </div>
+
+          {/* Botão principal */}
+          <div className="pt-3">
+            <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
+              disabled={!!lockoutUntil}
+              className="w-full text-[16px]"
+            >
+              {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
+            </Button>
+          </div>
+
+          <div className="pt-2 text-center">
+            <p className="text-[14px] text-slate-500 font-medium">
+              Ainda não tem uma conta?{" "}
+              <Link href="/register" className="font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors">
+                Criar conta
+              </Link>
+            </p>
+          </div>
+
+          {/* Divisor OU */}
           <div className="flex items-center justify-center py-2">
-            <span className="text-[11px] text-slate-400 font-medium uppercase tracking-widest">
-              — ou —
+            <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
+            <span className="px-3 text-[12px] text-[#A1A8B6] font-medium uppercase tracking-widest">
+              ou
             </span>
+            <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
           </div>
 
           <Button 
             type="button"
             onClick={() => toast.info("Login com Google em breve 🚀")}
-            variant="outline"
+            variant="google"
             size="lg"
             className="w-full"
           >
             <GoogleIcon className="h-5 w-5 mr-3" />
-            Login com Google
+            Continuar com Google
           </Button>
 
-          <div className="pt-5">
-            <Link href="/register" className="block w-full">
-              <Button type="button" size="lg" className="w-full">
-                <span className="hidden sm:inline">Cresça com a BipeSend - </span>Criar Conta Grátis
-              </Button>
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* ── Passo 2: Formulário de Email ── */}
-      {authStep === "email" && (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-auth-card-enter w-full" noValidate>
-            
-            <div className="space-y-4">
-              {/* E-mail */}
-              <FormField control={form.control} name="email"
-                render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-1">
-                    <FormControl>
-                      <Input
-                        id="login-email" label="E-mail" type="email"
-                        placeholder="seuemail@provedor.com.br"
-                        autoComplete="email" error={!!fieldState.error}
-                        leftIcon={<Mail className="h-5 w-5" />}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="animate-in fade-in zoom-in-95" />
-                  </FormItem>
-                )}
-              />
-
-              {/* Senha */}
-              <FormField control={form.control} name="password"
-                render={({ field, fieldState }) => (
-                  <FormItem className="!space-y-1">
-                    <FormControl>
-                      <Input
-                        id="login-password" label="Senha"
-                        placeholder="123example@"
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="current-password" error={!!fieldState.error}
-                        leftIcon={<Lock className="h-5 w-5" />}
-                        rightIcon={
-                          <button type="button" onClick={() => setShowPassword(v => !v)}
-                            className="text-slate-400 hover:text-[#007BFF] transition-colors p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007BFF]"
-                            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                          >
-                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                          </button>
-                        }
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="animate-in fade-in zoom-in-95" />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {/* Lembrar + Esqueci */}
-            <div className="flex items-center justify-between pt-2">
-              <label className="flex items-center gap-2.5 cursor-pointer group relative">
-                <div className="relative flex items-center justify-center">
-                  <input id="rememberMe" type="checkbox" checked={rememberMe}
-                    onChange={e => setRememberMe(e.target.checked)}
-                    className="peer sr-only" aria-label="Lembrar de mim"
-                  />
-                  <div className="w-[18px] h-[18px] rounded-full border-[1.5px] border-slate-300 bg-white transition-all peer-checked:border-[#007BFF] peer-checked:bg-[#007BFF] peer-focus-visible:ring-2 peer-focus-visible:ring-[#007BFF]/30 group-hover:border-[#007BFF]" />
-                  <div className={`absolute inset-0 rounded-full bg-[#007BFF] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
-                  <svg className="absolute w-3 h-3 text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </div>
-                <span className="text-[14px] text-slate-500 group-hover:text-[#0F172A] transition-colors select-none font-medium">
-                  Lembrar de mim
-                </span>
-              </label>
-              <Link href="/forgot-password"
-                className="text-[14px] font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors"
-              >
-                Esqueci a senha
-              </Link>
-            </div>
-
-            {/* Botão principal */}
-            <div className="pt-4">
-              <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
-                disabled={!!lockoutUntil}
-                className="w-full"
-              >
-                {form.formState.isSubmitting ? "Entrando..." : (
-                  <> Entrar no BipeSend <ArrowRight className="ml-2 h-5 w-5" /> </>
-                )}
-              </Button>
-            </div>
-
-            {/* Termos rodapé */}
-            <p className="text-[13px] text-center text-slate-400 pt-2 leading-relaxed px-4">
-              Ao entrar, você concorda com nossos{" "}
-              <Link href="/terms" className="underline hover:text-[#0F172A] transition-colors">Termos de Serviço</Link> e{" "}
-              <Link href="/privacy" className="underline hover:text-[#0F172A] transition-colors">Política de Privacidade</Link>.
-            </p>
-          </form>
-        </Form>
-      )}
+          {/* Termos rodapé */}
+          <p className="text-[13px] text-center text-[#A1A8B6] pt-2 leading-relaxed px-4">
+            Ao entrar, você concorda com nossos{" "}
+            <Link href="/terms" className="underline hover:text-[#0F172A] transition-colors">Termos de Serviço</Link> e{" "}
+            <Link href="/privacy" className="underline hover:text-[#0F172A] transition-colors">Política de Privacidade</Link>.
+          </p>
+        </form>
+      </Form>
     </div>
   );
 }
