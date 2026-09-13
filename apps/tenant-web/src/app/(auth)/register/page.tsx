@@ -54,7 +54,7 @@ function PasswordStrength({ password }: { password?: string }) {
       </div>
       {/* Textos de requisitos */}
       <div className="relative flex items-center w-full h-[18px]">
-        <div className={`absolute left-1/2 -translate-x-1/2 text-[11.5px] whitespace-nowrap transition-colors duration-300 ${hasLength ? "text-[#10B981] font-medium" : "text-[#8E9AB4]"}`}>
+        <div className={`absolute left-0 text-[11.5px] whitespace-nowrap transition-colors duration-300 ${hasLength ? "text-[#10B981] font-medium" : "text-[#8E9AB4]"}`}>
           Mínimo 9 caracteres
         </div>
         <div className={`ml-auto text-[11.5px] whitespace-nowrap transition-colors duration-300 ${hasSpecial ? "text-[#10B981] font-medium" : "text-[#8E9AB4]"}`}>
@@ -98,7 +98,7 @@ export default function RegisterPage() {
   const passwordValue = form.watch("password");
 
   const onSubmit = async (data: RegisterInput) => {
-    setServerError(null);
+    setServerError("");
     try {
       const response = await registerAction(data);
       if (!response.success) { 
@@ -154,19 +154,19 @@ export default function RegisterPage() {
 
       {/* ── Passo 1: Escolha ── */}
       {authStep === "choice" && (
-        <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300 w-full">
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full">
           <Button 
             type="button"
             onClick={() => setAuthStep("email")}
-            size="lg"
-            className="w-full h-[54px] rounded-[14px] border-0 text-white font-semibold text-[16px] shadow-[0_10px_26px_rgba(63,79,215,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
-            style={{ background: "linear-gradient(100deg, #08A6F8 0%, #1478FF 38%, #575AF8 70%, #B132F4 100%)" }}
+            className="h-[52px] w-full text-[15px] font-semibold bg-white border border-[#E2E8F0] text-[#07113F] shadow-sm hover:bg-gray-50 transition-all rounded-[12px] group relative overflow-hidden delay-100"
           >
-            <Mail className="mr-2 h-5 w-5" />
-            Criar conta com E-mail
+            <Mail className="mr-2 h-5 w-5 text-[#68789A] group-hover:text-[#1478FF] transition-colors" />
+            Cadastrar com E-mail
           </Button>
           
-          <div className="flex items-center justify-center py-1">
+          <div 
+            className="h-[52px] w-full flex items-center justify-center text-[15px] font-semibold bg-white border border-[#E2E8F0] text-[#07113F] shadow-sm transition-all rounded-[12px] group delay-200 px-4"
+          >
             <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
             <span className="px-4 text-[13px] text-[#8E9AB4] font-medium">ou</span>
             <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
@@ -206,7 +206,7 @@ export default function RegisterPage() {
       {/* ── Passo 2: Formulário de Email ── */}
       {authStep === "email" && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 animate-in fade-in slide-in-from-right-4 duration-300 w-full" noValidate>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full" noValidate>
             
             <div className="space-y-3">
               {/* Nome */}
@@ -276,7 +276,6 @@ export default function RegisterPage() {
                         placeholder="Crie uma senha forte"
                         type={showPassword ? "text" : "password"}
                         autoComplete="new-password" error={!!fieldState.error}
-                        errorMessage={fieldState.error?.message}
                         leftIcon={<Lock className={getIconClass(field.value, fieldState.isTouched, fieldState.invalid)} />}
                         className="h-[50px] text-[15px] md:h-[46px] md:text-[14px]"
                         rightIcon={

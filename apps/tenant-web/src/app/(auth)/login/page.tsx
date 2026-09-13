@@ -226,7 +226,7 @@ function LoginContent() {
       {/* ── Passo 2: Formulário de Email ── */}
       {authStep === "email" && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300 w-full" noValidate>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full" noValidate>
             
             <div className="space-y-3">
               {requires2FA ? (
@@ -254,6 +254,7 @@ function LoginContent() {
               ) : (
                 <>
                   {/* E-mail */}
+                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
                   <FormField control={form.control} name="email"
                     render={({ field, fieldState }) => (
                       <FormItem className="!space-y-1">
@@ -262,7 +263,6 @@ function LoginContent() {
                             id="login-email" type="email"
                             placeholder={emailPlaceholder}
                             autoComplete="username" error={!!fieldState.error}
-                            errorMessage={fieldState.error?.message}
                             leftIcon={<Mail className={getIconClass(field.value, fieldState.isTouched, fieldState.invalid)} />}
                             className="h-[50px] text-[15px] md:h-[46px] md:text-[14px]"
                             {...field}
@@ -271,8 +271,10 @@ function LoginContent() {
                       </FormItem>
                     )}
                   />
+                  </div>
 
                   {/* Senha */}
+                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 fill-mode-both">
                   <FormField control={form.control} name="password"
                     render={({ field, fieldState }) => (
                       <FormItem className="!space-y-1">
@@ -282,7 +284,6 @@ function LoginContent() {
                             placeholder="Sua senha"
                             type={showPassword ? "text" : "password"}
                             autoComplete="current-password" error={!!fieldState.error}
-                            errorMessage={fieldState.error?.message}
                             leftIcon={<Lock className={getIconClass(field.value, fieldState.isTouched, fieldState.invalid)} />}
                             className="h-[50px] text-[15px] md:h-[46px] md:text-[14px]"
                             rightIcon={
@@ -299,8 +300,9 @@ function LoginContent() {
                       </FormItem>
                     )}
                   />
+                  </div>
                   
-                  <div className="flex justify-end pt-1">
+                  <div className="flex justify-end pt-1 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
                     <Link href="/forgot-password"
                       className="text-[13px] font-medium text-[#0A74FF] hover:opacity-80 transition-opacity"
                     >
@@ -312,7 +314,7 @@ function LoginContent() {
             </div>
 
             {/* Botão principal */}
-            <div className="pt-2">
+            <div className="pt-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
               <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
                 disabled={!!lockoutUntil || (requires2FA && twoFactorCode.length < 6)}
                 className="w-full text-[17px] font-semibold text-white h-[52px] rounded-[14px] border-0 shadow-[0_10px_26px_rgba(63,79,215,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"

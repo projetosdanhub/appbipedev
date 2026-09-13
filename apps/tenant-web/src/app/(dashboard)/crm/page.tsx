@@ -1,0 +1,1 @@
+export default function CrmPage() { return (<div className="space-y-4"><h1 className="text-2xl font-bold">Crm</h1><div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700"><p className="text-gray-500">Em breve...</p></div></div>) }

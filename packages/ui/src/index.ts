@@ -4,6 +4,8 @@ export * from "./components/input";
 export * from "./components/card";
 export * from "./components/alert";
 export * from "./components/toaster";
+export * from "./components/theme-toggle";
+
 export * from "./components/form";
 export * from "./components/label";
 export * from "./components/skeleton";

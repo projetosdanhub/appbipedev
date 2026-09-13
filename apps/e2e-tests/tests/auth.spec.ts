@@ -22,8 +22,8 @@ test.describe.serial('Autenticação Completa (AUTH)', () => {
     
     await expect(page.getByRole('heading', { name: 'Crie sua conta' })).toBeVisible({ timeout: 15000 });
     
-    // Click 'Criar conta com E-mail'
-    await page.getByRole('button', { name: 'Criar conta com E-mail' }).click();
+    // Click 'Cadastrar com E-mail'
+    await page.getByRole('button', { name: 'Cadastrar com E-mail' }).click();
     
     // Fill the fields
     await page.fill('input[name="name"]', 'Usuário de Teste');
