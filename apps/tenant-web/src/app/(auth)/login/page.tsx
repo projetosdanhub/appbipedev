@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, AlertCircle, Shield } from "lucide-react";
 import {
   Button,
   Form,
@@ -169,43 +169,43 @@ export default function LoginPage() {
             />
           </div>
 
+          {/* Botão principal */}
+          <div className="mt-[22px]">
+            <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
+              disabled={!!lockoutUntil}
+              className="w-full text-[17px] font-semibold text-white h-[56px] rounded-[16px] border-0 shadow-[0_10px_26px_rgba(63,79,215,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
+              style={{ background: "linear-gradient(100deg, #08A6F8 0%, #1478FF 38%, #575AF8 70%, #B132F4 100%)" }}
+            >
+              {form.formState.isSubmitting ? "Entrando..." : "Entrar"}
+              <svg className="ml-2 w-[20px] h-[20px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </Button>
+          </div>
+
           {/* Lembrar + Esqueci */}
-          <div className="flex items-center justify-between pt-4 mt-[16px]">
-            <label className="flex items-center gap-2.5 cursor-pointer group relative">
+          <div className="flex items-center justify-between mt-[14px]">
+            <label className="flex items-center gap-3 cursor-pointer group relative">
               <div className="relative flex items-center justify-center">
                 <input id="rememberMe" type="checkbox" checked={rememberMe}
                   onChange={e => setRememberMe(e.target.checked)}
                   className="peer sr-only" aria-label="Lembrar de mim"
                 />
-                <div className="w-[22px] h-[22px] rounded-md border-2 border-[#DCE5F2] bg-white transition-all peer-checked:border-[#087CF5] peer-checked:bg-[#087CF5] peer-focus-visible:ring-2 peer-focus-visible:ring-[#087CF5]/30 group-hover:border-[#087CF5]" />
-                <div className={`absolute inset-0 rounded-md bg-[#087CF5] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
-                <svg className="absolute w-4 h-4 text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <div className="w-[18px] h-[18px] rounded-[5px] border-2 border-[#DCE5F2] bg-white transition-all peer-checked:border-[#087CF5] peer-checked:bg-[#087CF5] peer-focus-visible:ring-2 peer-focus-visible:ring-[#087CF5]/30 group-hover:border-[#087CF5]" />
+                <div className={`absolute inset-0 rounded-[5px] bg-[#087CF5] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
+                <svg className="absolute w-[14px] h-[14px] text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </div>
-              <span className="text-[15px] text-[#07113F] font-medium transition-colors select-none">
+              <span className="text-[13px] text-[#68789A] font-medium transition-colors select-none">
                 Continuar conectado
               </span>
             </label>
             <Link href="/forgot-password"
-              className="text-[15px] font-medium text-[#0A74FF] hover:opacity-80 transition-opacity"
+              className="text-[13px] font-medium text-[#0A74FF] hover:opacity-80 transition-opacity"
             >
               Recuperar senha
             </Link>
           </div>
 
-          {/* Botão principal */}
-          <div className="mt-[20px]">
-            <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
-              disabled={!!lockoutUntil}
-              className="w-full text-[16px] md:text-[18px] font-semibold text-white h-[56px] rounded-[16px] border-0 shadow-[0_10px_24px_rgba(50,80,220,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
-              style={{ background: "linear-gradient(100deg, #079CF5 0%, #1478FF 38%, #5759F5 70%, #A827F5 100%)" }}
-            >
-              {form.formState.isSubmitting ? "Entrando..." : "Entrar com e-mail e senha"}
-              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-            </Button>
-          </div>
-
-          <div className="text-center mt-[20px]">
-            <p className="text-[15px] md:text-[16px] text-[#68789A] font-medium">
+          <div className="text-center mt-[22px]">
+            <p className="text-[14px] text-[#68789A] font-medium">
               Ainda não tem uma conta?{" "}
               <Link href="/register" className="font-semibold text-[#0A74FF] hover:opacity-80 transition-opacity">
                 Criar conta
@@ -222,7 +222,7 @@ export default function LoginPage() {
             <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
           </div>
 
-          <div className="mt-[10px] pb-6">
+          <div className="grid grid-cols-2 gap-3 mt-[10px] pb-6">
             <Button 
               type="button"
               onClick={() => toast.info("Login com Google em breve 🚀")}
@@ -230,8 +230,18 @@ export default function LoginPage() {
               size="lg"
               className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-slate-50 transition-colors"
             >
-              <GoogleIcon className="h-5 w-5 mr-3" />
-              Google
+              <GoogleIcon className="h-5 w-5 md:mr-2" />
+              <span className="hidden md:inline">Google</span>
+            </Button>
+            <Button 
+              type="button"
+              onClick={() => toast.info("Login com Código em breve 🚀")}
+              variant="outline"
+              size="lg"
+              className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-slate-50 transition-colors"
+            >
+              <Shield className="h-5 w-5 md:mr-2 text-[#07113F]" />
+              <span className="hidden md:inline">Código</span>
             </Button>
           </div>
 

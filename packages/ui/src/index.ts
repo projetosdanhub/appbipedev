@@ -8,4 +8,3 @@ export * from "./components/form";
 export * from "./components/label";
 export * from "./components/skeleton";
 export * from "./components/auth-layout";
-export * from "./components/glass-pill";

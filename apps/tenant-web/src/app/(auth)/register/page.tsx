@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Eye, EyeOff, Mail, Lock, User, Building, AlertCircle, CheckCircle2, Circle, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Building, AlertCircle, CheckCircle2, Circle, Loader2, Shield } from "lucide-react";
 import {
   Button,
   Form,
@@ -196,7 +196,8 @@ export default function RegisterPage() {
             {/* Botão principal */}
             <div className="pt-3">
               <Button type="submit" isLoading={form.formState.isSubmitting} size="lg"
-                className="w-full h-[56px] rounded-[16px] bg-gradient-to-r from-[#079CF5] via-[#1478FF] to-[#A827F5] border-0 text-white font-semibold text-[16px] shadow-[0_10px_24px_rgba(50,80,220,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
+                className="w-full h-[56px] rounded-[16px] border-0 text-white font-semibold text-[17px] shadow-[0_10px_26px_rgba(63,79,215,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
+                style={{ background: "linear-gradient(100deg, #08A6F8 0%, #1478FF 38%, #575AF8 70%, #B132F4 100%)" }}
               >
                 {form.formState.isSubmitting ? "Criando conta..." : (
                   <span className="flex items-center gap-2">
@@ -211,9 +212,9 @@ export default function RegisterPage() {
 
             {/* Termos implícitos */}
             <div className="pt-4 text-center px-2">
-              <p className="text-[13px] text-[#8E9AB4] leading-relaxed">
+              <p className="text-[12px] text-[#68789A] leading-[18px]">
                 Ao criar a conta, você concorda com nossos <br className="hidden md:block" />
-                <Link href="/terms" className="text-[#0A74FF] hover:underline font-medium transition-colors">Termos de Serviço</Link> e <Link href="/privacy" className="text-[#0A74FF] hover:underline font-medium transition-colors">Política de Privacidade</Link>.
+                <Link href="/terms" className="text-[#0A74FF] hover:underline transition-colors">Termos de Serviço</Link> e <Link href="/privacy" className="text-[#0A74FF] hover:underline transition-colors">Política de Privacidade</Link>.
               </p>
             </div>
 
@@ -236,16 +237,28 @@ export default function RegisterPage() {
               <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
             </div>
 
-            <Button 
-              type="button"
-              onClick={() => toast.info("Cadastro com Google em breve 🚀")}
-              variant="outline"
-              size="lg"
-              className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-slate-50 transition-colors"
-            >
-              <GoogleIcon className="h-5 w-5 mr-3" />
-              Google
-            </Button>
+            <div className="grid grid-cols-2 gap-3 pb-2">
+              <Button 
+                type="button"
+                onClick={() => toast.info("Cadastro com Google em breve 🚀")}
+                variant="outline"
+                size="lg"
+                className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-[#F9FBFE] hover:border-[#C4D1E2] transition-colors"
+              >
+                <GoogleIcon className="h-[22px] w-[22px] md:mr-2" />
+                <span className="hidden md:inline text-[15px]">Google</span>
+              </Button>
+              <Button 
+                type="button"
+                onClick={() => toast.info("Cadastro com Código em breve 🚀")}
+                variant="outline"
+                size="lg"
+                className="w-full h-[52px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-[#F9FBFE] hover:border-[#C4D1E2] transition-colors"
+              >
+                <Shield className="h-[21px] w-[21px] md:mr-2 text-[#07113F] stroke-[1.8]" />
+                <span className="hidden md:inline text-[15px]">Código</span>
+              </Button>
+            </div>
           </form>
         </Form>
       )}
