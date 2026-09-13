@@ -11,7 +11,7 @@ describe("loginSchema", () => {
   it("validates a correct login payload", () => {
     const result = loginSchema.safeParse({
       email: "user@example.com",
-      password: "12345678",
+      password: "123456789",
     });
     expect(result.success).toBe(true);
   });
@@ -19,7 +19,7 @@ describe("loginSchema", () => {
   it("rejects an invalid email", () => {
     const result = loginSchema.safeParse({
       email: "not-an-email",
-      password: "12345678",
+      password: "123456789",
     });
     expect(result.success).toBe(false);
   });

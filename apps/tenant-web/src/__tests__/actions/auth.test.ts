@@ -1,4 +1,48 @@
 import { describe, it, expect, vi } from "vitest";
+
+vi.mock("@bipesend/auth", () => ({
+  signIn: vi.fn(),
+  signOut: vi.fn(),
+  auth: vi.fn(),
+}));
+
+vi.mock("next-auth", () => ({
+  AuthError: class AuthError extends Error {
+    type: string;
+    constructor(message: string) {
+      super(message);
+      this.type = "CredentialsSignin";
+    }
+  }
+}));
+
+vi.mock("next/headers", () => ({
+  cookies: vi.fn(() => ({
+    get: vi.fn(),
+    set: vi.fn(),
+    delete: vi.fn(),
+  })),
+}));
+
+vi.mock("@bipesend/db", () => ({
+  prisma: {
+    user: {
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+    },
+    verificationToken: {
+      findFirst: vi.fn().mockResolvedValue({
+        identifier: "user@test.com",
+        token: "123456",
+        expires: new Date(Date.now() + 1000000)
+      }),
+      deleteMany: vi.fn(),
+      create: vi.fn(),
+    }
+  }
+}));
+
 import {
   loginAction,
   registerAction,
@@ -12,7 +56,7 @@ describe("Server Actions — Auth", () => {
     it("returns success with a valid payload", async () => {
       const result = await loginAction({
         email: "user@test.com",
-        password: "12345678",
+        password: "NewPass123!",
       });
       expect(result.success).toBe(true);
       expect(result.message).toBeTruthy();
