@@ -135,7 +135,7 @@ function LoginContent() {
         <h1 className="text-[26px] md:text-[30px] font-bold text-[#07113F] tracking-tight leading-[1.15]">
           {authStep === "choice" ? "Entre na sua conta" : "Entrar com E-mail"}
         </h1>
-        <p className="text-[15px] md:text-[16px] text-[#68789A] leading-[1.45] font-normal">
+        <p className="text-[15px] md:text-[16px] text-[#475569] leading-[1.45] font-normal">
           Acesse seu CRM e continue suas conversas com agilidade.
         </p>
       </div>
@@ -206,16 +206,16 @@ function LoginContent() {
                 <div className={`absolute inset-0 rounded-[5px] bg-[#087CF5] opacity-0 peer-checked:animate-[ping_0.5s_cubic-bezier(0,0,0.2,1)_1] pointer-events-none`} />
                 <svg className="absolute w-[14px] h-[14px] text-white pointer-events-none transition-transform duration-200 scale-0 peer-checked:scale-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </div>
-              <span className="text-[13px] text-[#68789A] font-medium transition-colors select-none">
+              <span className="text-[13px] text-[#475569] font-medium transition-colors select-none">
                 Continuar conectado
               </span>
             </label>
           </div>
 
           <div className="pt-2 text-center">
-            <p className="text-[14px] text-[#6E7D9E] font-medium">
+            <p className="text-[14px] text-[#475569] font-medium">
               Ainda não tem uma conta?{" "}
-              <Link href="/register" className="font-semibold text-[#0A74FF] hover:text-[#0A74FF]/80 transition-colors">
+              <Link href="/register" className="font-semibold text-[#0056D2] hover:text-[#0056D2]/80 transition-colors">
                 Criar conta
               </Link>
             </p>
@@ -236,7 +236,7 @@ function LoginContent() {
                       <Smartphone className="w-6 h-6 text-[#0A74FF]" />
                     </div>
                     <h3 className="text-[18px] font-semibold text-[#07113F]">Verificação em Duas Etapas</h3>
-                    <p className="text-[14px] text-[#68789A] mt-1">
+                    <p className="text-[14px] text-[#475569] mt-1">
                       Digite o código gerado pelo seu aplicativo autenticador.
                     </p>
                   </div>
@@ -304,7 +304,7 @@ function LoginContent() {
                   
                   <div className="flex justify-end pt-1 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
                     <Link href="/forgot-password"
-                      className="text-[13px] font-medium text-[#0A74FF] hover:opacity-80 transition-opacity"
+                      className="text-[13px] font-medium text-[#0056D2] hover:opacity-80 transition-opacity"
                     >
                       Esqueceu a senha?
                     </Link>
@@ -324,7 +324,7 @@ function LoginContent() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               {requires2FA && (
-                <Button type="button" variant="ghost" onClick={() => { setRequires2FA(false); setServerError(""); }} className="w-full mt-2 text-[#68789A]">
+                <Button type="button" variant="ghost" onClick={() => { setRequires2FA(false); setServerError(""); }} className="w-full mt-2 text-[#475569]">
                   Voltar
                 </Button>
               )}
@@ -332,17 +332,17 @@ function LoginContent() {
             
             {/* Termos rodapé */}
             <div className="pt-3 pb-1 text-center">
-              <p className="text-[12px] text-[#68789A] leading-relaxed">
+              <p className="text-[12px] text-[#475569] leading-relaxed">
                 Ao entrar, você concorda com nossos{" "}
-                <Link href="/terms" className="text-[#0A74FF] hover:underline font-medium transition-colors">Termos de Serviço</Link> e{" "}
-                <Link href="/privacy" className="text-[#0A74FF] hover:underline font-medium transition-colors">Política de Privacidade</Link>.
+                <Link href="/terms" className="text-[#0056D2] hover:underline font-medium transition-colors">Termos de Serviço</Link> e{" "}
+                <Link href="/privacy" className="text-[#0056D2] hover:underline font-medium transition-colors">Política de Privacidade</Link>.
               </p>
             </div>
 
             <div className="pt-1 text-center">
-              <p className="text-[14px] text-[#6E7D9E] font-medium">
+              <p className="text-[14px] text-[#475569] font-medium">
                 Crie sua conta agora!{" "}
-                <Link href="/register" className="font-semibold text-[#0A74FF] hover:text-[#0A74FF]/80 transition-colors">
+                <Link href="/register" className="font-semibold text-[#0056D2] hover:text-[#0056D2]/80 transition-colors">
                   Criar Conta
                 </Link>
               </p>

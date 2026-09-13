@@ -16,6 +16,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bipesend.com.br"),
   title: "BipeSend | Plataforma Completa de CRM e Automações",
   description: "Centralize seu atendimento, gerencie clientes e crie campanhas eficientes com a BipeSend. A plataforma SaaS líder em CRM e automações.",
   keywords: ["CRM", "Automação", "Atendimento", "SaaS", "BipeSend", "Campanhas", "Gestão de Clientes"],

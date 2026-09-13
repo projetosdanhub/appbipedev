@@ -136,7 +136,7 @@ export default function RegisterPage() {
           <h1 className="text-[26px] md:text-[30px] font-bold text-[#07113F] tracking-tight leading-[1.15]">
             {authStep === "choice" ? "Crie sua conta" : "Cadastro"}
           </h1>
-          <p className="text-[15px] md:text-[16px] text-[#68789A] leading-[1.45] font-normal">
+          <p className="text-[15px] md:text-[16px] text-[#475569] leading-[1.45] font-normal">
             Em apenas um Bipe você organiza tudo, aumenta as vendas e cresce o seu negócio.
           </p>
         </div>
@@ -168,7 +168,7 @@ export default function RegisterPage() {
           
           <div className="w-full flex items-center justify-center py-2 px-4">
             <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
-            <span className="px-4 text-[13px] text-[#8E9AB4] font-medium">ou</span>
+            <span className="px-4 text-[13px] text-[#475569] font-medium">ou</span>
             <div className="flex-1 h-[1px] bg-[#DCE5F2]"></div>
           </div>
           
@@ -185,17 +185,17 @@ export default function RegisterPage() {
 
           {/* Termos rodapé */}
           <div className="pt-4 text-center px-2">
-            <p className="text-[12px] md:text-[13px] text-[#68789A] leading-relaxed">
+            <p className="text-[12px] md:text-[13px] text-[#475569] leading-relaxed">
               Ao criar a conta, você concorda com nossos{" "}
-              <Link href="/terms" className="text-[#0A74FF] hover:underline transition-colors font-medium">Termos de Serviço</Link> e{" "}
-              <Link href="/privacy" className="text-[#0A74FF] hover:underline transition-colors font-medium">Política de Privacidade</Link>.
+              <Link href="/terms" className="text-[#0056D2] hover:underline transition-colors font-medium">Termos de Serviço</Link> e{" "}
+              <Link href="/privacy" className="text-[#0056D2] hover:underline transition-colors font-medium">Política de Privacidade</Link>.
             </p>
           </div>
 
           <div className="pt-2 text-center">
-            <p className="text-[14px] text-[#6E7D9E] font-medium">
+            <p className="text-[14px] text-[#475569] font-medium">
               Já tem uma conta?{" "}
-              <Link href="/login" className="font-semibold text-[#0A74FF] hover:text-[#0A74FF]/80 transition-colors">
+              <Link href="/login" className="font-semibold text-[#0056D2] hover:text-[#0056D2]/80 transition-colors">
                 Entrar
               </Link>
             </p>
@@ -312,15 +312,15 @@ export default function RegisterPage() {
             
             {/* Termos rodapé simplificado na etapa 2 */}
             <div className="pt-3 pb-1 text-center">
-              <p className="text-[12px] text-[#68789A]">
-                Ao continuar, você aceita nossos <Link href="/terms" className="text-[#0A74FF] hover:underline">Termos</Link>.
+              <p className="text-[12px] text-[#475569]">
+                Ao continuar, você aceita nossos <Link href="/terms" className="text-[#0056D2] hover:underline">Termos</Link>.
               </p>
             </div>
             
             <div className="pt-1 text-center">
-              <p className="text-[14px] text-[#6E7D9E] font-medium">
+              <p className="text-[14px] text-[#475569] font-medium">
                 Já tem uma conta?{" "}
-                <Link href="/login" className="font-semibold text-[#0A74FF] hover:text-[#0A74FF]/80 transition-colors">
+                <Link href="/login" className="font-semibold text-[#0056D2] hover:text-[#0056D2]/80 transition-colors">
                   Entrar
                 </Link>
               </p>

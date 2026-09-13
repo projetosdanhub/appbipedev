@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 export function AuthLogo() {
   const [hasError, setHasError] = useState(false);
@@ -19,11 +20,14 @@ export function AuthLogo() {
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src="/logo-bip-bgt-white-vertical.webp"
       alt="BipeSend"
-      className="h-[52px] w-auto object-contain"
+      width={150}
+      height={52}
+      priority
+      style={{ width: "auto", height: "52px" }}
+      className="object-contain"
       onError={() => setHasError(true)}
     />
   );
