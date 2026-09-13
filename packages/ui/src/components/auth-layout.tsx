@@ -4,6 +4,7 @@ import { cn } from "../lib/utils";
 export interface AuthLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
   logo?: React.ReactNode;
   backgroundImage?: string;
+  backgroundNode?: React.ReactNode;
   brandingTitle?: string;
   brandingDescription?: string;
   brandingPills?: React.ReactNode;
@@ -16,6 +17,7 @@ export const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
       children,
       logo,
       backgroundImage,
+      backgroundNode,
       brandingTitle,
       brandingDescription,
       brandingPills,
@@ -33,11 +35,17 @@ export const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
         {...props}
       >
         {/* BACKGROUND GLOBAL (Apenas Desktop) */}
-        <div
-          aria-hidden="true"
-          className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat hidden lg:block"
-          style={backgroundImage ? { backgroundImage: `url(${backgroundImage})` } : undefined}
-        />
+        {backgroundNode ? (
+          <div aria-hidden="true" className="fixed inset-0 z-0 hidden lg:block">
+            {backgroundNode}
+          </div>
+        ) : backgroundImage ? (
+          <div
+            aria-hidden="true"
+            className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat hidden lg:block"
+            style={{ backgroundImage: `url(${backgroundImage})` }}
+          />
+        ) : null}
         <div
           aria-hidden="true"
           className="fixed inset-0 z-0 bg-gradient-to-br from-[#007BFF]/25 via-black/60 to-[#6366F1]/25 hidden lg:block"
