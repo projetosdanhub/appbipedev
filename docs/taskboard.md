@@ -4,7 +4,7 @@ Versão 1.0.0 · Revisão 2026-09-14 · Base auditada `fd3f4c3`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 85 cards. BACKLOG: 47 · READY: 1 · IN_PROGRESS: 17 · BLOCKED: 9 · DONE: 11.
+Total: 85 cards. BACKLOG: 47 · READY: 1 · IN_PROGRESS: 16 · BLOCKED: 9 · DONE: 12.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
@@ -106,7 +106,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 | [FND-011](#fnd-011) | DONE | Implementar biblioteca UI e catálogo interativo | FND-009 |
 | [FND-012](#fnd-012) | DONE | Implementar pacotes compartilhados e testes de contrato | FND-003, FND-006 |
 | [FND-013](#fnd-013) | DONE | Documentar reconciliação dos históricos de banco | FND-005 |
-| [FND-014](#fnd-014) | IN_PROGRESS | Entregar branch e guia de validação para Antigravity | FND-010, FND-011, FND-012, FND-013 |
+| [FND-014](#fnd-014) | DONE | Entregar branch e guia de validação para Antigravity | FND-010, FND-011, FND-012, FND-013 |
 
 ## Execução dos cards
 
@@ -2654,7 +2654,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 <a id="fnd-014"></a>
 ### FND-014 — Entregar branch e guia de validação para Antigravity
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 0 - implementação auditada
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 0 - implementação auditada
 
 **Objetivo:** Entregar branch e guia de validação para Antigravity
 
@@ -2677,6 +2677,6 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 
 - Branch remota disponível; relatório diferencia checks passados e blockers.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [docs/ANTIGRAVITY_HANDOFF.md](../docs/ANTIGRAVITY_HANDOFF.md), [docs/audit/validation.md](../docs/audit/validation.md), [docs/audit/evidence/checks.json](../docs/audit/evidence/checks.json)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.

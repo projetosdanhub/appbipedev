@@ -32,7 +32,7 @@ As capturas são recortes de viewport de uma área com rolagem própria e dados 
 
 ## Limites obrigatórios
 
-Sem PostgreSQL, Redis e SMTP conectados: não foi possível executar migração, RLS real, concorrência SQL, entrega de e-mail, sessão distribuída ou E2E de identidade. Nenhuma migration, seed, bootstrap ou deploy foi executado. CI remoto exige confirmação após publicação; a API do GitHub confirmou main com protected=false em 2026-09-14. A configuração da proteção permanece em FND-004.
+Sem PostgreSQL, Redis e SMTP conectados: não foi possível executar migração, RLS real, concorrência SQL, entrega de e-mail, sessão distribuída ou E2E de identidade. Nenhuma migration, seed, bootstrap ou deploy foi executado. O CI remoto da implementação passou; a API do GitHub confirmou main com protected=false em 2026-09-14. A configuração da proteção permanece em FND-004.
 
 Navegador local usa Chromium 153.0.8010.0 por executável fornecido ao runner, pois o download padrão do Playwright retornou 502. O runner versionado usa Playwright normal por padrão; override `PLAYWRIGHT_CHROMIUM_EXECUTABLE` serve somente à execução local. Não altera dependência de produção.
 
@@ -47,3 +47,9 @@ Axe não certifica WCAG; falta revisão manual com leitores de tela, zoom/teclad
 `pnpm --dir apps/e2e-tests exec playwright install chromium` e `pnpm ui:smoke`. O runner inicia servidor de desenvolvimento temporário e grava `test-results/foundation` (ignorado pelo git). Fechar outro next dev da mesma pasta antes para evitar lock.
 
 `pnpm --filter @bipesend/api test:integration` após provisionamento/reconciliação, usando role runtime sem bypass e banco descartável autorizado. Não executar em produção.
+
+## Publicação e rastreabilidade
+
+Implementação publicada no commit `5f5449ff8c7e5c217d590f67e67c6a9dec4868e1`, árvore `22f4d85506ade91cf293bbebb7a5f7b203d9281e`, idêntica à árvore validada localmente. O commit seguinte apenas fecha documentação/taskboard da entrega. Main permanece em fd3f4c3; não houve merge, migration ou deploy.
+
+[Execução CI da implementação](https://github.com/projetosdanhub/appbipedev/actions/runs/34793805919): **SUCCESS**. Instalação congelada, gate da fundação, builds API/tenant/superadmin, Chromium, smoke UI e upload de evidências passaram no GitHub. Isso continua sem certificar os gates de banco/identidade real.

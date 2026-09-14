@@ -79,3 +79,9 @@ A validação do Antigravity pode ocorrer nesta branch. Depois de corrigir os ga
 ## Reversão
 
 Nenhuma migration foi aplicada nesta entrega. Para desfazer código, use revert do(s) commit(s) da branch em um checkout apropriado; não apagar volumes nem executar down/reset. A reversão reabre os defeitos anteriores de autenticação: mantê-los corrigidos é preferível a reutilizar o caminho legado. Se houver mudanças locais adicionais, revisar antes de reverter.
+
+## Referência publicada
+
+Código validado: `5f5449ff8c7e5c217d590f67e67c6a9dec4868e1`. [Abrir branch no GitHub](https://github.com/projetosdanhub/appbipedev/tree/feat/saas-foundation-design-system). A entrega documental posterior preserva esse código. O CI remoto deve ser consultado antes do merge; esta branch não foi mesclada.
+
+CI da implementação: [Foundation passou](https://github.com/projetosdanhub/appbipedev/actions/runs/34793805919), incluindo builds e smoke de navegador. Banco, integração real de identidade e MFA continuam nos gates explícitos.

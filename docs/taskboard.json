@@ -2785,7 +2785,7 @@
         "FND-012",
         "FND-013"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "steps": [
         "Rodar gates da fundação e builds; registrar evidência e falhas de infraestrutura.",
         "Publicar branch sem merge e entregar comandos de checkout e próximo card."
@@ -2803,7 +2803,9 @@
         "Branch remota disponível; relatório diferencia checks passados e blockers."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "docs/ANTIGRAVITY_HANDOFF.md",
+        "docs/audit/validation.md",
+        "docs/audit/evidence/checks.json"
       ],
       "blockers": [],
       "owner": "Engenharia BipeSend"

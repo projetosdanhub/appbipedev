@@ -2,7 +2,7 @@
   "validatedAt": "2026-09-14",
   "baseCommit": "fd3f4c3a6ddbdefd17b591820a4e51b692764773",
   "branch": "feat/saas-foundation-design-system",
-  "source": "working tree committed by this delivery; later handoff-only commit does not change validated runtime",
+  "source": "Remote implementation commit and local validated tree are identical. Delivery documentation follows in a separate commit.",
   "runtime": {
     "node": "24.19.0",
     "pnpmObserved": "11.19.0",
@@ -44,12 +44,24 @@
     "Redis/SMTP identity integration",
     "full identity E2E",
     "session registry and privileged MFA recovery",
-    "field performance metrics",
-    "remote CI"
+    "field performance metrics"
   ],
   "databaseIntegrationAttempt": {
     "result": "failed_dependency",
     "reason": "ECONNREFUSED",
     "failedTests": 3
+  },
+  "validatedCommit": "5f5449ff8c7e5c217d590f67e67c6a9dec4868e1",
+  "validatedTree": "22f4d85506ade91cf293bbebb7a5f7b203d9281e",
+  "publication": {
+    "branch": "feat/saas-foundation-design-system",
+    "implementationCommit": "5f5449ff8c7e5c217d590f67e67c6a9dec4868e1",
+    "mainUnchanged": true
+  },
+  "remoteCI": {
+    "runId": 34793805919,
+    "commit": "5f5449ff8c7e5c217d590f67e67c6a9dec4868e1",
+    "conclusion": "success",
+    "url": "https://github.com/projetosdanhub/appbipedev/actions/runs/34793805919"
   }
 }
