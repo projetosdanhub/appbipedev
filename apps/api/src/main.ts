@@ -7,27 +7,29 @@
  * - Servir na porta configurada, com bind local em 127.0.0.1 por padrão
  */
 
+import crypto from "node:crypto";
 import Fastify from "fastify";
 import { loadEnv } from "./config/env.js";
+import { logger } from "./modules/00-shared/infrastructure/logger.js";
 import { registerHealthController } from "./modules/00-shared/presentation/health.controller.js";
 
 async function bootstrap(): Promise<void> {
   const env = loadEnv();
 
   const app = Fastify({
-    logger: {
-      redact: [
-        "req.headers.authorization",
-        "req.headers.cookie",
-        'req.headers["x-api-key"]',
-        'res.headers["set-cookie"]',
-      ],
-      level: env.NODE_ENV === "production" ? "info" : "debug",
-      transport:
-        env.NODE_ENV !== "production"
-          ? { target: "pino-pretty", options: { colorize: true } }
-          : undefined,
-    },
+    logger: false,
+    trustProxy: ['127.0.0.1', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '::1'],
+    genReqId: (req) => {
+      const id = req.headers["x-request-id"];
+      return typeof id === "string" ? id : crypto.randomUUID();
+    }
+  });
+
+  app.addHook("onRequest", async (request, reply) => {
+    // Garantir que a request ID está sanitizada e segura
+    const reqId = request.id;
+    reply.header("x-request-id", reqId);
+    request.log = logger.withContext({ requestId: reqId }) as any;
   });
 
   await registerHealthController(app);
@@ -121,15 +123,12 @@ async function bootstrap(): Promise<void> {
 
   try {
     await app.listen({ port: env.API_PORT, host: env.API_HOST });
-    app.log.info(
-      {
-        host: env.API_HOST,
-        port: env.API_PORT,
-      },
+    logger.info(
       `${env.APP_NAME} API upstream is ready; public access must use the HTTPS proxy`,
+      { host: env.API_HOST, port: env.API_PORT }
     );
   } catch (err) {
-    app.log.error(err);
+    logger.error("Failed to start server", err);
     process.exit(1);
   }
 }

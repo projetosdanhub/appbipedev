@@ -28,6 +28,13 @@ export class Database {
     callback: (db: Database) => Promise<T>,
     tenantId?: string
   ): Promise<T> {
+    if (this.client) {
+      if (tenantId) {
+        await this.client.query(`SELECT set_config('app.current_tenant_id', $1, true)`, [tenantId]);
+      }
+      return await callback(this);
+    }
+
     const client = await this.pool.connect();
     const txDb = new Database(this.pool, client);
     try {

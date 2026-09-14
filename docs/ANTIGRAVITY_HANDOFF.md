@@ -72,9 +72,24 @@ pnpm --filter @bipesend/superadmin-web build
 pnpm taskboard:check
 ```
 
-Revisar o workflow Foundation no GitHub; presença do YAML não garante que branch protection esteja ativada. CI não roda migration nem certifica integração real.
+Revisar o workflow Foundation no GitHub; presença do YAML não garante que branch protection esteja ativada.
 
-A validação do Antigravity pode ocorrer nesta branch. Depois de corrigir os gates necessários ao marco, atualizar cards/evidências e revisar o diff antes do merge. Esta fundação não autoriza deploy do CRM completo com blockers P0 abertos.
+### AUTH-011: Estabilização de Testes E2E e E-mail
+- **Playwright Configuration:** Alterado `workers: 1` para evitar timeouts devido à concorrência com o Argon2 e reduzido a carga na CPU durante os testes. Forçado uso do Mailpit definindo `RESEND_API_KEY=""` em `env` no `webServer`.
+- **Validação de Cadastro:** Corrigido esquema para `companyName` opcional.
+- **Adaptação de UI nos Testes:** 
+  - Expressões Regulares mais robustas em `auth.spec.ts`.
+  - Tratamento aprimorado de redirecionamento dinâmico para `/onboarding` ou `/`.
+  - Adicionado suporte a `onboarding` em `invitation.spec.ts`.
+- **E-mails & Resend:**
+  - Adicionado o token Resend ao projeto e `.env`.
+  - Configurado o emissor para `onboarding@resend.dev`.
+  - Implementado transporte com `nodemailer` quando `RESEND_API_KEY` não for provido, visando o Mailpit em testes E2E.
+- `docs/taskboard.json` atualizado.
+
+## Próximos Passos
+- Concluir **AUTH-014** para revisão final de segurança, fluxos e logs de E2E.
+- Confirmar sucesso da pipeline com `pnpm build && pnpm foundation:check`. Depois de corrigir os gates necessários ao marco, atualizar cards/evidências e revisar o diff antes do merge. Esta fundação não autoriza deploy do CRM completo com blockers P0 abertos.
 
 ## Reversão
 

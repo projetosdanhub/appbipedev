@@ -15,7 +15,13 @@ const serviceUrl = (protocols: string[]) =>
   z
     .string()
     .url()
-    .refine((value) => protocols.includes(new URL(value).protocol));
+    .refine((value) => {
+      try {
+        return protocols.includes(new URL(value).protocol);
+      } catch {
+        return false;
+      }
+    });
 export const apiEnvSchema = z.object({
   NODE_ENV: z
     .enum(["development", "test", "production"])

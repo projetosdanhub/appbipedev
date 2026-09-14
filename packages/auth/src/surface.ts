@@ -1,5 +1,5 @@
 import { authSecret, checkAuthRateLimit } from "./rate-limit";
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthConfig, CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -7,8 +7,8 @@ import { prisma } from "@bipesend/db";
 import * as argon2 from "argon2";
 import { authenticator } from "otplib";
 
-export function createSurfaceAuth(surface: "tenant" | "platform") {
-  return NextAuth(() => ({
+export function getSurfaceAuthConfig(surface: "tenant" | "platform"): NextAuthConfig {
+  return {
     secret: surface === "platform" ? platformSecret() : authSecret(),
     cookies: {
       sessionToken: {
@@ -39,7 +39,7 @@ export function createSurfaceAuth(surface: "tenant" | "platform") {
       },
     },
     adapter: PrismaAdapter(prisma),
-    session: { strategy: "jwt", maxAge: 7 * 24 * 60 * 60 }, // Padrão 7 dias, mas sobrescrevemos em auth.ts
+    session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 }, // Sessão física controla TTL
     pages: {
       signIn: "/login",
       newUser: "/register",
@@ -97,18 +97,48 @@ export function createSurfaceAuth(surface: "tenant" | "platform") {
           if (!isValid) return null;
 
           if (user.twoFactorEnabled) {
+            class AuthError2FA extends CredentialsSignin {
+              code = "2FA_REQUIRED";
+              constructor() { super("2FA_REQUIRED"); }
+            }
+            class AuthErrorSetup2FA extends CredentialsSignin {
+              code = "2FA_SETUP_REQUIRED";
+              constructor() { super("2FA_SETUP_REQUIRED"); }
+            }
+            class AuthErrorInvalid2FA extends CredentialsSignin {
+              code = "INVALID_2FA_CODE";
+              constructor() { super("INVALID_2FA_CODE"); }
+            }
+
             if (!credentials.code) {
-              throw new Error("2FA_REQUIRED");
+              throw new AuthError2FA();
             }
-            if (!user.twoFactorSecret) {
-              throw new Error("2FA_SETUP_REQUIRED");
-            }
-            const isCodeValid = authenticator.verify({
-              token: credentials.code as string,
-              secret: user.twoFactorSecret,
-            });
-            if (!isCodeValid) {
-              throw new Error("INVALID_2FA_CODE");
+
+            const codeStr = credentials.code as string;
+            
+            // Check backup code first
+            if (codeStr.length === 10 && user.twoFactorBackupCodes?.includes(codeStr)) {
+              // Consume backup code
+              await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                  twoFactorBackupCodes: {
+                    set: user.twoFactorBackupCodes.filter(c => c !== codeStr)
+                  }
+                }
+              });
+            } else {
+              // Check TOTP
+              if (!user.twoFactorSecret) {
+                throw new AuthErrorSetup2FA();
+              }
+              const isCodeValid = authenticator.verify({
+                token: codeStr,
+                secret: user.twoFactorSecret,
+              });
+              if (!isCodeValid) {
+                throw new AuthErrorInvalid2FA();
+              }
             }
           }
 
@@ -124,6 +154,7 @@ export function createSurfaceAuth(surface: "tenant" | "platform") {
     ],
     callbacks: {
       async jwt({ token, user }) {
+        const { createSession, verifySession } = await import("./session");
         if (user) {
           const account = await prisma.user.findUnique({
             where: { id: user.id },
@@ -135,12 +166,22 @@ export function createSurfaceAuth(surface: "tenant" | "platform") {
               : account.isSuperadmin)
           )
             return null;
+          const sessionId = await createSession(
+            account.id,
+            (user as any).rememberMe === true,
+            surface
+          );
           token.id = account.id;
           token.surface = surface;
           token.authVersion = account.updatedAt.getTime();
+          token.sessionId = sessionId;
         }
-        if (typeof token.id !== "string" || token.surface !== surface)
+        if (typeof token.id !== "string" || token.surface !== surface || typeof token.sessionId !== "string")
           return null;
+
+        const isSessionValid = await verifySession(token.sessionId as string, surface);
+        if (!isSessionValid) return null;
+
         const current = await prisma.user.findUnique({
           where: { id: token.id },
           select: {
@@ -162,12 +203,26 @@ export function createSurfaceAuth(surface: "tenant" | "platform") {
       async session({ session, token }) {
         if (token) {
           session.user.id = token.id as string;
+          (session as any).sessionId = token.sessionId;
         }
         return session;
       },
     },
-  }));
+    events: {
+      async signOut(message) {
+        if ("token" in message && message.token?.sessionId) {
+          const { revokeSession } = await import("./session");
+          await revokeSession(message.token.sessionId as string, surface);
+        }
+      },
+    },
+  };
 }
+
+export function createSurfaceAuth(surface: "tenant" | "platform") {
+  return NextAuth(() => getSurfaceAuthConfig(surface));
+}
+
 function platformSecret(): string {
   const secret = process.env.SUPERADMIN_AUTH_SECRET;
   if (

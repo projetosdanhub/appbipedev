@@ -11,7 +11,9 @@ export function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/register") ||
     request.nextUrl.pathname.startsWith("/forgot-password") ||
-    request.nextUrl.pathname.startsWith("/reset-password");
+    request.nextUrl.pathname.startsWith("/reset-password") ||
+    request.nextUrl.pathname.startsWith("/invite") ||
+    request.nextUrl.pathname.startsWith("/onboarding");
 
   // Se não tem token e tenta acessar página protegida (qualquer uma exceto as de auth e api)
   if (

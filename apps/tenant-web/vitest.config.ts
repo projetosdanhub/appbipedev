@@ -10,11 +10,17 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./src/__tests__/setup.ts"],
     include: ["src/**/*.test.{ts,tsx}"],
+    server: {
+      deps: {
+        inline: ["next-auth"],
+      },
+    },
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "@bipesend/ui": path.resolve(__dirname, "../../packages/ui/src"),
+      "next/server": path.resolve(__dirname, "./src/__tests__/stubs/next-server.js"),
     },
   },
 });

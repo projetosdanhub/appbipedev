@@ -6,23 +6,24 @@ export async function registerHealthController(app: FastifyInstance): Promise<vo
   const redisUrl = process.env["REDIS_URL"] || "";
   const healthService = new HealthService(databaseUrl, redisUrl);
 
-  app.get("/health", async (_request, reply) => {
+  app.get("/health", async (request, reply) => {
     reply.header("cache-control", "no-store");
     return reply.status(200).send({
       status: "ok",
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
+      requestId: request.id,
     });
   });
 
-  app.get("/ready", async (_request, reply) => {
+  app.get("/ready", async (request, reply) => {
     const result = await healthService.checkAll();
     
     reply.header("cache-control", "no-store");
-    return reply.status(result.status === "ready" ? 200 : 503).send({
+    const statusCode = result.status === "ok" ? 200 : 503;
+    
+    return reply.status(statusCode).send({
       status: result.status,
-      timestamp: new Date().toISOString(),
       dependencies: result.dependencies,
+      requestId: request.id,
     });
   });
 }

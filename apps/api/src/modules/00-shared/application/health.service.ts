@@ -1,9 +1,10 @@
 import { Client as PgClient } from "pg";
 import { Redis } from "ioredis";
+import { logger } from "../infrastructure/logger.js";
+import type { IntegrationState } from "@bipesend/contracts";
 
 export interface DependencyStatus {
-  name: string;
-  status: "ok" | "error";
+  state: IntegrationState;
   latencyMs?: number;
 }
 
@@ -24,14 +25,13 @@ export class HealthService {
       await client.connect();
       await client.query("SELECT 1");
       return {
-        name: "postgresql",
-        status: "ok",
+        state: "connected",
         latencyMs: Date.now() - start,
       };
-    } catch {
+    } catch (err) {
+      logger.error("Health check failed for Postgres", err);
       return {
-        name: "postgresql",
-        status: "error",
+        state: "disconnected",
         latencyMs: Date.now() - start,
       };
     } finally {
@@ -52,28 +52,43 @@ export class HealthService {
     try {
       await redis.connect();
       await redis.ping();
-      return { name: "redis", status: "ok", latencyMs: Date.now() - start };
-    } catch {
-      return { name: "redis", status: "error", latencyMs: Date.now() - start };
+      return { state: "connected", latencyMs: Date.now() - start };
+    } catch (err) {
+      logger.error("Health check failed for Redis", err);
+      return { state: "disconnected", latencyMs: Date.now() - start };
     } finally {
       redis.disconnect();
     }
   }
 
   async checkAll(): Promise<{
-    status: "ready" | "degraded";
-    dependencies: DependencyStatus[];
+    status: "ok" | "degraded" | "unavailable";
+    dependencies: Record<string, DependencyStatus>;
   }> {
     const [pg, redis] = await Promise.all([
       this.checkPostgres(),
       this.checkRedis(),
     ]);
-    const dependencies = [pg, redis];
-    const allOk = dependencies.every((d) => d.status === "ok");
+    
+    const dependencies: Record<string, DependencyStatus> = {
+      postgresql: pg,
+      redis,
+    };
+    
+    const isPgConnected = pg.state === "connected";
+    const isRedisConnected = redis.state === "connected";
+
+    let status: "ok" | "degraded" | "unavailable" = "unavailable";
+    if (isPgConnected && isRedisConnected) {
+      status = "ok";
+    } else if (isPgConnected) {
+      status = "degraded"; // redis might be optional for basic reads? No, but let's call it degraded.
+    }
 
     return {
-      status: allOk ? "ready" : "degraded",
+      status,
       dependencies,
     };
   }
 }
+

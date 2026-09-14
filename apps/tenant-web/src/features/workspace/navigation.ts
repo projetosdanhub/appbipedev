@@ -21,6 +21,7 @@ export const navigation = [
   { name: "Integrações", href: "/integrations", icon: Plug, group: "Gestão" },
   { name: "Faturamento", href: "/billing", icon: CreditCard, group: "Gestão" },
   { name: "Configurações", href: "/settings", icon: Settings, group: "Gestão" },
+  { name: "Equipe", href: "/settings/team", icon: Users, group: "Gestão" },
 ] as const;
 export function isActiveRoute(path: string, href: string) {
   return path === href || (href !== "/" && path.startsWith(`${href}/`));

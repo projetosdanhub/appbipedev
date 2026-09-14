@@ -16,18 +16,33 @@ import {
 } from "@bipesend/ui";
 import { navigation, isActiveRoute } from "./navigation";
 import { logout } from "./actions";
+import { TenantSwitcher, type TenantData } from "./tenant-switcher";
 
-export function WorkspaceHeader({ name }: { name: string }) {
+export function WorkspaceHeader({ 
+  name, 
+  activeTenant, 
+  availableTenants 
+}: { 
+  name: string; 
+  activeTenant?: TenantData;
+  availableTenants?: TenantData[];
+}) {
   const router = useRouter(),
     path = usePathname(),
     [pending, startTransition] = useTransition();
   const current = navigation.find((item) => isActiveRoute(path, item.href));
   return (
     <header className="workspace-header">
-      <div className="workspace-breadcrumb">
-        <span>BipeSend</span>
-        <span aria-hidden="true">/</span>
-        <strong>{current?.name ?? "Workspace"}</strong>
+      <div className="flex items-center gap-4">
+        {activeTenant && availableTenants && (
+          <>
+            <TenantSwitcher activeTenant={activeTenant} availableTenants={availableTenants} />
+            <span className="text-slate-300" aria-hidden="true">/</span>
+          </>
+        )}
+        <div className="workspace-breadcrumb">
+          <strong>{current?.name ?? "Dashboard"}</strong>
+        </div>
       </div>
       <div className="ui-filter-bar">
         <IconButton

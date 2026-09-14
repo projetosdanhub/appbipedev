@@ -17,6 +17,7 @@ export function SecurityClient({ isTwoFactorEnabled }: { isTwoFactorEnabled: boo
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
 
   const handleStartSetup = async () => {
     try {
@@ -37,12 +38,15 @@ export function SecurityClient({ isTwoFactorEnabled }: { isTwoFactorEnabled: boo
 
     try {
       setIsLoading(true);
-      await enable2FA(setupData.secret, code);
-      toast.success("Autenticação em duas etapas ativada com sucesso!");
-      setIsSettingUp(false);
-      setSetupData(null);
-      setCode("");
-      router.refresh();
+      const res = await enable2FA(setupData.secret, code);
+      if (res?.success) {
+        toast.success("Autenticação em duas etapas ativada com sucesso!");
+        setBackupCodes(res.backupCodes || null);
+        setIsSettingUp(false);
+        setSetupData(null);
+        setCode("");
+        router.refresh();
+      }
     } catch (err: any) {
       toast.error(err.message || "Código inválido");
     } finally {
@@ -103,6 +107,31 @@ export function SecurityClient({ isTwoFactorEnabled }: { isTwoFactorEnabled: boo
           )}
         </div>
       </div>
+
+      {backupCodes && (
+        <div className="mt-8 pt-8 border-t border-[var(--color-border-200)]">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+            <h4 className="text-[16px] font-bold text-yellow-800 mb-2">
+              Códigos de Recuperação
+            </h4>
+            <p className="text-[14px] text-yellow-700 mb-4">
+              Guarde estes códigos em um local seguro. Eles são a única forma de recuperar sua conta se você perder o acesso ao seu aplicativo autenticador. Cada código só pode ser usado uma vez.
+            </p>
+            <div className="grid grid-cols-2 gap-4 bg-white p-4 rounded border border-yellow-200 font-mono text-sm">
+              {backupCodes.map((c) => (
+                <div key={c} className="text-slate-700 font-medium">
+                  {c}
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 flex gap-2">
+              <Button onClick={() => setBackupCodes(null)} variant="outline">
+                Já guardei em local seguro
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isSettingUp && setupData && (
         <div className="mt-8 pt-8 border-t border-[var(--color-border-200)]">

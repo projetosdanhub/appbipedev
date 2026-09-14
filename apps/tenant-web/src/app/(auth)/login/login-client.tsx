@@ -100,6 +100,7 @@ function LoginContent() {
     setServerError("");
     try {
       const response = await loginAction({ ...data, rememberMe, code: requires2FA ? twoFactorCode : undefined });
+      console.log("loginAction response:", response);
       if (!response.success) { 
         if (response.message === "2FA_REQUIRED") {
           setRequires2FA(true);
@@ -121,7 +122,9 @@ function LoginContent() {
         return; 
       }
       toast.success("Bem-vindo de volta! 🎉");
-      router.push("/");
+      // Hard redirect to clear any Next.js router cache and ensure the new session is picked up
+      const cb = searchParams?.get("callbackUrl") || "/";
+      window.location.href = cb;
     } catch {
       setServerError("Erro inesperado ao conectar ao servidor.");
     }

@@ -18,6 +18,17 @@ export const metadata: Metadata = {
   }
 };
 
+import { Suspense } from "react";
+import { Loader2 } from "lucide-react";
+
 export default function RegisterPage() {
-  return <RegisterClient />;
+  return (
+    <Suspense fallback={
+      <div className="flex h-full w-full items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-[#007BFF]" />
+      </div>
+    }>
+      <RegisterClient />
+    </Suspense>
+  );
 }

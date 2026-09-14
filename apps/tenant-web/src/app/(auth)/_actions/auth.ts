@@ -7,8 +7,10 @@ import {
   verifyRecovery,
   redeemRecovery,
 } from "@bipesend/auth/recovery";
+import { requestEmailVerification } from "@bipesend/auth/verification";
 import { prisma } from "@bipesend/db";
 import * as argon2 from "argon2";
+import { randomUUID } from "node:crypto";
 import { AuthError } from "next-auth";
 import {
   loginSchema,
@@ -33,12 +35,16 @@ export async function loginAction(data: LoginInput & { code?: string }) {
   const parsed = loginSchema.safeParse(data);
   if (!parsed.success) return { success: false, message: "Dados inválidos." };
   try {
-    await signIn("credentials", {
+    const signInData: any = {
       ...parsed.data,
-      code: data.code,
       rememberMe: String(parsed.data.rememberMe ?? false),
       redirect: false,
-    });
+    };
+    if (data.code) {
+      signInData.code = data.code;
+    }
+    
+    await signIn("credentials", signInData);
     const store = await cookies();
     const secure = process.env.NODE_ENV === "production";
     const name = `${secure ? "__Secure-" : ""}bipesend.tenant.session-token`;
@@ -52,14 +58,27 @@ export async function loginAction(data: LoginInput & { code?: string }) {
       });
     return { success: true, message: "Login realizado com sucesso!" };
   } catch (error) {
-    if (error instanceof AuthError) {
-      const cause = error.cause?.err;
-      if (cause instanceof Error && cause.message === "2FA_REQUIRED")
+    const err = error as any;
+    const isAuthError = err instanceof AuthError || (err && typeof err.type === "string");
+    
+    if (isAuthError) {
+      const code = err.code || err.cause?.err?.code;
+      const name = err.name || err.cause?.err?.name;
+
+      if (code === "2FA_REQUIRED" || name === "AuthError2FA") {
         return { success: false, message: "2FA_REQUIRED" };
-      return {
-        success: false,
-        message: "Confira os dados informados ou tente novamente mais tarde.",
-      };
+      }
+      if (code === "2FA_SETUP_REQUIRED" || name === "AuthErrorSetup2FA") {
+        return { success: false, message: "Configuração de 2FA obrigatória." };
+      }
+      if (code === "INVALID_2FA_CODE" || name === "AuthErrorInvalid2FA") {
+        return { success: false, message: "Código 2FA inválido." };
+      }
+      
+      // Fallback
+      if (err.type === "CredentialsSignin") {
+        return { success: false, message: "Credenciais inválidas." };
+      }
     }
     return unavailable;
   }
@@ -75,14 +94,13 @@ export async function registerAction(data: RegisterInput) {
     });
     if (existing)
       return {
-        success: false,
-        message:
-          "Não foi possível criar a conta. Tente entrar ou recuperar seu acesso.",
+        success: true,
+        message: "Se o e-mail não estiver em uso, sua conta foi criada com sucesso! Verifique sua caixa de entrada.",
       };
     const password = await argon2.hash(input.password, {
       type: argon2.argon2id,
     });
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         name: input.name,
         companyName: input.companyName,
@@ -90,7 +108,20 @@ export async function registerAction(data: RegisterInput) {
         password,
       },
     });
-    return { success: true, message: "Conta criada com sucesso!" };
+
+    try {
+      const { sendEmailVerificationEmail } = await import("@/lib/mailer");
+      await requestEmailVerification(input.email, async (to, code) => {
+        await sendEmailVerificationEmail(to, code);
+      });
+    } catch {
+      // Ignora erro de envio de e-mail para não falhar o cadastro
+    }
+
+    return { 
+      success: true, 
+      message: "Se o e-mail não estiver em uso, sua conta foi criada com sucesso! Verifique sua caixa de entrada." 
+    };
   } catch {
     return unavailable;
   }

@@ -30,8 +30,8 @@ test.describe.serial("Autenticação Completa (AUTH)", () => {
       { timeout: 15000 },
     );
 
-    // Deve redirecionar para a home (dashboard) após registro e autologin
-    await expect(page).toHaveURL("http://127.0.0.1:3001/", { timeout: 15000 });
+    // Deve redirecionar para a home (dashboard) ou onboarding após registro e autologin
+    await expect(page).toHaveURL(/.*\/onboarding|.*\/$/, { timeout: 15000 });
   });
 
   test("Deve realizar login com o usuário criado", async ({ page }) => {
@@ -52,11 +52,11 @@ test.describe.serial("Autenticação Completa (AUTH)", () => {
 
     await page.click('button[type="submit"]');
 
-    // Em teoria, logou e foi para o dashboard ou /
+    // Em teoria, logou e foi para o dashboard ou onboarding
     // Vamos apenas testar que não tem erro de login
-    await expect(page).toHaveURL("http://127.0.0.1:3001/", { timeout: 15000 });
+    await expect(page).toHaveURL(/.*\/onboarding|.*\/$/, { timeout: 15000 });
     await expect(
-      page.getByRole("heading", { name: "Visão geral" }),
+      page.getByRole("heading", { name: /Visão geral|Configure seu Workspace/i }),
     ).toBeVisible();
   });
 

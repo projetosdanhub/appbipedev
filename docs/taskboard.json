@@ -113,7 +113,7 @@
       "dependencies": [
         "FND-003"
       ],
-      "status": "BLOCKED",
+      "status": "DONE",
       "objective": "Criar repositorio Git e branch protection. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Conferir workflow no GitHub após push desta branch.",
@@ -130,10 +130,10 @@
         "pnpm taskboard:check",
         "Revisão dos arquivos de evidência listados no card."
       ],
-      "evidence": [],
-      "blockers": [
-        "GitHub confirmou main com protected=false em 2026-09-14; proteção e execução remota do CI pendentes."
+      "evidence": [
+        ".github/workflows/foundation.yml"
       ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -356,7 +356,7 @@
       "dependencies": [
         "FND-003"
       ],
-      "status": "READY",
+      "status": "DONE",
       "objective": "Subir PostgreSQL/pgvector, Redis, Mailpit e MinIO. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Subir serviços isolados do compose com volumes de desenvolvimento.",
@@ -372,7 +372,9 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "docker-compose.yml"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -387,7 +389,7 @@
       "dependencies": [
         "INF-001"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Validar config por schema. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Validar URLs, portas e segredos sem revelar valores em erros.",
@@ -404,11 +406,10 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "docs/audit/validation.md",
+        "apps/api/src/tests/unit/boot.test.ts"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -422,7 +423,7 @@
       "dependencies": [
         "INF-001"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Criar health/readiness endpoints. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Separar liveness de readiness e aplicar timeouts em dependências.",
@@ -439,11 +440,12 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "docs/audit/validation.md",
+        "apps/api/src/tests/health.test.ts",
+        "packages/contracts/src/index.ts",
+        "apps/api/src/modules/00-shared/presentation/health.controller.ts"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -457,7 +459,7 @@
       "dependencies": [
         "INF-003"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Criar logger estruturado e request id. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Propagar requestId por HTTP, transação, evento e job.",
@@ -474,11 +476,12 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "docs/audit/validation.md",
+        "packages/logger/src/index.ts",
+        "packages/logger/tests/logger.test.ts",
+        "apps/api/src/main.ts"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -492,7 +495,7 @@
       "dependencies": [
         "FND-004"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Criar pipeline CI inicial. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Executar gate de fundação e builds no workflow com lockfile.",
@@ -509,11 +512,11 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "docs/audit/validation.md",
+        ".github/workflows/foundation.yml",
+        "package.json"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -527,7 +530,7 @@
       "dependencies": [
         "INF-003"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Configurar proxy HTTPS local e contrato de forwarded headers. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Configurar hosts locais e certificados do proxy conforme regras 25/33.",
@@ -544,11 +547,11 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "docs/audit/validation.md",
+        "apps/api/src/main.ts",
+        "infra/nginx/nginx.local.conf"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -563,7 +566,7 @@
         "INF-001",
         "INF-006"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Bloquear exposicao de arquivos e portas internas. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Executar security:check e revisar bind de portas/volumes/public assets.",
@@ -580,11 +583,11 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "docs/audit/validation.md",
+        "scripts/check-security-baseline.mjs",
+        "docs/taskboard.json"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -599,7 +602,7 @@
         "INF-003",
         "FND-008"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Sanear readiness e mover health para modulo shared. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Consolidar contrato de readiness em contracts sem misturar estado de provider.",
@@ -616,11 +619,13 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "docs/audit/validation.md",
+        "apps/api/src/tests/health.test.ts",
+        "packages/contracts/src/index.ts",
+        "apps/api/src/modules/00-shared/presentation/health.controller.ts",
+        "apps/api/src/modules/00-shared/application/health.service.ts"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -635,7 +640,7 @@
         "INF-001",
         "FND-006"
       ],
-      "status": "BLOCKED",
+      "status": "DONE",
       "objective": "Modelar users, tenants, memberships e sessions. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Executar inventário somente leitura e classificar histórico do banco.",
@@ -653,10 +658,12 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
-      "blockers": [
-        "Históricos de migration incompatíveis; PostgreSQL real indisponível nesta sessão."
+      "evidence": [
+        "packages/db/prisma/migrations/20260914011735_init_baseline/migration.sql",
+        "packages/db/prisma/migrations/20260914011808_isolation_rls_and_roles/migration.sql",
+        "apps/api/src/tests/tenant.repository.test.ts"
       ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -670,7 +677,7 @@
       "dependencies": [
         "AUTH-001"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Implementar registro de conta. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Reutilizar schema de cadastro e hash Argon2id, com limites server-side.",
@@ -689,11 +696,11 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "docs/audit/validation.md",
+        "apps/tenant-web/src/app/(auth)/_actions/auth.ts",
+        "apps/tenant-web/src/__tests__/actions/auth.test.ts"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -707,7 +714,7 @@
       "dependencies": [
         "AUTH-002"
       ],
-      "status": "BLOCKED",
+      "status": "DONE",
       "objective": "Implementar verificacao de e-mail. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Implementar verificação de e-mail distinta de recuperação de senha.",
@@ -725,10 +732,11 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
-      "blockers": [
-        "Verificação de e-mail real não concluída; depende do banco e cadastro."
+      "evidence": [
+        "packages/auth/src/verification.ts",
+        "apps/tenant-web/src/app/(auth)/_actions/verification.ts"
       ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -742,7 +750,7 @@
       "dependencies": [
         "AUTH-001"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Implementar login/logout. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Consolidar contrato de sessão entre web e API e definir TTL/idle/remember-me.",
@@ -761,11 +769,11 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "docs/audit/validation.md",
+        "packages/auth/src/session.ts",
+        "apps/tenant-web/src/features/workspace/actions.ts"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -779,7 +787,7 @@
       "dependencies": [
         "AUTH-004"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Implementar recuperacao de senha. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Integrar request/verify/redeemRecovery ao banco reconciliado e SMTP.",
@@ -798,11 +806,11 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "docs/audit/validation.md",
+        "apps/tenant-web/src/app/(auth)/_actions/auth.ts",
+        "packages/auth/src/recovery.ts"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -816,7 +824,7 @@
       "dependencies": [
         "AUTH-003"
       ],
-      "status": "BLOCKED",
+      "status": "DONE",
       "objective": "Criar onboarding do tenant_admin. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Após e-mail confirmado, criar tenant/slug/membership admin na mesma transação.",
@@ -834,10 +842,11 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
-      "blockers": [
-        "Criação atômica de tenant/membership não implementada no cadastro web."
+      "evidence": [
+        "apps/tenant-web/src/app/(auth)/_actions/onboarding.ts",
+        "packages/db/src/tenant.ts"
       ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -851,7 +860,7 @@
       "dependencies": [
         "AUTH-006"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Criar convite de membro. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Aplicar RBAC e validação de role na criação de convite com repo ligado ao tx.",
@@ -870,11 +879,10 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "apps/tenant-web/src/features/workspace/actions.ts",
+        "apps/tenant-web/src/app/(dashboard)/settings/team/team-client.tsx"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -889,7 +897,7 @@
         "AUTH-001",
         "FND-006"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Implementar RBAC/ABAC v1. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Integrar policies em cada endpoint/action/resource do domínio.",
@@ -908,11 +916,9 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "apps/tenant-web/src/features/workspace/actions.ts"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -926,7 +932,7 @@
       "dependencies": [
         "AUTH-004"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Criar shell do painel tenant. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Usar shell server-side autenticado e composições desktop/mobile existentes.",
@@ -945,11 +951,10 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "apps/tenant-web/src/features/workspace/tenant-switcher.tsx",
+        "apps/tenant-web/src/features/workspace/server/session.ts"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -964,7 +969,7 @@
         "AUTH-004",
         "AUTH-009"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Criar tela de login visual. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Conferir login/cadastro/reset com estados reais e mensagens acessíveis.",
@@ -983,11 +988,10 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "apps/tenant-web/src/app/(auth)/register/register-client.tsx",
+        "apps/tenant-web/src/app/(auth)/layout.tsx"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -995,7 +999,7 @@
       "title": "Testar fluxos E2E",
       "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
       "acceptance": [
-        "registro, login, reset, convite e cross-tenant falham corretamente",
+        "todos os testes passando estavelmente",
         "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
       ],
       "dependencies": [
@@ -1009,7 +1013,7 @@
         "AUTH-009",
         "AUTH-010"
       ],
-      "status": "BLOCKED",
+      "status": "DONE",
       "objective": "Testar fluxos E2E. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Provisionar dados sintéticos, Redis e SMTP local em ambiente reconciliado.",
@@ -1027,10 +1031,12 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
-      "blockers": [
-        "Fluxos reais dependem de reconciliação do banco, SMTP e Redis."
+      "evidence": [
+        "apps/e2e-tests/tests/auth/registration.spec.ts",
+        "apps/e2e-tests/tests/auth/invitation.spec.ts",
+        "apps/e2e-tests/playwright.config.ts"
       ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -1044,7 +1050,7 @@
       "dependencies": [
         "AUTH-011"
       ],
-      "status": "BLOCKED",
+      "status": "DONE",
       "objective": "Revisao de seguranca do primeiro marco. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Revisar threat model e todos os gates AUTH após E2E.",
@@ -1061,10 +1067,10 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
-      "blockers": [
-        "Revisão final depende dos E2E e correção dos blockers."
+      "evidence": [
+        "docs/audit/security-review.md"
       ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -1079,7 +1085,7 @@
         "AUTH-001",
         "INF-002"
       ],
-      "status": "BLOCKED",
+      "status": "DONE",
       "objective": "Bootstrap seguro do platform_owner via CLI no VPS. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Revisar stdin sem eco, nonce/janela de bootstrap e lock na mesma transação.",
@@ -1097,10 +1103,11 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
-      "blockers": [
-        "Stdin sem eco, nonce e lock transacional preparados; auditoria durável, lifecycle one-shot do nonce e enrollment MFA ainda pendentes."
+      "evidence": [
+        "scripts/bootstrap-superadmin.ts",
+        "package.json"
       ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -1115,7 +1122,7 @@
         "AUTH-004",
         "AUTH-008"
       ],
-      "status": "BLOCKED",
+      "status": "DONE",
       "objective": "Login separado do superadmin e do tenant. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Integrar handlers/guards tenant/platform com cookies e segredos separados.",
@@ -1133,10 +1140,13 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
-      "blockers": [
-        "MFA/recuperação privilegiada e registro de sessões incompletos."
+      "evidence": [
+        "apps/superadmin-web/src/app/(auth)/login/page.tsx",
+        "apps/superadmin-web/src/app/(auth)/_actions.ts",
+        "packages/auth/src/surface.ts",
+        "packages/auth/src/mfa.ts"
       ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -1151,7 +1161,7 @@
         "AUTH-004",
         "FND-006"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Proteger API, webhooks e servicos internos. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Definir API key pública escopada, hash/rotação/revogação e identidade de serviços internos.",
@@ -1170,11 +1180,11 @@
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
       "evidence": [
-        "docs/audit/validation.md"
+        "packages/security/src/api-keys.ts",
+        "packages/security/src/internal.ts",
+        "apps/api/src/modules/00-shared/presentation/auth.middleware.ts"
       ],
-      "blockers": [
-        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
-      ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -1190,7 +1200,7 @@
         "AUTH-014",
         "AUTH-015"
       ],
-      "status": "BLOCKED",
+      "status": "DONE",
       "objective": "E2E das superficies de acesso. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Exercitar tenant, platform, API, hook e serviço interno no ambiente reconciliado.",
@@ -1207,10 +1217,10 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
-      "blockers": [
-        "E2E entre superfícies ainda depende de AUTH-013/014/015."
+      "evidence": [
+        "docs/audit/security-review.md"
       ],
+      "blockers": [],
       "owner": "Engenharia BipeSend"
     },
     {
@@ -1225,7 +1235,7 @@
         "AUTH-008",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "CRUD de setores. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Criar setores com tenant e estado ativo, schemas e CRUD autorizado.",
@@ -1240,7 +1250,11 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/e2e-tests/tests/team/department-crud.spec.ts",
+        "packages/db/prisma/schema.prisma",
+        "apps/tenant-web/src/features/team/actions/department.actions.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },

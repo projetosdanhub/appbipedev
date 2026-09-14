@@ -1,3 +1,6 @@
+export * from "./api-keys.js";
+export * from "./internal.js";
+
 import {
   createCipheriv,
   createDecipheriv,

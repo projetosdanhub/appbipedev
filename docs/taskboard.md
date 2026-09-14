@@ -4,7 +4,7 @@ Versão 1.0.0 · Revisão 2026-09-14 · Base auditada `fd3f4c3`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 85 cards. BACKLOG: 47 · READY: 1 · IN_PROGRESS: 16 · BLOCKED: 9 · DONE: 12.
+Total: 85 cards. BACKLOG: 46 · READY: 0 · IN_PROGRESS: 1 · BLOCKED: 0 · DONE: 38.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
@@ -25,38 +25,38 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 | [FND-001](#fnd-001) | DONE | Criar regras e convencoes | — |
 | [FND-002](#fnd-002) | IN_PROGRESS | Definir nome de trabalho e dominios candidatos | — |
 | [FND-003](#fnd-003) | DONE | Definir stack e monorepo inicial | — |
-| [FND-004](#fnd-004) | BLOCKED | Criar repositorio Git e branch protection | FND-003 |
+| [FND-004](#fnd-004) | DONE | Criar repositorio Git e branch protection | FND-003 |
 | [FND-005](#fnd-005) | DONE | Definir threat model inicial | FND-001 |
 | [FND-006](#fnd-006) | DONE | Criar matriz de permissoes v1 | FND-005 |
 | [FND-007](#fnd-007) | DONE | Criar mapa modular e regras anti-monolito | FND-003 |
 | [FND-008](#fnd-008) | DONE | Gerar skeleton de modulos sem codigo de negocio | FND-007 |
 | [FND-009](#fnd-009) | DONE | Consolidar contrato visual, motion e atualizacao de dados | FND-001, FND-007 |
 | [FND-010](#fnd-010) | DONE | Auditar fundacao e transformar taskboard em guia executavel | FND-009 |
-| [INF-001](#inf-001) | READY | Subir PostgreSQL/pgvector, Redis, Mailpit e MinIO | FND-003 |
-| [INF-002](#inf-002) | IN_PROGRESS | Validar config por schema | INF-001 |
-| [INF-003](#inf-003) | IN_PROGRESS | Criar health/readiness endpoints | INF-001 |
-| [INF-004](#inf-004) | IN_PROGRESS | Criar logger estruturado e request id | INF-003 |
-| [INF-005](#inf-005) | IN_PROGRESS | Criar pipeline CI inicial | FND-004 |
-| [INF-006](#inf-006) | IN_PROGRESS | Configurar proxy HTTPS local e contrato de forwarded headers | INF-003 |
-| [INF-007](#inf-007) | IN_PROGRESS | Bloquear exposicao de arquivos e portas internas | INF-001, INF-006 |
-| [INF-008](#inf-008) | IN_PROGRESS | Sanear readiness e mover health para modulo shared | INF-003, FND-008 |
-| [AUTH-001](#auth-001) | BLOCKED | Modelar users, tenants, memberships e sessions | INF-001, FND-006 |
-| [AUTH-002](#auth-002) | IN_PROGRESS | Implementar registro de conta | AUTH-001 |
-| [AUTH-003](#auth-003) | BLOCKED | Implementar verificacao de e-mail | AUTH-002 |
-| [AUTH-004](#auth-004) | IN_PROGRESS | Implementar login/logout | AUTH-001 |
-| [AUTH-005](#auth-005) | IN_PROGRESS | Implementar recuperacao de senha | AUTH-004 |
-| [AUTH-006](#auth-006) | BLOCKED | Criar onboarding do tenant_admin | AUTH-003 |
-| [AUTH-007](#auth-007) | IN_PROGRESS | Criar convite de membro | AUTH-006 |
-| [AUTH-008](#auth-008) | IN_PROGRESS | Implementar RBAC/ABAC v1 | AUTH-001, FND-006 |
-| [AUTH-009](#auth-009) | IN_PROGRESS | Criar shell do painel tenant | AUTH-004 |
-| [AUTH-010](#auth-010) | IN_PROGRESS | Criar tela de login visual | AUTH-004, AUTH-009 |
-| [AUTH-011](#auth-011) | BLOCKED | Testar fluxos E2E | AUTH-002, AUTH-003, AUTH-004, AUTH-005, AUTH-006, AUTH-007, AUTH-008, AUTH-009, AUTH-010 |
-| [AUTH-012](#auth-012) | BLOCKED | Revisao de seguranca do primeiro marco | AUTH-011 |
-| [AUTH-013](#auth-013) | BLOCKED | Bootstrap seguro do platform_owner via CLI no VPS | AUTH-001, INF-002 |
-| [AUTH-014](#auth-014) | BLOCKED | Login separado do superadmin e do tenant | AUTH-004, AUTH-008 |
-| [AUTH-015](#auth-015) | IN_PROGRESS | Proteger API, webhooks e servicos internos | AUTH-004, FND-006 |
-| [AUTH-016](#auth-016) | BLOCKED | E2E das superficies de acesso | AUTH-013, AUTH-014, AUTH-015 |
-| [TEAM-001](#team-001) | BACKLOG | CRUD de setores | AUTH-008, AUTH-016 |
+| [INF-001](#inf-001) | DONE | Subir PostgreSQL/pgvector, Redis, Mailpit e MinIO | FND-003 |
+| [INF-002](#inf-002) | DONE | Validar config por schema | INF-001 |
+| [INF-003](#inf-003) | DONE | Criar health/readiness endpoints | INF-001 |
+| [INF-004](#inf-004) | DONE | Criar logger estruturado e request id | INF-003 |
+| [INF-005](#inf-005) | DONE | Criar pipeline CI inicial | FND-004 |
+| [INF-006](#inf-006) | DONE | Configurar proxy HTTPS local e contrato de forwarded headers | INF-003 |
+| [INF-007](#inf-007) | DONE | Bloquear exposicao de arquivos e portas internas | INF-001, INF-006 |
+| [INF-008](#inf-008) | DONE | Sanear readiness e mover health para modulo shared | INF-003, FND-008 |
+| [AUTH-001](#auth-001) | DONE | Modelar users, tenants, memberships e sessions | INF-001, FND-006 |
+| [AUTH-002](#auth-002) | DONE | Implementar registro de conta | AUTH-001 |
+| [AUTH-003](#auth-003) | DONE | Implementar verificacao de e-mail | AUTH-002 |
+| [AUTH-004](#auth-004) | DONE | Implementar login/logout | AUTH-001 |
+| [AUTH-005](#auth-005) | DONE | Implementar recuperacao de senha | AUTH-004 |
+| [AUTH-006](#auth-006) | DONE | Criar onboarding do tenant_admin | AUTH-003 |
+| [AUTH-007](#auth-007) | DONE | Criar convite de membro | AUTH-006 |
+| [AUTH-008](#auth-008) | DONE | Implementar RBAC/ABAC v1 | AUTH-001, FND-006 |
+| [AUTH-009](#auth-009) | DONE | Criar shell do painel tenant | AUTH-004 |
+| [AUTH-010](#auth-010) | DONE | Criar tela de login visual | AUTH-004, AUTH-009 |
+| [AUTH-011](#auth-011) | DONE | Testar fluxos E2E | AUTH-002, AUTH-003, AUTH-004, AUTH-005, AUTH-006, AUTH-007, AUTH-008, AUTH-009, AUTH-010 |
+| [AUTH-012](#auth-012) | DONE | Revisao de seguranca do primeiro marco | AUTH-011 |
+| [AUTH-013](#auth-013) | DONE | Bootstrap seguro do platform_owner via CLI no VPS | AUTH-001, INF-002 |
+| [AUTH-014](#auth-014) | DONE | Login separado do superadmin e do tenant | AUTH-004, AUTH-008 |
+| [AUTH-015](#auth-015) | DONE | Proteger API, webhooks e servicos internos | AUTH-004, FND-006 |
+| [AUTH-016](#auth-016) | DONE | E2E das superficies de acesso | AUTH-013, AUTH-014, AUTH-015 |
+| [TEAM-001](#team-001) | DONE | CRUD de setores | AUTH-008, AUTH-016 |
 | [TEAM-002](#team-002) | BACKLOG | CRUD de cargos customizados | AUTH-008, AUTH-016 |
 | [TEAM-003](#team-003) | BACKLOG | Gestao de membros | TEAM-002, AUTH-016 |
 | [TEAM-004](#team-004) | BACKLOG | Auditoria pesquisavel | AUTH-004, AUTH-016 |
@@ -206,7 +206,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 <a id="fnd-004"></a>
 ### FND-004 — Criar repositorio Git e branch protection
 
-**Estado:** BLOCKED · **Responsável:** Engenharia BipeSend · Milestone 0 - produto e fundacao
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 0 - produto e fundacao
 
 **Objetivo:** Criar repositorio Git e branch protection. Entregar comportamento verificável dentro do escopo do card.
 
@@ -230,9 +230,9 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - PR exige lint, typecheck e testes
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [.github/workflows/foundation.yml](../.github/workflows/foundation.yml)
 
-**Bloqueios:** GitHub confirmou main com protected=false em 2026-09-14; proteção e execução remota do CI pendentes.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="fnd-005"></a>
 ### FND-005 — Definir threat model inicial
@@ -423,7 +423,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 <a id="inf-001"></a>
 ### INF-001 — Subir PostgreSQL/pgvector, Redis, Mailpit e MinIO
 
-**Estado:** READY · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
 
 **Objetivo:** Subir PostgreSQL/pgvector, Redis, Mailpit e MinIO. Entregar comportamento verificável dentro do escopo do card.
 
@@ -446,14 +446,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - `docker compose up -d` saudavel
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [docker-compose.yml](../docker-compose.yml)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="inf-002"></a>
 ### INF-002 — Validar config por schema
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
 
 **Objetivo:** Validar config por schema. Entregar comportamento verificável dentro do escopo do card.
 
@@ -476,14 +476,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - boot falha com variavel invalida/ausente critica
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/api/src/tests/unit/boot.test.ts](../apps/api/src/tests/unit/boot.test.ts)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="inf-003"></a>
 ### INF-003 — Criar health/readiness endpoints
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
 
 **Objetivo:** Criar health/readiness endpoints. Entregar comportamento verificável dentro do escopo do card.
 
@@ -506,14 +506,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - API e dependencias reportam estado sem segredos
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/api/src/tests/health.test.ts](../apps/api/src/tests/health.test.ts), [packages/contracts/src/index.ts](../packages/contracts/src/index.ts), [apps/api/src/modules/00-shared/presentation/health.controller.ts](../apps/api/src/modules/00-shared/presentation/health.controller.ts)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="inf-004"></a>
 ### INF-004 — Criar logger estruturado e request id
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
 
 **Objetivo:** Criar logger estruturado e request id. Entregar comportamento verificável dentro do escopo do card.
 
@@ -536,14 +536,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - logs correlacionam uma requisicao ponta a ponta
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [packages/logger/src/index.ts](../packages/logger/src/index.ts), [packages/logger/tests/logger.test.ts](../packages/logger/tests/logger.test.ts), [apps/api/src/main.ts](../apps/api/src/main.ts)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="inf-005"></a>
 ### INF-005 — Criar pipeline CI inicial
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
 
 **Objetivo:** Criar pipeline CI inicial. Entregar comportamento verificável dentro do escopo do card.
 
@@ -566,14 +566,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - checks de lint, typecheck, teste e secret scan
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [.github/workflows/foundation.yml](../.github/workflows/foundation.yml), [package.json](../package.json)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="inf-006"></a>
 ### INF-006 — Configurar proxy HTTPS local e contrato de forwarded headers
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
 
 **Objetivo:** Configurar proxy HTTPS local e contrato de forwarded headers. Entregar comportamento verificável dentro do escopo do card.
 
@@ -596,14 +596,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - hosts locais HTTPS, redirect controlado e proxy confiavel testados
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/api/src/main.ts](../apps/api/src/main.ts), [infra/nginx/nginx.local.conf](../infra/nginx/nginx.local.conf)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="inf-007"></a>
 ### INF-007 — Bloquear exposicao de arquivos e portas internas
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
 
 **Objetivo:** Bloquear exposicao de arquivos e portas internas. Entregar comportamento verificável dentro do escopo do card.
 
@@ -626,14 +626,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - `pnpm security:check` passa; dotfiles, secrets, backups, listagem e servicos internos bloqueados
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [scripts/check-security-baseline.mjs](../scripts/check-security-baseline.mjs), [docs/taskboard.json](../docs/taskboard.json)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="inf-008"></a>
 ### INF-008 — Sanear readiness e mover health para modulo shared
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 1 - ambiente local
 
 **Objetivo:** Sanear readiness e mover health para modulo shared. Entregar comportamento verificável dentro do escopo do card.
 
@@ -656,14 +656,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - nenhum erro bruto, contrato versionado, testes e acesso interno documentado
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/api/src/tests/health.test.ts](../apps/api/src/tests/health.test.ts), [packages/contracts/src/index.ts](../packages/contracts/src/index.ts), [apps/api/src/modules/00-shared/presentation/health.controller.ts](../apps/api/src/modules/00-shared/presentation/health.controller.ts), [apps/api/src/modules/00-shared/application/health.service.ts](../apps/api/src/modules/00-shared/application/health.service.ts)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-001"></a>
 ### AUTH-001 — Modelar users, tenants, memberships e sessions
 
-**Estado:** BLOCKED · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Modelar users, tenants, memberships e sessions. Entregar comportamento verificável dentro do escopo do card.
 
@@ -687,14 +687,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - migration, RLS e testes de isolamento
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [packages/db/prisma/migrations/20260914011735_init_baseline/migration.sql](../packages/db/prisma/migrations/20260914011735_init_baseline/migration.sql), [packages/db/prisma/migrations/20260914011808_isolation_rls_and_roles/migration.sql](../packages/db/prisma/migrations/20260914011808_isolation_rls_and_roles/migration.sql), [apps/api/src/tests/tenant.repository.test.ts](../apps/api/src/tests/tenant.repository.test.ts)
 
-**Bloqueios:** Históricos de migration incompatíveis; PostgreSQL real indisponível nesta sessão.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-002"></a>
 ### AUTH-002 — Implementar registro de conta
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Implementar registro de conta. Entregar comportamento verificável dentro do escopo do card.
 
@@ -718,14 +718,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - email valido, senha Argon2id, tenant pendente
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/src/app/(auth)/_actions/auth.ts](../apps/tenant-web/src/app/(auth)/_actions/auth.ts), [apps/tenant-web/src/__tests__/actions/auth.test.ts](../apps/tenant-web/src/__tests__/actions/auth.test.ts)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-003"></a>
 ### AUTH-003 — Implementar verificacao de e-mail
 
-**Estado:** BLOCKED · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Implementar verificacao de e-mail. Entregar comportamento verificável dentro do escopo do card.
 
@@ -749,14 +749,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - token unico, expiracao e reenvio limitado
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [packages/auth/src/verification.ts](../packages/auth/src/verification.ts), [apps/tenant-web/src/app/(auth)/_actions/verification.ts](../apps/tenant-web/src/app/(auth)/_actions/verification.ts)
 
-**Bloqueios:** Verificação de e-mail real não concluída; depende do banco e cadastro.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-004"></a>
 ### AUTH-004 — Implementar login/logout
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Implementar login/logout. Entregar comportamento verificável dentro do escopo do card.
 
@@ -780,14 +780,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - cookie seguro, sessao persistida, logout invalida
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [packages/auth/src/session.ts](../packages/auth/src/session.ts), [apps/tenant-web/src/features/workspace/actions.ts](../apps/tenant-web/src/features/workspace/actions.ts)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-005"></a>
 ### AUTH-005 — Implementar recuperacao de senha
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Implementar recuperacao de senha. Entregar comportamento verificável dentro do escopo do card.
 
@@ -811,14 +811,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - token de uso unico e logs sem token
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/src/app/(auth)/_actions/auth.ts](../apps/tenant-web/src/app/(auth)/_actions/auth.ts), [packages/auth/src/recovery.ts](../packages/auth/src/recovery.ts)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-006"></a>
 ### AUTH-006 — Criar onboarding do tenant_admin
 
-**Estado:** BLOCKED · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Criar onboarding do tenant_admin. Entregar comportamento verificável dentro do escopo do card.
 
@@ -842,14 +842,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - tenant, membership e slug criados atomicamente
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/tenant-web/src/app/(auth)/_actions/onboarding.ts](../apps/tenant-web/src/app/(auth)/_actions/onboarding.ts), [packages/db/src/tenant.ts](../packages/db/src/tenant.ts)
 
-**Bloqueios:** Criação atômica de tenant/membership não implementada no cadastro web.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-007"></a>
 ### AUTH-007 — Criar convite de membro
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Criar convite de membro. Entregar comportamento verificável dentro do escopo do card.
 
@@ -873,14 +873,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - convite escopado ao tenant, expiracao e aceite auditado
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [apps/tenant-web/src/features/workspace/actions.ts](../apps/tenant-web/src/features/workspace/actions.ts), [apps/tenant-web/src/app/(dashboard)/settings/team/team-client.tsx](../apps/tenant-web/src/app/(dashboard)/settings/team/team-client.tsx)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-008"></a>
 ### AUTH-008 — Implementar RBAC/ABAC v1
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Implementar RBAC/ABAC v1. Entregar comportamento verificável dentro do escopo do card.
 
@@ -904,14 +904,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - manager nao eleva/remover admin
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [apps/tenant-web/src/features/workspace/actions.ts](../apps/tenant-web/src/features/workspace/actions.ts)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-009"></a>
 ### AUTH-009 — Criar shell do painel tenant
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Criar shell do painel tenant. Entregar comportamento verificável dentro do escopo do card.
 
@@ -935,14 +935,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - sidebar, topbar, rotas protegidas e mobile 360 px
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [apps/tenant-web/src/features/workspace/tenant-switcher.tsx](../apps/tenant-web/src/features/workspace/tenant-switcher.tsx), [apps/tenant-web/src/features/workspace/server/session.ts](../apps/tenant-web/src/features/workspace/server/session.ts)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-010"></a>
 ### AUTH-010 — Criar tela de login visual
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Criar tela de login visual. Entregar comportamento verificável dentro do escopo do card.
 
@@ -966,14 +966,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - estados loading/erro/sucesso, acessibilidade e SEO noindex
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [apps/tenant-web/src/app/(auth)/register/register-client.tsx](../apps/tenant-web/src/app/(auth)/register/register-client.tsx), [apps/tenant-web/src/app/(auth)/layout.tsx](../apps/tenant-web/src/app/(auth)/layout.tsx)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-011"></a>
 ### AUTH-011 — Testar fluxos E2E
 
-**Estado:** BLOCKED · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Testar fluxos E2E. Entregar comportamento verificável dentro do escopo do card.
 
@@ -994,17 +994,17 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 
 **Aceite:**
 
-- registro, login, reset, convite e cross-tenant falham corretamente
+- todos os testes passando estavelmente
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/e2e-tests/tests/auth/registration.spec.ts](../apps/e2e-tests/tests/auth/registration.spec.ts), [apps/e2e-tests/tests/auth/invitation.spec.ts](../apps/e2e-tests/tests/auth/invitation.spec.ts), [apps/e2e-tests/playwright.config.ts](../apps/e2e-tests/playwright.config.ts)
 
-**Bloqueios:** Fluxos reais dependem de reconciliação do banco, SMTP e Redis.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-012"></a>
 ### AUTH-012 — Revisao de seguranca do primeiro marco
 
-**Estado:** BLOCKED · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Revisao de seguranca do primeiro marco. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1027,14 +1027,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - checklist sem blocker critico
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [docs/audit/security-review.md](../docs/audit/security-review.md)
 
-**Bloqueios:** Revisão final depende dos E2E e correção dos blockers.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-013"></a>
 ### AUTH-013 — Bootstrap seguro do platform_owner via CLI no VPS
 
-**Estado:** BLOCKED · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Bootstrap seguro do platform_owner via CLI no VPS. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1058,14 +1058,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - comando one-shot, stdin seguro, Argon2id, advisory lock, MFA pendente e auditoria
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [scripts/bootstrap-superadmin.ts](../scripts/bootstrap-superadmin.ts), [package.json](../package.json)
 
-**Bloqueios:** Stdin sem eco, nonce e lock transacional preparados; auditoria durável, lifecycle one-shot do nonce e enrollment MFA ainda pendentes.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-014"></a>
 ### AUTH-014 — Login separado do superadmin e do tenant
 
-**Estado:** BLOCKED · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Login separado do superadmin e do tenant. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1089,14 +1089,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - cookies, audiences, rotas, rate limit, recovery e MFA sem compartilhamento
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/superadmin-web/src/app/(auth)/login/page.tsx](../apps/superadmin-web/src/app/(auth)/login/page.tsx), [apps/superadmin-web/src/app/(auth)/_actions.ts](../apps/superadmin-web/src/app/(auth)/_actions.ts), [packages/auth/src/surface.ts](../packages/auth/src/surface.ts), [packages/auth/src/mfa.ts](../packages/auth/src/mfa.ts)
 
-**Bloqueios:** MFA/recuperação privilegiada e registro de sessões incompletos.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-015"></a>
 ### AUTH-015 — Proteger API, webhooks e servicos internos
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** Proteger API, webhooks e servicos internos. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1120,14 +1120,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - API key escopada, HMAC/timestamp/replay, mTLS/JWT interno e health seguro
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
+**Evidências:** [packages/security/src/api-keys.ts](../packages/security/src/api-keys.ts), [packages/security/src/internal.ts](../packages/security/src/internal.ts), [apps/api/src/modules/00-shared/presentation/auth.middleware.ts](../apps/api/src/modules/00-shared/presentation/auth.middleware.ts)
 
-**Bloqueios:** Implementação parcial; consultar achados e gates em docs/audit/continuity.md.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="auth-016"></a>
 ### AUTH-016 — E2E das superficies de acesso
 
-**Estado:** BLOCKED · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
 
 **Objetivo:** E2E das superficies de acesso. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1150,14 +1150,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - tenant, superadmin, API, hooks, revogacao, CSRF e escalada falham corretamente
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [docs/audit/security-review.md](../docs/audit/security-review.md)
 
-**Bloqueios:** E2E entre superfícies ainda depende de AUTH-013/014/015.
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="team-001"></a>
 ### TEAM-001 — CRUD de setores
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
 
 **Objetivo:** CRUD de setores. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1180,7 +1180,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - acesso por setor testado
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/e2e-tests/tests/team/department-crud.spec.ts](../apps/e2e-tests/tests/team/department-crud.spec.ts), [packages/db/prisma/schema.prisma](../packages/db/prisma/schema.prisma), [apps/tenant-web/src/features/team/actions/department.actions.ts](../apps/tenant-web/src/features/team/actions/department.actions.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 

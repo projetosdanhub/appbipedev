@@ -8,8 +8,12 @@
     "test:report": "playwright show-report"
   },
   "devDependencies": {
+    "@bipesend/auth": "workspace:*",
+    "@bipesend/db": "workspace:*",
     "@playwright/test": "^1.47.0",
     "@types/node": "^20.0.0",
+    "ioredis": "^6.0.0",
+    "otplib": "^12.0.1",
     "typescript": "^5.0.0"
   }
 }

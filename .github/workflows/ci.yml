@@ -1,0 +1,106 @@
+name: CI Baseline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: rootpassword
+          POSTGRES_DB: bipesend
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: "postgresql://root:rootpassword@localhost:5432/bipesend?schema=public"
+      REDIS_URL: "redis://localhost:6379"
+      # Fallback values for next-auth and tests
+      AUTH_SECRET: "test-auth-secret-do-not-use-in-production"
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+      NEXT_PUBLIC_API_URL: "http://localhost:3001"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 12
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check Architecture, Secrets and Brand
+        run: |
+          pnpm architecture:check
+          pnpm secrets:check
+          pnpm brand:check
+
+      - name: Run Prisma Migrations
+        run: pnpm --filter @bipesend/db db:migrate
+
+      - name: Generate Prisma Client
+        run: pnpm --filter @bipesend/db generate
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm --filter @bipesend/tenant-web --filter @bipesend/superadmin-web --filter @bipesend/api --filter @bipesend/ui --filter @bipesend/db -r typecheck
+
+      - name: Run Foundation & Unit Tests
+        run: pnpm foundation:test && pnpm --filter @bipesend/ui test && pnpm --filter @bipesend/tenant-web test && pnpm --filter @bipesend/api test
+
+      - name: Build Packages
+        run: pnpm foundation:build
+
+      - name: Build Apps
+        run: pnpm build
+
+      - name: Install Playwright Browsers
+        run: pnpm --filter @bipesend/e2e-tests exec playwright install --with-deps chromium
+
+      - name: Run E2E Tests
+        run: pnpm --filter @bipesend/e2e-tests exec playwright test

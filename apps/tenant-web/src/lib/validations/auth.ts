@@ -14,9 +14,7 @@ export const registerSchema = z.object({
   name: z.string().trim().max(120).min(3, {
     message: "O nome deve ter pelo menos 3 caracteres.",
   }),
-  companyName: z.string().trim().max(160).min(2, {
-    message: "O nome da empresa deve ter pelo menos 2 caracteres.",
-  }),
+  companyName: z.string().trim().max(160).optional().or(z.literal("")),
   email: z.string().trim().toLowerCase().max(254).email({
     message: "Digite um endereço de e-mail válido.",
   }),
@@ -63,8 +61,20 @@ export const verifyCodeSchema = z.object({
     }),
 });
 
+export const onboardingSchema = z.object({
+  companyName: z.string().trim().max(160).min(2, {
+    message: "O nome da empresa deve ter pelo menos 2 caracteres.",
+  }),
+  slug: z.string().trim().max(100).min(3, {
+    message: "O slug deve ter pelo menos 3 caracteres.",
+  }).regex(/^[a-z0-9-]+$/, {
+    message: "O slug deve conter apenas letras minúsculas, números e hifens.",
+  }),
+});
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type VerifyCodeInput = z.infer<typeof verifyCodeSchema>;
+export type OnboardingInput = z.infer<typeof onboardingSchema>;

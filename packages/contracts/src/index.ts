@@ -118,6 +118,16 @@ export const healthSchema = z
     requestId: requestIdSchema.optional(),
   })
   .strict();
+export const readinessSchema = z
+  .object({
+    status: z.enum(["ok", "degraded", "unavailable"]),
+    dependencies: z.record(z.string(), z.object({
+      state: integrationStateSchema,
+      latencyMs: z.number().nonnegative().optional()
+    })),
+    requestId: requestIdSchema.optional()
+  })
+  .strict();
 export const tenantInvitationSchema = z
   .object({
     email: emailSchema,

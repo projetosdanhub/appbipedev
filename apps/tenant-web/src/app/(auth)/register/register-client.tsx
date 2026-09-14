@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -71,6 +71,8 @@ export default function RegisterPage() {
   const [emailPlaceholder, setEmailPlaceholder] = useState("E-mail (ex: seuemail@empresa.com.br)");
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams?.get("callbackUrl") || "/";
 
   useEffect(() => {
     const handleResize = () => {
@@ -83,7 +85,12 @@ export default function RegisterPage() {
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: "", companyName: "", email: "", password: "" },
+    defaultValues: { 
+      name: "", 
+      companyName: "", 
+      email: searchParams?.get("email") || "", 
+      password: "" 
+    },
     mode: "onBlur",
   });
 
@@ -118,7 +125,8 @@ export default function RegisterPage() {
         });
 
         setTimeout(() => {
-          router.push("/");
+          // Hard redirect to clear any Next.js router cache and ensure the new session is picked up
+          window.location.href = callbackUrl;
         }, 1500);
       }, 800);
     } catch {

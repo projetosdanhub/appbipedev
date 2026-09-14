@@ -2,32 +2,37 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import Fastify from "fastify";
 import {
-  createApiKeyMiddleware,
+  createInternalJwtMiddleware,
   createTenantMiddleware,
   createWebhookHmacMiddleware,
 } from "../../modules/00-shared/presentation/auth.middleware.js";
+import { signInternalToken } from "@bipesend/security";
 import { Database } from "../../modules/00-shared/infrastructure/database.js";
 import type { Pool } from "pg";
 
 test("internal key rejects prefix-only credentials and accepts only the configured secret", async () => {
   const app = Fastify(),
-    key = "internal-test-key-".repeat(3);
+    secret = "internal-test-key-".repeat(3);
+    
+  const validToken = await signInternalToken({ sub: "test" }, secret);
+  const invalidToken = await signInternalToken({ sub: "test" }, "wrong-secret-key-that-is-long-enough");
+
   app.get(
     "/internal",
-    { preHandler: createApiKeyMiddleware(key) },
+    { preHandler: createInternalJwtMiddleware(secret) },
     async () => ({ ok: true }),
   );
   assert.equal(
     (
       await app.inject({
         url: "/internal",
-        headers: { "x-api-key": "bipesend_fake" },
+        headers: { authorization: `Bearer ${invalidToken}` },
       })
     ).statusCode,
     401,
   );
   assert.equal(
-    (await app.inject({ url: "/internal", headers: { "x-api-key": key } }))
+    (await app.inject({ url: "/internal", headers: { authorization: `Bearer ${validToken}` } }))
       .statusCode,
     200,
   );

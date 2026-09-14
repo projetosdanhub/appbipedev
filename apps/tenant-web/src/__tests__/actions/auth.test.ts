@@ -9,6 +9,8 @@ const mocks = vi.hoisted(() => ({
   setCookie: vi.fn(),
   findUser: vi.fn(),
   createUser: vi.fn(),
+  createTenant: vi.fn(),
+  createMembership: vi.fn(),
 }));
 vi.mock("next-auth", () => ({ AuthError: class AuthError extends Error {} }));
 vi.mock("@bipesend/auth", () => ({ signIn: mocks.signIn }));
@@ -25,6 +27,11 @@ vi.mock("next/headers", () => ({
 }));
 vi.mock("@bipesend/db", () => ({
   prisma: { user: { findUnique: mocks.findUser, create: mocks.createUser } },
+  withTenantCreationTransaction: vi.fn(async (prisma, tenantId, cb) => cb({
+    user: { create: mocks.createUser },
+    tenant: { create: mocks.createTenant },
+    membership: { create: mocks.createMembership },
+  })),
 }));
 vi.mock("@/lib/mailer", () => ({
   sendPasswordResetEmail: vi.fn().mockResolvedValue(true),
@@ -71,6 +78,31 @@ describe("Auth server action boundaries", () => {
     expect(result.success).toBe(false);
     expect(result.message).not.toContain("redis");
     expect(mocks.createUser).not.toHaveBeenCalled();
+  });
+  it("prevents user enumeration on registration by returning generic success", async () => {
+    mocks.findUser.mockResolvedValue({ id: "exists" });
+    const result = await registerAction({
+      ...payload,
+      name: "João",
+      companyName: "Empresa",
+    });
+    expect(result.success).toBe(true);
+    expect(result.message).toContain("caixa de entrada");
+    expect(mocks.createUser).not.toHaveBeenCalled();
+    expect(mocks.createTenant).not.toHaveBeenCalled();
+  });
+  it("creates user on valid registration, but defers tenant creation to onboarding", async () => {
+    mocks.findUser.mockResolvedValue(null);
+    mocks.createUser.mockResolvedValue({ id: "user-123" });
+    const result = await registerAction({
+      ...payload,
+      name: "João",
+      companyName: "Empresa",
+    });
+    expect(result.success).toBe(true);
+    expect(mocks.createUser).toHaveBeenCalled();
+    expect(mocks.createTenant).not.toHaveBeenCalled();
+    expect(mocks.createMembership).not.toHaveBeenCalled();
   });
   it("responds generically to recovery without exposing code or proof", async () => {
     const result = await forgotPasswordAction({ email: payload.email });

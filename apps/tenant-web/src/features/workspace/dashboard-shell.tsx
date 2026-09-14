@@ -5,6 +5,7 @@ import { Badge, SkipLink } from "@bipesend/ui";
 import { DesktopNavigation } from "./desktop-navigation";
 import { MobileNavigation } from "./mobile-navigation";
 import { WorkspaceHeader } from "./workspace-header";
+import type { TenantData } from "./tenant-switcher";
 import "./workspace.css";
 
 export function DashboardShell({
@@ -12,7 +13,7 @@ export function DashboardShell({
   user,
 }: {
   children: ReactNode;
-  user: { name: string };
+  user: { name: string; activeTenant: TenantData; availableTenants: TenantData[] };
 }) {
   const [collapsed, setCollapsed] = useState(false),
     path = usePathname();
@@ -34,7 +35,11 @@ export function DashboardShell({
         onToggle={() => setCollapsed(!collapsed)}
       />
       <div className="workspace-body">
-        <WorkspaceHeader name={user.name} />
+        <WorkspaceHeader 
+          name={user.name} 
+          activeTenant={user.activeTenant} 
+          availableTenants={user.availableTenants} 
+        />
         {demo && (
           <div className="workspace-demo">
             <Badge variant="info">Prévia de interface</Badge>

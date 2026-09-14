@@ -93,7 +93,11 @@ export function DesignSystemGallery() {
         a.name.localeCompare(b.name) * (sort.direction === "asc" ? 1 : -1),
     );
   return (
-    <DashboardShell user={{ name: "Catálogo de componentes" }}>
+    <DashboardShell user={{ 
+      name: "Catálogo de componentes",
+      activeTenant: { id: "a", name: "Exemplo", slug: "exemplo", role: "owner" },
+      availableTenants: []
+    }}>
       <PageContainer>
         <PageHeader
           title="Design system BipeSend"

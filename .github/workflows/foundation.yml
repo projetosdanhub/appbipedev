@@ -14,11 +14,33 @@ jobs:
     timeout-minutes: 20
     env:
       NEXT_TELEMETRY_DISABLED: '1'
-      # Build-only values. This job neither connects to a database nor deploys.
       AUTH_SECRET: ci-only-tenant-secret-never-use-in-production-0001
       SUPERADMIN_AUTH_SECRET: ci-only-platform-secret-never-use-in-production-0002
-      DATABASE_URL: postgresql://localhost:5432/foundation_build
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/foundation_build
       REDIS_URL: redis://localhost:6379
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: foundation_build
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -27,6 +49,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: touch .env && pnpm --filter @bipesend/api migrate
       - run: pnpm foundation:check
       - run: pnpm --filter @bipesend/api build
       - run: pnpm --filter @bipesend/tenant-web build

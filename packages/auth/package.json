@@ -28,7 +28,10 @@
     },
     "./rate-limit": "./src/rate-limit.ts",
     "./superadmin": "./src/superadmin.ts",
-    "./recovery": "./src/recovery.ts"
+    "./recovery": "./src/recovery.ts",
+    "./session": "./src/session.ts",
+    "./verification": "./src/verification.ts",
+    "./mfa": "./src/mfa.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.policies.json",

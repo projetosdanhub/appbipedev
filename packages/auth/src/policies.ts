@@ -70,7 +70,7 @@ export function canGrantRole(
   role: TenantRole,
 ): boolean {
   if (
-    role === "tenant_admin" ||
+    (role === "tenant_admin" && context.role !== "tenant_admin") ||
     !hasPermission(context, "team.members.manage", context.tenantId)
   )
     return false;

@@ -1,15 +1,18 @@
 import { Database } from "../../00-shared/infrastructure/database.js";
 import { Tenant } from "../domain/tenant.entity.js";
+import { randomUUID } from "node:crypto";
 
 export class TenantRepository {
   constructor(private readonly db: Database) {}
 
-  async create(name: string): Promise<Tenant> {
-    const rows = await this.db.query(
-      `INSERT INTO tenants (name) VALUES ($1) RETURNING id, name, created_at as "createdAt", updated_at as "updatedAt"`,
-      [name]
-    );
-    return rows[0];
+  async create(name: string, id: string = randomUUID()): Promise<Tenant> {
+    return this.db.withTransaction(async (txDb) => {
+      const rows = await txDb.query(
+        `INSERT INTO tenants (id, name) VALUES ($1, $2) RETURNING id, name, created_at as "createdAt", updated_at as "updatedAt"`,
+        [id, name]
+      );
+      return rows[0];
+    }, id);
   }
 
   async findById(id: string): Promise<Tenant | null> {

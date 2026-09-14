@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, Shield, Smartphone, KeyRound } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Smartphone, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Input } from "@bipesend/ui";
 import { loginAction } from "../_actions";
@@ -51,8 +51,6 @@ export default function SuperadminLoginPage() {
     setIsLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       if (!requires2FA && (!email || !password)) {
         throw new Error("E-mail e senha são obrigatórios");
       }
@@ -60,15 +58,24 @@ export default function SuperadminLoginPage() {
         throw new Error("O código de autenticação é obrigatório");
       }
 
-      // Mock 2FA required for testing ui
-      if (!requires2FA && email === "2fa@bipesend.com.br") {
-        setRequires2FA(true);
-        return;
+      const res = await loginAction({
+        email,
+        password,
+        code,
+        rememberMe
+      });
+
+      if (!res.success) {
+        if (res.message === "2FA_REQUIRED") {
+          setRequires2FA(true);
+          return;
+        }
+        throw new Error(res.message);
       }
 
       router.push("/");
-    } catch (err: any) {
-      setError(err.message || "Erro ao realizar login");
+    } catch (err: unknown) {
+      setError((err as { message?: string }).message || "Erro ao realizar login");
     } finally {
       setIsLoading(false);
     }

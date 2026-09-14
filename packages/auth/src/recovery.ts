@@ -12,6 +12,7 @@ const digest = (value: string, purpose: string) =>
 export async function requestRecovery(
   rawEmail: string,
   send: (email: string, code: string) => Promise<void>,
+  surface: "tenant" | "platform" = "tenant"
 ): Promise<void> {
   const email = emailSchema.parse(rawEmail);
   await checkAuthRateLimit("recovery-send", email, 1, 45_000);
@@ -20,7 +21,8 @@ export async function requestRecovery(
     where: { email },
     select: { id: true, isSuperadmin: true },
   });
-  if (!user || user.isSuperadmin) return; // Separate platform recovery requires a privileged procedure.
+  if (!user) return;
+  if (surface === "platform" ? !user.isSuperadmin : user.isSuperadmin) return;
   const code = generateOtp();
   await prisma.$transaction(async (tx) => {
     await tx.verificationToken.deleteMany({
@@ -67,6 +69,7 @@ export async function redeemRecovery(
   rawEmail: string,
   proof: string,
   password: string,
+  surface: "tenant" | "platform" = "tenant"
 ): Promise<void> {
   const email = emailSchema.parse(rawEmail);
   passwordSchema.parse(password);
@@ -86,7 +89,9 @@ export async function redeemRecovery(
       where: { email },
       select: { id: true, isSuperadmin: true },
     });
-    if (!user || user.isSuperadmin) throw new Error("AUTH_CODE_INVALID");
+    if (!user || (surface === "platform" ? !user.isSuperadmin : user.isSuperadmin)) {
+      throw new Error("AUTH_CODE_INVALID");
+    }
     // updatedAt also invalidates the Auth.js JWT revision on the next protected request.
     await tx.user.update({
       where: { id: user.id },
