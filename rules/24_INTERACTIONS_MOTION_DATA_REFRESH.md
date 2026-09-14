@@ -99,3 +99,7 @@ Optimistic UI somente quando rollback é seguro e efeito é previsível. Cobran�
 ## 11. Versão da aplicação
 
 Detectar versão nova sem recarregar durante digitação/edição/operação crítica. Oferecer atualização acessível e preservar rascunho quando possível.
+
+## Revisão de fundação — 2026-09-13
+
+Refresh usa revalidação contextual preservando filtro, scroll e rascunho quando aplicável. SearchField cancela debounce; data layer descarta resposta obsoleta. Removida espera artificial após sucesso. Reduzir motion global respeita prefers-reduced-motion, inclusive skeleton e overlays.

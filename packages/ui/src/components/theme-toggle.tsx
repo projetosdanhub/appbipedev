@@ -7,14 +7,14 @@ import { useTheme } from "next-themes";
 import { Button } from "./button";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
 
   return (
     <Button
       variant="outline"
       size="icon"
-      className="rounded-full w-9 h-9 relative border-[var(--color-border-200)] text-[var(--color-ink-600)] hover:text-[var(--color-ink-900)] hover:bg-[var(--color-surface-50)]"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="rounded-full w-11 h-11 relative border-[var(--color-border-200)] text-[var(--color-ink-600)] hover:text-[var(--color-ink-900)] hover:bg-[var(--color-surface-50)]"
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       title="Alternar tema"
     >
       <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

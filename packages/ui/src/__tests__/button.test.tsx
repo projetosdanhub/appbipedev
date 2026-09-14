@@ -8,10 +8,10 @@ describe("Button", () => {
     expect(screen.getByRole("button")).toHaveTextContent("Click me");
   });
 
-  it("applies the default variant gradient style", () => {
+  it("does not submit a form unless requested", () => {
     render(<Button>Default</Button>);
     const btn = screen.getByRole("button");
-    expect(btn.style.background).toContain("linear-gradient");
+    expect(btn).toHaveAttribute("type", "button");
   });
 
   it("renders as disabled when disabled prop is true", () => {

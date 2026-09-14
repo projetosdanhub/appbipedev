@@ -39,3 +39,7 @@ Eventos críticos derivados de transação devem usar outbox ou padrão equivale
 ## 7. Realtime
 
 WebSocket/SSE não é fonte de verdade. Ao reconectar, cliente revalida estado. Eventos são autorizados por contexto e não podem vazar dados entre tenants.
+
+## Revisão de fundação — 2026-09-13
+
+Schemas executáveis em @bipesend/contracts. code técnico estável é distinto do código BPS de suporte, ainda a implementar. Eventos incluem tenant obrigatório, actor, requestId, versão e occurredAt. appendOutbox recebe o adapter da transação; publicar fora dela exige relay persistente ainda pendente.

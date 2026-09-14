@@ -24,3 +24,7 @@ Usar nomes semânticos (`text.primary`, `action.primary`) no consumo. Escalas cr
 ## 5. Banco
 
 Convenção consistente para tabelas/colunas e migrations. IDs e foreign keys nomeadas de forma previsível.
+
+## Revisão de fundação — 2026-09-13
+
+Nomes públicos do pacote seguem exports documentados; contratos versionados no ponto de quebra. docs/taskboard.json preserva IDs históricos. Não renomear estado de integração em uma única camada; mapear no adapter e atualizar consumidores.

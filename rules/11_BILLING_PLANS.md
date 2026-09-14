@@ -28,3 +28,7 @@ Upgrade/downgrade, trial, cancelamento, grace period e suspensão precisam de es
 ## 6. Segurança
 
 Nunca armazenar dados de cartão se o PSP pode tokenizar. Segredos do PSP não chegam ao navegador.
+
+## Revisão de fundação — 2026-09-13
+
+Entitlement e cota no servidor, com consumo atômico. Pagamento é confirmado por webhook autenticado/idempotente; redirect não confirma. Decimais/moeda, timezone, downgrade não destrutivo e replay precisam de testes próprios. Não embutir secrets ou preços supostos na UI.

@@ -1,95 +1,87 @@
-import * as React from "react"
-import { cn } from "../lib/utils"
-
+"use client";
+import * as React from "react";
+import { cn } from "../lib/utils";
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  error?: boolean
-  label?: string
-  helperText?: string
-  errorMessage?: string
-  leftIcon?: React.ReactNode
-  rightIcon?: React.ReactNode
+  error?: boolean;
+  label?: string;
+  helperText?: string;
+  errorMessage?: string;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 }
-
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, error, label, helperText, errorMessage, leftIcon, rightIcon, id, ...props }, ref) => {
-    const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined)
-    const [showError, setShowError] = React.useState(false)
-
-    React.useEffect(() => {
-      if (errorMessage) {
-        setShowError(true)
-        const timer = setTimeout(() => setShowError(false), 4000)
-        return () => clearTimeout(timer)
-      } else {
-        setShowError(false)
-      }
-    }, [errorMessage])
-
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      className,
+      type = "text",
+      error,
+      label,
+      helperText,
+      errorMessage,
+      leftIcon,
+      rightIcon,
+      id,
+      "aria-describedby": describedBy,
+      "aria-invalid": invalid,
+      ...props
+    },
+    ref,
+  ) => {
+    const generatedId = React.useId();
+    const inputId = id ?? generatedId;
+    const description =
+      [
+        describedBy,
+        helperText ? `${inputId}-help` : null,
+        errorMessage ? `${inputId}-error` : null,
+      ]
+        .filter(Boolean)
+        .join(" ") || undefined;
     return (
-      <div className="flex flex-col gap-2 w-full">
+      <div className="ui-field">
         {label && (
-          <label 
-            htmlFor={inputId} 
-            className="text-[15px] font-semibold text-[#07113F]"
-          >
+          <label htmlFor={inputId} className="ui-label">
             {label}
           </label>
         )}
-        <div className="relative flex items-center w-full">
+        <div className="ui-field-control">
           {leftIcon && (
-            <div className="absolute left-0 top-0 bottom-0 flex items-center justify-center pl-4 pr-3 text-slate-400 pointer-events-none">
-              <div className="flex items-center gap-3">
-                {leftIcon}
-                <div className="h-6 w-[1px] bg-[var(--color-border-200)]" />
-              </div>
-            </div>
+            <span className="ui-field-prefix" aria-hidden="true">
+              {leftIcon}
+            </span>
           )}
           <input
-            id={inputId}
-            type={type}
-            className={cn(
-              "flex h-[54px] w-full rounded-[14px] border border-[#DCE5F2] bg-[#FFFFFF] py-2 text-[16px] text-[#07113F] ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-[#A1A8B6] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[#1478FF]/10 focus-visible:border-[#1478FF] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150 hover:border-[#1478FF]/50",
-              leftIcon ? "pl-[58px]" : "pl-4",
-              rightIcon ? "pr-12" : "pr-4",
-              (error || errorMessage) && "border-red-400 focus-visible:ring-red-400/10 focus-visible:border-red-400",
-              className
-            )}
-            ref={ref}
             {...props}
+            type={type}
+            id={inputId}
+            ref={ref}
+            aria-describedby={description}
+            aria-invalid={invalid ?? Boolean(error || errorMessage)}
+            className={cn(
+              "ui-input",
+              leftIcon && "ui-input-prefix",
+              rightIcon && "ui-input-suffix",
+              className,
+            )}
           />
-          {rightIcon && (
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center">
-              {rightIcon}
-            </div>
-          )}
-          {/* Error Message inside the input covering the text/placeholder */}
-          {showError && errorMessage && (
-            <div 
-              className={cn(
-                "absolute inset-y-[2px] flex items-center bg-white pointer-events-none animate-in fade-in zoom-in-95 duration-200 z-10",
-                leftIcon ? "left-[58px]" : "left-[14px]",
-                rightIcon ? "right-[48px]" : "right-[2px] rounded-r-[12px]"
-              )}
-            >
-              <span className="text-[13px] md:text-[14px] font-medium text-red-500 truncate w-full">
-                {errorMessage}
-              </span>
-            </div>
-          )}
+          {rightIcon && <span className="ui-field-suffix">{rightIcon}</span>}
         </div>
         {helperText && (
-          <span className={cn(
-            "text-[13px] leading-[18px]",
-            (error || errorMessage) ? "text-[var(--color-danger-600)]" : "text-[var(--color-ink-600)]"
-          )}>
+          <span
+            id={`${inputId}-help`}
+            className={error ? "ui-error" : "ui-help"}
+          >
             {helperText}
           </span>
         )}
+        {errorMessage && (
+          <span id={`${inputId}-error`} className="ui-error">
+            {errorMessage}
+          </span>
+        )}
       </div>
-    )
-  }
-)
-Input.displayName = "Input"
-
-export { Input }
+    );
+  },
+);
+Input.displayName = "Input";

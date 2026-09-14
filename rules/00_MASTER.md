@@ -1,7 +1,7 @@
 # BipeSend Rules — regra mestre
 
-Versão: 1.0.0  
-Status: contrato oficial de engenharia, UX/UI e segurança  
+Versão: 2.0.0
+Status: contrato oficial de engenharia, UX/UI e segurança
 Bootstrap de agente: `!construibase`
 
 ## 1. Missão
@@ -18,15 +18,15 @@ Estas regras são a fonte de verdade para humanos e agentes de IA. Quando códig
 4. Componentes, tokens e padrões compartilhados precedem implementações locais.
 5. Toda tela precisa de estados `loading`, `empty`, `error`, `success` e `disabled` quando aplicáveis. Formulários devem usar `react-hook-form` e `zod` para validação robusta.
 6. WCAG 2.2 AA é requisito de produto. Componentes interativos complexos (Dialog, Dropdown, Select) devem usar primitivas de acessibilidade (como `@radix-ui`).
-7. Responsividade obrigatória desde 360 px.
+7. Reflow obrigatório desde 320 px; validar mobile em 360 px.
 8. Motion é funcional, curto e opcional via `prefers-reduced-motion`. Feedback transiente (sucesso/erro não bloqueante) deve usar sistema unificado de Toasts (Sonner).
 9. Segredos nunca chegam ao frontend, logs públicos, URLs ou repositório.
 10. Toda ação sensível gera auditoria segura e minimizada.
 11. Integrações externas usam adaptador, timeout, retry, idempotência e observabilidade.
 12. Suporte nativo a temas (Light/Dark) via `next-themes` sem "FOUC", lendo a preferência do sistema operacional por padrão.
-12. IA nunca recebe autoridade implícita para executar ações destrutivas ou acessar dados fora do escopo.
-13. Nenhum módulo concentra domínio, banco, HTTP e UI em arquivo monolítico.
-14. Não inventar novo padrão visual se já existir token, componente ou fluxo equivalente.
+13. IA nunca recebe autoridade implícita para executar ações destrutivas ou acessar dados fora do escopo.
+14. Nenhum módulo concentra domínio, banco, HTTP e UI em arquivo monolítico.
+15. Não inventar novo padrão visual se já existir token, componente ou fluxo equivalente.
 
 ## 3. Ordem obrigatória de leitura
 
@@ -63,6 +63,8 @@ Estas regras são a fonte de verdade para humanos e agentes de IA. Quando códig
 31. `31_DESIGN_TOKENS_AUTH.md`
 32. `32_UI_COMPONENTS_STANDARD.md`
 33. `33_ENVIRONMENT_VARIABLES_GUIDELINES.md`
+34. `34_DELIVERY_EVIDENCE.md`
+35. `35_MOBILE_WEB_NATIVE.md`
 
 ## 4. Precedência em caso de conflito
 
@@ -140,5 +142,6 @@ O fluxo visual e comportamental dessas telas está em `29_AUTH_UX_FLOWS.md`.
 - O layout do SaaS deve seguir `12`, `14`, `22`, `24` e `30` sem criar variações ad hoc.
 - Gradiente pode reforçar marca; nunca é a única forma de comunicar estado.
 - Motion nunca bloqueia tarefa, foco, leitura ou navegação.
-- **Padrão Premium Mobile-First (Auth e UI)**: Novas superfícies devem adotar visual premium. Em mobile, a interface deve ter **fundo 100% branco**, sem cards contornados e sem backgrounds fotográficos, utilizando ondas/vetores abstratos (`AuthLayout`). Formulários devem ser simplificados (visão única) com opções secundárias (como Google) na base da página. A UI deve sempre fluir do mobile (limpo, flat) para o desktop (painéis bi-partidos). Todos os componentes base estão na `packages/ui`.
-
+- Auth mantém composição clara específica; o workspace mobile suporta light/dark e navegação própria, conforme `35`.
+- Em conflitos de números/tokens, `packages/ui/src/styles/tokens.css` + regra `14` prevalecem; regras `31/32` foram reconciliadas nesta revisão.
+- Evidência atual: `docs/audit/validation.md`; histórico relatado não substitui execução. Arquivos arquivados fora de `rules/` não são regras ativas.

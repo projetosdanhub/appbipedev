@@ -72,3 +72,7 @@ Sem decisão explícita, não implementar:
 ## 7. Definição de pronto de um módulo
 
 Um módulo só está pronto quando possui fluxo feliz e falhas, autorização, auditoria, acessibilidade, responsividade, loading/empty/error, testes e observabilidade proporcionais ao risco.
+
+## Revisão de fundação — 2026-09-13
+
+Escopo desta entrega é a fundação e suas composições. CRM/inbox/canvas existentes permanecem prévias identificadas; IA, billing e canais reais exigem cards próprios. Não apresentar roadmap como funcionalidade disponível.

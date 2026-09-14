@@ -4,10 +4,14 @@ export const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "127.0.0.1",
   port: parseInt(process.env.SMTP_PORT || "1025", 10),
   secure: process.env.SMTP_SECURE === "true", // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER || "", // user
-    pass: process.env.SMTP_PASS || "", // password
-  },
+  connectionTimeout: 5000,
+  socketTimeout: 10000,
+  auth: process.env.SMTP_USER
+    ? {
+        user: process.env.SMTP_USER || "", // user
+        pass: process.env.SMTP_PASS || "", // password
+      }
+    : undefined,
 });
 
 /**
@@ -16,8 +20,8 @@ export const transporter = nodemailer.createTransport({
  */
 export async function sendPasswordResetEmail(to: string, code: string) {
   try {
-    const info = await transporter.sendMail({
-      from: `"Bipesend Auth" <${process.env.SMTP_FROM || "no-reply@bipesend.com"}>`,
+    await transporter.sendMail({
+      from: `"Bipesend Auth" <${process.env.MAIL_FROM || process.env.SMTP_FROM || "no-reply@bipesend.com"}>`,
       to,
       subject: "Seu código de recuperação de senha - Bipesend",
       text: `Seu código de recuperação de senha é: ${code}. Ele expira em 10 minutos.`,
@@ -33,10 +37,8 @@ export async function sendPasswordResetEmail(to: string, code: string) {
         </div>
       `,
     });
-    console.log("Email sent: %s", info.messageId);
     return true;
-  } catch (error) {
-    console.error("Error sending email:", error);
+  } catch {
     return false;
   }
 }

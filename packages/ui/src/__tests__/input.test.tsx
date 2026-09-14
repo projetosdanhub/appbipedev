@@ -21,10 +21,10 @@ describe("Input", () => {
     expect(screen.getByText("This field is required")).toBeInTheDocument();
   });
 
-  it("applies error styling when error prop is true", () => {
+  it("exposes the error and description to assistive technology", () => {
     render(<Input error helperText="Invalid" />);
-    const helper = screen.getByText("Invalid");
-    expect(helper.className).toContain("danger");
+    expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByRole("textbox")).toHaveAccessibleDescription("Invalid");
   });
 
   it("renders a password type without built-in toggle", () => {

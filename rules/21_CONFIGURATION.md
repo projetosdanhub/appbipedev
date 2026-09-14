@@ -25,3 +25,7 @@ Flag tem owner, objetivo, data de revisão e comportamento seguro. Não usar fla
 ## 5. Design
 
 Tokens não devem vir de env por página. Branding/white-label, se existir, passa por tema validado e constraints de contraste.
+
+## Revisão de fundação — 2026-09-13
+
+@bipesend/config valida config da API e origens; @bipesend/auth valida segredos por superfície. Variáveis públicas contêm apenas valores publicáveis. Não registrar valor inválido ao falhar bootstrap. .env.example é catálogo, não configuração pronta para produção.

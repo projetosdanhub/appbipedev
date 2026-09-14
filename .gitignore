@@ -14,3 +14,7 @@ output/
 # Certificados locais gerados por mkcert; nunca versionar chaves privadas.
 infra/certs/*
 !infra/certs/.gitkeep
+
+playwright-report/
+test-results/
+*.tsbuildinfo

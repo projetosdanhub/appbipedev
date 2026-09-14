@@ -1,60 +1,29 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "../lib/utils"
-
-const alertVariants = cva(
-  "relative w-full rounded-[10px] border p-4 text-[14px] leading-relaxed flex gap-3",
-  {
-    variants: {
-      variant: {
-        default: "bg-[var(--color-surface-50)] text-[var(--color-ink-900)] border-[var(--color-border-200)]",
-        destructive:
-          "border-[var(--color-danger-200)] text-[var(--color-danger-700)] bg-[var(--color-danger-50)] [&>svg]:text-[var(--color-danger-700)]",
-        success:
-          "border-[var(--color-success-200)] text-[var(--color-success-700)] bg-[var(--color-success-50)] [&>svg]:text-[var(--color-success-700)]",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
-
-const Alert = React.forwardRef<
+import * as React from "react";
+import { cn } from "../lib/utils";
+export const Alert = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
->(({ className, variant, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement> & {
+    variant?: "default" | "destructive" | "success";
+  }
+>(({ className, variant = "default", role, ...props }, ref) => (
   <div
-    ref={ref}
-    role="alert"
-    className={cn(alertVariants({ variant }), className)}
     {...props}
-  />
-))
-Alert.displayName = "Alert"
-
-const AlertTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h5
     ref={ref}
-    className={cn("mb-1 font-semibold leading-none tracking-tight", className)}
-    {...props}
+    role={role ?? (variant === "destructive" ? "alert" : "status")}
+    className={cn("ui-alert", `ui-alert-${variant}`, className)}
   />
-))
-AlertTitle.displayName = "AlertTitle"
-
-const AlertDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("text-[14px] [&_p]:leading-relaxed", className)}
-    {...props}
-  />
-))
-AlertDescription.displayName = "AlertDescription"
-
-export { Alert, AlertTitle, AlertDescription }
+));
+Alert.displayName = "Alert";
+export const AlertTitle = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) => (
+  <p {...props} className={cn("ui-alert-title", className)} />
+);
+export const AlertDescription = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div {...props} className={className} />
+);
+export const InlineMessage = Alert;

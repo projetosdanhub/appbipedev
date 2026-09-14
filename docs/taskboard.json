@@ -1,0 +1,2812 @@
+{
+  "version": "1.0.0",
+  "reviewedAt": "2026-09-14",
+  "baseCommit": "fd3f4c3a6ddbdefd17b591820a4e51b692764773",
+  "cards": [
+    {
+      "id": "FND-001",
+      "title": "Criar regras e convencoes",
+      "milestone": "Milestone 0 - produto e fundacao",
+      "acceptance": [
+        "pasta `rules/` versionada e lida pelo bootstrap",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [],
+      "status": "DONE",
+      "objective": "Criar regras e convencoes. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Auditar as 34 regras originais e registrar divergências por arquivo.",
+        "Unificar tokens, estados, leitura de agentes e critérios de evidência; validar índice ativo."
+      ],
+      "codeAreas": [
+        "rules",
+        "docs",
+        "packages",
+        "scripts"
+      ],
+      "tests": [
+        "pnpm rules:check",
+        "pnpm taskboard:check",
+        "Revisão dos arquivos de evidência listados no card."
+      ],
+      "evidence": [
+        "docs/audit/rules-review.md"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-002",
+      "title": "Definir nome de trabalho e dominios candidatos",
+      "milestone": "Milestone 0 - produto e fundacao",
+      "acceptance": [
+        "ADR registrado; disponibilidade pendente",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [],
+      "status": "IN_PROGRESS",
+      "objective": "Definir nome de trabalho e dominios candidatos. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Manter BipeSend como nome de trabalho e origens por ambiente.",
+        "Confirmar propriedade/disponibilidade de domínio antes de configurar DNS público; registrar no ADR."
+      ],
+      "codeAreas": [
+        "rules",
+        "docs",
+        "packages",
+        "scripts"
+      ],
+      "tests": [
+        "pnpm rules:check",
+        "pnpm taskboard:check",
+        "Revisão dos arquivos de evidência listados no card."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-003",
+      "title": "Definir stack e monorepo inicial",
+      "milestone": "Milestone 0 - produto e fundacao",
+      "acceptance": [
+        "README, package manager e workspaces",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [],
+      "status": "DONE",
+      "objective": "Definir stack e monorepo inicial. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Confirmar pnpm/workspaces e versões efetivamente instaladas.",
+        "Construir pacotes na ordem de dependência e documentar runtimes Next/Node."
+      ],
+      "codeAreas": [
+        "rules",
+        "docs",
+        "packages",
+        "scripts"
+      ],
+      "tests": [
+        "pnpm rules:check",
+        "pnpm taskboard:check",
+        "Revisão dos arquivos de evidência listados no card."
+      ],
+      "evidence": [
+        "package.json",
+        "pnpm-workspace.yaml"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-004",
+      "title": "Criar repositorio Git e branch protection",
+      "milestone": "Milestone 0 - produto e fundacao",
+      "acceptance": [
+        "PR exige lint, typecheck e testes",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "FND-003"
+      ],
+      "status": "BLOCKED",
+      "objective": "Criar repositorio Git e branch protection. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Conferir workflow no GitHub após push desta branch.",
+        "Configurar proteção de main com checks exigidos, revisão e bloqueio de force push; guardar evidência administrativa."
+      ],
+      "codeAreas": [
+        "rules",
+        "docs",
+        "packages",
+        "scripts"
+      ],
+      "tests": [
+        "pnpm rules:check",
+        "pnpm taskboard:check",
+        "Revisão dos arquivos de evidência listados no card."
+      ],
+      "evidence": [],
+      "blockers": [
+        "GitHub confirmou main com protected=false em 2026-09-14; proteção e execução remota do CI pendentes."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-005",
+      "title": "Definir threat model inicial",
+      "milestone": "Milestone 0 - produto e fundacao",
+      "acceptance": [
+        "riscos, controles e responsaveis registrados",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "FND-001"
+      ],
+      "status": "DONE",
+      "objective": "Definir threat model inicial. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Mapear ativos e fronteiras web/API/tenant/worker/provider/IA.",
+        "Priorizar ameaças, controles existentes, lacunas, responsáveis e cenários negativos."
+      ],
+      "codeAreas": [
+        "rules",
+        "docs",
+        "packages",
+        "scripts"
+      ],
+      "tests": [
+        "pnpm rules:check",
+        "pnpm taskboard:check",
+        "Revisão dos arquivos de evidência listados no card."
+      ],
+      "evidence": [
+        "docs/architecture/threat-model.md"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-006",
+      "title": "Criar matriz de permissoes v1",
+      "milestone": "Milestone 0 - produto e fundacao",
+      "acceptance": [
+        "todas as telas do MVP mapeadas",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "FND-005"
+      ],
+      "status": "DONE",
+      "objective": "Criar matriz de permissoes v1. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Definir catálogo de permissões e matriz tenant_admin/manager/agent/viewer.",
+        "Implementar deny-by-default, vínculo ao recurso e prevenção de escalada; mapear telas."
+      ],
+      "codeAreas": [
+        "rules",
+        "docs",
+        "packages",
+        "scripts"
+      ],
+      "tests": [
+        "pnpm rules:check",
+        "pnpm taskboard:check",
+        "Revisão dos arquivos de evidência listados no card."
+      ],
+      "evidence": [
+        "packages/auth/src/policies.ts",
+        "docs/architecture/permissions.md"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-007",
+      "title": "Criar mapa modular e regras anti-monolito",
+      "milestone": "Milestone 0 - produto e fundacao",
+      "acceptance": [
+        "dependencias e nomes canonicos documentados",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "FND-003"
+      ],
+      "status": "DONE",
+      "objective": "Criar mapa modular e regras anti-monolito. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Conferir mapa modular e direção dos imports.",
+        "Documentar contratos de pacote, superfície e feature, separando runtime Next da API Node."
+      ],
+      "codeAreas": [
+        "rules",
+        "docs",
+        "packages",
+        "scripts"
+      ],
+      "tests": [
+        "pnpm rules:check",
+        "pnpm taskboard:check",
+        "Revisão dos arquivos de evidência listados no card."
+      ],
+      "evidence": [
+        "docs/module-map.md",
+        "packages/README.md"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-008",
+      "title": "Gerar skeleton de modulos sem codigo de negocio",
+      "milestone": "Milestone 0 - produto e fundacao",
+      "acceptance": [
+        "pastas numeradas, READMEs e checks de arquitetura",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "FND-007"
+      ],
+      "status": "DONE",
+      "objective": "Gerar skeleton de modulos sem codigo de negocio. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Inspecionar skeleton e READMEs de domínio.",
+        "Manter placeholders identificados sem endpoints ou funcionalidades simuladas em produção."
+      ],
+      "codeAreas": [
+        "rules",
+        "docs",
+        "packages",
+        "scripts"
+      ],
+      "tests": [
+        "pnpm rules:check",
+        "pnpm taskboard:check",
+        "Revisão dos arquivos de evidência listados no card."
+      ],
+      "evidence": [
+        "docs/module-map.md"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-009",
+      "title": "Consolidar contrato visual, motion e atualizacao de dados",
+      "milestone": "Milestone 0 - produto e fundacao",
+      "acceptance": [
+        "tipografia, estados, refresh, frescor e versao documentados",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "FND-001",
+        "FND-007"
+      ],
+      "status": "DONE",
+      "objective": "Consolidar contrato visual, motion e atualizacao de dados. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Consolidar Inter/Poppins, marca, temas, foco, radius e motion no CSS canônico.",
+        "Documentar freshness/refresh e estados que não inventam dados ou disponibilidade."
+      ],
+      "codeAreas": [
+        "rules",
+        "docs",
+        "packages",
+        "scripts"
+      ],
+      "tests": [
+        "pnpm rules:check",
+        "pnpm taskboard:check",
+        "Revisão dos arquivos de evidência listados no card."
+      ],
+      "evidence": [
+        "packages/ui/src/styles/tokens.css",
+        "packages/ui/README.md"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-010",
+      "title": "Auditar fundacao e transformar taskboard em guia executavel",
+      "milestone": "Milestone 0 - produto e fundacao",
+      "acceptance": [
+        "auditoria versionada, riscos classificados, cards com arquivos/testes/aceite e regras atualizadas",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "FND-009"
+      ],
+      "status": "DONE",
+      "objective": "Auditar fundacao e transformar taskboard em guia executavel. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Comparar histórico relatado com branches/commits acessíveis.",
+        "Gerar cards completos, corrigir conclusões sem evidência e checar ciclos/links/status."
+      ],
+      "codeAreas": [
+        "rules",
+        "docs",
+        "packages",
+        "scripts"
+      ],
+      "tests": [
+        "pnpm rules:check",
+        "pnpm taskboard:check",
+        "Revisão dos arquivos de evidência listados no card."
+      ],
+      "evidence": [
+        "docs/audit/continuity.md",
+        "scripts/taskboard.mjs"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "INF-001",
+      "title": "Subir PostgreSQL/pgvector, Redis, Mailpit e MinIO",
+      "milestone": "Milestone 1 - ambiente local",
+      "acceptance": [
+        "`docker compose up -d` saudavel",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "FND-003"
+      ],
+      "status": "READY",
+      "objective": "Subir PostgreSQL/pgvector, Redis, Mailpit e MinIO. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Subir serviços isolados do compose com volumes de desenvolvimento.",
+        "Verificar portas internas, health, SMTP local e armazenamento sem dados reais."
+      ],
+      "codeAreas": [
+        "infra",
+        "apps/api/src/modules/00-shared",
+        "packages/config",
+        ".github/workflows"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "INF-002",
+      "title": "Validar config por schema",
+      "milestone": "Milestone 1 - ambiente local",
+      "acceptance": [
+        "boot falha com variavel invalida/ausente critica",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-001"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Validar config por schema. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Validar URLs, portas e segredos sem revelar valores em erros.",
+        "Testar boot da API/Next com campo crítico ausente e com configuração válida no ambiente real."
+      ],
+      "codeAreas": [
+        "infra",
+        "apps/api/src/modules/00-shared",
+        "packages/config",
+        ".github/workflows"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "INF-003",
+      "title": "Criar health/readiness endpoints",
+      "milestone": "Milestone 1 - ambiente local",
+      "acceptance": [
+        "API e dependencias reportam estado sem segredos",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-001"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Criar health/readiness endpoints. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Separar liveness de readiness e aplicar timeouts em dependências.",
+        "Testar dependências saudáveis, indisponíveis e lentas com respostas sanitizadas."
+      ],
+      "codeAreas": [
+        "infra",
+        "apps/api/src/modules/00-shared",
+        "packages/config",
+        ".github/workflows"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "INF-004",
+      "title": "Criar logger estruturado e request id",
+      "milestone": "Milestone 1 - ambiente local",
+      "acceptance": [
+        "logs correlacionam uma requisicao ponta a ponta",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-003"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Criar logger estruturado e request id. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Propagar requestId por HTTP, transação, evento e job.",
+        "Aplicar logging estruturado allowlist e teste com senha/cookie/PII em payload de falha."
+      ],
+      "codeAreas": [
+        "infra",
+        "apps/api/src/modules/00-shared",
+        "packages/config",
+        ".github/workflows"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "INF-005",
+      "title": "Criar pipeline CI inicial",
+      "milestone": "Milestone 1 - ambiente local",
+      "acceptance": [
+        "checks de lint, typecheck, teste e secret scan",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "FND-004"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Criar pipeline CI inicial. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Executar gate de fundação e builds no workflow com lockfile.",
+        "Adicionar integração PostgreSQL/Redis após reconciliação, secret scanning e proteção de branch; registrar execução remota."
+      ],
+      "codeAreas": [
+        "infra",
+        "apps/api/src/modules/00-shared",
+        "packages/config",
+        ".github/workflows"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "INF-006",
+      "title": "Configurar proxy HTTPS local e contrato de forwarded headers",
+      "milestone": "Milestone 1 - ambiente local",
+      "acceptance": [
+        "hosts locais HTTPS, redirect controlado e proxy confiavel testados",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-003"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Configurar proxy HTTPS local e contrato de forwarded headers. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Configurar hosts locais e certificados do proxy conforme regras 25/33.",
+        "Testar forwarded headers válidos/forjados, origem rejeitada, redirects e callbacks."
+      ],
+      "codeAreas": [
+        "infra",
+        "apps/api/src/modules/00-shared",
+        "packages/config",
+        ".github/workflows"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "INF-007",
+      "title": "Bloquear exposicao de arquivos e portas internas",
+      "milestone": "Milestone 1 - ambiente local",
+      "acceptance": [
+        "`pnpm security:check` passa; dotfiles, secrets, backups, listagem e servicos internos bloqueados",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-001",
+        "INF-006"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Bloquear exposicao de arquivos e portas internas. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Executar security:check e revisar bind de portas/volumes/public assets.",
+        "Tentar acesso externo a arquivos internos, backups, env e serviços; registrar respostas sem divulgar segredos."
+      ],
+      "codeAreas": [
+        "infra",
+        "apps/api/src/modules/00-shared",
+        "packages/config",
+        ".github/workflows"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "INF-008",
+      "title": "Sanear readiness e mover health para modulo shared",
+      "milestone": "Milestone 1 - ambiente local",
+      "acceptance": [
+        "nenhum erro bruto, contrato versionado, testes e acesso interno documentado",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-003",
+        "FND-008"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Sanear readiness e mover health para modulo shared. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Consolidar contrato de readiness em contracts sem misturar estado de provider.",
+        "Validar timeouts e sanitização em falhas reais de PostgreSQL/Redis; documentar endpoint público versus interno."
+      ],
+      "codeAreas": [
+        "infra",
+        "apps/api/src/modules/00-shared",
+        "packages/config",
+        ".github/workflows"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-001",
+      "title": "Modelar users, tenants, memberships e sessions",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "migration, RLS e testes de isolamento",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-001",
+        "FND-006"
+      ],
+      "status": "BLOCKED",
+      "objective": "Modelar users, tenants, memberships e sessions. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Executar inventário somente leitura e classificar histórico do banco.",
+        "Preparar baseline/reconciliação por origem em clone; completar relações, estados de membership, roles e RLS.",
+        "Testar SELECT/INSERT/UPDATE/DELETE cruzados, contexto ausente, concorrência e pool com runtime sem bypass."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [
+        "Históricos de migration incompatíveis; PostgreSQL real indisponível nesta sessão."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-002",
+      "title": "Implementar registro de conta",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "email valido, senha Argon2id, tenant pendente",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-001"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Implementar registro de conta. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Reutilizar schema de cadastro e hash Argon2id, com limites server-side.",
+        "Criar identidade e fluxo pendente de verificação de forma consistente; resolver conta existente sem exposição indevida.",
+        "Exercitar e-mail duplicado, falha parcial e retries com banco reconciliado."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-003",
+      "title": "Implementar verificacao de e-mail",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "token unico, expiracao e reenvio limitado",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-002"
+      ],
+      "status": "BLOCKED",
+      "objective": "Implementar verificacao de e-mail. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Implementar verificação de e-mail distinta de recuperação de senha.",
+        "Persistir hash/expiração, reenvio limitado e consumo único que efetivamente marque emailVerified.",
+        "Testar conta já verificada, token expirado, concorrência e reenvio."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [
+        "Verificação de e-mail real não concluída; depende do banco e cadastro."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-004",
+      "title": "Implementar login/logout",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "cookie seguro, sessao persistida, logout invalida",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-001"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Implementar login/logout. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Consolidar contrato de sessão entre web e API e definir TTL/idle/remember-me.",
+        "Implementar registro/revogação por dispositivo e logout servidor além da remoção do cookie.",
+        "Validar revisão, revogação, CSRF, cookie copiado, expiração e Redis indisponível."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-005",
+      "title": "Implementar recuperacao de senha",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "token de uso unico e logs sem token",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-004"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Implementar recuperacao de senha. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Integrar request/verify/redeemRecovery ao banco reconciliado e SMTP.",
+        "Manter OTP/prova fora da URL, consumo atômico e expiração; reduzir timing/PII do fluxo com desafio opaco e envio assíncrono.",
+        "Testar concorrência real, reuso, outro e-mail, falha de entrega/Redis e revogação posterior."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-006",
+      "title": "Criar onboarding do tenant_admin",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "tenant, membership e slug criados atomicamente",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-003"
+      ],
+      "status": "BLOCKED",
+      "objective": "Criar onboarding do tenant_admin. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Após e-mail confirmado, criar tenant/slug/membership admin na mesma transação.",
+        "Definir retomada idempotente e seleção segura para usuários com múltiplos tenants.",
+        "Testar slug duplicado, falha parcial, ausência de tenant e reentrada."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [
+        "Criação atômica de tenant/membership não implementada no cadastro web."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-007",
+      "title": "Criar convite de membro",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "convite escopado ao tenant, expiracao e aceite auditado",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-006"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Criar convite de membro. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Aplicar RBAC e validação de role na criação de convite com repo ligado ao tx.",
+        "Resolver aceite por capability segura sem bypass global de RLS e consumir com lock/índice único.",
+        "Auditar criação/aceite/expiração e testar elevação, concorrência e rollback."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-008",
+      "title": "Implementar RBAC/ABAC v1",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "manager nao eleva/remover admin",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-001",
+        "FND-006"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Implementar RBAC/ABAC v1. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Integrar policies em cada endpoint/action/resource do domínio.",
+        "Adicionar estado ativo/suspenso e revalidar membership na mutação, incluindo revogação concorrente.",
+        "Testar viewer escrevendo, manager elevando admin, tenant trocado e recurso de outro tenant."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-009",
+      "title": "Criar shell do painel tenant",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "sidebar, topbar, rotas protegidas e mobile 360 px",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-004"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Criar shell do painel tenant. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Usar shell server-side autenticado e composições desktop/mobile existentes.",
+        "Conectar seleção de tenant e navegação a membership/entitlements reais; preservar filtros/rascunhos.",
+        "Validar logout, teclado, temas, 320/360/768/1440 e ausência de controle inerte."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-010",
+      "title": "Criar tela de login visual",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "estados loading/erro/sucesso, acessibilidade e SEO noindex",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-004",
+        "AUTH-009"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Criar tela de login visual. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Conferir login/cadastro/reset com estados reais e mensagens acessíveis.",
+        "Validar autofill, paste, foco no erro, mobile, noindex, contraste e reduced motion.",
+        "Executar o fluxo completo após AUTH-004/009, sem confundir aprovação visual com E2E."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-011",
+      "title": "Testar fluxos E2E",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "registro, login, reset, convite e cross-tenant falham corretamente",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-002",
+        "AUTH-003",
+        "AUTH-004",
+        "AUTH-005",
+        "AUTH-006",
+        "AUTH-007",
+        "AUTH-008",
+        "AUTH-009",
+        "AUTH-010"
+      ],
+      "status": "BLOCKED",
+      "objective": "Testar fluxos E2E. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Provisionar dados sintéticos, Redis e SMTP local em ambiente reconciliado.",
+        "Executar cadastro→verificação→onboarding→login→logout→reset→convite e cenários negativos.",
+        "Guardar resumo e evidências redigidas por commit; falha de dependência não conta como ataque bloqueado."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [
+        "Fluxos reais dependem de reconciliação do banco, SMTP e Redis."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-012",
+      "title": "Revisao de seguranca do primeiro marco",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "checklist sem blocker critico",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-011"
+      ],
+      "status": "BLOCKED",
+      "objective": "Revisao de seguranca do primeiro marco. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Revisar threat model e todos os gates AUTH após E2E.",
+        "Confirmar que não restam findings críticos/altos sem mitigação aprovada; documentar risco e reteste."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [
+        "Revisão final depende dos E2E e correção dos blockers."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-013",
+      "title": "Bootstrap seguro do platform_owner via CLI no VPS",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "comando one-shot, stdin seguro, Argon2id, advisory lock, MFA pendente e auditoria",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-001",
+        "INF-002"
+      ],
+      "status": "BLOCKED",
+      "objective": "Bootstrap seguro do platform_owner via CLI no VPS. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Revisar stdin sem eco, nonce/janela de bootstrap e lock na mesma transação.",
+        "Criar owner único com hash Argon2id, auditoria durável e MFA pendente sem acesso ao painel.",
+        "Testar segunda execução, concorrência, nonce inválido, rollback e logs sem segredo."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [
+        "Stdin sem eco, nonce e lock transacional preparados; auditoria durável, lifecycle one-shot do nonce e enrollment MFA ainda pendentes."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-014",
+      "title": "Login separado do superadmin e do tenant",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "cookies, audiences, rotas, rate limit, recovery e MFA sem compartilhamento",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-004",
+        "AUTH-008"
+      ],
+      "status": "BLOCKED",
+      "objective": "Login separado do superadmin e do tenant. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Integrar handlers/guards tenant/platform com cookies e segredos separados.",
+        "Completar MFA seguro, setup recente, replay/backup codes, recovery privilegiado e registro de sessão por superfície.",
+        "Testar credencial/cookie cruzado, isSuperadmin inválido, MFA ausente e revogação nas duas superfícies."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [
+        "MFA/recuperação privilegiada e registro de sessões incompletos."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-015",
+      "title": "Proteger API, webhooks e servicos internos",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "API key escopada, HMAC/timestamp/replay, mTLS/JWT interno e health seguro",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-004",
+        "FND-006"
+      ],
+      "status": "IN_PROGRESS",
+      "objective": "Proteger API, webhooks e servicos internos. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Definir API key pública escopada, hash/rotação/revogação e identidade de serviços internos.",
+        "Integrar raw body, assinatura, timestamp e dedupe persistente por provider; aplicar audience/scopes/expiração.",
+        "Testar prefixo falso, chave revogada, assinatura curta, replay, token vencido e tenant trocado."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [
+        "Implementação parcial; consultar achados e gates em docs/audit/continuity.md."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTH-016",
+      "title": "E2E das superficies de acesso",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "tenant, superadmin, API, hooks, revogacao, CSRF e escalada falham corretamente",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-013",
+        "AUTH-014",
+        "AUTH-015"
+      ],
+      "status": "BLOCKED",
+      "objective": "E2E das superficies de acesso. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Exercitar tenant, platform, API, hook e serviço interno no ambiente reconciliado.",
+        "Testar sessão revogada, CSRF, tenant switching, MFA, replay e escalada; registrar evidência por superfície."
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "packages/db",
+        "apps/tenant-web/src/app/(auth)",
+        "apps/api/src/modules/01-identity",
+        "apps/api/src/modules/02-tenancy"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [
+        "E2E entre superfícies ainda depende de AUTH-013/014/015."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "TEAM-001",
+      "title": "CRUD de setores",
+      "milestone": "Milestone 3 - equipe, setores e auditoria",
+      "acceptance": [
+        "acesso por setor testado",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-008",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "CRUD de setores. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Criar setores com tenant e estado ativo, schemas e CRUD autorizado.",
+        "Definir associação/visibilidade de usuários e recursos por setor; testar remoção com dependentes."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/04-team",
+        "apps/tenant-web/src/features",
+        "packages/auth"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "TEAM-002",
+      "title": "CRUD de cargos customizados",
+      "milestone": "Milestone 3 - equipe, setores e auditoria",
+      "acceptance": [
+        "permissao nao pode exceder criador",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-008",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "CRUD de cargos customizados. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Modelar cargos customizados como subconjunto das permissões do criador.",
+        "Impedir alteração de dono/permissão reservada e testar escalada por atualização parcial."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/04-team",
+        "apps/tenant-web/src/features",
+        "packages/auth"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "TEAM-003",
+      "title": "Gestao de membros",
+      "milestone": "Milestone 3 - equipe, setores e auditoria",
+      "acceptance": [
+        "suspender, reativar, transferir e auditar",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "TEAM-002",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Gestao de membros. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Implementar lista, convite, suspensão, reativação e transferência com policies.",
+        "Revogar acessos/sessões afetados e auditar; testar proteção do último admin."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/04-team",
+        "apps/tenant-web/src/features",
+        "packages/auth"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "TEAM-004",
+      "title": "Auditoria pesquisavel",
+      "milestone": "Milestone 3 - equipe, setores e auditoria",
+      "acceptance": [
+        "filtros por actor, acao, recurso e periodo",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-004",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Auditoria pesquisavel. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Persistir eventos de auditoria minimizados com tenant/actor/requestId.",
+        "Criar filtros e paginação autorizados, retenção e export controlado; testar acesso cruzado."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/04-team",
+        "apps/tenant-web/src/features",
+        "packages/auth"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "TEAM-005",
+      "title": "Contrato de erros e reporte pelo painel tenant",
+      "milestone": "Milestone 3 - equipe, setores e auditoria",
+      "acceptance": [
+        "codigo BipeSend, request id, redacao e protocolo de reporte",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-004",
+        "AUTH-004",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Contrato de erros e reporte pelo painel tenant. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Padronizar erros técnicos + HTTP + protocolo BPS sem stack/PII.",
+        "Criar reporte contextual com requestId e payload allowlisted; testar falha de envio e consentimento quando aplicável."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/04-team",
+        "apps/tenant-web/src/features",
+        "packages/auth"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "TEAM-006",
+      "title": "Dicionario e triagem de erros no superpainel",
+      "milestone": "Milestone 3 - equipe, setores e auditoria",
+      "acceptance": [
+        "buscar, vincular, promover, resolver e auditar",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "TEAM-005",
+        "AUTH-008",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Dicionario e triagem de erros no superpainel. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Criar busca/triagem privilegiada por código/fingerprint/tenant/severidade.",
+        "Implementar transições open/investigating/resolved/ignored com auditoria e autorização."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/04-team",
+        "apps/tenant-web/src/features",
+        "packages/auth"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "CRM-001",
+      "title": "Contatos e campos customizados",
+      "milestone": "Milestone 4 - CRM e inbox",
+      "acceptance": [
+        "CRUD, importacao segura e tenant isolation",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "TEAM-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Contatos e campos customizados. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Modelar contatos/campos customizados com tenant, índices e schema limitado.",
+        "Conectar CRUD/importação ao backend; tratar duplicata, CSV injection, tamanho e rollback."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/05-crm",
+        "apps/tenant-web/src/app/(dashboard)",
+        "packages/contracts",
+        "packages/ui"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "CRM-002",
+      "title": "Tags e segmentos",
+      "milestone": "Milestone 4 - CRM e inbox",
+      "acceptance": [
+        "filtros e limites por plano",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "CRM-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Tags e segmentos. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Criar tags e filtros de segmentos com schema e limites por plano.",
+        "Testar exclusão, associação cruzada, paginação e reavaliação de segmentos."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/05-crm",
+        "apps/tenant-web/src/app/(dashboard)",
+        "packages/contracts",
+        "packages/ui"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "CRM-003",
+      "title": "Pipelines configuraveis",
+      "milestone": "Milestone 4 - CRM e inbox",
+      "acceptance": [
+        "etapas, ordem, cor e regras validas",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "CRM-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Pipelines configuraveis. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Persistir pipelines/etapas/ordem e transições autorizadas.",
+        "Validar cor acessível, movimento concorrente e remoção de etapa com negócios existentes."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/05-crm",
+        "apps/tenant-web/src/app/(dashboard)",
+        "packages/contracts",
+        "packages/ui"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "CRM-004",
+      "title": "Cards/lista/inbox views",
+      "milestone": "Milestone 4 - CRM e inbox",
+      "acceptance": [
+        "alternativa acessivel ao drag-and-drop",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "CRM-003",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Cards/lista/inbox views. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Conectar cards/lista às queries do tenant mantendo filtro/sort.",
+        "Oferecer ação de mover etapa por teclado/menu além do drag; composição mobile própria."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/05-crm",
+        "apps/tenant-web/src/app/(dashboard)",
+        "packages/contracts",
+        "packages/ui"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "CRM-005",
+      "title": "Conversas e mensagens internas",
+      "milestone": "Milestone 4 - CRM e inbox",
+      "acceptance": [
+        "historico paginado e auditoria",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "CRM-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Conversas e mensagens internas. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Modelar conversas/mensagens com direção, estado, paginação e retenção.",
+        "Conectar inbox de três painéis no desktop e lista→conversa→contexto no mobile; preservar rascunho."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/05-crm",
+        "apps/tenant-web/src/app/(dashboard)",
+        "packages/contracts",
+        "packages/ui"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "CRM-006",
+      "title": "Atribuicao a setor/cargo/membro",
+      "milestone": "Milestone 4 - CRM e inbox",
+      "acceptance": [
+        "autorizacao e notificacao em tempo real",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "TEAM-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Atribuicao a setor/cargo/membro. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Autorizar atribuição por setor/cargo/membro ativo.",
+        "Persistir atribuição atomicamente, auditar e emitir evento; testar membro suspenso e corrida."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/05-crm",
+        "apps/tenant-web/src/app/(dashboard)",
+        "packages/contracts",
+        "packages/ui"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "CRM-007",
+      "title": "WebSocket rooms",
+      "milestone": "Milestone 4 - CRM e inbox",
+      "acceptance": [
+        "usuario so recebe eventos autorizados",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "CRM-005",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "WebSocket rooms. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Autenticar handshake e autorizar rooms por tenant/recurso.",
+        "Revalidar após reconexão/revogação e fazer catch-up paginado; testar inscrição em sala alheia."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/05-crm",
+        "apps/tenant-web/src/app/(dashboard)",
+        "packages/contracts",
+        "packages/ui"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "MSG-001",
+      "title": "Outbox e eventos",
+      "milestone": "Milestone 5 - filas, WhatsApp e automacoes",
+      "acceptance": [
+        "sem evento fantasma apos rollback",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-004",
+        "CRM-005",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Outbox e eventos. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Criar tabela/adapter de outbox na transação da entidade e relay com lease.",
+        "Persistir dedupe por tenant/consumer/eventId; testar rollback, publicação repetida e queda após envio."
+      ],
+      "codeAreas": [
+        "packages/events",
+        "apps/worker",
+        "apps/api/src/modules/07-messaging"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "MSG-002",
+      "title": "BullMQ e dead-letter",
+      "milestone": "Milestone 5 - filas, WhatsApp e automacoes",
+      "acceptance": [
+        "retry/backoff/timeout/idempotencia",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "MSG-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "BullMQ e dead-letter. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Configurar filas BullMQ isoladas por escopo, payload pequeno e referências.",
+        "Aplicar retry/backoff/timeout/cancelamento/DLQ e controle de concorrência/custo por tenant."
+      ],
+      "codeAreas": [
+        "packages/events",
+        "apps/worker",
+        "apps/api/src/modules/07-messaging"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "MSG-003",
+      "title": "Adapter de provider",
+      "milestone": "Milestone 5 - filas, WhatsApp e automacoes",
+      "acceptance": [
+        "provider fake coberto por contrato",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "MSG-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Adapter de provider. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Definir interface de provider e adapter fake contratual sem rede real.",
+        "Implementar adapter real server-only com timeout, mapeamento de erros e testes de contrato."
+      ],
+      "codeAreas": [
+        "packages/events",
+        "apps/worker",
+        "apps/api/src/modules/07-messaging"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "MSG-004",
+      "title": "QR e conexao",
+      "milestone": "Milestone 5 - filas, WhatsApp e automacoes",
+      "acceptance": [
+        "QR expirado e status auditado",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "MSG-003",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "QR e conexao. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Criar estado de conexão/QR com expiração, autorização e emissão segura.",
+        "Não registrar QR/token; testar expiração, reconexão, logout provider e perda de rede."
+      ],
+      "codeAreas": [
+        "packages/events",
+        "apps/worker",
+        "apps/api/src/modules/07-messaging"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "MSG-005",
+      "title": "Webhook normalizado",
+      "milestone": "Milestone 5 - filas, WhatsApp e automacoes",
+      "acceptance": [
+        "assinatura e duplicatas tratadas",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "MSG-003",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Webhook normalizado. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Verificar assinatura nos bytes originais conforme provider e mapear evento canônico.",
+        "Persistir chave idempotente e enfileirar após confirmação segura; testar replay e eventos fora de ordem."
+      ],
+      "codeAreas": [
+        "packages/events",
+        "apps/worker",
+        "apps/api/src/modules/07-messaging"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTO-001",
+      "title": "Gatilhos e condicoes",
+      "milestone": "Milestone 5 - filas, WhatsApp e automacoes",
+      "acceptance": [
+        "DSL validada, sem execucao arbitraria",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "CRM-003",
+        "MSG-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Gatilhos e condicoes. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Modelar DSL declarativa de gatilhos/condições com schemas e versão.",
+        "Proibir JS arbitrário e ciclos sem limite; avaliar com contexto autorizado e limite de passos."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/08-automation",
+        "apps/tenant-web/src/app/(dashboard)/automations",
+        "packages/events"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTO-002",
+      "title": "Acoes e agendamento",
+      "milestone": "Milestone 5 - filas, WhatsApp e automacoes",
+      "acceptance": [
+        "timezone, cancelamento e limite",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "MSG-002",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Acoes e agendamento. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Persistir agenda, timezone, cancelamento e idempotência da execução.",
+        "Criar ações allowlisted com limite por plano, simulação explícita e rollback/compensação definida."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/08-automation",
+        "apps/tenant-web/src/app/(dashboard)/automations",
+        "packages/events"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AUTO-003",
+      "title": "Campanhas com opt-out",
+      "milestone": "Milestone 5 - filas, WhatsApp e automacoes",
+      "acceptance": [
+        "supressao e rate limit obrigatorios",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "MSG-004",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Campanhas com opt-out. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Implementar seleção de público com opt-in/opt-out e lista de supressão.",
+        "Enfileirar com limites do provider/tenant, pausa/cancelamento e dedupe por destinatário/campanha."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/08-automation",
+        "apps/tenant-web/src/app/(dashboard)/automations",
+        "packages/events"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AI-001",
+      "title": "Upload em quarentena",
+      "milestone": "Milestone 6 - IA, conhecimento e MCP",
+      "acceptance": [
+        "MIME, tamanho, scan e storage privado",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-001",
+        "TEAM-003",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Upload em quarentena. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Criar upload privado em quarentena com tenant, limite, MIME real e assinatura temporária.",
+        "Executar scan e rejeitar arquivo perigoso; testar zip bomb, tamanho e URL expirada."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/09-knowledge",
+        "apps/worker",
+        "packages/security"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AI-002",
+      "title": "Pipeline de extracao/chunks",
+      "milestone": "Milestone 6 - IA, conhecimento e MCP",
+      "acceptance": [
+        "documento versionado e reprocessavel",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AI-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Pipeline de extracao/chunks. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Extrair texto com sandbox/limites e versionar documento/chunks.",
+        "Garantir reprocessamento idempotente, exclusão completa e rastreabilidade sem conteúdo em log."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/09-knowledge",
+        "apps/worker",
+        "packages/security"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AI-003",
+      "title": "Embeddings + pgvector",
+      "milestone": "Milestone 6 - IA, conhecimento e MCP",
+      "acceptance": [
+        "retrieval filtra tenant e permissao",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AI-002",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Embeddings + pgvector. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Criar embeddings e índice com namespace e filtro tenant/ACL obrigatório.",
+        "Testar recuperação cruzada, permissão revogada, atualização/exclusão e isolamento de cache."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/09-knowledge",
+        "apps/worker",
+        "packages/security"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AI-004",
+      "title": "Provider adapter de LLM",
+      "milestone": "Milestone 6 - IA, conhecimento e MCP",
+      "acceptance": [
+        "chave server-only, limite de custo",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AI-003",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Provider adapter de LLM. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Definir adapter LLM com credencial server-only, timeout e orçamento.",
+        "Aplicar limites por tenant/modelo, minimizar envio de dados e registrar custo sem prompt secreto."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/09-knowledge",
+        "apps/worker",
+        "packages/security"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AI-005",
+      "title": "Copiloto read-only",
+      "milestone": "Milestone 6 - IA, conhecimento e MCP",
+      "acceptance": [
+        "nao envia nem altera sem aprovacao",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AI-004",
+        "CRM-005",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Copiloto read-only. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Construir copiloto inicialmente de leitura com referências e incerteza explícita.",
+        "Sugestões não executam envios/mutações; aprovação humana com contexto precede efeitos autorizados."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/09-knowledge",
+        "apps/worker",
+        "packages/security"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AI-006",
+      "title": "Gateway MCP interno",
+      "milestone": "Milestone 6 - IA, conhecimento e MCP",
+      "acceptance": [
+        "tools allowlist, schema, tenant e auditoria",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AI-005",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Gateway MCP interno. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Expor tools allowlisted com JSON schemas, sessão, tenant e escopo mínimos.",
+        "Autorizar cada chamada/resultado, auditar efeitos e negar endpoints/URLs arbitrários."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/09-knowledge",
+        "apps/worker",
+        "packages/security"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "AI-007",
+      "title": "Testes de prompt injection",
+      "milestone": "Milestone 6 - IA, conhecimento e MCP",
+      "acceptance": [
+        "ataques conhecidos nao elevam privilegio",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AI-005",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Testes de prompt injection. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Montar casos de injeção em chat, documento, metadata e saída de ferramenta.",
+        "Verificar exfiltração, tool escalation, cross-tenant e abuso de orçamento; retestar regressões."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/09-knowledge",
+        "apps/worker",
+        "packages/security"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "CAT-001",
+      "title": "Categorias/produtos/opcoes",
+      "milestone": "Milestone 7 - catalogo e paginas",
+      "acceptance": [
+        "imagens e limites por plano",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "CRM-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Categorias/produtos/opcoes. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Criar categorias/produtos/opções com tenant, estoque/preço quando aplicáveis.",
+        "Validar mídia privada/pública, alt text, moeda e limites por plano."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/10-catalog",
+        "apps/tenant-web/src/features",
+        "packages/contracts"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "CAT-002",
+      "title": "Loja/catalogo publico",
+      "milestone": "Milestone 7 - catalogo e paginas",
+      "acceptance": [
+        "SEO, acessibilidade e cache seguro",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "CAT-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Loja/catalogo publico. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Publicar catálogo com dados explicitamente públicos e escopo de tenant.",
+        "Aplicar canonical/sitemap/metadata/robots, acessibilidade e cache sem dado privado."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/10-catalog",
+        "apps/tenant-web/src/features",
+        "packages/contracts"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "CAT-003",
+      "title": "Pedido e automacao",
+      "milestone": "Milestone 7 - catalogo e paginas",
+      "acceptance": [
+        "estado e idempotencia",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "CAT-002",
+        "AUTO-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Pedido e automacao. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Criar pedido com estados validados e idempotência de criação.",
+        "Emitir eventos após commit; automação não confirma pagamento; testar duplicata e concorrência."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/10-catalog",
+        "apps/tenant-web/src/features",
+        "packages/contracts"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "PAGE-001",
+      "title": "Schema de blocos",
+      "milestone": "Milestone 7 - catalogo e paginas",
+      "acceptance": [
+        "sem HTML/JS arbitrario",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-009",
+        "CRM-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Schema de blocos. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Definir blocos versionados com props allowlisted e sem JS arbitrário.",
+        "Validar rich text/URLs e política de mídia, sem iframe/script livre."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/11-pages",
+        "apps/tenant-web/src/features",
+        "packages/ui"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "PAGE-002",
+      "title": "Editor e preview",
+      "milestone": "Milestone 7 - catalogo e paginas",
+      "acceptance": [
+        "teclado, undo e autosave seguro",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "PAGE-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Editor e preview. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Criar editor com undo/redo, teclado e preview isolado.",
+        "Autosave com revisão otimista e proteção de concorrência; distinguir rascunho de publicado."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/11-pages",
+        "apps/tenant-web/src/features",
+        "packages/ui"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "PAGE-003",
+      "title": "Publicacao, slug e dominio",
+      "milestone": "Milestone 7 - catalogo e paginas",
+      "acceptance": [
+        "preview, rollback e TLS",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "PAGE-002",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Publicacao, slug e dominio. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Publicar revisão imutável, slug/domínio verificado e TLS.",
+        "Permitir rollback, validar colisão/tomada de domínio e invalidar cache por versão."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/11-pages",
+        "apps/tenant-web/src/features",
+        "packages/ui"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "PAGE-004",
+      "title": "SEO/pixel/consentimento",
+      "milestone": "Milestone 7 - catalogo e paginas",
+      "acceptance": [
+        "tags allowlist e noindex no painel",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "PAGE-003",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "SEO/pixel/consentimento. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Gerar metadata/canonical/sitemap e consentimento conforme finalidade.",
+        "Permitir pixels somente allowlist e após estado de consentimento aplicável; painel permanece noindex."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/11-pages",
+        "apps/tenant-web/src/features",
+        "packages/ui"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "BILL-001",
+      "title": "Entitlements e contadores",
+      "milestone": "Milestone 8 - billing e gateways",
+      "acceptance": [
+        "backend decide acesso e limite",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-006",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Entitlements e contadores. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Modelar entitlement/cota por plano no backend com consumo atômico.",
+        "Testar esgotamento, concorrência, reset de período e UI explicando disponibilidade real."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/12-billing",
+        "apps/superadmin-web",
+        "packages/contracts"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "BILL-002",
+      "title": "CRUD de planos superadmin",
+      "milestone": "Milestone 8 - billing e gateways",
+      "acceptance": [
+        "custom plan auditado",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "BILL-001",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "CRUD de planos superadmin. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Criar administração de plano/custom plan com revisão e auditoria.",
+        "Validar limites/preço/moeda e impacto em assinaturas existentes antes da publicação."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/12-billing",
+        "apps/superadmin-web",
+        "packages/contracts"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "BILL-003",
+      "title": "Stripe Connect sandbox",
+      "milestone": "Milestone 8 - billing e gateways",
+      "acceptance": [
+        "OAuth, state, tokens criptografados e webhook",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "BILL-002",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Stripe Connect sandbox. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Integrar Stripe Connect em sandbox com state/OAuth escopado.",
+        "Cifrar credenciais e validar webhook/dedupe; testar conta errada, revogação e replay."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/12-billing",
+        "apps/superadmin-web",
+        "packages/contracts"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "BILL-004",
+      "title": "Mercado Pago OAuth sandbox",
+      "milestone": "Milestone 8 - billing e gateways",
+      "acceptance": [
+        "mesmo contrato e idempotencia",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "BILL-002",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Mercado Pago OAuth sandbox. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Integrar Mercado Pago OAuth em sandbox conforme documentação vigente.",
+        "Aplicar contrato comum de credencial/evento, timeout e idempotência; testar revogação."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/12-billing",
+        "apps/superadmin-web",
+        "packages/contracts"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "BILL-005",
+      "title": "Upgrade/downgrade",
+      "milestone": "Milestone 8 - billing e gateways",
+      "acceptance": [
+        "downgrade nao apaga dados",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "BILL-003",
+        "BILL-004",
+        "AUTH-016"
+      ],
+      "status": "BACKLOG",
+      "objective": "Upgrade/downgrade. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Implementar upgrade/downgrade com previsão clara e confirmação apropriada.",
+        "Aplicar mudanças por webhook confirmado; preservar dados excedentes sem apagar por downgrade."
+      ],
+      "codeAreas": [
+        "apps/api/src/modules/12-billing",
+        "apps/superadmin-web",
+        "packages/contracts"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "OPS-001",
+      "title": "Backup e restore drill",
+      "milestone": "Milestone 9 - operacao e app mobile",
+      "acceptance": [
+        "restore documentado e medido",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-001"
+      ],
+      "status": "BACKLOG",
+      "objective": "Backup e restore drill. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Definir RPO/RTO, backup cifrado e retenção para DB/blob/chaves.",
+        "Ensaiar restauração isolada com contagens e tempo medidos, incluindo rotação de acesso."
+      ],
+      "codeAreas": [
+        "infra",
+        "docs",
+        "apps/api/src/modules/00-shared"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "OPS-002",
+      "title": "Observabilidade e alertas",
+      "milestone": "Milestone 9 - operacao e app mobile",
+      "acceptance": [
+        "SLOs e runbooks",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-004"
+      ],
+      "status": "BACKLOG",
+      "objective": "Observabilidade e alertas. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Instrumentar latência/erro/fila/entrega/custo e SLOs acionáveis.",
+        "Criar alertas deduplicados e runbooks de incidente por responsável."
+      ],
+      "codeAreas": [
+        "infra",
+        "docs",
+        "apps/api/src/modules/00-shared"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "OPS-003",
+      "title": "Pentest e revisao externa",
+      "milestone": "Milestone 9 - operacao e app mobile",
+      "acceptance": [
+        "sem blocker critico",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "AUTH-016",
+        "TEAM-004",
+        "OPS-001",
+        "OPS-002"
+      ],
+      "status": "BACKLOG",
+      "objective": "Pentest e revisao externa. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Executar revisão externa do escopo efetivamente implementado com dados sintéticos.",
+        "Retestar achados críticos e altos, documentar mitigação e liberar marco somente com aceite."
+      ],
+      "codeAreas": [
+        "infra",
+        "docs",
+        "apps/api/src/modules/00-shared"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "OPS-004",
+      "title": "Registro e verificacao de saude das integracoes",
+      "milestone": "Milestone 9 - operacao e app mobile",
+      "acceptance": [
+        "estados, timeout, backoff e resumo sem segredos",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "INF-004"
+      ],
+      "status": "BACKLOG",
+      "objective": "Registro e verificacao de saude das integracoes. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Persistir estado normalizado da integração, checkedAt e motivo seguro.",
+        "Agendar verificação com timeout/backoff, limitar por tenant e auditar transições."
+      ],
+      "codeAreas": [
+        "infra",
+        "docs",
+        "apps/api/src/modules/00-shared"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "OPS-005",
+      "title": "Indicadores de API e integracao no painel",
+      "milestone": "Milestone 9 - operacao e app mobile",
+      "acceptance": [
+        "status textual, ponto acessivel, ultima verificacao e reduced motion",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "OPS-004",
+        "AUTH-009"
+      ],
+      "status": "BACKLOG",
+      "objective": "Indicadores de API e integracao no painel. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Conectar IntegrationStatusBadge/LastCheckedLabel ao estado autorizado.",
+        "Oferecer reconectar/detalhes/retry sem segredo; testar unknown, plano bloqueado e reduced motion."
+      ],
+      "codeAreas": [
+        "infra",
+        "docs",
+        "apps/api/src/modules/00-shared"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "MOB-001",
+      "title": "Especificar app nativo",
+      "milestone": "Milestone 9 - operacao e app mobile",
+      "acceptance": [
+        "decisoes de escopo e API mobile",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "OPS-003"
+      ],
+      "status": "BACKLOG",
+      "objective": "Especificar app nativo. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Registrar ADR de app nativo: fluxos prioritários, autenticação, storage e notificações.",
+        "Definir contrato de paridade, offline/conflitos e tokens nativos sem importar DOM/Next."
+      ],
+      "codeAreas": [
+        "apps/mobile",
+        "packages/contracts",
+        "rules/35_MOBILE_WEB_NATIVE.md"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "MOB-002",
+      "title": "Implementar mobile",
+      "milestone": "Milestone 9 - operacao e app mobile",
+      "acceptance": [
+        "paridade dos fluxos prioritarios",
+        "Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis."
+      ],
+      "dependencies": [
+        "MOB-001"
+      ],
+      "status": "BACKLOG",
+      "objective": "Implementar mobile. Entregar comportamento verificável dentro do escopo do card.",
+      "steps": [
+        "Implementar navegação/controles nativos sobre contratos autorizados.",
+        "Validar dispositivos, leitor de tela, deep links, expiração/revogação e armazenamento seguro."
+      ],
+      "codeAreas": [
+        "apps/mobile",
+        "packages/contracts",
+        "rules/35_MOBILE_WEB_NATIVE.md"
+      ],
+      "tests": [
+        "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
+        "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
+      ],
+      "evidence": [],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-011",
+      "title": "Implementar biblioteca UI e catálogo interativo",
+      "milestone": "Milestone 0 - implementação auditada",
+      "objective": "Implementar biblioteca UI e catálogo interativo",
+      "dependencies": [
+        "FND-009"
+      ],
+      "status": "DONE",
+      "steps": [
+        "Criar componentes base, overlays, tabelas, campos, estados e tokens light/dark.",
+        "Validar teclado, foco, contraste automático e mobile no catálogo sem dados reais."
+      ],
+      "codeAreas": [
+        "packages/ui",
+        "apps/tenant-web/src/features/design-system"
+      ],
+      "tests": [
+        "pnpm --filter @bipesend/ui test",
+        "pnpm --filter @bipesend/ui lint",
+        "pnpm ui:smoke"
+      ],
+      "acceptance": [
+        "Biblioteca importável e catálogo acessível em desenvolvimento, sem simular backend."
+      ],
+      "evidence": [
+        "docs/audit/validation.md",
+        "docs/audit/evidence/ui-report.json"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-012",
+      "title": "Implementar pacotes compartilhados e testes de contrato",
+      "milestone": "Milestone 0 - implementação auditada",
+      "objective": "Implementar pacotes compartilhados e testes de contrato",
+      "dependencies": [
+        "FND-003",
+        "FND-006"
+      ],
+      "status": "DONE",
+      "steps": [
+        "Construir contracts/config/security/events/auth-policies com limites server/client explícitos.",
+        "Testar rejeição de escopo, validação, adulteração, rate limit e documentar adapters ainda necessários."
+      ],
+      "codeAreas": [
+        "packages"
+      ],
+      "tests": [
+        "pnpm foundation:test",
+        "pnpm --filter @bipesend/api test:unit"
+      ],
+      "acceptance": [
+        "Pacotes buildam e testes de unidade passam; limitações de integração estão explícitas."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-013",
+      "title": "Documentar reconciliação dos históricos de banco",
+      "milestone": "Milestone 0 - implementação auditada",
+      "objective": "Documentar reconciliação dos históricos de banco",
+      "dependencies": [
+        "FND-005"
+      ],
+      "status": "DONE",
+      "steps": [
+        "Comparar schema e ambos os históricos sem alterar migrations aplicadas.",
+        "Entregar inventário somente leitura, plano por origem, testes e rollback em clone."
+      ],
+      "codeAreas": [
+        "packages/db/audit",
+        "docs/architecture/database-reconciliation.md"
+      ],
+      "tests": [
+        "Revisar SQL de inventário e matriz de diferenças."
+      ],
+      "acceptance": [
+        "Runbook pronto; aplicação/integração permanece em AUTH-001."
+      ],
+      "evidence": [
+        "docs/architecture/database-reconciliation.md"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-014",
+      "title": "Entregar branch e guia de validação para Antigravity",
+      "milestone": "Milestone 0 - implementação auditada",
+      "objective": "Entregar branch e guia de validação para Antigravity",
+      "dependencies": [
+        "FND-010",
+        "FND-011",
+        "FND-012",
+        "FND-013"
+      ],
+      "status": "IN_PROGRESS",
+      "steps": [
+        "Rodar gates da fundação e builds; registrar evidência e falhas de infraestrutura.",
+        "Publicar branch sem merge e entregar comandos de checkout e próximo card."
+      ],
+      "codeAreas": [
+        "docs/ANTIGRAVITY_HANDOFF.md",
+        "docs/audit/validation.md"
+      ],
+      "tests": [
+        "pnpm foundation:check",
+        "pnpm ui:smoke",
+        "Build tenant-web/superadmin-web/API"
+      ],
+      "acceptance": [
+        "Branch remota disponível; relatório diferencia checks passados e blockers."
+      ],
+      "evidence": [
+        "docs/audit/validation.md"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    }
+  ]
+}

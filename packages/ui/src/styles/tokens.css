@@ -1,0 +1,130 @@
+/* Canonical values. Artwork keeps the brand palette; controls use AA tones. */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --brand-blue: #007bff;
+  --brand-violet: #6366f1;
+  --bg-canvas: #f6f8fc;
+  --bg-surface: #ffffff;
+  --bg-subtle: #edf1f8;
+  --bg-selected: #eaf1ff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #596a82;
+  --border-default: #d9e1ed;
+  --border-control: #7b8ba2;
+  --action-primary: #075fd8;
+  --action-hover: #074caf;
+  --action-foreground: #ffffff;
+  --action-gradient: linear-gradient(110deg, #075fd8, #5145cd);
+  --focus-ring: #075fd8;
+  --status-success: #08734f;
+  --status-success-bg: #e9f8f1;
+  --status-warning: #8b5107;
+  --status-warning-bg: #fff5df;
+  --status-danger: #b4233c;
+  --status-danger-bg: #fff0f2;
+  --status-info: #075a99;
+  --status-info-bg: #eaf4ff;
+  --overlay: rgb(15 23 42 / 48%);
+  --shadow-sm: 0 2px 8px rgb(15 23 42 / 4%);
+  --shadow-md: 0 16px 48px rgb(15 23 42 / 16%);
+}
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-canvas: #0d1422;
+  --bg-surface: #141e2f;
+  --bg-subtle: #1e2a3e;
+  --bg-selected: #203654;
+  --text-primary: #edf3fc;
+  --text-secondary: #b6c4da;
+  --text-muted: #a0b1ca;
+  --border-default: #2e405b;
+  --border-control: #6f829f;
+  --action-primary: #9ac3ff;
+  --action-hover: #c2daff;
+  --action-foreground: #101b30;
+  --action-gradient: linear-gradient(110deg, #9ac3ff, #c0b7ff);
+  --focus-ring: #9ac3ff;
+  --status-success: #7ee2b8;
+  --status-success-bg: #12362e;
+  --status-warning: #f5ca7a;
+  --status-warning-bg: #3b2c19;
+  --status-danger: #ffacb9;
+  --status-danger-bg: #422332;
+  --status-info: #96d6ff;
+  --status-info-bg: #153247;
+  --overlay: rgb(0 0 0 / 64%);
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 12%);
+  --shadow-md: 0 16px 48px rgb(0 0 0 / 32%);
+}
+:root {
+  --font-body: var(--font-poppins, ui-sans-serif), system-ui, sans-serif;
+  --font-title: var(--font-inter, ui-sans-serif), system-ui, sans-serif;
+  --text-caption: 0.75rem;
+  --text-body: 0.875rem;
+  --text-control: 1rem;
+  --text-title: clamp(1.5rem, 1.25rem + 0.7vw, 2rem);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --radius-sm: 0.5rem;
+  --radius-control: 0.875rem;
+  --radius-card: 1.125rem;
+  --radius-dialog: 1.5rem;
+  --radius-pill: 999px;
+  --control-compact: 2rem;
+  --control-height: 2.75rem;
+  --control-auth: 3.375rem;
+  --sidebar-width: 16rem;
+  --sidebar-collapsed: 5rem;
+  --header-height: 4rem;
+  --content-reading: 48rem;
+  --content-form: 36rem;
+  --motion-fast: 140ms;
+  --motion-base: 180ms;
+  --motion-panel: 240ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --z-sticky: 100;
+  --z-dropdown: 200;
+  --z-overlay: 300;
+  --z-dialog: 400;
+  --z-toast: 500;
+}
+/* Aliases for existing screens. Resolved per surface, not frozen at the root. */
+:root,
+.dark,
+[data-theme] {
+  --color-brand-100: var(--bg-selected);
+  --color-brand-600: var(--action-primary);
+  --color-brand-700: var(--brand-violet);
+  --color-ink-400: var(--text-muted);
+  --color-ink-500: var(--text-muted);
+  --color-ink-600: var(--text-secondary);
+  --color-ink-700: var(--text-secondary);
+  --color-ink-900: var(--text-primary);
+  --color-surface-0: var(--bg-surface);
+  --color-surface-50: var(--bg-canvas);
+  --color-surface-100: var(--bg-subtle);
+  --color-surface-900: #0f172a;
+  --color-border-200: var(--border-default);
+  --color-border-300: var(--border-control);
+  --color-danger-50: var(--status-danger-bg);
+  --color-danger-200: var(--status-danger);
+  --color-danger-600: var(--status-danger);
+  --color-danger-700: var(--status-danger);
+  --color-success-50: var(--status-success-bg);
+  --color-success-200: var(--status-success);
+  --color-success-600: var(--status-success);
+  --color-success-700: var(--status-success);
+  --color-warning-600: var(--status-warning);
+  --color-background: var(--bg-canvas);
+  --color-foreground: var(--text-primary);
+}

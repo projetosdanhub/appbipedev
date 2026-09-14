@@ -22,4 +22,8 @@ Revogar localmente e, quando disponível, no provider. Limpar caches e marcar es
 
 ## 6. UX
 
-Status normalizado: `connected`, `degraded`, `action_required`, `disconnected`, `unknown`. Mostrar última verificação e ação recomendada.
+Status normalizado: `connected`, `degraded`, `disconnected`, `misconfigured`, `not_entitled`, `disabled`, `unknown`. Mostrar última verificação e ação recomendada.
+
+## Revisão de fundação — 2026-09-13
+
+Adapters server-only tipados, timeouts/AbortSignal, retry classificado, idempotência, circuit breaker quando necessário, logs minimizados e credenciais cifradas com rotação de chave. Não confiar em URLs de callback fornecidas pelo cliente; allowlist e proteção SSRF.

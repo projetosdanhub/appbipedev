@@ -42,3 +42,7 @@ Erro de campo fica junto do campo. Erro de bloco não derruba página. Erro de p
 ## 6. Reporte
 
 `Reportar erro` envia identificadores técnicos permitidos e contexto controlado. Usuário deve saber que protocolo foi criado. Não capturar formulário sensível inteiro.
+
+## Revisão de fundação — 2026-09-13
+
+Distinguir código técnico, HTTP e futuro código BPS de suporte. AuditMetadata usa allowlist; corpo, DSN, stack, OTP, cookie e chave não entram. Auditoria durável pesquisável e correlação com frontend ainda estão em TEAM-004/005/006; helper redactor não os conclui.

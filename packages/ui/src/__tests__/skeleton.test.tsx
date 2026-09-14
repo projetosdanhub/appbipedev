@@ -3,11 +3,11 @@ import { render } from "@testing-library/react";
 import { Skeleton } from "../components/skeleton";
 
 describe("Skeleton", () => {
-  it("renders a div with animate-pulse class", () => {
+  it("hides decorative loading shapes from assistive technology", () => {
     const { container } = render(<Skeleton />);
     const div = container.firstChild as HTMLElement;
     expect(div).toBeInTheDocument();
-    expect(div.className).toContain("animate-pulse");
+    expect(div).toHaveAttribute("aria-hidden", "true");
   });
 
   it("accepts custom className", () => {

@@ -50,3 +50,7 @@ Ações como alterar e-mail, senha, MFA, API key, permissão crítica ou billing
 ## 7. Sessões
 
 Usuário deve poder encerrar sessão atual; admins podem ter gerenciamento de sessões conforme política. Troca de senha, comprometimento e remoção de acesso devem revogar sessões afetadas.
+
+## Revisão de fundação — 2026-09-13
+
+Matriz executável em packages/auth/src/policies.ts. Superadmin não é cargo de tenant. Validação da sessão e RBAC devem ocorrer a cada operação. Mudança de updatedAt invalida JWT web atual; logout por dispositivo/idle e revogação dirigida exigem registro de sessões ainda pendente.

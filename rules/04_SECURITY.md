@@ -87,3 +87,7 @@ Quarentena, limite de tamanho, allowlist de tipo, nome gerado pelo sistema, scan
 ## 12. Auditoria
 
 Auditar login relevante, falhas suspeitas, mudança de senha, MFA, alteração de permissão, exportação, integração, API key, billing e suporte. Auditoria é append-only lógico e protegida contra edição comum.
+
+## Revisão de fundação — 2026-09-13
+
+Usar @bipesend/security para CSPRNG, HMAC, comparação constante, AEAD e redaction allowlist. Assinatura de webhook exige bytes originais e janela; deduplicação persistida continua obrigatória. Rate limit de identidade é server-side e falha fechado; limite IP global no edge/API continua necessário.

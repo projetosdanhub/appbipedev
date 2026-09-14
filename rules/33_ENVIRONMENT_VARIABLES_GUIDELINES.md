@@ -19,7 +19,11 @@ Ao lidar com `Server Actions` que efetuam redirecionamentos ou validam origens, 
 ## 3. Segurança de Segredos
 Nenhuma variável de ambiente de banco de dados, API key externa (como SendGrid, Stripe) ou JWT Secret deve ser exposta com `NEXT_PUBLIC_`.
 - `DATABASE_URL`: Exclusivo do Server.
-- `AUTH_SECRET`: Usado pela camada de criptografia de senhas / sessões e Auth.js.
+- `AUTH_SECRET`: Usado por sessões Auth.js e HMAC de desafios; senhas usam Argon2id.
 
 ## 4. UI e Pacotes Padrões (`packages/ui`)
 Sempre que novos componentes forem criados, devem respeitar a biblioteca padrão instalada no `packages/ui` e serem importados pelos apps a partir de lá. Não deve haver lógica de UI essencial duplicada nas aplicações isoladamente, preservando a diretriz de não duplicação lógica.
+
+## Revisão de fundação — 2026-09-13
+
+AUTH_SECRET serve sessões e HMAC de desafios; senha usa Argon2id, nunca criptografia reversível. SUPERADMIN_AUTH_SECRET é distinto e server-only. INTERNAL_API_KEY é obrigatório na API e não aceita valor padrão em produção. Origens absolutas devem ter protocolo, host e política de porta validados, sem credenciais/caminho/query.

@@ -1,43 +1,52 @@
 import * as z from "zod";
 
 export const loginSchema = z.object({
-  email: z.string().email({
+  email: z.string().trim().toLowerCase().max(254).email({
     message: "Digite um endereço de e-mail válido.",
   }),
-  password: z.string().min(9, {
+  password: z.string().max(128).min(9, {
     message: "A senha deve ter pelo menos 9 caracteres.",
   }),
   rememberMe: z.boolean().optional(),
 });
 
-export const registerSchema = z
-  .object({
-    name: z.string().min(3, {
-      message: "O nome deve ter pelo menos 3 caracteres.",
+export const registerSchema = z.object({
+  name: z.string().trim().max(120).min(3, {
+    message: "O nome deve ter pelo menos 3 caracteres.",
+  }),
+  companyName: z.string().trim().max(160).min(2, {
+    message: "O nome da empresa deve ter pelo menos 2 caracteres.",
+  }),
+  email: z.string().trim().toLowerCase().max(254).email({
+    message: "Digite um endereço de e-mail válido.",
+  }),
+  password: z
+    .string()
+    .max(128)
+    .min(9, { message: "A senha deve ter pelo menos 9 caracteres." })
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, {
+      message: "A senha deve conter pelo menos 1 caractere especial.",
     }),
-    companyName: z.string().min(2, {
-      message: "O nome da empresa deve ter pelo menos 2 caracteres.",
-    }),
-    email: z.string().email({
-      message: "Digite um endereço de e-mail válido.",
-    }),
-    password: z.string()
-      .min(9, { message: "A senha deve ter pelo menos 9 caracteres." })
-      .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: "A senha deve conter pelo menos 1 caractere especial." }),
-  });
+});
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email({
+  email: z.string().trim().toLowerCase().max(254).email({
     message: "Digite um endereço de e-mail válido.",
   }),
 });
 
 export const resetPasswordSchema = z
   .object({
-    password: z.string().min(9, {
-      message: "A senha deve ter pelo menos 9 caracteres.",
-    }),
-    confirmPassword: z.string().min(9, {
+    password: z
+      .string()
+      .min(9, {
+        message: "A senha deve ter pelo menos 9 caracteres.",
+      })
+      .max(128)
+      .regex(/[!@#$%^&*(),.?":{}|<>]/, {
+        message: "A senha deve conter pelo menos 1 caractere especial.",
+      }),
+    confirmPassword: z.string().max(128).min(9, {
       message: "A senha deve ter pelo menos 9 caracteres.",
     }),
   })
@@ -47,9 +56,11 @@ export const resetPasswordSchema = z
   });
 
 export const verifyCodeSchema = z.object({
-  code: z.string().min(6, {
-    message: "O código deve ter pelo menos 6 caracteres.",
-  }),
+  code: z
+    .string()
+    .regex(/^\d{6}$/, {
+      message: "O código deve conter exatamente 6 dígitos.",
+    }),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;

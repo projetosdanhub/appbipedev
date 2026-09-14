@@ -27,3 +27,7 @@ Evitar conteúdo de mensagem, token, documento e PII em logs/analytics. Identifi
 ## 7. IA
 
 Envio a provider de IA requer finalidade, minimização e contrato de retenção conhecido.
+
+## Revisão de fundação — 2026-09-13
+
+Classificar dados pessoais, de autenticação, conversa, embedding e auditoria; registrar finalidade, retenção e descarte por tenant. Exclusão inclui índices, blobs e réplicas conforme política. Logs/screenshots de teste usam dados sintéticos. Definição legal/contratual e atendimento de titulares ainda exigem fluxo operacional próprio.

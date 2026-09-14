@@ -147,3 +147,7 @@ Evitar:
 ## 15. Critério visual de pronto
 
 Uma nova tela deve parecer nativa do BipeSend sem explicação. Se precisa criar novos valores de cor, radius, sombra, duração, botão ou campo para funcionar, a mudança deve primeiro evoluir o design system.
+
+## Revisão de fundação — 2026-09-13
+
+O shell desta branch tem sidebar expansível, navegação mobile própria, refresh e perfil reais. Busca global, sino e tenant switcher só entram com comportamento e dados autorizados. Não deixar controles inertes aparentando função pronta. Fonte de componentes/tokens: packages/ui; instruções de Server Actions não substituem autorização na própria action.

@@ -16,14 +16,16 @@ import {
   FormItem,
 } from "@bipesend/ui";
 
-import { resetPasswordSchema, type ResetPasswordInput } from "@/lib/validations/auth";
+import {
+  resetPasswordSchema,
+  type ResetPasswordInput,
+} from "@/lib/validations/auth";
 import { resetPasswordAction } from "../../_actions/auth";
 
 function ResetPasswordContent() {
   const searchParams = useSearchParams();
-  const email = searchParams.get('email') || "";
-  const token = searchParams.get('token') || "";
-  
+  const email = searchParams.get("email") || "";
+
   const [error, setError] = useState("");
   const [globalValidationError, setGlobalValidationError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
@@ -56,21 +58,19 @@ function ResetPasswordContent() {
       const response = await resetPasswordAction({
         ...data,
         email,
-        code: token,
       });
-      
+
       if (!response.success) {
         setError(response.message || "Erro ao redefinir a senha");
         return;
       }
-      
+
       setIsSuccess(true);
       toast.success(response.message);
-      
+
       setTimeout(() => {
         router.push("/login");
       }, 3000);
-      
     } catch {
       setError("Ocorreu um erro inesperado ao conectar ao servidor.");
     }
@@ -80,7 +80,15 @@ function ResetPasswordContent() {
     return (
       <div className="w-full flex flex-col items-center justify-center py-10 animate-slide-up text-center">
         <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-6">
-          <svg className="w-8 h-8 text-emerald-500 animate-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            className="w-8 h-8 text-emerald-500 animate-checkmark"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
         </div>
@@ -88,7 +96,8 @@ function ResetPasswordContent() {
           Senha redefinida!
         </h1>
         <p className="text-[15px] md:text-[16px] text-slate-500 font-normal leading-relaxed mb-8 max-w-sm">
-          Sua senha foi alterada com sucesso. Você será redirecionado para a tela de login em instantes.
+          Sua senha foi alterada com sucesso. Você será redirecionado para a
+          tela de login em instantes.
         </p>
         <Loader2 className="w-6 h-6 animate-spin text-[#007BFF]" />
       </div>
@@ -105,7 +114,8 @@ function ResetPasswordContent() {
           Crie uma nova senha
         </h1>
         <p className="text-[15px] md:text-[16px] text-slate-500 font-normal leading-relaxed">
-          Sua nova senha deve ser diferente das senhas usadas anteriormente para maior segurança.
+          Sua nova senha deve ser diferente das senhas usadas anteriormente para
+          maior segurança.
         </p>
       </div>
 
@@ -120,24 +130,30 @@ function ResetPasswordContent() {
       {error && (
         <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 animate-error-enter">
           <AlertCircle className="h-4 w-4 mt-0.5 text-[var(--color-danger-600)] flex-shrink-0" />
-          <p className="text-[13px] font-medium text-[var(--color-danger-600)]">{error}</p>
+          <p className="text-[13px] font-medium text-[var(--color-danger-600)]">
+            {error}
+          </p>
         </div>
       )}
 
       <Form {...form}>
-        <form className="space-y-4 w-full" onSubmit={form.handleSubmit(onSubmit)} noValidate>
+        <form
+          className="space-y-4 w-full"
+          onSubmit={form.handleSubmit(onSubmit)}
+          noValidate
+        >
           <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem className="!space-y-0">
                 <FormControl>
-                  <Input 
+                  <Input
                     label="Nova senha"
-                    type="password" 
-                    placeholder="••••••••" 
+                    type="password"
+                    placeholder="••••••••"
                     leftIcon={<Lock className="h-5 w-5" />}
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 {field.value?.length > 0 && (
@@ -153,12 +169,12 @@ function ResetPasswordContent() {
             render={({ field }) => (
               <FormItem className="!space-y-0">
                 <FormControl>
-                  <Input 
+                  <Input
                     label="Confirmar nova senha"
-                    type="password" 
-                    placeholder="••••••••" 
+                    type="password"
+                    placeholder="••••••••"
                     leftIcon={<Lock className="h-5 w-5" />}
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
               </FormItem>
@@ -172,17 +188,24 @@ function ResetPasswordContent() {
               className="w-full"
               size="lg"
             >
-              {form.formState.isSubmitting ? "Salvando..." : (
-                <>Redefinir senha <ArrowRight className="ml-2 h-5 w-5" /></>
+              {form.formState.isSubmitting ? (
+                "Salvando..."
+              ) : (
+                <>
+                  Redefinir senha <ArrowRight className="ml-2 h-5 w-5" />
+                </>
               )}
             </Button>
           </div>
         </form>
       </Form>
-      
+
       <p className="mt-8 text-center text-[14px] text-slate-500">
         Lembrou da sua senha?{" "}
-        <Link href="/login" className="font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors">
+        <Link
+          href="/login"
+          className="font-semibold text-[#007BFF] hover:text-[#6366F1] transition-colors"
+        >
           Fazer login
         </Link>
       </p>
@@ -195,26 +218,36 @@ function PasswordStrength({ password }: { password?: string }) {
   const p = password || "";
   const hasLength = p.length >= 9;
   const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(p);
-  
+
   let score = 0;
   if (p.length > 0) score = 1;
   if (hasLength || hasSpecial) score = 2;
   if (hasLength && hasSpecial) score = 3;
-  
+
   return (
     <div className="flex flex-col gap-2 pt-1.5 px-1 w-full">
       {/* Barra de força fina */}
       <div className="flex items-center gap-1.5 w-full">
-        <div className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${score >= 1 ? (score === 3 ? 'bg-[#10B981]' : score === 2 ? 'bg-[#F59E0B]' : 'bg-[#EF4444]') : 'bg-[#E2E8F0]'}`} />
-        <div className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${score >= 2 ? (score === 3 ? 'bg-[#10B981]' : 'bg-[#F59E0B]') : 'bg-[#E2E8F0]'}`} />
-        <div className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${score >= 3 ? 'bg-[#10B981]' : 'bg-[#E2E8F0]'}`} />
+        <div
+          className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${score >= 1 ? (score === 3 ? "bg-[#10B981]" : score === 2 ? "bg-[#F59E0B]" : "bg-[#EF4444]") : "bg-[#E2E8F0]"}`}
+        />
+        <div
+          className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${score >= 2 ? (score === 3 ? "bg-[#10B981]" : "bg-[#F59E0B]") : "bg-[#E2E8F0]"}`}
+        />
+        <div
+          className={`h-[3px] flex-1 rounded-full transition-colors duration-300 ${score >= 3 ? "bg-[#10B981]" : "bg-[#E2E8F0]"}`}
+        />
       </div>
       {/* Textos de requisitos */}
       <div className="relative flex items-center w-full h-[18px]">
-        <div className={`absolute left-1/2 -translate-x-1/2 text-[11.5px] whitespace-nowrap transition-colors duration-300 ${hasLength ? "text-[#10B981] font-medium" : "text-[#8E9AB4]"}`}>
+        <div
+          className={`absolute left-1/2 -translate-x-1/2 text-[11.5px] whitespace-nowrap transition-colors duration-300 ${hasLength ? "text-[#10B981] font-medium" : "text-[#8E9AB4]"}`}
+        >
           Mínimo 9 caracteres
         </div>
-        <div className={`ml-auto text-[11.5px] whitespace-nowrap transition-colors duration-300 ${hasSpecial ? "text-[#10B981] font-medium" : "text-[#8E9AB4]"}`}>
+        <div
+          className={`ml-auto text-[11.5px] whitespace-nowrap transition-colors duration-300 ${hasSpecial ? "text-[#10B981] font-medium" : "text-[#8E9AB4]"}`}
+        >
           1 especial (ex: !@#)
         </div>
       </div>
@@ -224,7 +257,11 @@ function PasswordStrength({ password }: { password?: string }) {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="animate-pulse w-full h-96 bg-gray-50 rounded-xl" />}>
+    <Suspense
+      fallback={
+        <div className="animate-pulse w-full h-96 bg-gray-50 rounded-xl" />
+      }
+    >
       <ResetPasswordContent />
     </Suspense>
   );

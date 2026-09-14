@@ -1,0 +1,55 @@
+{
+  "validatedAt": "2026-09-14",
+  "baseCommit": "fd3f4c3a6ddbdefd17b591820a4e51b692764773",
+  "branch": "feat/saas-foundation-design-system",
+  "source": "working tree committed by this delivery; later handoff-only commit does not change validated runtime",
+  "runtime": {
+    "node": "24.19.0",
+    "pnpmObserved": "11.19.0",
+    "pnpmDeclared": "12.4.1",
+    "chromium": "153.0.8010.0"
+  },
+  "commands": [
+    {
+      "command": "pnpm foundation:check",
+      "result": "passed",
+      "unitTests": 63,
+      "apiLintWarnings": 5
+    },
+    {
+      "command": "pnpm ui:smoke",
+      "result": "passed",
+      "checks": 33,
+      "failures": 0
+    },
+    {
+      "command": "pnpm --filter @bipesend/tenant-web build",
+      "result": "passed"
+    },
+    {
+      "command": "pnpm --filter @bipesend/superadmin-web build",
+      "result": "passed"
+    },
+    {
+      "command": "pnpm --filter @bipesend/api build",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "unverified": [
+    "PostgreSQL RLS and migration",
+    "Redis/SMTP identity integration",
+    "full identity E2E",
+    "session registry and privileged MFA recovery",
+    "field performance metrics",
+    "remote CI"
+  ],
+  "databaseIntegrationAttempt": {
+    "result": "failed_dependency",
+    "reason": "ECONNREFUSED",
+    "failedTests": 3
+  }
+}

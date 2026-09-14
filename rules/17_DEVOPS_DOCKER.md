@@ -29,3 +29,7 @@ Estruturados, com request/correlation ID e sem segredo. PII minimizada.
 ## 6. Backups
 
 Backup e restore precisam ser testados. Criptografia, retenção e controle de acesso seguem governança.
+
+## Revisão de fundação — 2026-09-13
+
+CI da fundação deve instalar lockfile, gerar Prisma, buildar packages, rodar checks reais e build dos apps. Proteção de branch exige configuração no GitHub; arquivo de workflow sozinho não prova proteção ativa. Nenhuma migration/seed/bootstrap roda automaticamente neste gate.

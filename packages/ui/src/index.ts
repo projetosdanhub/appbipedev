@@ -1,4 +1,4 @@
-export * from "./lib/utils"
+export * from "./lib/utils";
 export * from "./components/button";
 export * from "./components/input";
 export * from "./components/card";
@@ -11,3 +11,11 @@ export * from "./components/label";
 export * from "./components/skeleton";
 export * from "./components/auth-layout";
 export * from "./components/glass-pill";
+export * from "./components/fields";
+export * from "./components/dialog";
+export * from "./components/overlays";
+export * from "./components/feedback";
+export * from "./components/layout";
+export * from "./components/combobox";
+export * from "./components/data-table";
+export * from "./components/file-upload";

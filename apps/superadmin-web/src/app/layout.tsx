@@ -17,6 +17,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Superpainel - BipeSend",
+  robots: { index: false, follow: false },
   description: "BipeSend Superadmin Dashboard",
 };
 
@@ -26,7 +27,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} ${poppins.variable} antialiased h-full`}>
+    <html
+      lang="pt-BR"
+      className={`${inter.variable} ${poppins.variable} antialiased h-full`}
+    >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

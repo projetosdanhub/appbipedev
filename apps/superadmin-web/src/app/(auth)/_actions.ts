@@ -1,9 +1,14 @@
 "use server";
 
-import { signIn } from "@bipesend/auth";
+import { AuthError } from "next-auth";
+import { signIn } from "@bipesend/auth/superadmin";
 
-
-export async function loginAction(data: { email: string; password: string; code?: string; rememberMe?: boolean }) {
+export async function loginAction(data: {
+  email: string;
+  password: string;
+  code?: string;
+  rememberMe?: boolean;
+}) {
   try {
     await signIn("credentials", {
       email: data.email,
@@ -14,18 +19,13 @@ export async function loginAction(data: { email: string; password: string; code?
     });
     return { success: true, message: "Login realizado com sucesso!" };
   } catch (error) {
-    if (error && typeof error === 'object' && ('type' in error || 'message' in error)) {
-      const errorMsg = (error as any).cause?.err?.message || (error as any).type || (error as any).message;
-      if (errorMsg === "2FA_REQUIRED") {
+    if (error instanceof AuthError && error.cause?.err instanceof Error) {
+      if (error.cause.err.message === "2FA_REQUIRED")
         return { success: false, message: "2FA_REQUIRED" };
-      }
-      if (errorMsg === "INVALID_2FA_CODE") {
-        return { success: false, message: "Código inválido." };
-      }
-      if (errorMsg === "CredentialsSignin") {
-        return { success: false, message: "Senha ou e-mail incorretos." };
-      }
     }
-    throw error;
+    return {
+      success: false,
+      message: "Não foi possível entrar. Confira os dados e tente novamente.",
+    };
   }
 }

@@ -1,93 +1,105 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import crypto from "crypto";
+import type { FastifyReply, FastifyRequest } from "fastify";
+import crypto from "node:crypto";
+import { constantTimeEqual, verifyWebhook } from "@bipesend/security";
+import { idSchema, type TenantContext } from "@bipesend/contracts";
+import { resolveTenantContext } from "@bipesend/auth/policies";
 import { Database } from "../infrastructure/database.js";
 import { SessionRepository } from "../../01-identity/infrastructure/session.repository.js";
 import { UserRepository } from "../../01-identity/infrastructure/user.repository.js";
-import { env } from "../../../config/env.js";
+import type { User } from "../../01-identity/domain/user.entity.js";
 
-// Add user to request
 declare module "fastify" {
   interface FastifyRequest {
-    user?: any;
+    user?: User;
     tenantId?: string;
+    tenantContext?: TenantContext;
+    rawBody?: Buffer;
   }
 }
-
 export function createAuthMiddleware(
-  sessionRepository: SessionRepository,
-  userRepository: UserRepository
+  sessions: SessionRepository,
+  users: UserRepository,
 ) {
   return async (request: FastifyRequest, reply: FastifyReply) => {
-    const sessionToken = request.cookies.session_token;
-    if (!sessionToken) {
+    const token = request.cookies.session_token;
+    if (!token) return reply.status(401).send({ error: "Unauthorized" });
+    const session = await sessions.findByTokenHash(
+      crypto.createHash("sha256").update(token).digest("hex"),
+    );
+    if (!session) return reply.status(401).send({ error: "Unauthorized" });
+    const user = await users.findById(session.user_id);
+    if (!user || user.isSuperadmin)
       return reply.status(401).send({ error: "Unauthorized" });
-    }
-
-    const tokenHash = crypto.createHash("sha256").update(sessionToken).digest("hex");
-    const session = await sessionRepository.findByTokenHash(tokenHash);
-
-    if (!session) {
-      return reply.status(401).send({ error: "Invalid session" });
-    }
-
-    const user = await userRepository.findById(session.user_id);
-    if (!user) {
-      return reply.status(401).send({ error: "User not found" });
-    }
-
     request.user = user;
   };
 }
-
 export function createTenantMiddleware(db: Database) {
   return async (request: FastifyRequest, reply: FastifyReply) => {
-    // Auth middleware should run first
-    if (!request.user) {
+    if (!request.user) return reply.status(401).send({ error: "Unauthorized" });
+    const params = request.params as { tenantId?: string };
+    const selector = params?.tenantId ?? request.headers["x-tenant-id"];
+    const parsed = idSchema.safeParse(selector);
+    if (!parsed.success)
+      return reply.status(400).send({ error: "Invalid tenant selector" });
+    try {
+      request.tenantContext = await db.withTransaction(
+        async (tx) =>
+          resolveTenantContext(
+            {
+              async findMembership(userId, tenantId) {
+                const rows = await tx.query<{
+                  id: string;
+                  userId: string;
+                  tenantId: string;
+                  role: string;
+                  active: boolean;
+                }>(
+                  'SELECT id, user_id AS "userId", tenant_id AS "tenantId", role, true AS active FROM memberships WHERE user_id = $1 AND tenant_id = $2',
+                  [userId, tenantId],
+                );
+                return rows[0] ?? null;
+              },
+            },
+            {
+              userId: request.user!.id,
+              tenantId: parsed.data,
+              requestId: request.id,
+            },
+          ),
+        parsed.data,
+      );
+      request.tenantId = parsed.data;
+    } catch {
+      return reply.status(403).send({ error: "Tenant access denied" });
+    }
+  };
+}
+/** Internal credential only. This does not implement public tenant API keys. */
+export function createApiKeyMiddleware(
+  expectedKey = process.env.INTERNAL_API_KEY ?? "",
+) {
+  return async (request: FastifyRequest, reply: FastifyReply) => {
+    const supplied = request.headers["x-api-key"];
+    if (
+      expectedKey.length < 32 ||
+      typeof supplied !== "string" ||
+      !constantTimeEqual(supplied, expectedKey)
+    )
       return reply.status(401).send({ error: "Unauthorized" });
-    }
-
-    // Expect tenant_id in header or extract from URL?
-    // According to best practices, usually header X-Tenant-ID or similar
-    const tenantId = request.headers["x-tenant-id"] as string;
-    
-    if (!tenantId) {
-      return reply.status(400).send({ error: "Missing x-tenant-id header" });
-    }
-
-    request.tenantId = tenantId;
   };
 }
-
-export function createApiKeyMiddleware() {
+/** Generic internal protocol: timestamp.rawBody. Provider adapters must verify their own format. */
+export function createWebhookHmacMiddleware(secret: string) {
   return async (request: FastifyRequest, reply: FastifyReply) => {
-    const apiKey = request.headers["x-api-key"] as string;
-    if (!apiKey) {
-      return reply.status(401).send({ error: "Missing API key" });
-    }
-    // In a real application, validate the API key against the database here
-    if (apiKey !== env.INTERNAL_API_KEY && !apiKey.startsWith("bipesend_")) {
-      return reply.status(401).send({ error: "Invalid API key" });
-    }
-    // Set appropriate context
-  };
-}
-
-export function createWebhookHmacMiddleware(webhookSecret: string) {
-  return async (request: FastifyRequest, reply: FastifyReply) => {
-    const signature = request.headers["x-webhook-signature"] as string;
-    if (!signature) {
-      return reply.status(401).send({ error: "Missing webhook signature" });
-    }
-
-    const payload = JSON.stringify(request.body);
-    const expectedSignature = crypto
-      .createHmac("sha256", webhookSecret)
-      .update(payload)
-      .digest("hex");
-
-    // Prevent timing attacks
-    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) {
+    const signature = request.headers["x-webhook-signature"],
+      timestamp = request.headers["x-webhook-timestamp"];
+    if (
+      !request.rawBody ||
+      typeof signature !== "string" ||
+      typeof timestamp !== "string" ||
+      !verifyWebhook({ rawBody: request.rawBody, signature, timestamp, secret })
+    )
       return reply.status(401).send({ error: "Invalid webhook signature" });
-    }
+    // Signature is not replay deduplication; consumer MUST persist provider event ID before effects.
   };
 }

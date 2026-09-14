@@ -1,31 +1,11 @@
-# Saúde de integrações
+# Saúde e estado de integrações — v2
 
-## 1. Estado normalizado
+Contrato canônico: `integrationStateSchema` em `packages/contracts`. Estados: `connected`, `degraded`, `disconnected`, `misconfigured`, `not_entitled`, `disabled`, `unknown`. O antigo conjunto healthy/action_required/down não é enum público válido; adapters devem mapeá-lo explicitamente.
 
-- `healthy`
-- `degraded`
-- `action_required`
-- `down`
-- `unknown`
+Health de infraestrutura é contrato diferente de estado do provider. Não misturar disponibilidade, credencial, habilitação e entitlement sem preservar o motivo normalizado.
 
-Estado do provider não é igual a estado da credencial; modelar separadamente quando necessário.
+Cada verificação tem timeout, checkedAt, escopo e erro seguro. Ausência de verificação é unknown, nunca connected. Use IntegrationStatusBadge e LastCheckedLabel com texto/ícone, timezone e ação contextual. Não mostrar credenciais, DSN ou resposta bruta.
 
-## 2. Health check
+Revalidar por abertura/foco/evento e intervalo controlado. Aplicar backoff, evitar polling por aba invisível e deduplicar alertas de transição. Mudanças de credencial e reconexão são auditadas. Autorização e cache incluem tenant; somente operação privilegiada pode ver agregados.
 
-Check tem timeout e não revela segredo. Resultado armazena horário, latência/erro normalizado e próxima ação.
-
-## 3. UX
-
-`IntegrationStatusBadge` mostra texto + ícone, não só cor. Exibir última verificação e CTA como `Reconectar`, `Ver detalhes` ou `Tentar novamente`.
-
-## 4. Atualização
-
-Revalidar ao abrir, voltar ao foco e por intervalo controlado. Evento de provider pode atualizar imediatamente. Não fazer polling agressivo.
-
-## 5. Alertas
-
-Notificar apenas transições relevantes e deduplicar ruído. Falha temporária não deve virar avalanche de notificações.
-
-## 6. Auditoria
-
-Mudança de credencial, reconnect e disable são auditados. Payload bruto fica fora da auditoria comum.
+OPS-004/005 continuam abertos até persistência, workers, autorização e testes reais; componentes de status não implementam monitoramento.

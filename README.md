@@ -2,6 +2,20 @@
 
 BipeSend e o nome escolhido para a plataforma. `bipesend.com.br` e `bipesend.com` sao dominios candidatos; a disponibilidade e a verificacao de marca ainda precisam ser confirmadas antes do registro.
 
+## Fundação executável e retomada
+
+A branch da fundação entrega design system claro/escuro, pacotes compartilhados, 36 regras e taskboard de 85 cards. Comece por [guia do Antigravity](docs/ANTIGRAVITY_HANDOFF.md), [auditoria](docs/audit/continuity.md) e [validação](docs/audit/validation.md).
+
+```bash
+pnpm install --frozen-lockfile
+pnpm foundation:check
+pnpm ui:smoke
+```
+
+O smoke requer Chromium do Playwright e inicia uma galeria de desenvolvimento com dados de exemplo. `/design-system` não é publicado em produção. Confira o [mapa dos pacotes](packages/README.md).
+
+**Antes de migrar banco:** há dois históricos incompatíveis. Use o [plano de reconciliação](docs/architecture/database-reconciliation.md); não rodar ambos os migradores ou db push em banco existente. CRM/inbox/automação ainda contêm prévias; liberação real depende dos gates de identidade/tenant.
+
 ## Objetivo desta base
 
 Este repositorio comeca como a fonte de verdade da arquitetura e das regras de implementacao. A pasta `rules/` deve ser lida antes de qualquer agente de IA criar ou alterar codigo, banco, componentes, eventos ou configuracoes.
@@ -26,7 +40,7 @@ Ao receber esse comando, a IA deve ler `rules/00_MASTER.md` e os arquivos de reg
 Na fundacao, a tarefa `FND-008` pode executar `pnpm structure:scaffold`. Esse comando cria apenas a estrutura de pastas modular; o codigo de negocio sera construido por tarefas posteriores.
 
 Para configurar a maquina Windows uma unica vez, siga
-`rules/SETUP-01-LOCAL.md`. O arquivo prepara Docker, certificado HTTPS local,
+`docs/ANTIGRAVITY_HANDOFF.md`. O arquivo prepara Docker, certificado HTTPS local,
 proxy, verificacoes de seguranca e ngrok sem colocar tokens no repositorio.
 
 ## Superficies e dominios propostos
@@ -45,8 +59,8 @@ Todos sao nomes candidatos. A disponibilidade dos dominios, marca e requisitos l
 ## Stack decidida para o MVP
 
 - Frontend: Next.js + React + TypeScript + Tailwind CSS + componentes acessiveis.
-- Backend: NestJS com adaptador Fastify, REST versionada e WebSocket para tempo real.
-- Dados: PostgreSQL com migracoes SQL/Drizzle e RLS; pgvector para RAG.
+- Backend observado: Fastify + TypeScript; contratos REST, realtime por cards futuros. A proposta inicial de NestJS não foi implementada.
+- Dados: PostgreSQL, Prisma nos apps e SQL/pg na API legada; reconciliação das migrations pendente. pgvector é previsto para RAG.
 - Filas: Redis + BullMQ; PostgreSQL permanece como fonte de verdade.
 - IA: microsservico Python/FastAPI isolado para RAG, orquestracao de LLM e avaliacao; Node.js continua como autoridade de negocio e mensageria.
 - Infra local: Docker Compose, Mailpit, MinIO opcional e ngrok apenas para callbacks de desenvolvimento.
@@ -71,7 +85,7 @@ arquivos, proxy, HTTPS e `.htaccess` esta em
 
 ## Estado atual
 
-Esta base e uma especificacao inicial v0.3. O taskboard em `docs/taskboard.md`
+Esta base contém código de fundação e especificações para os próximos módulos. O taskboard em `docs/taskboard.md`
 e as regras devem ser revisados antes de qualquer integracao externa em
 producao. A configuracao local de HTTPS exige certificado de desenvolvimento
 gerado na maquina; certificados e tokens nunca entram no repositorio.
@@ -81,8 +95,7 @@ gerado na maquina; certificados e tokens nunca entram no repositorio.
 
 O mapa de superficies está em docs/auth-surfaces.md. O painel do tenant e o
 superpainel possuem logins separados. API e hooks não possuem tela de login:
-API usa sessão/API key escopada; hooks usam assinatura, timestamp, replay
-protection e idempotência.
+API deverá usar identidade/API key escopada; hooks deverão validar assinatura, timestamp e deduplicação persistida. Esses gates ainda estão abertos no taskboard. Os endpoints HTTP legados /auth/* retornam 410; Auth.js é a entrada web.
 
 O primeiro platform_owner é criado somente por CLI no VPS, com senha recebida
 por stdin e hash Argon2id. Não existe endpoint ou seed público para criar o

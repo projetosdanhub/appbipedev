@@ -1,0 +1,43 @@
+name: Foundation
+on:
+  pull_request:
+  push:
+    branches: [main, 'feat/saas-foundation-design-system']
+permissions:
+  contents: read
+concurrency:
+  group: foundation-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      # Build-only values. This job neither connects to a database nor deploys.
+      AUTH_SECRET: ci-only-tenant-secret-never-use-in-production-0001
+      SUPERADMIN_AUTH_SECRET: ci-only-platform-secret-never-use-in-production-0002
+      DATABASE_URL: postgresql://localhost:5432/foundation_build
+      REDIS_URL: redis://localhost:6379
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm foundation:check
+      - run: pnpm --filter @bipesend/api build
+      - run: pnpm --filter @bipesend/tenant-web build
+      - run: pnpm --filter @bipesend/superadmin-web build
+      - run: pnpm --dir apps/e2e-tests exec playwright install --with-deps chromium
+      - run: pnpm ui:smoke
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: foundation-ui-evidence
+          path: test-results/foundation
+          retention-days: 7
+# PostgreSQL/Redis identity integration is a separate production gate (AUTH-001/011/016).
+# Do not mark those cards DONE from this workflow's catalogue/unit checks.

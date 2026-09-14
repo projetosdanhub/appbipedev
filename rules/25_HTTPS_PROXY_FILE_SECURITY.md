@@ -35,3 +35,7 @@ PDF/imagem/documento em preview deve usar sandbox/política apropriada. Não exe
 ## 9. CDN/cache
 
 Conteúdo autenticado não entra em cache público sem política explícita. URL assinada não deve aparecer em log completo.
+
+## Revisão de fundação — 2026-09-13
+
+Proxy Next é conveniência de redirecionamento; cookie presente não autentica. Guards server-side validam sessão. Trusted proxy/origins/CSP e portas internas exigem teste do ambiente real, incluindo túneis. Não ampliar allowlist por conveniência.

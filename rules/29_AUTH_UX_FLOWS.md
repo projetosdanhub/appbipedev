@@ -27,7 +27,7 @@ Ações:
 
 ### Comportamento Visual e Validação (Global para Auth)
 
-- **Tamanhos Desktop**: Campos (Inputs) devem ter altura de `46px` (`h-[46px]`), fonte de `14px` (`text-[14px]`), e ícones de `18px` (`w-[18px] h-[18px]`).
+- **Tamanhos Desktop**: Campos (Inputs) devem ter altura de token auth de `54px`, fonte de `14px` (`text-[14px]`), e ícones de `18px` (`w-[18px] h-[18px]`).
 - **Comportamento de Validação**: Validação de formulários deve ser disparada no evento de **onBlur** (quando o usuário sai do campo ou clica em Enviar), e **NÃO no onChange** (durante a digitação).
 - **Cores dos Ícones**: 
   - Se o campo possui erro, o ícone fica **Vermelho** (`text-red-500`).
@@ -147,7 +147,7 @@ Para privacidade, mascarar endereço quando necessário:
 
 ### Componente `OtpInput`
 
-Visualmente, 6 caixas. Semanticamente, preferir implementação robusta que suporte:
+Um campo semântico para o código completo; agrupamento visual é opcional. Deve suportar:
 
 - digitação contínua;
 - apenas caracteres permitidos;
@@ -339,3 +339,7 @@ Nunca enviar e-mail, senha, OTP, token, cookie ou motivo interno sensível ao an
 - mobile 360 px;
 - reduced motion;
 - testes E2E de sucesso, erro, expirado, rate limit e paste.
+
+## Revisão de fundação — 2026-09-13
+
+Atualização canônica: controles auth 54 px conforme regra 31; ícones usam tokens de foco/erro, sem cores locais. OTP semântico único é permitido. Erros persistem; código/prova não transitam por query string. Recuperação consome desafio em transação e exige prova HttpOnly; fluxo integral depende da reconciliação do banco.

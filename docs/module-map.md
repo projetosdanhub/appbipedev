@@ -41,9 +41,9 @@ apps/tenant-web/src/
   app/
     (auth)/login/
     (auth)/forgot-password/
-    (workspace)/dashboard/
-    (workspace)/inbox/
-    (workspace)/crm/
+    (dashboard)/
+    (dashboard)/inbox/
+    (dashboard)/crm/
   features/
     identity/
     team/
@@ -94,3 +94,8 @@ Se o arquivo atende uma regra de negocio, ele fica no modulo do dominio. Se aten
 - API/hooks: presentation por contrato no modulo dono; nenhum login HTML;
 - bootstrap do platform_owner: use case de identity + CLI/control plane em 14-platform;
 - health/readiness: contrato shared, sem mensagens de infraestrutura na resposta.
+
+
+## Implementação de fundação
+
+`features/workspace` contém shell, servidor de sessão e navegações desktop/mobile; `features/design-system` contém catálogo de desenvolvimento. As pastas de domínio vazias permanecem skeleton, sem prova de funcionalidade. `packages/README.md` define o runtime e a direção de imports.

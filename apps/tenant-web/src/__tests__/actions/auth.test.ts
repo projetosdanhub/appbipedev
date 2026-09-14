@@ -1,110 +1,118 @@
-import { describe, it, expect, vi } from "vitest";
-
-vi.mock("@bipesend/auth", () => ({
+import { beforeEach, describe, it, expect, vi } from "vitest";
+const mocks = vi.hoisted(() => ({
   signIn: vi.fn(),
-  signOut: vi.fn(),
-  auth: vi.fn(),
+  rateLimit: vi.fn(),
+  request: vi.fn(),
+  verify: vi.fn(),
+  redeem: vi.fn(),
+  getCookie: vi.fn(),
+  setCookie: vi.fn(),
+  findUser: vi.fn(),
+  createUser: vi.fn(),
 }));
-
-vi.mock("next-auth", () => ({
-  AuthError: class AuthError extends Error {
-    type: string;
-    constructor(message: string) {
-      super(message);
-      this.type = "CredentialsSignin";
-    }
-  }
+vi.mock("next-auth", () => ({ AuthError: class AuthError extends Error {} }));
+vi.mock("@bipesend/auth", () => ({ signIn: mocks.signIn }));
+vi.mock("@bipesend/auth/rate-limit", () => ({
+  checkAuthRateLimit: mocks.rateLimit,
 }));
-
+vi.mock("@bipesend/auth/recovery", () => ({
+  requestRecovery: mocks.request,
+  verifyRecovery: mocks.verify,
+  redeemRecovery: mocks.redeem,
+}));
 vi.mock("next/headers", () => ({
-  cookies: vi.fn(() => ({
-    get: vi.fn(),
-    set: vi.fn(),
-    delete: vi.fn(),
-  })),
+  cookies: async () => ({ get: mocks.getCookie, set: mocks.setCookie }),
 }));
-
 vi.mock("@bipesend/db", () => ({
-  prisma: {
-    user: {
-      findUnique: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
-    },
-    verificationToken: {
-      findFirst: vi.fn().mockResolvedValue({
-        identifier: "user@test.com",
-        token: "123456",
-        expires: new Date(Date.now() + 1000000)
-      }),
-      deleteMany: vi.fn(),
-      create: vi.fn(),
-    }
-  }
+  prisma: { user: { findUnique: mocks.findUser, create: mocks.createUser } },
 }));
-
+vi.mock("@/lib/mailer", () => ({
+  sendPasswordResetEmail: vi.fn().mockResolvedValue(true),
+}));
 import {
   loginAction,
   registerAction,
   forgotPasswordAction,
-  resetPasswordAction,
   verifyAction,
+  resetPasswordAction,
 } from "@/app/(auth)/_actions/auth";
-
-describe("Server Actions — Auth", () => {
-  describe("loginAction", () => {
-    it("returns success with a valid payload", async () => {
-      const result = await loginAction({
-        email: "user@test.com",
-        password: "NewPass123!",
-      });
-      expect(result.success).toBe(true);
-      expect(result.message).toBeTruthy();
-    });
+const payload = {
+  email: "user@test.com",
+  password: "NewPass123!",
+  confirmPassword: "NewPass123!",
+};
+beforeEach(() => {
+  vi.resetAllMocks();
+});
+describe("Auth server action boundaries", () => {
+  it("validates before invoking credentials", async () => {
+    expect(
+      (await loginAction({ email: "invalid", password: "x" })).success,
+    ).toBe(false);
+    expect(mocks.signIn).not.toHaveBeenCalled();
   });
-
-  describe("registerAction", () => {
-    it("returns success with a valid payload", async () => {
-      const result = await registerAction({
-        name: "João",
-        companyName: "João Company",
-        email: "joao@test.com",
-        password: "NewPass123!",
-      });
-      expect(result.success).toBe(true);
-      expect(result.message).toBeTruthy();
-    });
+  it("passes valid credentials and makes an unremembered session a session cookie", async () => {
+    mocks.getCookie.mockReturnValue({ value: "opaque-session" });
+    expect((await loginAction(payload)).success).toBe(true);
+    expect(mocks.setCookie).toHaveBeenCalledWith(
+      "bipesend.tenant.session-token",
+      "opaque-session",
+      expect.objectContaining({ httpOnly: true, sameSite: "lax" }),
+    );
+    expect(mocks.setCookie.mock.calls[0][2]).not.toHaveProperty("maxAge");
   });
-
-  describe("forgotPasswordAction", () => {
-    it("returns success with a valid email", async () => {
-      const result = await forgotPasswordAction({
-        email: "user@test.com",
-      });
-      expect(result.success).toBe(true);
-      expect(result.message).toContain("e-mail");
+  it("fails closed when the registration rate limiter is unavailable", async () => {
+    mocks.rateLimit.mockRejectedValue(new Error("redis://sensitive"));
+    const result = await registerAction({
+      ...payload,
+      name: "João",
+      companyName: "Empresa",
     });
+    expect(result.success).toBe(false);
+    expect(result.message).not.toContain("redis");
+    expect(mocks.createUser).not.toHaveBeenCalled();
   });
-
-  describe("resetPasswordAction", () => {
-    it("returns success with matching passwords", async () => {
-      const result = await resetPasswordAction({
-        email: "user@test.com",
-        code: "123456",
-        password: "NewPass123!",
-        confirmPassword: "NewPass123!",
-      });
-      expect(result.success).toBe(true);
-    });
+  it("responds generically to recovery without exposing code or proof", async () => {
+    const result = await forgotPasswordAction({ email: payload.email });
+    expect(result.success).toBe(true);
+    expect(result).not.toHaveProperty("token");
   });
-
-  describe("verifyAction", () => {
-    it("returns success with a valid code", async () => {
-      const result = await verifyAction({
-        email: "user@test.com",
-        code: "123456",
-      });
-      expect(result.success).toBe(true);
-    });
+  it("places recovery proof only in a restricted HttpOnly cookie", async () => {
+    mocks.verify.mockResolvedValue("server-proof");
+    const result = await verifyAction({ email: payload.email, code: "012345" });
+    expect(result.success).toBe(true);
+    expect(JSON.stringify(result)).not.toContain("server-proof");
+    expect(mocks.setCookie).toHaveBeenCalledWith(
+      "bipesend.tenant.recovery",
+      "server-proof",
+      expect.objectContaining({
+        httpOnly: true,
+        sameSite: "strict",
+        path: "/forgot-password",
+        maxAge: 600,
+      }),
+    );
+  });
+  it("rejects a code supplied by the client without a server-issued cookie", async () => {
+    expect(
+      (await resetPasswordAction({ ...payload, code: "012345" })).success,
+    ).toBe(false);
+    expect(mocks.redeem).not.toHaveBeenCalled();
+  });
+  it("uses the cookie and expires it after a successful reset", async () => {
+    mocks.getCookie.mockReturnValue({ value: "server-proof" });
+    expect(
+      (await resetPasswordAction({ ...payload, code: "forged-code" })).success,
+    ).toBe(true);
+    expect(mocks.redeem).toHaveBeenCalledWith(
+      payload.email,
+      "server-proof",
+      payload.password,
+    );
+    expect(mocks.setCookie).toHaveBeenCalledWith(
+      "bipesend.tenant.recovery",
+      "",
+      expect.objectContaining({ path: "/forgot-password", maxAge: 0 }),
+    );
   });
 });

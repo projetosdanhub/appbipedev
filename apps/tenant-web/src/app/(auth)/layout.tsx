@@ -5,10 +5,14 @@ import { AuthLayout, GlassPill } from "@bipesend/ui";
 import { MessageCircle, TrendingUp, KeyRound } from "lucide-react";
 
 export const metadata: Metadata = {
-  robots: { index: true, follow: true },
+  robots: { index: false, follow: false },
 };
 
-export default function TenantAuthLayout({ children }: { children: React.ReactNode }) {
+export default function TenantAuthLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <AuthLayout
       logo={<AuthLogo />}
@@ -26,7 +30,9 @@ export default function TenantAuthLayout({ children }: { children: React.ReactNo
       brandingDescription="Qualidade no atendimento, Portabilidade e Total Controle"
       brandingPills={
         <>
-          <GlassPill icon={<MessageCircle />}>Conversas centralizadas</GlassPill>
+          <GlassPill icon={<MessageCircle />}>
+            Conversas centralizadas
+          </GlassPill>
           <GlassPill icon={<TrendingUp />}>Aumento em Vendas</GlassPill>
           <GlassPill icon={<KeyRound />}>Acesso protegido</GlassPill>
         </>

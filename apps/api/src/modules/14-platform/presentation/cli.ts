@@ -1,83 +1,61 @@
-import * as readline from "node:readline";
+import { timingSafeEqual } from "node:crypto";
 import * as argon2 from "argon2";
+import { emailSchema, passwordSchema } from "@bipesend/contracts";
 import { env } from "../../../config/env.js";
 import { Database } from "../../00-shared/infrastructure/database.js";
 import { UserRepository } from "../../01-identity/infrastructure/user.repository.js";
 
-async function readPasswordFromStdin(): Promise<string> {
-  return new Promise((resolve) => {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-      terminal: true,
-    });
-    // This is a simple implementation. In a real terminal, we might want to hide the input.
-    rl.question("Enter platform owner password: ", (password) => {
-      rl.close();
-      resolve(password.trim());
-    });
-  });
-}
-
+/** Privileged preparation only: enrollment/audit/one-shot secret lifecycle remain AUTH-013. */
 async function bootstrap() {
-  const args = process.argv.slice(2);
-  
-  if (!args.includes("--confirm-production")) {
-    console.error("Missing --confirm-production flag.");
-    process.exit(1);
+  const args = process.argv.slice(2),
+    emailIndex = args.indexOf("--email");
+  if (
+    !args.includes("--confirm-production") ||
+    !args.includes("--password-stdin") ||
+    emailIndex < 0 ||
+    process.stdin.isTTY
+  )
+    throw new Error("BOOTSTRAP_INPUT_REQUIRED");
+  const email = emailSchema.parse(args[emailIndex + 1]);
+  // JSON piped by a secret manager: never echo, accept password on argv, or trim password.
+  let input = "";
+  for await (const chunk of process.stdin) {
+    input += chunk.toString();
+    if (Buffer.byteLength(input) > 4096)
+      throw new Error("BOOTSTRAP_INPUT_INVALID");
   }
-
-  const emailIndex = args.indexOf("--email");
-  if (emailIndex === -1 || !args[emailIndex + 1]) {
-    console.error("Missing --email argument.");
-    process.exit(1);
-  }
-  const email = args[emailIndex + 1];
-
-  if (!args.includes("--password-stdin")) {
-    console.error("Missing --password-stdin flag.");
-    process.exit(1);
-  }
-
-  const password = await readPasswordFromStdin();
-  if (!password) {
-    console.error("Password cannot be empty.");
-    process.exit(1);
-  }
-
+  const payload = JSON.parse(input) as { password?: unknown; nonce?: unknown };
+  const password = passwordSchema.parse(payload.password);
+  const expected = process.env.PLATFORM_BOOTSTRAP_NONCE;
+  if (!expected || expected.length < 32 || typeof payload.nonce !== "string")
+    throw new Error("BOOTSTRAP_CLOSED");
+  const left = Buffer.from(expected),
+    right = Buffer.from(payload.nonce);
+  if (left.length !== right.length || !timingSafeEqual(left, right))
+    throw new Error("BOOTSTRAP_CLOSED");
+  const passwordHash = await argon2.hash(password, { type: argon2.argon2id });
   const db = new Database(env.DATABASE_URL);
-  
   try {
-    // Acquire advisory lock to prevent concurrent execution
-    // 12345 is an arbitrary ID for platform_owner bootstrap lock
-    const lockResult = await db.query(`SELECT pg_try_advisory_lock(12345) as locked`);
-    if (!lockResult[0].locked) {
-      console.error("Could not acquire advisory lock. Is another bootstrap running?");
-      process.exit(1);
-    }
-
-    const userRepository = new UserRepository(db);
-    
-    // Check if owner already exists
-    const hasOwner = await userRepository.hasSuperadmin();
-    if (hasOwner) {
-      console.error("Platform owner already exists. Aborting bootstrap.");
-      process.exit(1);
-    }
-
-    const passwordHash = await argon2.hash(password);
-    
-    // We execute the insert logic. No tenant logic is needed since this is global users table
-    await userRepository.createSuperadmin(email, passwordHash, "Platform Owner");
-    
-    console.log("Platform owner created successfully.");
-  } catch (error: any) {
-    console.error("Error during bootstrap:", error.message);
-    process.exit(1);
+    await db.withTransaction(async (tx) => {
+      const lock = await tx.query<{ locked: boolean }>(
+        "SELECT pg_try_advisory_xact_lock(12345) AS locked",
+      );
+      if (!lock[0]?.locked) throw new Error("BOOTSTRAP_BUSY");
+      const users = new UserRepository(tx);
+      if (await users.hasSuperadmin())
+        throw new Error("BOOTSTRAP_ALREADY_USED");
+      await users.createSuperadmin(email, passwordHash, "Platform Owner");
+    });
+    console.log(
+      "Platform owner prepared. Privileged MFA enrollment is required before login. Disable the bootstrap nonce in the secret manager.",
+    );
   } finally {
-    await db.query(`SELECT pg_advisory_unlock(12345)`);
     await db.close();
   }
 }
-
-bootstrap();
+bootstrap().catch(() => {
+  console.error(
+    "Bootstrap failed. Check the controlled procedure; no credential was logged.",
+  );
+  process.exitCode = 1;
+});

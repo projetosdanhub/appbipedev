@@ -113,3 +113,7 @@ restrito.
 infraestrutura e não devem ser expostos por uma rota de health.
 
 **Status:** corrigido na fundacao; manter teste de contrato.
+
+## 2026-09-13 — fundação executável e identidade canônica
+
+Adotado o ADR em [architecture/foundation.md](architecture/foundation.md): tokens/UI compartilhados, contratos/policies, taskboard estruturado e Auth.js como entrada web. Endpoints Fastify antigos de identidade retornam 410 para fechar caminho paralelo inseguro. Reconciliação do banco, registro de sessões e MFA completo permanecem gates explícitos. Pesquisa e evidências estão em research/ e audit/.

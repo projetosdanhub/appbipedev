@@ -25,3 +25,7 @@ Webhook validado, deduplicado e enfileirado. Anexos passam pela política de arq
 ## 5. UX
 
 Status de mensagem não depende apenas de cor. Falha deve mostrar motivo seguro/normalizado e ação possível, sem expor payload secreto do provider.
+
+## Revisão de fundação — 2026-09-13
+
+Cada provider tem assinatura/encoding próprios; protocolo genérico timestamp.rawBody não substitui documentação do WhatsApp. Dedupe persistente precede efeito; respeitar opt-out, janela, limites e regras atuais do provider verificadas na implementação.

@@ -23,3 +23,7 @@ Usar chave de deduplicação/lock quando duas execuções causarem efeito duplic
 ## 5. UX
 
 Processos longos expõem estado `queued`, `processing`, `completed`, `failed` e progresso quando confiável. UI pode usar evento ou polling controlado; não fingir percentual.
+
+## Revisão de fundação — 2026-09-13
+
+Retry sempre possui limite, timeout, jitter, classificação e DLQ; consumidor é idempotente por tenant/evento/consumer. packages/events fornece política/helper, não worker pronto. Teste rollback e duplicata contra storage real antes de DONE em MSG-001/002.

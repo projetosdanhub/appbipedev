@@ -1,0 +1,222 @@
+{
+  "date": "2026-09-14T00:38:56.857Z",
+  "scope": "Development catalogue and auth UI; no live database or identity E2E",
+  "browser": "153.0.8010.0",
+  "checks": [
+    {
+      "width": 320,
+      "theme": "light",
+      "tab": "Componentes",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 320,
+      "theme": "light",
+      "tab": "Dados e listas",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 320,
+      "theme": "light",
+      "tab": "Estados",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "tab": "Componentes",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "tab": "Dados e listas",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 320,
+      "theme": "dark",
+      "tab": "Estados",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 360,
+      "theme": "light",
+      "tab": "Componentes",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 360,
+      "theme": "light",
+      "tab": "Dados e listas",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 360,
+      "theme": "light",
+      "tab": "Estados",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 360,
+      "theme": "dark",
+      "tab": "Componentes",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 360,
+      "theme": "dark",
+      "tab": "Dados e listas",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 360,
+      "theme": "dark",
+      "tab": "Estados",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "tab": "Componentes",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "tab": "Dados e listas",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "tab": "Estados",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "tab": "Componentes",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "tab": "Dados e listas",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "tab": "Estados",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "tab": "Componentes",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "tab": "Dados e listas",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "tab": "Estados",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "tab": "Componentes",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "tab": "Dados e listas",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "tab": "Estados",
+      "overflow": false,
+      "violations": 0
+    },
+    {
+      "interaction": "modal Escape and focus restored",
+      "passed": true
+    },
+    {
+      "interaction": "combobox filter and keyboard selection",
+      "passed": true
+    },
+    {
+      "interaction": "debounced table search and explicit selection",
+      "passed": true
+    },
+    {
+      "interaction": "mobile navigation reaches full menu",
+      "passed": true
+    },
+    {
+      "interaction": "reduced motion applied to spinner",
+      "duration": "1e-05s",
+      "passed": true
+    },
+    {
+      "route": "/login",
+      "width": 360,
+      "overflow": false,
+      "violations": 0,
+      "noindex": true
+    },
+    {
+      "route": "/register",
+      "width": 360,
+      "overflow": false,
+      "violations": 0,
+      "noindex": true
+    },
+    {
+      "route": "/forgot-password",
+      "width": 360,
+      "overflow": false,
+      "violations": 0,
+      "noindex": true
+    },
+    {
+      "security": "forged cookie rejected by server guard",
+      "passed": true
+    }
+  ],
+  "failures": []
+}

@@ -57,3 +57,7 @@ Operações com efeito externo devem aceitar/gerar chave idempotente. Eventos de
 ## 8. Evolução
 
 Mudança estrutural exige ADR/decisão documentada, plano de migração e compatibilidade. Não trocar framework ou arquitetura por conveniência local.
+
+## Revisão de fundação — 2026-09-13
+
+Direção dos imports: contracts/config/security → auth/events/db → features do servidor; UI recebe props sem banco ou segredo. Next server e Fastify são runtimes diferentes; não importar Auth.js na API, use @bipesend/auth/policies. ADRs em docs/architecture/foundation.md.

@@ -47,3 +47,7 @@ Painéis autenticados: `noindex`, sem vazamento de conteúdo em HTML público/ca
 ## 10. Tracking
 
 Scripts e pixels dependem de política e consentimento. Nunca permitir JavaScript arbitrário de tenant dentro do painel.
+
+## Revisão de fundação — 2026-09-13
+
+Novo workspace: light/dark, teclado, foco não encoberto, erros associados e reflow 320 px. WCAG 2.2 AA é meta, não certificação por axe. Painel/login/reset/catalogo de componentes são noindex; SEO público pertence ao marketing/catalogo publicado. Core Web Vitals de campo não são inferidos de um build ou Lighthouse local.

@@ -44,3 +44,7 @@ Senha é hash; segredo recuperável usa envelope encryption; PII segue minimiza�
 ## 7. Auditoria
 
 Eventos de auditoria devem ser resistentes a alteração comum, conter ator, ação, alvo, tenant, horário, resultado e metadados mínimos.
+
+## Revisão de fundação — 2026-09-13
+
+Não rodar os dois migradores sobre o mesmo banco. Drift foi encontrado entre node-pg-migrate, migration Prisma e schema atual. Seguir packages/db/audit/inventory.sql e docs/architecture/database-reconciliation.md antes de deploy. RLS precisa incluir tabelas indiretas e runtime sem owner/BYPASSRLS.

@@ -8,7 +8,7 @@ Primitives reutilizáveis vivem em `packages/ui`. Feature pode compor componente
 
 ### Desktop
 - sidebar expandida: 256 px;
-- sidebar recolhida: 72 px;
+- sidebar recolhida: 80 px;
 - topbar: 64 px;
 - conteúdo: padding 24–32 px;
 - largura fluida; páginas de leitura podem limitar linha, páginas de dados podem usar largura total;
@@ -20,21 +20,21 @@ Primitives reutilizáveis vivem em `packages/ui`. Feature pode compor componente
 
 ### Mobile
 - drawer para navegação;
-- topbar 56 px;
+- topbar 64 px;
 - padding 16 px;
 - uma coluna por padrão;
 - ações críticas não ficam fora da viewport.
 
 ## 3. Auth shell
 
-`AuthShell`, `AuthCard`, `AuthHeader`, `AuthFooter` e `AuthIllustrationPanel`.
+Implementação atual: `AuthLayout` e composição da feature. Outros nomes de composição só devem ser exportados quando implementados.
 
 Desktop:
 - min-height viewport;
 - painel visual 42–46%;
 - painel de formulário 54–58%;
 - card/form max-width aproximada 440–480 px;
-- controles confortáveis 44–48 px.
+- controles auth 54 px.
 
 Mobile:
 - painel visual removido ou reduzido;
@@ -67,13 +67,11 @@ Mobile:
 - Sheet
 - Toast
 - Alert
-- InlineMessage
 - Skeleton
 - EmptyState
 - ErrorState
 - DataTable
 - Pagination
-- DataCard
 - MetricCard
 - Avatar
 - TenantSwitcher
@@ -135,7 +133,7 @@ Sort, filtros, paginação, loading/empty/error, seleção e ações. Mobile esc
 
 ## 12. Componentes de feedback
 
-`Alert` para mensagem persistente; `Toast` para confirmação breve; `InlineMessage` junto do contexto; `ErrorState` para falha de bloco/página.
+`Alert` para mensagem persistente; `Toast` para confirmação breve; mensagem auxiliar junto do contexto; `ErrorState` para falha de bloco/página.
 
 ## 13. Skeleton
 
@@ -150,3 +148,7 @@ Representa forma real. Sem shimmer agressivo; animação reduzida/desligada em r
 - tooltip como única forma de entender função essencial;
 - dropdown para ação primária frequente;
 - componente duplicado com aparência ligeiramente diferente.
+
+## Revisão de fundação — 2026-09-13
+
+A composição concreta está em features/workspace. Sidebar 256/80 px, topbar 64 px e controles/cantos vêm dos tokens. Mobile usa sua navegação e safe-area; conteúdo não depende de largura fixa. AuthLayout é separado do shell de operação. Não adicionar placeholders acionáveis em produto.

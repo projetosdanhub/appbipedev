@@ -29,3 +29,7 @@ Convite tem tenant, papel/capacidades permitidas, expiração, uso único e audi
 ## 6. Exclusão e suspensão
 
 Suspensão bloqueia operação sem apagar dados. Exclusão segue retenção, exportação, billing e LGPD; operações destrutivas exigem autorização forte e registro.
+
+## Revisão de fundação — 2026-09-13
+
+TenantContext parseado é somente forma. Resolver membership atual com userId autenticado + tenant selecionado antes de acesso; negar ausência, inatividade e troca de tenant. SET LOCAL e query precisam da mesma transação/conexão. Estado de membership ainda não existe no schema atual: AUTH-001/008 seguem abertos.

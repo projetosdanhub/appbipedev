@@ -10,18 +10,30 @@ export interface DependencyStatus {
 export class HealthService {
   constructor(
     private readonly databaseUrl: string,
-    private readonly redisUrl: string
+    private readonly redisUrl: string,
   ) {}
 
   async checkPostgres(): Promise<DependencyStatus> {
     const start = Date.now();
-    const client = new PgClient({ connectionString: this.databaseUrl });
+    const client = new PgClient({
+      connectionString: this.databaseUrl,
+      connectionTimeoutMillis: 3000,
+      query_timeout: 3000,
+    });
     try {
       await client.connect();
       await client.query("SELECT 1");
-      return { name: "postgresql", status: "ok", latencyMs: Date.now() - start };
+      return {
+        name: "postgresql",
+        status: "ok",
+        latencyMs: Date.now() - start,
+      };
     } catch {
-      return { name: "postgresql", status: "error", latencyMs: Date.now() - start };
+      return {
+        name: "postgresql",
+        status: "error",
+        latencyMs: Date.now() - start,
+      };
     } finally {
       await client.end().catch(() => {});
     }
@@ -34,6 +46,9 @@ export class HealthService {
       maxRetriesPerRequest: 0,
       lazyConnect: true,
     });
+    redis.on("error", () => {
+      /* Report normalized readiness status only. */
+    });
     try {
       await redis.connect();
       await redis.ping();
@@ -41,11 +56,14 @@ export class HealthService {
     } catch {
       return { name: "redis", status: "error", latencyMs: Date.now() - start };
     } finally {
-      await redis.quit().catch(() => {});
+      redis.disconnect();
     }
   }
 
-  async checkAll(): Promise<{ status: "ready" | "degraded"; dependencies: DependencyStatus[] }> {
+  async checkAll(): Promise<{
+    status: "ready" | "degraded";
+    dependencies: DependencyStatus[];
+  }> {
     const [pg, redis] = await Promise.all([
       this.checkPostgres(),
       this.checkRedis(),

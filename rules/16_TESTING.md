@@ -39,3 +39,7 @@ Componentes compartilhados devem ter testes de estados e, quando adotado, snapsh
 ## 6. CI
 
 PR não deve ser mergeada com lint/typecheck/build/teste relevante quebrado sem exceção registrada.
+
+## Revisão de fundação — 2026-09-13
+
+Gate atual em pnpm foundation:check e verificação de navegador pnpm ui:smoke. Testes PostgreSQL/Redis/E2E de identidade são separados e obrigatórios antes de produção. Mock não prova isolamento SQL nem revogação distribuída. Relatório vigente em docs/audit/validation.md.

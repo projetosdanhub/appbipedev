@@ -1,16 +1,20 @@
 "use server";
-
 import { cookies } from "next/headers";
-
 import { signIn } from "@bipesend/auth";
+import { checkAuthRateLimit } from "@bipesend/auth/rate-limit";
+import {
+  requestRecovery,
+  verifyRecovery,
+  redeemRecovery,
+} from "@bipesend/auth/recovery";
 import { prisma } from "@bipesend/db";
 import * as argon2 from "argon2";
 import { AuthError } from "next-auth";
-
 import {
   loginSchema,
   registerSchema,
   forgotPasswordSchema,
+  resetPasswordSchema,
   verifyCodeSchema,
   type LoginInput,
   type RegisterInput,
@@ -18,260 +22,143 @@ import {
   type ResetPasswordInput,
   type VerifyCodeInput,
 } from "@/lib/validations/auth";
-import { z } from "zod";
 
+const recoveryCookie = "bipesend.tenant.recovery";
+const unavailable = {
+  success: false,
+  message:
+    "Não foi possível concluir. Confira os dados ou tente novamente em alguns instantes.",
+};
 export async function loginAction(data: LoginInput & { code?: string }) {
   const parsed = loginSchema.safeParse(data);
-  if (!parsed.success) {
-    return { success: false, message: "Dados inválidos." };
-  }
-
-  // Simulate network latency
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-  const cookieStore = await cookies();
-  const attemptsCookie = cookieStore.get("bipesend_auth_attempts")?.value;
-  const lockoutCookie = cookieStore.get("bipesend_auth_lockout")?.value;
-
-  // Verifica se está bloqueado
-  if (lockoutCookie) {
-    const lockoutUntil = parseInt(lockoutCookie, 10);
-    if (Date.now() < lockoutUntil) {
-      return { 
-        success: false, 
-        message: "Muitas tentativas.", 
-        lockoutUntil 
-      };
-    } else {
-      // Bloqueio expirou, limpa os cookies
-      cookieStore.delete("bipesend_auth_attempts");
-      cookieStore.delete("bipesend_auth_lockout");
-    }
-  }
-
-  // Logica real de login via NextAuth Credentials
+  if (!parsed.success) return { success: false, message: "Dados inválidos." };
   try {
     await signIn("credentials", {
-      email: data.email,
-      password: data.password,
+      ...parsed.data,
       code: data.code,
-      rememberMe: data.rememberMe?.toString() || "false",
-      redirect: false, // We handle redirection on the client
+      rememberMe: String(parsed.data.rememberMe ?? false),
+      redirect: false,
     });
-
-    // Se sucesso, reseta as tentativas
-    cookieStore.delete("bipesend_auth_attempts");
-    cookieStore.delete("bipesend_auth_lockout");
-
-    // Gerenciar cookie de Sessão vs 7 Dias
-    const isSecure = process.env.NODE_ENV === "production";
-    const tokenName = isSecure ? "__Secure-authjs.session-token" : "authjs.session-token";
-    const sessionToken = cookieStore.get(tokenName);
-
-    if (sessionToken) {
-      if (data.rememberMe === true) {
-        cookieStore.set(tokenName, sessionToken.value, {
-          httpOnly: true,
-          secure: isSecure,
-          sameSite: "lax",
-          path: "/",
-          maxAge: 7 * 24 * 60 * 60, // 7 dias
-        });
-      } else {
-        cookieStore.set(tokenName, sessionToken.value, {
-          httpOnly: true,
-          secure: isSecure,
-          sameSite: "lax",
-          path: "/",
-          // Sem maxAge e expires = Session Cookie (fecha ao fechar o navegador)
-        });
-      }
-    }
-    
+    const store = await cookies();
+    const secure = process.env.NODE_ENV === "production";
+    const name = `${secure ? "__Secure-" : ""}bipesend.tenant.session-token`;
+    const token = store.get(name);
+    if (token && !parsed.data.rememberMe)
+      store.set(name, token.value, {
+        httpOnly: true,
+        secure,
+        sameSite: "lax",
+        path: "/",
+      });
     return { success: true, message: "Login realizado com sucesso!" };
   } catch (error) {
     if (error instanceof AuthError) {
-      const errorMsg = (error.cause as any)?.err?.message || error.type;
-      if (errorMsg === "2FA_REQUIRED") {
+      const cause = error.cause?.err;
+      if (cause instanceof Error && cause.message === "2FA_REQUIRED")
         return { success: false, message: "2FA_REQUIRED" };
-      }
-      if (errorMsg === "INVALID_2FA_CODE") {
-        return { success: false, message: "Código inválido." };
-      }
-
-      let attempts = attemptsCookie ? parseInt(attemptsCookie, 10) : 0;
-      attempts += 1;
-
-      if (attempts >= 3) {
-        const lockoutTime = Date.now() + 5 * 60 * 1000;
-        cookieStore.set("bipesend_auth_lockout", lockoutTime.toString(), { httpOnly: true, secure: true, maxAge: 5 * 60 });
-        cookieStore.delete("bipesend_auth_attempts");
-        return { 
-          success: false, 
-          message: "Muitas tentativas.", 
-          lockoutUntil: lockoutTime 
-        };
-      } else {
-        cookieStore.set("bipesend_auth_attempts", attempts.toString(), { httpOnly: true, secure: true, maxAge: 60 * 60 });
-        return { success: false, message: `Senha ou e-mail incorretos. Tentativa ${attempts} de 3.` };
-      }
+      return {
+        success: false,
+        message: "Confira os dados informados ou tente novamente mais tarde.",
+      };
     }
-    throw error; // Rethrow next/navigation errors
+    return unavailable;
   }
 }
-
 export async function registerAction(data: RegisterInput) {
   const parsed = registerSchema.safeParse(data);
-  if (!parsed.success) {
-    return { success: false, message: "Dados inválidos." };
-  }
-
+  if (!parsed.success) return { success: false, message: "Dados inválidos." };
   try {
-    const existingUser = await prisma.user.findUnique({
-      where: { email: data.email }
+    const input = parsed.data;
+    await checkAuthRateLimit("register", input.email, 5, 3_600_000);
+    const existing = await prisma.user.findUnique({
+      where: { email: input.email },
     });
-
-    if (existingUser) {
-      return { success: false, message: "Este e-mail já está em uso." };
-    }
-
-    const hashedPassword = await argon2.hash(data.password);
-
+    if (existing)
+      return {
+        success: false,
+        message:
+          "Não foi possível criar a conta. Tente entrar ou recuperar seu acesso.",
+      };
+    const password = await argon2.hash(input.password, {
+      type: argon2.argon2id,
+    });
     await prisma.user.create({
       data: {
-        name: data.name,
-        companyName: data.companyName,
-        email: data.email,
-        password: hashedPassword,
-      }
+        name: input.name,
+        companyName: input.companyName,
+        email: input.email,
+        password,
+      },
     });
-
     return { success: true, message: "Conta criada com sucesso!" };
-  } catch (error) {
-    console.error("Register Error:", error);
-    return { success: false, message: "Ocorreu um erro ao criar a conta." };
+  } catch {
+    return unavailable;
   }
 }
-
 export async function forgotPasswordAction(data: ForgotPasswordInput) {
   const parsed = forgotPasswordSchema.safeParse(data);
-  if (!parsed.success) {
-    return { success: false, message: "Dados inválidos." };
-  }
-
+  if (!parsed.success) return { success: false, message: "Dados inválidos." };
   try {
-    const user = await prisma.user.findUnique({
-      where: { email: data.email }
-    });
-
-    if (!user) {
-      // Retornar sucesso de qualquer maneira para não vazar emails cadastrados
-      return { success: true, message: "Se o e-mail existir, um código será enviado." };
-    }
-
-    // Gerar código de 6 dígitos numéricos
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
-
-    // Remover tokens antigos do usuário e criar novo
-    await prisma.verificationToken.deleteMany({
-      where: { identifier: data.email }
-    });
-
-    await prisma.verificationToken.create({
-      data: {
-        identifier: data.email,
-        token: code,
-        expires
-      }
-    });
-
     const { sendPasswordResetEmail } = await import("@/lib/mailer");
-    await sendPasswordResetEmail(data.email, code);
-
-    return { success: true, message: "Se o e-mail existir, um código será enviado." };
-  } catch (error) {
-    console.error("Forgot Password Error:", error);
-    return { success: false, message: "Ocorreu um erro ao solicitar a recuperação." };
+    await requestRecovery(parsed.data.email, async (to, code) => {
+      if (!(await sendPasswordResetEmail(to, code)))
+        throw new Error("MAIL_UNAVAILABLE");
+    });
+  } catch {
+    /* Same response for missing account, throttling and mail failure. */
   }
+  return {
+    success: true,
+    message: "Se o e-mail existir, um código será enviado.",
+  };
 }
-
-const resetPasswordServerSchema = z.object({
-  email: z.string().email(),
-  code: z.string().min(6),
-  password: z.string().min(8)
-});
-
-export async function resetPasswordAction(data: ResetPasswordInput & { email: string; code: string }) {
-  const parsed = resetPasswordServerSchema.safeParse(data);
-  if (!parsed.success) {
-    return { success: false, message: "Dados inválidos." };
-  }
-
-  try {
-    const tokenRecord = await prisma.verificationToken.findFirst({
-      where: {
-        identifier: data.email,
-        token: data.code,
-      }
-    });
-
-    if (!tokenRecord) {
-      return { success: false, message: "Código inválido." };
-    }
-
-    if (tokenRecord.expires < new Date()) {
-      return { success: false, message: "O código expirou. Solicite um novo." };
-    }
-
-    const hashedPassword = await argon2.hash(data.password);
-
-    await prisma.user.update({
-      where: { email: data.email },
-      data: { password: hashedPassword }
-    });
-
-    await prisma.verificationToken.deleteMany({
-      where: { identifier: data.email }
-    });
-
-    return { success: true, message: "Senha redefinida com sucesso." };
-  } catch (error) {
-    console.error("Reset Password Error:", error);
-    return { success: false, message: "Ocorreu um erro ao redefinir a senha." };
-  }
-}
-
-const verifyCodeServerSchema = z.object({
-  email: z.string().email(),
-  code: z.string().min(6)
-});
-
 export async function verifyAction(data: VerifyCodeInput & { email: string }) {
-  const parsed = verifyCodeServerSchema.safeParse(data);
-  if (!parsed.success) {
+  const code = verifyCodeSchema.safeParse(data),
+    email = forgotPasswordSchema.safeParse(data);
+  if (!code.success || !email.success)
     return { success: false, message: "Dados inválidos." };
-  }
-
   try {
-    const tokenRecord = await prisma.verificationToken.findFirst({
-      where: {
-        identifier: data.email,
-        token: data.code,
-      }
+    const proof = await verifyRecovery(email.data.email, code.data.code);
+    (await cookies()).set(recoveryCookie, proof, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/forgot-password",
+      maxAge: 600,
     });
-
-    if (!tokenRecord) {
-      return { success: false, message: "Código inválido." };
-    }
-
-    if (tokenRecord.expires < new Date()) {
-      return { success: false, message: "O código expirou. Solicite um novo." };
-    }
-
     return { success: true, message: "Código verificado com sucesso." };
-  } catch (error) {
-    console.error("Verify Code Error:", error);
-    return { success: false, message: "Erro ao verificar o código." };
+  } catch {
+    return {
+      success: false,
+      message: "Código inválido ou expirado. Solicite um novo código.",
+    };
+  }
+}
+export async function resetPasswordAction(
+  data: ResetPasswordInput & { email: string; code?: string },
+) {
+  const parsed = resetPasswordSchema.safeParse(data),
+    email = forgotPasswordSchema.safeParse(data);
+  if (!parsed.success || !email.success)
+    return { success: false, message: "Dados inválidos." };
+  try {
+    const store = await cookies(),
+      proof = store.get(recoveryCookie)?.value;
+    if (!proof)
+      return {
+        success: false,
+        message: "Verifique o código novamente para continuar.",
+      };
+    await redeemRecovery(email.data.email, proof, parsed.data.password);
+    store.set(recoveryCookie, "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/forgot-password",
+      maxAge: 0,
+    });
+    return { success: true, message: "Senha redefinida com sucesso." };
+  } catch {
+    return unavailable;
   }
 }

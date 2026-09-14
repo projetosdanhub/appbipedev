@@ -43,3 +43,7 @@ Emitidas com escopo, tenant, expiração/rotação/revogação. Exibidas uma vez
 ## 6. Critérios
 
 Testar brute force, CSRF, session fixation/revocation, cross-tenant, replay, assinatura inválida e tentativa de escalar para platform owner.
+
+## Revisão de fundação — 2026-09-13
+
+Cookies e segredos tenant/platform foram separados. MFA/recuperação privilegiada/registro de sessões e bootstrap completo continuam em aberto. Prefixo bipesend_ não autentica API key; a chave interna atual exige comparação exata e não substitui scoped tokens/mTLS. AUTH-015 não depende de MSG-005 para definir o contrato base, evitando ciclo.

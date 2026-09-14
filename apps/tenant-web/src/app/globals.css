@@ -1,103 +1,134 @@
 @import "tailwindcss";
+@import "@bipesend/ui/styles.css";
 @source "../../../../packages/ui";
 
-@theme inline {
-  --color-brand-600: #007BFF;
-  --color-brand-700: #6366F1;
-  --color-ink-900: #0F172A;
-  --color-ink-600: #475569;
-  --color-surface-0: #FFFFFF;
-  --color-surface-50: #F8FAFC;
-  --color-surface-900: #0F172A;
-  --color-border-200: #E2E8F0;
-  --color-success-600: #10B981;
-  --color-warning-600: #F59E0B;
-  --color-danger-600: #EF4444;
-
- --color-background: var(--color-surface-50);
- --color-foreground: var(--color-ink-900);
-  --font-sans: var(--font-poppins), system-ui, sans-serif;
-  --font-heading: var(--font-inter), system-ui, sans-serif;
-}
-
- body {
+body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
- }
+}
 
- h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
- }
+}
 
- /* ───── Auth card entrance ───── */
- @keyframes auth-card-enter-kf {
-  0% { opacity: 0; transform: translateY(24px) scale(0.97); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
- }
+/* ───── Auth card entrance ───── */
+@keyframes auth-card-enter-kf {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
- .auth-card-enter {
+.auth-card-enter {
   animation: auth-card-enter-kf 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
- }
+}
 
- /* ───── Content fade slide ───── */
- @keyframes auth-content-enter-kf {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
- }
+/* ───── Content fade slide ───── */
+@keyframes auth-content-enter-kf {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
- .auth-content-enter {
-  animation: auth-content-enter-kf 280ms 80ms cubic-bezier(0.22, 1, 0.36, 1) both;
- }
+.auth-content-enter {
+  animation: auth-content-enter-kf 280ms 80ms cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+}
 
- /* ───── Legacy aliases ───── */
- .animate-auth-card-enter { animation: auth-card-enter-kf 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards; }
- .animate-auth-content { animation: auth-content-enter-kf 220ms cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+/* ───── Legacy aliases ───── */
+.animate-auth-card-enter {
+  animation: auth-card-enter-kf 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-auth-content {
+  animation: auth-content-enter-kf 220ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
 
- /* ───── Fade animations ───── */
- @keyframes fade-in-up {
-  0% { opacity: 0; transform: translateY(16px); }
-  100% { opacity: 1; transform: translateY(0); }
- }
+/* ───── Fade animations ───── */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
- @keyframes gradient-x {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
- }
- 
- @keyframes fade-in {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
- }
+@keyframes gradient-x {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
 
- @keyframes slide-up {
-  0% { opacity: 0; transform: translateY(12px); }
-  100% { opacity: 1; transform: translateY(0); }
- }
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 
- @keyframes error-enter {
-  0% { opacity: 0; transform: translateY(-4px); }
-  100% { opacity: 1; transform: translateY(0); }
- }
- 
- .animate-fade-in-up {
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes error-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
   animation: fade-in-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
- }
- 
- .animate-fade-in {
+}
+
+.animate-fade-in {
   animation: fade-in 0.25s ease-out forwards;
- }
+}
 
- .animate-slide-up {
+.animate-slide-up {
   animation: slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
- }
+}
 
- .animate-error-enter {
+.animate-error-enter {
   animation: error-enter 0.2s ease-out forwards;
- }
+}
 
- /* ───── Custom checkbox (squared, rounded corners) ───── */
- .auth-checkbox {
+/* ───── Custom checkbox (squared, rounded corners) ───── */
+.auth-checkbox {
   appearance: none;
   -webkit-appearance: none;
   width: 20px;
@@ -108,21 +139,23 @@
   background: white;
   cursor: pointer;
   position: relative;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
   flex-shrink: 0;
- }
+}
 
- .auth-checkbox:hover {
+.auth-checkbox:hover {
   border-color: var(--color-brand-600);
- }
+}
 
- .auth-checkbox:checked {
+.auth-checkbox:checked {
   border-color: var(--color-brand-600);
   background-color: var(--color-brand-600);
- }
+}
 
- .auth-checkbox:checked::after {
-  content: '';
+.auth-checkbox:checked::after {
+  content: "";
   position: absolute;
   top: 3px;
   left: 6px;
@@ -131,15 +164,15 @@
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
- }
+}
 
- .auth-checkbox:focus-visible {
+.auth-checkbox:focus-visible {
   outline: 2px solid var(--color-brand-600);
   outline-offset: 2px;
- }
+}
 
- /* ───── Legacy toggle (keep for backward compat) ───── */
- .toggle-round {
+/* ───── Legacy toggle (keep for backward compat) ───── */
+.toggle-round {
   appearance: none;
   -webkit-appearance: none;
   width: 20px;
@@ -149,17 +182,19 @@
   background: white;
   cursor: pointer;
   position: relative;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
   flex-shrink: 0;
- }
+}
 
- .toggle-round:checked {
+.toggle-round:checked {
   border-color: var(--color-brand-600);
   background-color: transparent;
- }
+}
 
- .toggle-round:checked::after {
-  content: '';
+.toggle-round:checked::after {
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -168,15 +203,15 @@
   background-color: var(--color-brand-600);
   border-radius: 50%;
   transform: translate(-50%, -50%);
- }
+}
 
- .toggle-round:focus-visible {
+.toggle-round:focus-visible {
   outline: 2px solid var(--color-brand-600);
   outline-offset: 2px;
- }
+}
 
- /* ───── Reduced motion ───── */
- @media (prefers-reduced-motion: reduce) {
+/* ───── Reduced motion ───── */
+@media (prefers-reduced-motion: reduce) {
   .animate-auth-card-enter,
   .animate-auth-content,
   .animate-fade-in-up,
@@ -190,35 +225,39 @@
   * {
     transition-duration: 0.01ms !important;
   }
- }
+}
 
- /* ───── Custom Scrollbar ───── */
- .custom-scrollbar::-webkit-scrollbar {
+/* ───── Custom Scrollbar ───── */
+.custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
- }
- .custom-scrollbar::-webkit-scrollbar-track {
+}
+.custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
   margin: 4px 0; /* Keeps it away from the absolute edges */
   border-radius: 8px;
- }
- .custom-scrollbar::-webkit-scrollbar-thumb {
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
   background: var(--color-border-200);
   border-radius: 8px;
- }
- /* O truque mágico: fundo fixo com gradiente. Quando a barra desce, revela a parte de baixo do gradiente! */
- .custom-scrollbar::-webkit-scrollbar-thumb:hover,
- .custom-scrollbar::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(to bottom, var(--color-brand-700), var(--color-brand-600));
+}
+/* O truque mágico: fundo fixo com gradiente. Quando a barra desce, revela a parte de baixo do gradiente! */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(
+    to bottom,
+    var(--color-brand-700),
+    var(--color-brand-600)
+  );
   background-attachment: fixed;
- }
+}
 
- /* Fix for Input Autofill background color */
- input:-webkit-autofill,
- input:-webkit-autofill:hover, 
- input:-webkit-autofill:focus, 
- input:-webkit-autofill:active {
-   -webkit-box-shadow: 0 0 0 1000px #F8FAFC inset !important;
-   -webkit-text-fill-color: var(--color-ink-900) !important;
-   transition: background-color 5000s ease-in-out 0s;
- }
+/* Fix for Input Autofill background color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-surface) inset !important;
+  -webkit-text-fill-color: var(--color-ink-900) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}

@@ -52,3 +52,7 @@ Ao finalizar, informar:
 ## 5. Mudança de design system
 
 Novo token, componente base ou padrão global exige justificar reutilização, impacto e migração. Não adicionar só para uma tela.
+
+## Revisão de fundação — 2026-09-13
+
+Para !construibase <ID>, consultar o card completo e dependências, implementar a fatia, validar e atualizar evidência. Não bloquear tarefas reversíveis já autorizadas por mero ritual de confirmação. Se dependência impedir conclusão, trabalhar a preparação útil e registrar o impedimento. Nunca declarar uma etapa DONE por relato de chat.

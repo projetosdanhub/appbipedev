@@ -35,3 +35,7 @@ Schemas e tipos que cruzam app/pacote vivem em `packages/contracts` ou local equ
 ## 6. Eventos
 
 Módulos se desacoplam por eventos quando assíncrono fizer sentido, sem usar evento para esconder dependência síncrona obrigatória.
+
+## Revisão de fundação — 2026-09-13
+
+Pastas vazias são skeleton, não módulos concluídos. API/controllers e Next/app são entradas finas; feature contém caso de uso e composição, pacote contém contrato reutilizável. Só extrair abstração com limite e consumidor claros; evitar dependências circulares e o pacote compartilhado virar domínio monolítico.
