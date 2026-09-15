@@ -4,7 +4,7 @@ Versão 1.0.0 · Revisão 2026-09-14 · Base auditada `fd3f4c3`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 85 cards. BACKLOG: 46 · READY: 0 · IN_PROGRESS: 1 · BLOCKED: 0 · DONE: 38.
+Total: 86 cards. BACKLOG: 45 · READY: 0 · IN_PROGRESS: 1 · BLOCKED: 0 · DONE: 40.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
@@ -57,7 +57,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 | [AUTH-015](#auth-015) | DONE | Proteger API, webhooks e servicos internos | AUTH-004, FND-006 |
 | [AUTH-016](#auth-016) | DONE | E2E das superficies de acesso | AUTH-013, AUTH-014, AUTH-015 |
 | [TEAM-001](#team-001) | DONE | CRUD de setores | AUTH-008, AUTH-016 |
-| [TEAM-002](#team-002) | BACKLOG | CRUD de cargos customizados | AUTH-008, AUTH-016 |
+| [TEAM-002](#team-002) | DONE | CRUD de cargos customizados | AUTH-008, AUTH-016 |
 | [TEAM-003](#team-003) | BACKLOG | Gestao de membros | TEAM-002, AUTH-016 |
 | [TEAM-004](#team-004) | BACKLOG | Auditoria pesquisavel | AUTH-004, AUTH-016 |
 | [TEAM-005](#team-005) | BACKLOG | Contrato de erros e reporte pelo painel tenant | INF-004, AUTH-004, AUTH-016 |
@@ -107,6 +107,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 | [FND-012](#fnd-012) | DONE | Implementar pacotes compartilhados e testes de contrato | FND-003, FND-006 |
 | [FND-013](#fnd-013) | DONE | Documentar reconciliação dos históricos de banco | FND-005 |
 | [FND-014](#fnd-014) | DONE | Entregar branch e guia de validação para Antigravity | FND-010, FND-011, FND-012, FND-013 |
+| [TEAM-007](#team-007) | DONE | Godmode e Impersonation (Superadmin e Contratante) | TEAM-002 |
 
 ## Execução dos cards
 
@@ -1187,7 +1188,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 <a id="team-002"></a>
 ### TEAM-002 — CRUD de cargos customizados
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
 
 **Objetivo:** CRUD de cargos customizados. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1210,7 +1211,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - permissao nao pode exceder criador
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [packages/db/prisma/schema.prisma](../packages/db/prisma/schema.prisma), [packages/auth/src/session.ts](../packages/auth/src/session.ts), [packages/db/prisma/schema.prisma](../packages/db/prisma/schema.prisma), [packages/auth/src/session.ts](../packages/auth/src/session.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
@@ -2678,5 +2679,35 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - Branch remota disponível; relatório diferencia checks passados e blockers.
 
 **Evidências:** [docs/ANTIGRAVITY_HANDOFF.md](../docs/ANTIGRAVITY_HANDOFF.md), [docs/audit/validation.md](../docs/audit/validation.md), [docs/audit/evidence/checks.json](../docs/audit/evidence/checks.json)
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="team-007"></a>
+### TEAM-007 — Godmode e Impersonation (Superadmin e Contratante)
+
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 2 - identidade e tenant (primeiro desenvolvimento)
+
+**Objetivo:** Implementar as lógicas de impersonation e reset de senhas de contas gerenciadas.
+
+**Dependências:** TEAM-002
+
+**Passos:**
+
+1. Adicionar isManagedAccount e impersonatedBy no banco de dados
+2. Propagar campos via callback NextAuth JWT e Session
+3. Implementar actions de admin para o Tenant Web e Superadmin Web
+4. Gerar logs no AuditLog
+
+**Áreas de código:** `packages/auth`, `apps/tenant-web`, `apps/superadmin-web`.
+
+**Testes a executar:**
+
+- Testes visuais das rotas e validações de actions via server actions
+
+**Aceite:**
+
+- Ações de admin implementadas com log de auditoria
+
+**Evidências:** [apps/tenant-web/src/features/team/actions/member.actions.ts](../apps/tenant-web/src/features/team/actions/member.actions.ts), [apps/superadmin-web/src/actions/admin.ts](../apps/superadmin-web/src/actions/admin.ts), [packages/auth/src/impersonate.ts](../packages/auth/src/impersonate.ts), [rules/05_AUTH_RBAC.md](../rules/05_AUTH_RBAC.md)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.

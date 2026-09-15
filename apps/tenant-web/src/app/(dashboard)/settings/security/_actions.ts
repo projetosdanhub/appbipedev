@@ -27,7 +27,7 @@ export async function enable2FA(secret: string, code: string) {
   try {
     const backupCodes = await verifyMfaSetup(session.user.id, secret, code);
     return { success: true, backupCodes };
-  } catch (error: any) {
+  } catch (_error: unknown) {
     throw new Error("Código inválido");
   }
 }

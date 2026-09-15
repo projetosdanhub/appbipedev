@@ -98,6 +98,8 @@ function LoginContent() {
 
   const onSubmit = async (data: LoginInput) => {
     setServerError("");
+    // Simulate delay for smooth UI feedback
+    await new Promise((resolve) => setTimeout(resolve, 600));
     try {
       const response = await loginAction({ ...data, rememberMe, code: requires2FA ? twoFactorCode : undefined });
       console.log("loginAction response:", response);

@@ -148,3 +148,84 @@ export async function inviteMemberAction(data: import("@/lib/validations/workspa
   }
 }
 
+
+
+
+export async function disconnectMemberAction(tenantId: string, userIdToDisconnect: string, reason?: string) {
+  const { prisma } = await import("@bipesend/db");
+  const { resolveTenantContext, hasPermission } = await import("@bipesend/auth/policies");
+  const { getWorkspaceUser } = await import("@/features/workspace/server/session");
+  try {
+    const user = await getWorkspaceUser();
+    const lookup = {
+      async findMembership(userId: string, tId: string) {
+        return prisma.membership.findFirst({
+          where: { userId, tenantId: tId, active: true },
+          select: { id: true, userId: true, tenantId: true, role: true, active: true }
+        }) as any;
+      }
+    };
+    const context = await resolveTenantContext(lookup, { userId: user.id, tenantId, requestId: "disconnect-member" });
+    if (!hasPermission(context, "team.members.manage", tenantId)) {
+      return { success: false, message: "Permissão negada." };
+    }
+    const targetMembership = await prisma.membership.findFirst({
+      where: { userId: userIdToDisconnect, tenantId, active: true }
+    });
+    if (!targetMembership) {
+      return { success: false, message: "Membro não encontrado." };
+    }
+    
+    await prisma.membership.update({
+      where: { id: targetMembership.id },
+      data: { active: false }
+    });
+    return { success: true, message: "Membro desconectado com sucesso." };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Erro ao desconectar membro." };
+  }
+}
+
+export async function approveDisconnectionAction(requestId: string, approve: boolean) {
+  const { resolveTenantContext } = await import("@bipesend/auth/policies");
+  const { getWorkspaceUser } = await import("@/features/workspace/server/session");
+  const { prisma } = await import("@bipesend/db");
+  
+  try {
+    const user = await getWorkspaceUser();
+    const lookup = {
+      async findMembership(userId: string, tId: string) {
+        return prisma.membership.findFirst({
+          where: { userId, tenantId: tId, active: true },
+          select: { id: true, userId: true, tenantId: true, role: true, active: true }
+        }) as any;
+      }
+    };
+    // getWorkspaceUser already returns activeTenant info but let's use the standard resolution:
+    const context = await resolveTenantContext(lookup, { userId: user.id, tenantId: user.activeTenant.id, requestId: "approve-disconnection" });
+    if (context.role !== "tenant_admin") {
+      return { success: false, message: "Permissão negada." };
+    }
+    
+    const req = await prisma.disconnectionRequest.findUnique({ where: { id: requestId } });
+    if (!req) return { success: false, message: "Solicitação não encontrada" };
+    
+    await prisma.disconnectionRequest.update({
+      where: { id: requestId },
+      data: { status: approve ? "APPROVED" : "REJECTED" }
+    });
+    
+    if (approve) {
+      await prisma.membership.update({
+        where: { id: req.membershipId },
+        data: { active: false }
+      });
+    }
+    
+    return { success: true, message: approve ? "Desconexão aprovada." : "Desconexão rejeitada." };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Erro ao processar solicitação." };
+  }
+}

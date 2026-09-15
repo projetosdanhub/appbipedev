@@ -91,7 +91,7 @@ export async function deleteDepartmentAction(id: string) {
 
     revalidatePath("/settings/team");
     return { success: true, message: "Setor excluído com sucesso." };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return { success: false, message: "Erro ao excluir setor." };
   }
 }

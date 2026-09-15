@@ -188,6 +188,7 @@ export function getSurfaceAuthConfig(surface: "tenant" | "platform"): NextAuthCo
             updatedAt: true,
             isSuperadmin: true,
             twoFactorEnabled: true,
+            isManagedAccount: true,
           },
         });
         if (
@@ -198,12 +199,20 @@ export function getSurfaceAuthConfig(surface: "tenant" | "platform"): NextAuthCo
             : current.isSuperadmin)
         )
           return null;
+        
+        token.isManagedAccount = current.isManagedAccount;
+        
         return token;
       },
       async session({ session, token }) {
         if (token) {
           session.user.id = token.id as string;
           (session as any).sessionId = token.sessionId;
+          (session.user as any).isManagedAccount = token.isManagedAccount === true;
+          
+          if (token.impersonatedBy) {
+            (session as any).impersonatedBy = token.impersonatedBy;
+          }
         }
         return session;
       },

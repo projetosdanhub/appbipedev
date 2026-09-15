@@ -55,6 +55,11 @@ export default async function TeamSettingsPage({
     orderBy: { name: 'asc' }
   });
 
+  const disconnectionRequests = await prisma.disconnectionRequest.findMany({
+    where: { tenantId: tenant.id, status: "PENDING" },
+    orderBy: { createdAt: 'desc' }
+  });
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -82,6 +87,7 @@ export default async function TeamSettingsPage({
           tenantId={tenant.id} 
           members={members.map(m => ({ 
             id: m.id, 
+            userId: m.userId,
             email: m.user.email, 
             name: m.user.name, 
             role: m.role,
@@ -94,6 +100,12 @@ export default async function TeamSettingsPage({
             role: i.role,
             expiresAt: i.expiresAt,
             status: i.expiresAt < new Date() ? 'expired' : 'pending'
+          }))}
+          disconnectionRequests={disconnectionRequests.map(r => ({
+            id: r.id,
+            membershipId: r.membershipId,
+            requestedBy: r.requestedBy,
+            reason: r.reason
           }))}
         />
       ) : (

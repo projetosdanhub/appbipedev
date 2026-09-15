@@ -35,7 +35,7 @@ export async function loginAction(data: LoginInput & { code?: string }) {
   const parsed = loginSchema.safeParse(data);
   if (!parsed.success) return { success: false, message: "Dados inválidos." };
   try {
-    const signInData: any = {
+    const signInData: Record<string, any> = {
       ...parsed.data,
       rememberMe: String(parsed.data.rememberMe ?? false),
       redirect: false,

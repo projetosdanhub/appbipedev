@@ -106,6 +106,8 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterInput) => {
     setServerError("");
+    // Simulate delay for smoother UX
+    await new Promise((resolve) => setTimeout(resolve, 800));
     try {
       const response = await registerAction(data);
       if (!response.success) { 

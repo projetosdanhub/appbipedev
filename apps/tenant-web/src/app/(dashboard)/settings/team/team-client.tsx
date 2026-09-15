@@ -6,16 +6,37 @@ import { inviteMemberAction } from "@/features/workspace/actions";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export function TeamClient({ tenantId, members, invitations }: {
+import { disconnectMemberAction, approveDisconnectionAction } from "@/features/workspace/actions";
+
+export function TeamClient({ tenantId, members, invitations, disconnectionRequests }: {
   tenantId: string,
   members: any[],
-  invitations: any[]
+  invitations: any[],
+  disconnectionRequests: any[]
 }) {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("member");
   const [message, setMessage] = useState("");
+  const [disconnectLoading, setDisconnectLoading] = useState<string | null>(null);
   const router = useRouter();
+
+  async function handleDisconnect(userId: string) {
+    if (!confirm("Tem certeza que deseja desvincular este membro?")) return;
+    setDisconnectLoading(userId);
+    const res = await disconnectMemberAction(tenantId, userId, "Removido via painel");
+    alert(res.message);
+    setDisconnectLoading(null);
+    if (res.success) router.refresh();
+  }
+
+  async function handleApproveDisconnection(reqId: string, approve: boolean) {
+    setDisconnectLoading(reqId);
+    const res = await approveDisconnectionAction(reqId, approve);
+    alert(res.message);
+    setDisconnectLoading(null);
+    if (res.success) router.refresh();
+  }
 
   async function handleInvite(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -73,6 +94,14 @@ export function TeamClient({ tenantId, members, invitations }: {
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-sm bg-secondary px-2 py-1 rounded capitalize">{m.role}</span>
+                <Button 
+                  variant="destructive" 
+                  size="sm" 
+                  onClick={() => handleDisconnect(m.userId)}
+                  disabled={disconnectLoading === m.userId}
+                >
+                  {disconnectLoading === m.userId ? "..." : "Desvincular"}
+                </Button>
               </div>
             </div>
           ))}
@@ -97,6 +126,43 @@ export function TeamClient({ tenantId, members, invitations }: {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {disconnectionRequests.length > 0 && (
+        <div className="space-y-4 mt-8">
+          <h3 className="text-lg font-medium text-destructive">Solicitações de Desligamento</h3>
+          <div className="border rounded-lg divide-y">
+            {disconnectionRequests.map(r => {
+              const member = members.find(m => m.id === r.membershipId);
+              return (
+                <div key={r.id} className="p-4 flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Remover: {member?.email || r.membershipId}</p>
+                    <p className="text-sm text-muted-foreground">Motivo: {r.reason || "Não informado"}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleApproveDisconnection(r.id, false)}
+                      disabled={disconnectLoading === r.id}
+                    >
+                      Rejeitar
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => handleApproveDisconnection(r.id, true)}
+                      disabled={disconnectLoading === r.id}
+                    >
+                      Aprovar Remoção
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

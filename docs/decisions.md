@@ -117,3 +117,45 @@ infraestrutura e não devem ser expostos por uma rota de health.
 ## 2026-09-13 — fundação executável e identidade canônica
 
 Adotado o ADR em [architecture/foundation.md](architecture/foundation.md): tokens/UI compartilhados, contratos/policies, taskboard estruturado e Auth.js como entrada web. Endpoints Fastify antigos de identidade retornam 410 para fechar caminho paralelo inseguro. Reconciliação do banco, registro de sessões e MFA completo permanecem gates explícitos. Pesquisa e evidências estão em research/ e audit/.
+
+## ADR-0012 - Identidade global e vínculos empresariais separados
+
+**Decisão:** Manter uma conta global (`User`) para login, e vínculos independentes (`Membership`) para cada empresa (`Tenant`), onde a origem do cadastro não concede autoridade implícita.
+**Motivo:** Evitar vazamento de acessos entre lojas da mesma pessoa, e garantir que a autenticação e os poderes sejam gerenciados separadamente.
+**Status:** Aprovada (parte do rascunho de acessos).
+
+## ADR-0013 - Cargos cumulativos com escopo explícito
+
+**Decisão:** O acesso efetivo será a soma dos cargos atribuídos. Os cargos possuem escopos: globais do tenant ou restritos a setores específicos.
+**Motivo:** Evitar que a participação em um setor (ex: Vendas) libere acesso global indevidamente, permitindo que a edição no setor não escale para leitura de outros setores privados.
+**Status:** Aprovada.
+
+## ADR-0014 - Cargo base visível e substituível
+
+**Decisão:** Ao criar um setor, um cargo base será criado visível e sem poderes implícitos. Não haverá "herança obrigatória" para cargos hierárquicos.
+**Motivo:** Permite adicionar pessoas a um setor com permissões restritas (abaixo da base média) sem forçá-las a herdar privilégios desnecessários.
+**Status:** Aprovada.
+
+## ADR-0015 - Proprietário protegido e limites de delegação
+
+**Decisão:** Cada tenant ativo terá exatamente um proprietário técnico (`ownerMembershipId`). Gestores só poderão delegar poderes que eles mesmos possuam (e que sejam marcados como delegáveis). Concessões de permissões diretas (exceções) serão permitidas apenas pelo proprietário inicialmente.
+**Motivo:** Impedir escalada de privilégio por um gestor secundário e evitar travamentos na gestão principal.
+**Status:** Aprovada.
+
+## ADR-0016 - Convite com prova de finalidade e snapshot
+
+**Decisão:** Convites não terão a senha provisória exposta de forma insegura. Utilizarão prova temporal e salvarão o snapshot exato dos acessos propostos. Se os acessos do cargo mudarem antes do aceite, o convite precisará de revisão.
+**Motivo:** Prevenir que um cargo que ganhou privilégios recentemente conceda mais acesso do que o originalmente pretendido a convites antigos pendentes.
+**Status:** Aprovada.
+
+## ADR-0017 - Revogação coerente
+
+**Decisão:** A revogação de acessos, setores ou cargos deve invalidar as permissões em todas as camadas (Banco, Cache, Jobs e Realtime).
+**Motivo:** Garantir que sessões ativas (JWTs/Sockets) percam o acesso simultaneamente com a revogação no banco.
+**Status:** Aprovada.
+
+## ADR-0018 - Separação de comunicação, inbox e domínios
+
+**Decisão:** Comunicação interna, inbox de clientes, domínio de site e serviços de e-mail terão módulos, regras de retenção e destinatários totalmente distintos.
+**Motivo:** Uma "nota interna" não pode virar resposta ao cliente por falha de contexto; domínios DNS validados para site não autorizam envio de email corporativo implicitamente.
+**Status:** Aprovada.

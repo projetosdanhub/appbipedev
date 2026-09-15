@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@bipesend/auth": "workspace:*",
+    "@bipesend/db": "workspace:*",
     "@bipesend/ui": "workspace:*",
     "@hookform/resolvers": "^5.9.1",
+    "argon2": "^0.41.1",
     "lucide-react": "^1.44.0",
     "next": "16.3.5",
     "next-auth": "5.0.0-beta.32",

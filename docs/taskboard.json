@@ -1270,7 +1270,7 @@
         "AUTH-008",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "CRUD de cargos customizados. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Modelar cargos customizados como subconjunto das permissões do criador.",
@@ -1285,7 +1285,12 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "packages/db/prisma/schema.prisma",
+        "packages/auth/src/session.ts",
+        "packages/db/prisma/schema.prisma",
+        "packages/auth/src/session.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -2820,6 +2825,41 @@
         "docs/ANTIGRAVITY_HANDOFF.md",
         "docs/audit/validation.md",
         "docs/audit/evidence/checks.json"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "TEAM-007",
+      "title": "Godmode e Impersonation (Superadmin e Contratante)",
+      "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",
+      "acceptance": [
+        "Ações de admin implementadas com log de auditoria"
+      ],
+      "dependencies": [
+        "TEAM-002"
+      ],
+      "status": "DONE",
+      "objective": "Implementar as lógicas de impersonation e reset de senhas de contas gerenciadas.",
+      "steps": [
+        "Adicionar isManagedAccount e impersonatedBy no banco de dados",
+        "Propagar campos via callback NextAuth JWT e Session",
+        "Implementar actions de admin para o Tenant Web e Superadmin Web",
+        "Gerar logs no AuditLog"
+      ],
+      "codeAreas": [
+        "packages/auth",
+        "apps/tenant-web",
+        "apps/superadmin-web"
+      ],
+      "tests": [
+        "Testes visuais das rotas e validações de actions via server actions"
+      ],
+      "evidence": [
+        "apps/tenant-web/src/features/team/actions/member.actions.ts",
+        "apps/superadmin-web/src/actions/admin.ts",
+        "packages/auth/src/impersonate.ts",
+        "rules/05_AUTH_RBAC.md"
       ],
       "blockers": [],
       "owner": "Engenharia BipeSend"

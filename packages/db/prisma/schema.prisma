@@ -8,18 +8,18 @@ datasource db {
 }
 
 model Account {
-  id                 String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId             String  @map("user_id") @db.Uuid
-  type               String
-  provider           String
-  providerAccountId  String  @map("provider_account_id")
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
+  id                String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String  @map("user_id") @db.Uuid
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -28,36 +28,44 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  sessionToken String   @unique @map("token_hash")
-  userId       String   @map("user_id") @db.Uuid
-  surface      String   @default("tenant") @db.VarChar(50)
-  expires      DateTime @map("expires_at")
-  createdAt    DateTime @default(now()) @map("created_at")
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionToken   String   @unique @map("token_hash")
+  userId         String   @map("user_id") @db.Uuid
+  impersonatedBy String?  @map("impersonated_by") @db.Uuid
+  surface        String   @default("tenant") @db.VarChar(50)
+  expires        DateTime @map("expires_at")
+  createdAt      DateTime @default(now()) @map("created_at")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
 
 model User {
-  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name             String?
-  email            String?   @unique
-  emailVerified    DateTime? @map("email_verified")
-  image            String?
-  password         String?   @map("password_hash")
-  companyName      String?   @map("company_name")
-  isSuperadmin     Boolean   @default(false) @map("is_superadmin")
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                 String?
+  email                String?   @unique
+  emailNormalized      String?   @unique @map("email_normalized")
+  emailVerified        DateTime? @map("email_verified")
+  image                String?
+  password             String?   @map("password_hash")
+  companyName          String?   @map("company_name")
+  isSuperadmin         Boolean   @default(false) @map("is_superadmin")
+  isManagedAccount     Boolean   @default(false) @map("is_managed_account")
   twoFactorEnabled     Boolean   @default(false) @map("two_factor_enabled")
   twoFactorSecret      String?   @map("two_factor_secret")
   twoFactorBackupCodes String[]  @map("two_factor_backup_codes")
-  
-  accounts         Account[]
-  sessions         Session[]
-  memberships      Membership[]
+  status               String    @default("active") @db.VarChar(50)
+  signupOrigin         String?   @map("signup_origin") @db.VarChar(50)
+  authVersion          Int       @default(1) @map("auth_version")
+  mustChangePassword   Boolean   @default(false) @map("must_change_password")
+  passwordChangedAt    DateTime? @map("password_changed_at")
 
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @updatedAt @map("updated_at")
+  accounts    Account[]
+  sessions    Session[]
+  memberships Membership[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
 }
@@ -72,11 +80,14 @@ model VerificationToken {
 }
 
 model Tenant {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name      String   @db.VarChar(255)
-  slug      String   @unique @default(dbgenerated("gen_random_uuid()")) @db.VarChar(100)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                 String   @db.VarChar(255)
+  slug                 String   @unique @default(dbgenerated("gen_random_uuid()")) @db.VarChar(100)
+  ownerMembershipId    String?  @map("owner_membership_id") @db.Uuid
+  status               String   @default("active") @db.VarChar(50)
+  authorizationVersion Int      @default(1) @map("authorization_version")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @default(now()) @updatedAt @map("updated_at")
 
   apiKeys          ApiKey[]
   webhookEndpoints WebhookEndpoint[]
@@ -88,52 +99,93 @@ model Tenant {
 }
 
 model Membership {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId  String   @map("tenant_id") @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  role      String   @default("member") @db.VarChar(50)
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId              String    @map("tenant_id") @db.Uuid
+  userId                String    @map("user_id") @db.Uuid
+  role                  String    @default("member") @db.VarChar(50) // Legado
+  displayName           String?   @map("display_name") @db.VarChar(120)
+  relationshipType      String    @default("team_partner") @map("relationship_type") @db.VarChar(50)
+  status                String    @default("active") @db.VarChar(50)
+  authorizationVersion  Int       @default(1) @map("authorization_version")
+  jobTitle              String?   @map("job_title") @db.VarChar(100)
+  invitedByMembershipId String?   @map("invited_by_membership_id") @db.Uuid
+  joinedAt              DateTime? @map("joined_at")
+  suspendedAt           DateTime? @map("suspended_at")
+  removedAt             DateTime? @map("removed_at")
+  statusReason          String?   @map("status_reason")
+  active                Boolean   @default(true) // Legado
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at")
 
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  departmentId String?   @map("department_id") @db.Uuid
-  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  tenant       Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  departmentId String?     @map("department_id") @db.Uuid // Legado
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull) // Legado
+  alias        String?     @db.VarChar(100)
 
   @@unique([tenantId, userId])
   @@map("memberships")
 }
 
-model Role {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId  String   @map("tenant_id") @db.Uuid
-  departmentId String?   @map("department_id") @db.Uuid
-  name      String   @db.VarChar(100)
-  createdAt DateTime @default(now()) @map("created_at")
+model DisconnectionRequest {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  membershipId String   @map("membership_id") @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  requestedBy  String   @map("requested_by") @db.Uuid
+  approvedBy   String?  @map("approved_by") @db.Uuid
+  reason       String   @db.Text
+  status       String   @default("PENDING") @db.VarChar(50) // PENDING, APPROVED, REJECTED
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
 
-  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  @@map("disconnection_requests")
+}
+
+model Role {
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId              String    @map("tenant_id") @db.Uuid
+  departmentId          String?   @map("department_id") @db.Uuid
+  key                   String?   @unique @db.VarChar(100)
+  name                  String    @db.VarChar(100)
+  nameNormalized        String?   @map("name_normalized")
+  description           String?   @db.VarChar(500)
+  scopeKind             String    @default("TENANT") @map("scope_kind") @db.VarChar(50)
+  isBaseRole            Boolean   @default(false) @map("is_base_role")
+  status                String    @default("active") @db.VarChar(50)
+  policyVersion         Int       @default(1) @map("policy_version")
+  createdByMembershipId String?   @map("created_by_membership_id") @db.Uuid
+  updatedByMembershipId String?   @map("updated_by_membership_id") @db.Uuid
+  archivedAt            DateTime? @map("archived_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+
+  department Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
 
   @@map("roles")
 }
 
 model Permission {
-  id          String   @id @db.VarChar(100)
-  description String?  @db.Text
+  id          String  @id @db.VarChar(100)
+  description String? @db.Text
 
   @@map("permissions")
 }
 
 model Department {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId    String   @map("tenant_id") @db.Uuid
-  name        String   @db.VarChar(100)
-  description String?  @db.Text
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId              String    @map("tenant_id") @db.Uuid
+  name                  String    @db.VarChar(100)
+  nameNormalized        String?   @map("name_normalized")
+  description           String?   @db.Text
+  status                String    @default("active") @db.VarChar(50)
+  leadMembershipId      String?   @map("lead_membership_id") @db.Uuid
+  sortOrder             Int?      @map("sort_order")
+  createdByMembershipId String?   @map("created_by_membership_id") @db.Uuid
+  archivedAt            DateTime? @map("archived_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
 
   tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  memberships Membership[]
+  memberships Membership[] // Legado
   roles       Role[]
 
   @@unique([tenantId, name])
@@ -143,6 +195,8 @@ model Department {
 model RolePermission {
   roleId       String   @map("role_id") @db.Uuid
   permissionId String   @map("permission_id") @db.VarChar(100)
+  tenantId     String?  @map("tenant_id") @db.Uuid
+  scopeType    String   @default("TENANT") @map("scope_type") @db.VarChar(50)
   createdAt    DateTime @default(now()) @map("created_at")
 
   @@id([roleId, permissionId])
@@ -150,18 +204,98 @@ model RolePermission {
 }
 
 model Invitation {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId  String   @map("tenant_id") @db.Uuid
-  email     String   @db.VarChar(255)
-  role      String   @db.VarChar(50)
-  tokenHash String   @unique @map("token_hash") @db.VarChar(255)
-  expiresAt DateTime @map("expires_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId              String    @map("tenant_id") @db.Uuid
+  email                 String    @db.VarChar(255) // Legado
+  emailNormalized       String?   @map("email_normalized") @db.VarChar(255)
+  name                  String?   @db.VarChar(120)
+  role                  String    @db.VarChar(50) // Legado
+  relationshipType      String    @default("team_partner") @map("relationship_type") @db.VarChar(50)
+  status                String    @default("pending") @db.VarChar(50)
+  deliveryStatus        String    @default("queued") @map("delivery_status") @db.VarChar(50)
+  tokenHash             String    @unique @map("token_hash") @db.VarChar(255) // Legado
+  challengeId           String?   @map("challenge_id") @db.VarChar(255)
+  createdByMembershipId String?   @map("created_by_membership_id") @db.Uuid
+  accessSnapshotVersion Int       @default(1) @map("access_snapshot_version")
+  acceptedByUserId      String?   @map("accepted_by_user_id") @db.Uuid
+  acceptedAt            DateTime? @map("accepted_at")
+  revokedAt             DateTime? @map("revoked_at")
+  lastSentAt            DateTime? @map("last_sent_at")
+  sendCount             Int       @default(0) @map("send_count")
+  expiresAt             DateTime  @map("expires_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at")
 
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, email])
   @@map("invitations")
+}
+
+model PermissionDependency {
+  permissionId         String @map("permission_id") @db.VarChar(100)
+  requiredPermissionId String @map("required_permission_id") @db.VarChar(100)
+
+  @@id([permissionId, requiredPermissionId])
+  @@map("permission_dependencies")
+}
+
+model MembershipRole {
+  tenantId              String    @map("tenant_id") @db.Uuid
+  membershipId          String    @map("membership_id") @db.Uuid
+  roleId                String    @map("role_id") @db.Uuid
+  grantedByMembershipId String?   @map("granted_by_membership_id") @db.Uuid
+  grantedAt             DateTime  @default(now()) @map("granted_at")
+  expiresAt             DateTime? @map("expires_at")
+  revokedAt             DateTime? @map("revoked_at")
+
+  @@id([membershipId, roleId])
+  @@map("membership_roles")
+}
+
+model DepartmentMembership {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String    @map("tenant_id") @db.Uuid
+  departmentId String    @map("department_id") @db.Uuid
+  membershipId String    @map("membership_id") @db.Uuid
+  status       String    @default("active") @db.VarChar(50)
+  isPrimary    Boolean   @default(false) @map("is_primary")
+  joinedAt     DateTime  @default(now()) @map("joined_at")
+  leftAt       DateTime? @map("left_at")
+  version      Int       @default(1)
+
+  @@unique([departmentId, membershipId])
+  @@map("department_memberships")
+}
+
+model DepartmentRoleAssignment {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId               String    @map("tenant_id") @db.Uuid
+  departmentId           String    @map("department_id") @db.Uuid
+  departmentMembershipId String    @map("department_membership_id") @db.Uuid
+  roleId                 String    @map("role_id") @db.Uuid
+  grantedByMembershipId  String?   @map("granted_by_membership_id") @db.Uuid
+  grantedAt              DateTime  @default(now()) @map("granted_at")
+  expiresAt              DateTime? @map("expires_at")
+  revokedAt              DateTime? @map("revoked_at")
+
+  @@unique([departmentMembershipId, roleId])
+  @@map("department_role_assignments")
+}
+
+model MembershipPermissionGrant {
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId              String    @map("tenant_id") @db.Uuid
+  membershipId          String    @map("membership_id") @db.Uuid
+  permissionId          String    @map("permission_id") @db.VarChar(100)
+  scopeType             String    @default("TENANT") @map("scope_type") @db.VarChar(50)
+  reason                String?
+  grantedByMembershipId String?   @map("granted_by_membership_id") @db.Uuid
+  grantedAt             DateTime  @default(now()) @map("granted_at")
+  expiresAt             DateTime? @map("expires_at")
+  revokedAt             DateTime? @map("revoked_at")
+
+  @@map("membership_permission_grants")
 }
 
 model UserVerification {
@@ -185,9 +319,9 @@ model PasswordReset {
 }
 
 model PgMigration {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(255)
-  run_on    DateTime @db.Timestamp(6)
+  id     Int      @id @default(autoincrement())
+  name   String   @db.VarChar(255)
+  run_on DateTime @db.Timestamp(6)
 
   @@map("pgmigrations")
 }
@@ -203,7 +337,7 @@ model ApiKey {
   revokedAt DateTime? @map("revoked_at")
   createdAt DateTime  @default(now()) @map("created_at")
 
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@map("api_keys")
 }
@@ -218,24 +352,39 @@ model WebhookEndpoint {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant     Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   deliveries WebhookDelivery[]
 
   @@map("webhook_endpoints")
 }
 
 model WebhookDelivery {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  endpointId    String   @map("endpoint_id") @db.Uuid
-  eventId       String   @map("event_id") @db.VarChar(255)
-  payload       Json
-  status        String   @db.VarChar(50)
-  statusCode    Int?     @map("status_code")
-  createdAt     DateTime @default(now()) @map("created_at")
-  completedAt   DateTime? @map("completed_at")
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  endpointId  String    @map("endpoint_id") @db.Uuid
+  eventId     String    @map("event_id") @db.VarChar(255)
+  payload     Json
+  status      String    @db.VarChar(50)
+  statusCode  Int?      @map("status_code")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  completedAt DateTime? @map("completed_at")
 
-  endpoint      WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  endpoint WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
 
   @@index([endpointId, eventId])
   @@map("webhook_deliveries")
+}
+
+model AuditLog {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorId   String?  @map("actor_id") @db.Uuid
+  targetId  String?  @map("target_id") @db.Uuid
+  tenantId  String?  @map("tenant_id") @db.Uuid
+  action    String   @db.VarChar(100)
+  details   Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([actorId])
+  @@index([targetId])
+  @@index([tenantId])
+  @@map("audit_logs")
 }

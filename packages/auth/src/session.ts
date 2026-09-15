@@ -24,7 +24,7 @@ function getRedis(): Redis | undefined {
   return redis;
 }
 
-export async function createSession(userId: string, rememberMe: boolean, surface: "tenant" | "platform" = "tenant"): Promise<string> {
+export async function createSession(userId: string, rememberMe: boolean, surface: "tenant" | "platform" = "tenant", impersonatedBy?: string): Promise<string> {
   // 30 days if rememberMe, otherwise 1 day
   const ttlDays = rememberMe ? 30 : 1;
   const expires = new Date(Date.now() + ttlDays * 24 * 60 * 60 * 1000);
@@ -36,6 +36,7 @@ export async function createSession(userId: string, rememberMe: boolean, surface
       sessionToken,
       expires,
       surface,
+      impersonatedBy,
     },
   });
 
