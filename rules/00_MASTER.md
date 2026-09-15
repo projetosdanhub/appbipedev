@@ -122,6 +122,16 @@ Regra mais específica prevalece sobre regra genérica desde que não reduza seg
 - `packages/ui` é a casa dos componentes compartilhados;
 - `packages/auth`, `packages/security`, `packages/contracts` e `packages/db` concentram contratos transversais.
 
+### Padrão Arquitetural de Integração Frontend-Backend
+
+A plataforma adota uma divisão estrita de responsabilidades para garantir que as regras de negócio e de autorização sejam centralizadas e consumíveis por múltiplas superfícies (painel, app mobile, integrações):
+
+- **Server Actions (`tenant-web` e afins)**: Atuam como uma camada fina (BFF). Responsáveis por verificar a sessão web, validar a entrada (Zod), chamar a API via HTTP (não devem usar Prisma direto) e atualizar a interface após o sucesso (`revalidatePath`).
+- **Fastify (`apps/api`)**: Recebe as requisições, identifica usuário e sessão, resolve o vínculo ativo (tenant) e encaminha para os serviços de aplicação com regras de negócio.
+- **`packages/auth/policies`**: Avalia permissões e escopos. A aplicação obrigatória ocorre no backend (Fastify).
+- **Repositórios e `packages/db`**: Executam Prisma, gerenciam transações, isolamento e persistência de auditoria, operando estritamente por trás dos serviços do Fastify.
+- **`packages/contracts`**: Compartilham schemas, dados de entrada/saída e erros entre o painel e a API.
+
 A implementação pode evoluir, mas alterações estruturais exigem decisão registrada.
 
 ## 7. Primeiro marco de experiência

@@ -101,6 +101,15 @@ export function canGrantRole(
       rolePermissions[context.role].includes(permission),
   );
 }
+export function canManageTargetRole(
+  context: TenantContext,
+  targetRole: string,
+): boolean {
+  if (context.role !== "tenant_admin" && normalizeTenantRole(targetRole) === "tenant_admin") {
+    return false; // Only admins can manage admins
+  }
+  return hasPermission(context, "team.members.manage", context.tenantId);
+}
 export interface MembershipLookup {
   findMembership(
     userId: string,
