@@ -7,11 +7,13 @@ import { DealCard } from "./deal-card";
 
 interface BoardColumnProps {
   stage: CrmPipelineStage;
+  stages: CrmPipelineStage[];
   deals: CrmDeal[];
   onEdit: (deal: CrmDeal) => void;
+  onMoveStage: (deal: CrmDeal, stageId: string) => void;
 }
 
-export function BoardColumn({ stage, deals, onEdit }: BoardColumnProps) {
+export function BoardColumn({ stage, stages, deals, onEdit, onMoveStage }: BoardColumnProps) {
   return (
     <div className="flex flex-col w-[320px] max-h-full bg-[#F1F5F9] dark:bg-[#1E293B]/50 rounded-[12px] border border-[#E2E8F0] dark:border-[#334155]/50 overflow-hidden shrink-0">
       {/* Column Header */}
@@ -41,9 +43,11 @@ export function BoardColumn({ stage, deals, onEdit }: BoardColumnProps) {
                 {(provided, snapshot) => (
                   <DealCard 
                     deal={deal} 
+                    stages={stages}
                     provided={provided} 
                     snapshot={snapshot}
                     onEdit={() => onEdit(deal)}
+                    onMoveStage={(stageId) => onMoveStage(deal, stageId)}
                   />
                 )}
               </Draggable>

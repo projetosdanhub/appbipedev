@@ -47,8 +47,8 @@ export async function superadminImpersonateUserAction(targetUserId: string) {
     });
 
     return { success: true, message: "Acessando conta do usuário..." };
-  } catch (error: any) {
-    return { success: false, message: error.message || "Erro ao tentar acessar a conta." };
+  } catch (error: unknown) {
+    return { success: false, message: error instanceof Error ? error.message : "Erro ao tentar acessar a conta." };
   }
 }
 
@@ -84,7 +84,7 @@ export async function superadminResetUserPasswordAction(targetUserId: string, ne
 
     revalidatePath("/users");
     return { success: true, message: "Senha redefinida com sucesso.", newPassword: newPass };
-  } catch (error: any) {
-    return { success: false, message: error.message || "Erro ao tentar redefinir a senha da conta." };
+  } catch (error: unknown) {
+    return { success: false, message: error instanceof Error ? error.message : "Erro ao tentar redefinir a senha da conta." };
   }
 }

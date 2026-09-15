@@ -2,16 +2,19 @@
 
 import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { Calendar, MoreHorizontal } from "lucide-react";
-import { CrmDeal } from "@bipesend/contracts";
+import { CrmDeal, CrmPipelineStage } from "@bipesend/contracts";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "@bipesend/ui/components/overlays";
 
 interface DealCardProps {
   deal: CrmDeal;
+  stages: CrmPipelineStage[];
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   onEdit: () => void;
+  onMoveStage: (stageId: string) => void;
 }
 
-export function DealCard({ deal, provided, snapshot, onEdit }: DealCardProps) {
+export function DealCard({ deal, stages, provided, snapshot, onEdit, onMoveStage }: DealCardProps) {
   const formattedValue = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: deal.currency }).format(parseFloat(deal.amount));
   const dateStr = deal.expectedCloseDate ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short' }).format(new Date(deal.expectedCloseDate)) : "--";
 
@@ -31,13 +34,34 @@ export function DealCard({ deal, provided, snapshot, onEdit }: DealCardProps) {
         <h4 className="text-[14px] font-semibold text-[#0F172A] dark:text-white leading-tight">
           {deal.title}
         </h4>
-        <button 
-          type="button"
-          onClick={(e) => { e.stopPropagation(); onEdit(); }}
-          className="opacity-0 group-hover:opacity-100 p-1 text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-white transition-opacity rounded-md hover:bg-[#F1F5F9] dark:hover:bg-[#1E293B]"
-        >
-          <MoreHorizontal className="w-4 h-4" />
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button 
+              type="button"
+              onClick={(e) => e.stopPropagation()}
+              className="opacity-0 group-hover:opacity-100 p-1 text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-white transition-opacity rounded-md hover:bg-[#F1F5F9] dark:hover:bg-[#1E293B]"
+            >
+              <MoreHorizontal className="w-4 h-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[180px]">
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(); }}>
+              Editar lead
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Mover para...</DropdownMenuLabel>
+            {stages.map(stage => (
+              <DropdownMenuItem 
+                key={stage.id} 
+                onClick={(e) => { e.stopPropagation(); onMoveStage(stage.id); }}
+                disabled={stage.id === deal.stageId}
+              >
+                <div className={`w-2 h-2 rounded-full mr-2 ${stage.colorToken}`} />
+                {stage.name}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       
       <div className="flex items-center gap-1.5 text-[#64748B] dark:text-[#94A3B8] text-[13px] mb-3">

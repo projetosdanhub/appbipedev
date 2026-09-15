@@ -19,13 +19,19 @@ export function CRMClient({ tenantId, initialPipelines, initialStages, initialDe
   const router = useRouter();
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
   const [isNewDealOpen, setIsNewDealOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedPipelineId, setSelectedPipelineId] = useState<string | null>(
     initialPipelines.length > 0 ? initialPipelines[0].id : null
   );
 
   const selectedPipeline = initialPipelines.find(p => p.id === selectedPipelineId);
   const stages = selectedPipelineId ? (initialStages[selectedPipelineId] || []) : [];
-  const deals = selectedPipelineId ? (initialDeals[selectedPipelineId] || []) : [];
+  let deals = selectedPipelineId ? (initialDeals[selectedPipelineId] || []) : [];
+
+  if (searchTerm) {
+    const lowerSearch = searchTerm.toLowerCase();
+    deals = deals.filter(deal => deal.title.toLowerCase().includes(lowerSearch));
+  }
 
   return (
     <div className="flex flex-col h-full w-full bg-[#F8FAFC] dark:bg-[#0B1120] overflow-hidden">
@@ -94,6 +100,8 @@ export function CRMClient({ tenantId, initialPipelines, initialStages, initialDe
           <input 
             type="text" 
             placeholder="Buscar leads..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="h-[34px] pl-9 pr-4 text-[13px] bg-[#F8FAFC] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] rounded-[8px] focus:outline-none focus:border-[#0A74FF] dark:focus:border-[#0A74FF] text-[#0F172A] dark:text-white w-full sm:w-[220px] transition-all"
           />
         </div>

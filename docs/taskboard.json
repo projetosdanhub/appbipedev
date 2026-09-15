@@ -1551,7 +1551,7 @@
         "CRM-003",
         "AUTH-016"
       ],
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "objective": "Cards/lista/inbox views. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Conectar cards/lista às queries do tenant mantendo filtro/sort.",
@@ -1567,7 +1567,10 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/tenant-web/src/features/crm/components/board/pipeline-board.tsx",
+        "apps/tenant-web/src/features/crm/components/board/pipeline-list.tsx"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },

@@ -58,6 +58,10 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
        return;
     }
 
+    handleMoveStage(draggedDeal, toStageId);
+  };
+
+  const handleMoveStage = (draggedDeal: CrmDeal, toStageId: string) => {
     // Movimentação entre colunas
     // Checar regras da coluna destino
     const toStage = stages.find(s => s.id === toStageId);
@@ -157,8 +161,10 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
               <BoardColumn 
                 key={stage.id} 
                 stage={stage} 
+                stages={stages}
                 deals={deals.filter(d => d.stageId === stage.id)}
                 onEdit={handleEdit}
+                onMoveStage={handleMoveStage}
               />
             ))
           )}
