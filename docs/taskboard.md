@@ -4,7 +4,7 @@ Versão 1.0.0 · Revisão 2026-09-14 · Base auditada `fd3f4c3`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 86 cards. BACKLOG: 44 · READY: 0 · IN_PROGRESS: 1 · BLOCKED: 0 · DONE: 41.
+Total: 86 cards. BACKLOG: 43 · READY: 0 · IN_PROGRESS: 1 · BLOCKED: 0 · DONE: 42.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
@@ -60,7 +60,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 | [TEAM-002](#team-002) | DONE | CRUD de cargos customizados | AUTH-008, AUTH-016 |
 | [TEAM-003](#team-003) | BACKLOG | Gestao de membros | TEAM-002, AUTH-016 |
 | [TEAM-004](#team-004) | DONE | Auditoria pesquisavel | AUTH-004, AUTH-016 |
-| [TEAM-005](#team-005) | BACKLOG | Contrato de erros e reporte pelo painel tenant | INF-004, AUTH-004, AUTH-016 |
+| [TEAM-005](#team-005) | DONE | Contrato de erros e reporte pelo painel tenant | INF-004, AUTH-004, AUTH-016 |
 | [TEAM-006](#team-006) | BACKLOG | Dicionario e triagem de erros no superpainel | TEAM-005, AUTH-008, AUTH-016 |
 | [CRM-001](#crm-001) | BACKLOG | Contatos e campos customizados | TEAM-001, AUTH-016 |
 | [CRM-002](#crm-002) | BACKLOG | Tags e segmentos | CRM-001, AUTH-016 |
@@ -1278,7 +1278,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 <a id="team-005"></a>
 ### TEAM-005 — Contrato de erros e reporte pelo painel tenant
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
 
 **Objetivo:** Contrato de erros e reporte pelo painel tenant. Entregar comportamento verificável dentro do escopo do card.
 

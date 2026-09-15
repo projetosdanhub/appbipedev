@@ -1375,7 +1375,7 @@
         "AUTH-004",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "Contrato de erros e reporte pelo painel tenant. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Padronizar erros técnicos + HTTP + protocolo BPS sem stack/PII.",
