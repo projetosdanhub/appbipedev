@@ -1,5 +1,4 @@
 import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
-import { ZodError } from "zod";
 import { AppError } from "../domain/errors.js";
 import { ErrorEnvelope } from "@bipesend/contracts";
 
@@ -27,18 +26,6 @@ export function errorHandler(
       },
     };
     return reply.status(error.statusCode).send(envelope);
-  }
-
-  // Handle validation errors from Zod
-  if (error instanceof ZodError) {
-    const envelope: ErrorEnvelope = {
-      error: {
-        code: "VALIDATION_FAILED",
-        message: "Os dados fornecidos são inválidos. Verifique e tente novamente.",
-        requestId: reqId,
-      },
-    };
-    return reply.status(400).send(envelope);
   }
 
   // Check if error is Fastify validation error (usually has validationContext)

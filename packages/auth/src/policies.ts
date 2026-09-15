@@ -33,6 +33,8 @@ export const rolePermissions: Readonly<
     "chat.messages.read",
     "chat.messages.send",
     "chat.history.read",
+    "team.audit.read",
+    "team.audit.manage",
     "audit.read",
   ],
   agent: [

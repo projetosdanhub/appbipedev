@@ -396,7 +396,7 @@ model ErrorReport {
   requestId String   @map("request_id") @db.VarChar(100)
   errorCode String   @map("error_code") @db.VarChar(100)
   context   Json?
-  status    String   @default("open") @db.VarChar(50) // open, resolved, ignored
+  status    String   @default("open") @db.VarChar(50) // open, investigating, resolved, ignored
   createdAt DateTime @default(now()) @map("created_at")
 
   @@index([tenantId])

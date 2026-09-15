@@ -9,6 +9,7 @@ import {
   CreditCard,
   Settings,
   Send,
+  ShieldAlert,
 } from "lucide-react";
 export const navigation = [
   { name: "Visão geral", href: "/", icon: LayoutDashboard, group: "Workspace" },
@@ -22,6 +23,7 @@ export const navigation = [
   { name: "Faturamento", href: "/billing", icon: CreditCard, group: "Gestão" },
   { name: "Configurações", href: "/settings", icon: Settings, group: "Gestão" },
   { name: "Equipe", href: "/settings/team", icon: Users, group: "Gestão" },
+  { name: "Erros", href: "/settings/audit/errors", icon: ShieldAlert, group: "Gestão" },
 ] as const;
 export function isActiveRoute(path: string, href: string) {
   return path === href || (href !== "/" && path.startsWith(`${href}/`));

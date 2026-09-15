@@ -1390,7 +1390,9 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/api/src/modules/04-team/presentation/support.controller.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -1407,7 +1409,7 @@
         "AUTH-008",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "Dicionario e triagem de erros no superpainel. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Criar busca/triagem privilegiada por código/fingerprint/tenant/severidade.",
@@ -1422,7 +1424,13 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/tenant-web/src/features/support/actions/triage.actions.ts",
+        "apps/tenant-web/src/features/support/actions/report.actions.ts",
+        "apps/tenant-web/src/features/support/components/error-triage-panel.tsx",
+        "apps/api/src/modules/04-team/presentation/support.controller.ts",
+        "apps/api/src/modules/04-team/infrastructure/error-report.repository.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },

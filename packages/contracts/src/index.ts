@@ -54,6 +54,7 @@ export const permissionSchema = z.enum([
   "team.roles.read",
   "team.roles.manage",
   "team.audit.read",
+  "team.audit.manage",
   "chat.messages.read",
   "chat.messages.send",
   "chat.history.read",
@@ -211,4 +212,36 @@ export const auditLogListResponseSchema = z.object({
   nextCursor: z.string().nullable(),
 });
 export type AuditLogListResponse = z.infer<typeof auditLogListResponseSchema>;
+
+export const errorReportStatusSchema = z.enum(["open", "investigating", "resolved", "ignored"]);
+export type ErrorReportStatus = z.infer<typeof errorReportStatusSchema>;
+
+export const errorReportSchema = z.object({
+  id: idSchema,
+  tenantId: idSchema.nullable(),
+  actorId: idSchema.nullable(),
+  requestId: requestIdSchema,
+  errorCode: z.string().max(100),
+  context: z.record(z.string(), z.unknown()).nullable(),
+  status: errorReportStatusSchema,
+  createdAt: z.iso.datetime(),
+}).strict();
+export type ErrorReport = z.infer<typeof errorReportSchema>;
+
+export const errorReportListParamsSchema = paginationSchema.extend({
+  status: errorReportStatusSchema.optional(),
+  errorCode: z.string().max(100).optional(),
+});
+export type ErrorReportListParams = z.infer<typeof errorReportListParamsSchema>;
+
+export const errorReportListResponseSchema = z.object({
+  data: z.array(errorReportSchema),
+  nextCursor: z.string().nullable(),
+});
+export type ErrorReportListResponse = z.infer<typeof errorReportListResponseSchema>;
+
+export const errorReportUpdateSchema = z.object({
+  status: errorReportStatusSchema,
+}).strict();
+export type ErrorReportUpdate = z.infer<typeof errorReportUpdateSchema>;
 

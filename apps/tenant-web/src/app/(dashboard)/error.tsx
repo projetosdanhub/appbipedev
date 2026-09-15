@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { ErrorState } from "@bipesend/ui";
+import { ErrorState, PageHeader } from "@bipesend/ui";
 import { ReportErrorButton } from "../../features/support/components/report-button";
-import { PageHeader } from "../../features/design-system/components/page-header";
 
 export default function DashboardError({
   error,
