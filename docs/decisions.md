@@ -159,3 +159,75 @@ Adotado o ADR em [architecture/foundation.md](architecture/foundation.md): token
 **Decisão:** Comunicação interna, inbox de clientes, domínio de site e serviços de e-mail terão módulos, regras de retenção e destinatários totalmente distintos.
 **Motivo:** Uma "nota interna" não pode virar resposta ao cliente por falha de contexto; domínios DNS validados para site não autorizam envio de email corporativo implicitamente.
 **Status:** Aprovada.
+
+## ADR-0019 - Fonte de negócio (D-01)
+**Decisão:** Fastify + serviços de aplicação + repositórios; Actions como BFF.
+**Motivo:** Uma regra de acesso e de escrita para as superfícies do produto.
+**Status:** Aprovada (CRM-001).
+
+## ADR-0020 - Campos dinâmicos (D-02)
+**Decisão:** Metadados relacionais em CustomField; valores limitados e tipados em JSONB no Contact.
+**Motivo:** Flexibilidade sem transformar relações centrais em JSON arbitrário.
+**Status:** Aprovada (CRM-001).
+
+## ADR-0021 - CSV inicial (D-03)
+**Decisão:** Importação síncrona, até 500 linhas e 512 KiB de CSV, com prévia e confirmação.
+**Motivo:** Entrega útil sem depender de uma fila ainda inexistente; limites sujeitos ao ensaio de carga.
+**Status:** Aprovada (CRM-001).
+
+## ADR-0022 - Importação maior (D-04)
+**Decisão:** Background após MSG-001/002, com contrato próprio de progresso e falha parcial.
+**Motivo:** Arquivos grandes não devem atravessar Actions como arrays enormes.
+**Status:** Aprovada (Pendente MSG).
+
+## ADR-0023 - Autorização (D-05)
+**Decisão:** Reutilizar ações canônicas e preservar ação + escopo + origem da concessão.
+**Motivo:** Ler todo o tenant não pode ampliar o alcance de uma permissão de edição setorial.
+**Status:** Aprovada.
+
+## ADR-0024 - Identidade do cliente (D-06)
+**Decisão:** Contact é dado do CRM, separado de User e Membership.
+**Motivo:** Cadastrar/importar cliente não cria login, convite, senha ou acesso ao painel.
+**Status:** Aprovada.
+
+## ADR-0025 - Duplicidade comercial (D-07)
+**Decisão:** Identificadores normalizados para busca e revisão; idempotência para repetição técnica; nenhuma fusão automática.
+**Motivo:** Pessoas distintas podem compartilhar um telefone ou e-mail comercial.
+**Status:** Aprovada.
+
+## ADR-0026 - Entidade comercial (D-08)
+**Decisão:** Contact e Deal são entidades distintas; um contato pode ter vários negócios.
+**Motivo:** Evita transformar a etapa comercial em um atributo único do cliente.
+**Status:** Aprovada.
+
+## ADR-0027 - Comunicação (D-09)
+**Decisão:** CRM-005 entrega conversas de atendimento e notas internas; chat da equipe tem domínio separado.
+**Motivo:** Segue ADR-0018 e impede uma nota interna virar resposta ao cliente.
+**Status:** Aprovada.
+
+## ADR-0028 - Atribuição (D-10)
+**Decisão:** Setor responsável, cargo de roteamento e membro responsável são referências explícitas.
+**Motivo:** Cargo orienta fila/elegibilidade; não cria permissão nem muda a hierarquia de acesso.
+**Status:** Aprovada.
+
+## ADR-0029 - Realtime (D-11)
+**Decisão:** WebSocket transporta avisos autorizados; HTTP e banco mantêm o estado canônico.
+**Motivo:** Reconexão, revogação e eventos repetidos precisam de recuperação previsível.
+**Status:** Aprovada.
+
+## ADR-0030 - Ordem real (D-12)
+**Decisão:** Antecipar contratos de atribuição; concluir CRM-007 antes do aceite integral de CRM-006.
+**Motivo:** O aceite de CRM-006 exige notificação em tempo real.
+**Status:** Aprovada.
+
+
+## ADR-0004 - Pipelines, Etapas e Negocios (CRM-003)
+
+**Decisao:**
+1. **PipelineStage.requiredFieldRules**: Armazenar em JSONB com contrato explicito versionado ({"version":1,"rules":[]}). As regras referenciam campos nativos e customizados permitidos. A validacao ocorre no backend na criacao, transicao e transferencia. Valores omissos (null, vazio) reprovam; (0, false) sao aceitos quando validos.
+2. **Moedas**: Moeda padrao BRL por pipeline. Negocios possuem currency persistida, definida via input ou herdada do pipeline. Totais sao segmentados por moeda; sem conversao neste MVP. Tipagem no BD e Decimal.
+3. **Relacionamentos Prisma**: Negocios reusam Department, Role e Membership (opcionais). Integridade mantida via FKs compostas com 	enantId.
+
+**Motivo:** Assegurar isolamento de tenant em FKs de CRM (evitar relacionamento cruzado), prevenir que configuracoes antigas quebrem entidades antigas, e fornecer base rigorosa para funis comerciais na primeira fase do MVP.
+**Risco:** A gestao manual de transicoes via scripts de banco podera estar sujeita a falhas (optimistic locking no ORM lidara com aplicacoes concorrentes via ersion).
+**Status:** Aprovada. Implementacao do CRM-003.

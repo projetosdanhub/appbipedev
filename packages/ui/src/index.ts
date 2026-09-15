@@ -19,3 +19,4 @@ export * from "./components/layout";
 export * from "./components/combobox";
 export * from "./components/data-table";
 export * from "./components/file-upload";
+export * from "./components/table";

@@ -4,7 +4,7 @@ Versão 1.0.0 · Revisão 2026-09-14 · Base auditada `fd3f4c3`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 86 cards. BACKLOG: 42 · READY: 0 · IN_PROGRESS: 1 · BLOCKED: 0 · DONE: 43.
+Total: 86 cards. BACKLOG: 38 · READY: 0 · IN_PROGRESS: 2 · BLOCKED: 0 · DONE: 46.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
@@ -62,10 +62,10 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 | [TEAM-004](#team-004) | DONE | Auditoria pesquisavel | AUTH-004, AUTH-016 |
 | [TEAM-005](#team-005) | DONE | Contrato de erros e reporte pelo painel tenant | INF-004, AUTH-004, AUTH-016 |
 | [TEAM-006](#team-006) | DONE | Dicionario e triagem de erros no superpainel | TEAM-005, AUTH-008, AUTH-016 |
-| [CRM-001](#crm-001) | BACKLOG | Contatos e campos customizados | TEAM-001, AUTH-016 |
-| [CRM-002](#crm-002) | BACKLOG | Tags e segmentos | CRM-001, AUTH-016 |
-| [CRM-003](#crm-003) | BACKLOG | Pipelines configuraveis | CRM-001, AUTH-016 |
-| [CRM-004](#crm-004) | BACKLOG | Cards/lista/inbox views | CRM-003, AUTH-016 |
+| [CRM-001](#crm-001) | DONE | Contatos e campos customizados | TEAM-001, AUTH-016 |
+| [CRM-002](#crm-002) | DONE | Tags e segmentos | CRM-001, AUTH-016 |
+| [CRM-003](#crm-003) | DONE | Pipelines configuraveis | CRM-001, AUTH-016 |
+| [CRM-004](#crm-004) | IN_PROGRESS | Cards/lista/inbox views | CRM-003, AUTH-016 |
 | [CRM-005](#crm-005) | BACKLOG | Conversas e mensagens internas | CRM-001, AUTH-016 |
 | [CRM-006](#crm-006) | BACKLOG | Atribuicao a setor/cargo/membro | TEAM-001, AUTH-016 |
 | [CRM-007](#crm-007) | BACKLOG | WebSocket rooms | CRM-005, AUTH-016 |
@@ -1338,7 +1338,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 <a id="crm-001"></a>
 ### CRM-001 — Contatos e campos customizados
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
 
 **Objetivo:** Contatos e campos customizados. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1361,14 +1361,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - CRUD, importacao segura e tenant isolation
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/e2e/crm-pipeline.spec.ts](../apps/tenant-web/e2e/crm-pipeline.spec.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="crm-002"></a>
 ### CRM-002 — Tags e segmentos
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
 
 **Objetivo:** Tags e segmentos. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1391,14 +1391,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - filtros e limites por plano
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/e2e/crm-pipeline.spec.ts](../apps/tenant-web/e2e/crm-pipeline.spec.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="crm-003"></a>
 ### CRM-003 — Pipelines configuraveis
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
 
 **Objetivo:** Pipelines configuraveis. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1421,14 +1421,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - etapas, ordem, cor e regras validas
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/e2e/crm-pipeline.spec.ts](../apps/tenant-web/e2e/crm-pipeline.spec.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="crm-004"></a>
 ### CRM-004 — Cards/lista/inbox views
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
 
 **Objetivo:** Cards/lista/inbox views. Entregar comportamento verificável dentro do escopo do card.
 

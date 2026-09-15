@@ -27,6 +27,10 @@ Estas regras são a fonte de verdade para humanos e agentes de IA. Quando códig
 13. IA nunca recebe autoridade implícita para executar ações destrutivas ou acessar dados fora do escopo.
 14. Nenhum módulo concentra domínio, banco, HTTP e UI em arquivo monolítico.
 15. Não inventar novo padrão visual se já existir token, componente ou fluxo equivalente.
+16. Validações de UI dinâmicas e formulários (ex: campos obrigatórios por estágio) devem espelhar as regras de servidor, utilizando schemas unificados do `packages/contracts` para garantir única fonte de verdade.
+17. Utilizar `@hello-pangea/dnd` para funcionalidades de Drag-and-Drop, garantindo acessibilidade, suporte a navegação por teclado e sem ferir os estilos nativos do Tailwind/UI.
+18. Padrões de SEO (Title, Meta Descriptions semânticas) devem ser aplicados consistentemente no frontend.
+19. Colunas JSONB (como regras de estágio de pipeline) devem ter contratos explícitos e versionados (ex: `{"version": 1, "rules": []}`) em `packages/contracts` com Zod. Validações dinâmicas devem considerar referências desconhecidas ou de outros tenants como inválidas e bloquear deleções de campos ou opções em uso por regras ativas. Campos obrigatórios validam ausência, `null`, texto/seleção vazia como não preenchidos; mas `0` e `false` são preenchidos.
 
 ## 3. Ordem obrigatória de leitura
 

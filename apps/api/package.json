@@ -20,6 +20,7 @@
     "@bipesend/auth": "workspace:*",
     "@bipesend/config": "workspace:*",
     "@bipesend/contracts": "workspace:*",
+    "@bipesend/db": "workspace:*",
     "@bipesend/logger": "workspace:*",
     "@bipesend/security": "workspace:*",
     "@fastify/cookie": "^11.1.2",

@@ -141,6 +141,87 @@ async function bootstrap(): Promise<void> {
   const teamRepository = new TeamRepository(db);
   const teamService = new TeamService(db, teamRepository);
 
+  // CRM Module
+  const { ContactRepository } = await import(
+    "./modules/05-crm/infrastructure/contact.repository.js"
+  );
+  const { TagRepository } = await import(
+    "./modules/05-crm/infrastructure/tag.repository.js"
+  );
+  const { SegmentRepository } = await import(
+    "./modules/05-crm/infrastructure/segment.repository.js"
+  );
+  const { ContactService } = await import(
+    "./modules/05-crm/application/contact.service.js"
+  );
+  const { TagService } = await import(
+    "./modules/05-crm/application/tag.service.js"
+  );
+  const { SegmentService } = await import(
+    "./modules/05-crm/application/segment.service.js"
+  );
+  const { contactRoutes } = await import(
+    "./modules/05-crm/presentation/contact.controller.js"
+  );
+  const { tagRoutes } = await import(
+    "./modules/05-crm/presentation/tag.controller.js"
+  );
+  const { segmentRoutes } = await import(
+    "./modules/05-crm/presentation/segment.controller.js"
+  );
+  const { CustomFieldRepository } = await import(
+    "./modules/05-crm/infrastructure/custom-field.repository.js"
+  );
+  const { ContactImportRepository } = await import(
+    "./modules/05-crm/infrastructure/contact-import.repository.js"
+  );
+  const { CustomFieldService } = await import(
+    "./modules/05-crm/application/custom-field.service.js"
+  );
+  const { ContactImportService } = await import(
+    "./modules/05-crm/application/contact-import.service.js"
+  );
+  const { customFieldRoutes } = await import(
+    "./modules/05-crm/presentation/custom-field.controller.js"
+  );
+  const { importRoutes } = await import(
+    "./modules/05-crm/presentation/import.controller.js"
+  );
+  const { PipelineRepository } = await import(
+    "./modules/05-crm/infrastructure/pipeline.repository.js"
+  );
+  const { DealRepository } = await import(
+    "./modules/05-crm/infrastructure/deal.repository.js"
+  );
+  const { PipelineService } = await import(
+    "./modules/05-crm/application/pipeline.service.js"
+  );
+  const { DealService } = await import(
+    "./modules/05-crm/application/deal.service.js"
+  );
+  const { pipelineRoutes } = await import(
+    "./modules/05-crm/presentation/pipeline.controller.js"
+  );
+  const { dealRoutes } = await import(
+    "./modules/05-crm/presentation/deal.controller.js"
+  );
+
+  const contactRepository = new ContactRepository(db);
+  const tagRepository = new TagRepository(db);
+  const segmentRepository = new SegmentRepository(db);
+  const customFieldRepository = new CustomFieldRepository(db);
+  const contactImportRepository = new ContactImportRepository(db);
+  const pipelineRepository = new PipelineRepository(db);
+  const dealRepository = new DealRepository(db);
+
+  const contactService = new ContactService(db, contactRepository);
+  const tagService = new TagService(tagRepository, db);
+  const segmentService = new SegmentService(segmentRepository, db);
+  const customFieldService = new CustomFieldService(customFieldRepository);
+  const contactImportService = new ContactImportService(contactImportRepository);
+  const pipelineService = new PipelineService(db, pipelineRepository);
+  const dealService = new DealService(db, dealRepository, pipelineRepository, contactRepository);
+
   // Register auth routes (no auth required for most, auth plugin handles middleware where needed)
   app.register(async (instance) => {
     const auditRepository = new AuditRepository(db);
@@ -153,6 +234,13 @@ async function bootstrap(): Promise<void> {
     teamRoutes(instance, db, teamService);
     auditRoutes(instance, db, auditService);
     supportRoutes(instance, db, errorReportRepository);
+    contactRoutes(instance, db, contactService);
+    tagRoutes(instance, db, tagService);
+    segmentRoutes(instance, db, segmentService);
+    customFieldRoutes(instance, db, customFieldService);
+    importRoutes(instance, db, contactImportService);
+    pipelineRoutes(instance, db, pipelineService);
+    dealRoutes(instance, db, dealService);
   });
 
   // Reject the obsolete browser identity paths; Auth.js is the canonical web surface.

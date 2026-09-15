@@ -1446,7 +1446,7 @@
         "TEAM-001",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "Contatos e campos customizados. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Modelar contatos/campos customizados com tenant, índices e schema limitado.",
@@ -1462,7 +1462,10 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/audit/validation.md",
+        "apps/tenant-web/e2e/crm-pipeline.spec.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -1478,7 +1481,7 @@
         "CRM-001",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "Tags e segmentos. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Criar tags e filtros de segmentos com schema e limites por plano.",
@@ -1494,7 +1497,10 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/audit/validation.md",
+        "apps/tenant-web/e2e/crm-pipeline.spec.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -1510,7 +1516,7 @@
         "CRM-001",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "Pipelines configuraveis. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Persistir pipelines/etapas/ordem e transições autorizadas.",
@@ -1526,7 +1532,10 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/audit/validation.md",
+        "apps/tenant-web/e2e/crm-pipeline.spec.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -1542,7 +1551,7 @@
         "CRM-003",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "IN_PROGRESS",
       "objective": "Cards/lista/inbox views. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Conectar cards/lista às queries do tenant mantendo filtro/sort.",
