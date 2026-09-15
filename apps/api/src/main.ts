@@ -25,6 +25,9 @@ async function bootstrap(): Promise<void> {
     }
   });
 
+  const { errorHandler } = await import("./modules/00-shared/presentation/error.handler.js");
+  app.setErrorHandler(errorHandler);
+
   app.addHook("onRequest", async (request, reply) => {
     // Garantir que a request ID está sanitizada e segura
     const reqId = request.id;
@@ -128,6 +131,12 @@ async function bootstrap(): Promise<void> {
   const { auditRoutes } = await import(
     "./modules/04-team/presentation/audit.controller.js"
   );
+  const { ErrorReportRepository } = await import(
+    "./modules/04-team/infrastructure/error-report.repository.js"
+  );
+  const { supportRoutes } = await import(
+    "./modules/04-team/presentation/support.controller.js"
+  );
 
   const teamRepository = new TeamRepository(db);
   const teamService = new TeamService(db, teamRepository);
@@ -136,12 +145,14 @@ async function bootstrap(): Promise<void> {
   app.register(async (instance) => {
     const auditRepository = new AuditRepository(db);
     const auditService = new AuditService(db, auditRepository);
+    const errorReportRepository = new ErrorReportRepository(db);
 
     // Add auth middleware hook to all tenant routes
     instance.addHook("onRequest", authMiddleware);
     tenantRoutes(instance, db, onboardingService, invitationService);
     teamRoutes(instance, db, teamService);
     auditRoutes(instance, db, auditService);
+    supportRoutes(instance, db, errorReportRepository);
   });
 
   // Reject the obsolete browser identity paths; Auth.js is the canonical web surface.

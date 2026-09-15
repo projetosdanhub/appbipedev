@@ -116,12 +116,16 @@ export function ErrorState({
   title = "Não foi possível carregar",
   description = "Tente novamente em alguns instantes.",
   requestId,
+  errorCode,
   onRetry,
+  action,
 }: {
   title?: string;
   description?: string;
   requestId?: string;
+  errorCode?: string;
   onRetry?(): void;
+  action?: React.ReactNode;
 }) {
   return (
     <div role="alert">
@@ -130,15 +134,23 @@ export function ErrorState({
         description={description}
         icon={<CircleAlert />}
         action={
-          onRetry ? (
-            <Button size="md" variant="outline" onClick={onRetry}>
-              <RefreshCw aria-hidden="true" />
-              Tentar novamente
-            </Button>
-          ) : undefined
+          <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
+            {onRetry && (
+              <Button size="md" variant="outline" onClick={onRetry}>
+                <RefreshCw aria-hidden="true" />
+                Tentar novamente
+              </Button>
+            )}
+            {action}
+          </div>
         }
       />
-      {requestId && <p className="ui-help">Protocolo: {requestId}</p>}
+      {requestId && (
+        <p className="ui-help">
+          Protocolo: {requestId}
+          {errorCode && ` • Código: ${errorCode}`}
+        </p>
+      )}
     </div>
   );
 }
