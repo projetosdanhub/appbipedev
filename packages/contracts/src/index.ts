@@ -186,3 +186,29 @@ export const auditEventSchema = z
     occurredAt: z.iso.datetime(),
   })
   .strict();
+
+export const auditLogSchema = z
+  .object({
+    id: idSchema,
+    tenantId: idSchema.nullable(),
+    actorId: idSchema.nullable(),
+    targetId: idSchema.nullable(),
+    action: z.string().max(100),
+    details: z.record(z.string(), z.unknown()).nullable(),
+    createdAt: z.iso.datetime(),
+  })
+  .strict();
+export type AuditLog = z.infer<typeof auditLogSchema>;
+
+export const auditLogListParamsSchema = paginationSchema.extend({
+  actorId: idSchema.optional(),
+  action: z.string().max(100).optional(),
+});
+export type AuditLogListParams = z.infer<typeof auditLogListParamsSchema>;
+
+export const auditLogListResponseSchema = z.object({
+  data: z.array(auditLogSchema),
+  nextCursor: z.string().nullable(),
+});
+export type AuditLogListResponse = z.infer<typeof auditLogListResponseSchema>;
+

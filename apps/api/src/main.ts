@@ -119,16 +119,29 @@ async function bootstrap(): Promise<void> {
   const { teamRoutes } = await import(
     "./modules/04-team/presentation/team.controller.js"
   );
+  const { AuditRepository } = await import(
+    "./modules/04-team/infrastructure/audit.repository.js"
+  );
+  const { AuditService } = await import(
+    "./modules/04-team/application/audit.service.js"
+  );
+  const { auditRoutes } = await import(
+    "./modules/04-team/presentation/audit.controller.js"
+  );
 
   const teamRepository = new TeamRepository(db);
   const teamService = new TeamService(db, teamRepository);
 
   // Register auth routes (no auth required for most, auth plugin handles middleware where needed)
   app.register(async (instance) => {
+    const auditRepository = new AuditRepository(db);
+    const auditService = new AuditService(db, auditRepository);
+
     // Add auth middleware hook to all tenant routes
     instance.addHook("onRequest", authMiddleware);
     tenantRoutes(instance, db, onboardingService, invitationService);
     teamRoutes(instance, db, teamService);
+    auditRoutes(instance, db, auditService);
   });
 
   // Reject the obsolete browser identity paths; Auth.js is the canonical web surface.

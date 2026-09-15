@@ -1337,7 +1337,7 @@
         "AUTH-004",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "Auditoria pesquisavel. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Persistir eventos de auditoria minimizados com tenant/actor/requestId.",
@@ -1352,7 +1352,13 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/api/src/modules/04-team/presentation/audit.controller.ts",
+        "apps/api/src/modules/04-team/infrastructure/audit.repository.ts",
+        "apps/tenant-web/src/features/workspace/actions/audit.actions.ts",
+        "apps/tenant-web/src/app/(dashboard)/settings/security/audit/audit-client.tsx",
+        "apps/tenant-web/src/app/(dashboard)/settings/security/audit/page.tsx"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
