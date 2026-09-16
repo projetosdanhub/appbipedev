@@ -93,15 +93,19 @@ export function TeamClient({ tenantId, members, invitations, disconnectionReques
                 <p className="text-sm text-muted-foreground">{m.email}</p>
               </div>
               <div className="flex items-center gap-4">
-                <span className="text-sm bg-secondary px-2 py-1 rounded capitalize">{m.role}</span>
-                <Button 
-                  variant="destructive" 
-                  size="sm" 
-                  onClick={() => handleDisconnect(m.userId)}
-                  disabled={disconnectLoading === m.userId}
-                >
-                  {disconnectLoading === m.userId ? "..." : "Desvincular"}
-                </Button>
+                <span className="text-sm bg-secondary px-2 py-1 rounded capitalize">
+                  {m.role === 'tenant_admin' ? 'Dono (Admin)' : m.role === 'admin' ? 'Administrador' : 'Membro'}
+                </span>
+                {m.role !== 'tenant_admin' && (
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    onClick={() => handleDisconnect(m.userId)}
+                    disabled={disconnectLoading === m.userId}
+                  >
+                    {disconnectLoading === m.userId ? "..." : "Desvincular"}
+                  </Button>
+                )}
               </div>
             </div>
           ))}
@@ -119,7 +123,9 @@ export function TeamClient({ tenantId, members, invitations, disconnectionReques
                   <p className="text-sm text-muted-foreground">Expira em: {new Date(i.expiresAt).toLocaleDateString()}</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-sm bg-secondary px-2 py-1 rounded capitalize">{i.role}</span>
+                  <span className="text-sm bg-secondary px-2 py-1 rounded capitalize">
+                    {i.role === 'tenant_admin' ? 'Dono (Admin)' : i.role === 'admin' ? 'Administrador' : 'Membro'}
+                  </span>
                   <span className={`text-sm px-2 py-1 rounded ${i.status === 'expired' ? 'bg-destructive/10 text-destructive' : 'bg-muted'}`}>
                     {i.status === 'expired' ? 'Expirado' : 'Pendente'}
                   </span>
