@@ -157,6 +157,7 @@ export function InboxPanel({ tenantId, contactId }: InboxPanelProps) {
                     <label htmlFor="note" className="sr-only">Adicionar Nota Interna</label>
                     <Textarea 
                       id="note"
+                      label="Adicionar Nota Interna"
                       placeholder="Escreva uma nota interna..."
                       className="min-h-[80px] text-sm resize-none"
                       value={noteContent}
