@@ -85,4 +85,6 @@ Ao adicionar componente: documentar necessidade/props/estados, implementar sem d
 
 ## Evolução premium e BipeWPRO
 
-[PREMIUM_LAYOUT.md](PREMIUM_LAYOUT.md) define a composição do workspace/editor, responsividade, controles de estilo, estados e aceite. É um guia para a evolução de WPRO-004; não acrescenta exports implementados. O editor e suas regras de árvore ficam no futuro web-builder; este pacote recebe somente primitives genéricas, preservando tokens e consumidores atuais.
+Por instrução do usuário em 2026-09-16, a reformulação completa deste pacote fica para uma etapa futura. O BipeWPRO possui sua UI em [../web-builder-ui](../web-builder-ui/README.md). A nova biblioteca importa somente os tokens canônicos deste pacote; não copia valores nem altera seus componentes, exports ou estilos de produção.
+
+[PREMIUM_LAYOUT.md](PREMIUM_LAYOUT.md) permanece referência para evolução futura do SaaS. WPRO-004 atua em web-builder-ui, conforme o guia próprio do construtor.

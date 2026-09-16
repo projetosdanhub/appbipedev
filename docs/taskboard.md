@@ -1,17 +1,19 @@
 # Taskboard BipeSend — executável
 
-Versão 1.0.0 · Revisão 2026-09-15 · Base auditada `489fae2`
+Versão 1.0.0 · Revisão 2026-09-16 · Base auditada `46832fc`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 104 cards. BACKLOG: 53 · READY: 1 · IN_PROGRESS: 1 · BLOCKED: 1 · DONE: 48.
+Total: 104 cards. BACKLOG: 50 · READY: 1 · IN_PROGRESS: 3 · BLOCKED: 1 · DONE: 49.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
 ## Próximo ciclo
 
-1. WPRO-002: Organização aditiva de packages e contratos.
+1. BILL-001: Entitlements e contadores.
 - Em andamento: FND-002: Definir nome de trabalho e dominios candidatos.
+- Em andamento: PAGE-001: Schema de blocos.
+- Em andamento: WPRO-004: Primitives e layout premium do editor.
 
 Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protótipos visuais podem ser revisados, identificados como exemplos.
 BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-handoff.md. A fundação BILL-001 antecede os CRUDs com cota; planos futuros reutilizam sua estrutura. Respeitar a frente paralela do CRM e os gates de publicação/segurança.
@@ -85,11 +87,11 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 | [CAT-001](#cat-001) | BACKLOG | Categorias/produtos/opcoes | CRM-001, AUTH-016, WPRO-005, WPRO-006, BILL-001 |
 | [CAT-002](#cat-002) | BACKLOG | Loja/catalogo publico | CAT-001, AUTH-016, WPRO-007, WPRO-012, PAGE-003 |
 | [CAT-003](#cat-003) | BACKLOG | Carrinho, cotação e pedido Food | CAT-002, AUTH-016, WPRO-012, MSG-002 |
-| [PAGE-001](#page-001) | BACKLOG | Schema de blocos | AUTH-009, CRM-001, AUTH-016, WPRO-002 |
+| [PAGE-001](#page-001) | IN_PROGRESS | Schema de blocos | AUTH-009, CRM-001, AUTH-016, WPRO-002 |
 | [PAGE-002](#page-002) | BACKLOG | Editor e preview | PAGE-001, AUTH-016, WPRO-003, WPRO-004, WPRO-005, WPRO-007 |
 | [PAGE-003](#page-003) | BACKLOG | Publicacao, slug e dominio | PAGE-002, AUTH-016, WPRO-007, WPRO-008, BILL-001, MSG-001, MSG-002 |
 | [PAGE-004](#page-004) | BACKLOG | SEO/pixel/consentimento | PAGE-003, AUTH-016, WPRO-009 |
-| [BILL-001](#bill-001) | BACKLOG | Entitlements e contadores | AUTH-006, AUTH-016, WPRO-002 |
+| [BILL-001](#bill-001) | READY | Entitlements e contadores | AUTH-006, AUTH-016, WPRO-002 |
 | [BILL-002](#bill-002) | BACKLOG | CRUD de planos superadmin | BILL-001, AUTH-016 |
 | [BILL-003](#bill-003) | BACKLOG | Stripe Connect sandbox | BILL-002, AUTH-016 |
 | [BILL-004](#bill-004) | BACKLOG | Mercado Pago OAuth sandbox | BILL-002, AUTH-016 |
@@ -107,9 +109,9 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 | [FND-014](#fnd-014) | DONE | Entregar branch e guia de validação para Antigravity | FND-010, FND-011, FND-012, FND-013 |
 | [TEAM-007](#team-007) | DONE | Godmode e Impersonation (Superadmin e Contratante) | TEAM-002 |
 | [WPRO-001](#wpro-001) | DONE | Planejamento e regras do BipeWPRO | — |
-| [WPRO-002](#wpro-002) | READY | Organização aditiva de packages e contratos | WPRO-001 |
+| [WPRO-002](#wpro-002) | DONE | Organização aditiva de packages e contratos | WPRO-001 |
 | [WPRO-003](#wpro-003) | BACKLOG | Spike do canvas, DnD e preview responsivo | WPRO-002, PAGE-001 |
-| [WPRO-004](#wpro-004) | BACKLOG | Primitives e layout premium do editor | WPRO-002 |
+| [WPRO-004](#wpro-004) | IN_PROGRESS | Primitives e layout premium do editor | WPRO-002 |
 | [WPRO-005](#wpro-005) | BACKLOG | Espaços, sites e páginas com autorização | PAGE-001, BILL-001, AUTH-016 |
 | [WPRO-006](#wpro-006) | BACKLOG | Mídia e SVG seguros e reutilizáveis | WPRO-005, INF-001 |
 | [WPRO-007](#wpro-007) | BACKLOG | Renderer compartilhado e runtime público | WPRO-005, WPRO-006, PAGE-001 |
@@ -2110,7 +2112,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 <a id="page-001"></a>
 ### PAGE-001 — Schema de blocos
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 7 - catalogo e paginas
+**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 7 - catalogo e paginas
 
 **Objetivo:** Definir documento BipeWPRO único e versionado, com árvore, props allowlisted e herança responsiva.
 
@@ -2134,7 +2136,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - Documento único estrito com migração e roundtrip; sem execução arbitrária.
 - Core puro, testado e reutilizado por editor/renderer.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [docs/audit/bipewpro-foundation.md](../docs/audit/bipewpro-foundation.md)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
@@ -2237,7 +2239,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 <a id="bill-001"></a>
 ### BILL-001 — Entitlements e contadores
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 8 - billing e gateways
+**Estado:** READY · **Responsável:** Engenharia BipeSend · Milestone 8 - billing e gateways
 
 **Objetivo:** Fundação única e antecipada de entitlements/cotas, reutilizada pelo BipeWPRO e pelos planos futuros.
 
@@ -2781,7 +2783,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 <a id="wpro-002"></a>
 ### WPRO-002 — Organização aditiva de packages e contratos
 
-**Estado:** READY · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
+**Estado:** DONE · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
 
 **Objetivo:** Preparar fronteiras consumíveis por editor/renderer sem refatorar CRM concorrente.
 
@@ -2794,20 +2796,21 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 3. Introduzir projeção allowlist dos metadados de log e revisar Error/defaultContext.
 4. Documentar propriedade tenant/platform e extensão de eventos sem tornar tenantId opcional no contrato global.
 
-**Áreas de código:** `packages/contracts`, `packages/web-builder-core`, `packages/web-renderer`, `packages/web-builder`, `packages/logger`, `scripts/check-package-boundaries.mjs`.
+**Áreas de código:** `packages/contracts`, `packages/web-builder-core`, `packages/web-renderer`, `packages/web-builder`, `packages/logger`, `scripts/check-package-boundaries.mjs`, `packages/web-builder-ui`, `apps/api/src/tests/unit/boot.test.ts`, `apps/api/src/modules/06-inbox/presentation/inbox.controller.ts`.
 
 **Testes a executar:**
 
 - Testar imports client/server, ausência de dependência circular e compatibilidade dos consumidores.
 - Testar redaction de contexto, Error e objetos aninhados com dados sintéticos.
 - Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
+- pnpm bipewpro:check; pnpm bipewpro:smoke; pnpm foundation:check; build da galeria e typecheck dos consumidores. Correções mínimas de boot/lint da API documentadas na evidência.
 
 **Aceite:**
 
 - Nenhum pacote importa apps; cliente não carrega servidor.
 - Contracts e logger mantêm consumidores compatíveis; alterações aditivas documentadas.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [docs/audit/bipewpro-foundation.md](../docs/audit/bipewpro-foundation.md), [docs/audit/bipewpro-smoke.json](../docs/audit/bipewpro-smoke.json), [packages/web-builder/README.md](../packages/web-builder/README.md)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
@@ -2846,19 +2849,19 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 <a id="wpro-004"></a>
 ### WPRO-004 — Primitives e layout premium do editor
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
+**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
 
-**Objetivo:** Evoluir packages/ui por necessidade, seguindo PREMIUM_LAYOUT.
+**Objetivo:** Criar UI própria do BipeWPRO em packages/web-builder-ui, preservando packages/ui; reformulação global adiada por instrução do usuário.
 
 **Dependências:** WPRO-002
 
 **Passos:**
 
-1. Reutilizar componentes atuais e implementar somente controles genéricos ausentes.
+1. Criar controles próprios do construtor e reutilizar os tokens canônicos; não reformular packages/ui.
 2. Oferecer resize/fields de unidade/cor/espaçamento/breakpoint por teclado e valor textual.
 3. Preservar tokens, temas, altura estável e estados reais de salvamento.
 
-**Áreas de código:** `packages/ui`, `apps/tenant-web/src/app/design-system`, `packages/web-builder`.
+**Áreas de código:** `packages/web-builder-ui`, `packages/web-builder/demo`, `packages/web-builder`.
 
 **Testes a executar:**
 
@@ -2871,7 +2874,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - UI sem regras de Food/plano nem fetch oculto.
 - Documentação, galeria e exports correspondem à implementação.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [docs/audit/bipewpro-foundation.md](../docs/audit/bipewpro-foundation.md)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 

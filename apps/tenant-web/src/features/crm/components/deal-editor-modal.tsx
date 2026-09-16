@@ -7,6 +7,7 @@ import { createDealAction, updateDealAction, moveDealAction } from "../actions/d
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { InboxPanel } from "../../inbox/components/inbox-panel";
 // Aqui usamos um schema mais frouxo no client e dependemos do Backend, 
 // pois as regras dinâmicas estão lá, mas poderíamos checar client-side também.
 
@@ -162,6 +163,13 @@ export function DealEditorModal({
             </Button>
           </DialogFooter>
         </form>
+
+        {existingDeal && existingDeal.contactId && !isMoveMode && (
+          <div className="mt-6 border-t border-slate-200 pt-6">
+            <h4 className="font-semibold text-slate-800 mb-4">Atendimento ao Contato</h4>
+            <InboxPanel tenantId={tenantId} contactId={existingDeal.contactId} />
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

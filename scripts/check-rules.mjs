@@ -16,7 +16,7 @@ for (let index = 0; index < files.length; index++) {
     errors.push(`Empty rule: ${file}`);
 }
 if (files.length < 36) errors.push("Expected rules 00 through 35");
-for (const name of [
+const packageNames = [
   "auth",
   "config",
   "contracts",
@@ -24,7 +24,13 @@ for (const name of [
   "events",
   "security",
   "ui",
-]) {
+  "logger",
+  "web-builder-core",
+  "web-renderer",
+  "web-builder-ui",
+  "web-builder",
+];
+for (const name of packageNames) {
   const pkg = JSON.parse(
     await readFile(`${root}/packages/${name}/package.json`, "utf8"),
   );
@@ -42,5 +48,5 @@ if (errors.length) {
   process.exit(1);
 }
 console.log(
-  `Rules OK: ${files.length} active rules; 7 package guides. Content review: docs/audit/rules-review.md`,
+  `Rules OK: ${files.length} active rules; ${packageNames.length} package guides. Content review: docs/audit/rules-review.md`,
 );

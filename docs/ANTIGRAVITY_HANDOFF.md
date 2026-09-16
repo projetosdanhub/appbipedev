@@ -1,8 +1,10 @@
 # Retomada no Antigravity — BipeSend
 
-## Frente BipeWPRO - 2026-09-15
+## Frente BipeWPRO — implementação inicial 2026-09-16
 
-Planejamento separado em `feat/bipewpro-planning`, baseado em main `489fae2`. Leia [plano](plans/bipewpro.md), [handoff específico](plans/bipewpro-handoff.md) e cards WPRO/PAGE/CAT/BILL-001. Esta frente altera documentação/regras/taskboard, sem mover o código do CRM. O conteúdo abaixo preserva o histórico da fundação; suas pendências antigas não substituem o taskboard atual nem evidências novas.
+Branch `feat/bipewpro-planning`, com main `46832fc` integrada. Leia [plano](plans/bipewpro.md), [handoff específico](plans/bipewpro-handoff.md), [evidência](audit/bipewpro-foundation.md) e cards WPRO/PAGE/CAT/BILL-001. Há contratos, core, renderer e editor local com UI própria em `packages/web-builder-ui`. **Não reformular `packages/ui` agora**: o usuário adiou essa etapa. Rodar `pnpm bipewpro:dev` para a galeria; persistência, quotas e publicação continuam nos próximos cards.
+
+O conteúdo abaixo preserva o histórico da fundação; pendências antigas não substituem o taskboard atual nem evidências novas.
 
 Branch: `feat/saas-foundation-design-system`. Base: `fd3f4c3`. Objetivo: fundação de UI/pacotes/regras e taskboard executável, com correções de identidade e auditoria. Não houve merge ou deploy. Validação final: 63 testes locais, 33 verificações de navegador e builds dos três apps passaram; gates de banco/MFA permanecem abertos.
 

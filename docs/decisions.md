@@ -263,3 +263,16 @@ Adotado o ADR em [architecture/foundation.md](architecture/foundation.md): token
 ## ADR-BW-008 - Integração aditiva e evidência
 
 **Decisão:** branch `feat/bipewpro-planning` desde `489fae2`, com documentação/regras/taskboard antes da implementação. Preservar estados históricos e resolver conflitos por card/arquivo. Packages novos só existem quando houver código/consumidor; não migrar schema/contratos em massa durante trabalho local concorrente. SEO/Lighthouse/CWV/WCAG são critérios de validação, sem promessa de ranking ou certificação automática. **Evidência desta etapa:** [auditoria de planejamento](audit/bipewpro-planning.md).
+
+
+## ADR-BW-009 — UI dedicada do construtor e preservação do SaaS
+
+**Decisão do usuário, 2026-09-16:** criar `packages/web-builder-ui` para componentes específicos do BipeWPRO. A reformulação completa de `packages/ui` está adiada. Reutilizar somente seus tokens CSS nesta nova biblioteca; não copiar paleta, alterar exports/componentes globais ou mudar telas do CRM. O editor consome a UI dedicada; core/renderer permanecem independentes de React/UI. Esta decisão ajusta o destino de WPRO-004 e a seção 10 do plano anterior.
+
+**Implementação inicial:** shell desktop/sheet mobile, campos, navegação Elementos/Camadas/Ajustes, dispositivos e iframe isolado; quatro blocos tipados, comandos/histórico e galeria local com consumidor real. Estado local é apresentado como local; download não se anuncia como publicação ou persistência. Sem endpoints permissivos nem cotas simuladas para habilitar a demo.
+
+**Contratos:** exports por subpath, sem mover o index do CRM. O contrato de contexto é forma, não autenticação. Intenção de criação descreve 1 site + 1 inicial (+ catálogo Food); não concede vaga. O envelope tenant mantém tenantId obrigatório. O renderer inicial não aceita HTML/CSS/SVG/PHP arbitrário.
+
+**Logs:** manter as assinaturas e campos operacionais usados pela API, substituindo serialização ampla por allowlist em contexto/dados; Error sem message/stack/cause. Campo livre/e-mail antes emitido deixa de ser logado por decisão de minimização explícita.
+
+**Evidência e limites:** [WPRO-002](audit/bipewpro-foundation.md). PAGE-001/WPRO-004 continuam até suas entregas completas. A branch incorpora main `46832fc` (CRM/inbox) sem alterar esses arquivos nesta implementação; não confundir merge técnico na branch com merge em main/deploy.

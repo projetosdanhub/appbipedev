@@ -10,8 +10,12 @@ Consulte primeiro este mapa e o README do pacote. Versão de contrato: fundaçã
 | auth | policies portáveis; Auth.js e recovery no servidor Next | servidor | contracts, security, db |
 | db | Prisma e transação com contexto RLS | servidor | contracts |
 | events | envelope, adapter outbox, idempotência e backoff | Node servidor | contracts |
-| logger | logs estruturados; redaction atual tem limites documentados no README | servidor | nenhuma |
-| ui | tokens, componentes acessíveis e marca | React DOM; server/client conforme componente | nenhuma |
+| logger | logs estruturados com projeção allowlist; sem payload/stack brutos | servidor | nenhuma |
+| ui | tokens, componentes acessíveis e marca do SaaS; reforma global adiada | React DOM; server/client conforme componente | nenhuma |
+| web-builder-core | comandos, histórico e herança responsiva | puro cliente/servidor | contracts |
+| web-renderer | HTML/CSS validados; prévia sem scripts | puro cliente/servidor | contracts |
+| web-builder-ui | componentes próprios do construtor | React DOM cliente | ui (somente tokens CSS) |
+| web-builder | composição do editor e galeria local | React DOM cliente | contracts, core, renderer, builder-ui |
 
 `ui` não importa auth/db/security. Fastify importa `auth/policies`, sem trazer Next/Auth.js. Features compõem pacotes e regras de negócio; um pacote não deve importar um app. React Native futuro reutiliza contratos e conceitos, sem importar o pacote DOM.
 
@@ -29,19 +33,20 @@ Adicionar props/export opcional é evolução compatível; remover/renomear exig
 
 A biblioteca não promete todos os componentes possíveis: calendário avançado, gráficos, editor rich text, virtualização e uploader durável entram por necessidade comprovada, com teclado, performance e segurança no card correspondente.
 
-## Evolução BipeWPRO - planejamento 2026-09-15
+## BipeWPRO — primeira fatia implementada
 
-Plano canônico: [docs/plans/bipewpro.md](../docs/plans/bipewpro.md). Guia visual: [ui/PREMIUM_LAYOUT.md](ui/PREMIUM_LAYOUT.md). As pastas abaixo são destinos de implementação; não foram criadas como pacotes vazios nem estão disponíveis como exports.
+Plano canônico: [docs/plans/bipewpro.md](../docs/plans/bipewpro.md). UI própria: [web-builder-ui/README.md](web-builder-ui/README.md) e [guia premium](web-builder-ui/PREMIUM_LAYOUT.md). Por instrução do usuário, `packages/ui` mantém seus componentes/tokens atuais; sua reforma completa fica para outra etapa.
 
-| Destino planejado | Limite de responsabilidade |
+| Caminho implementado | Conteúdo e próximo limite |
 | --- | --- |
-| contracts/src/web, catalog e entitlements | Schemas versionados; manter exports atuais enquanto migra consumidores |
-| web-builder-core | Árvore, comandos, herança e migrações, sem React/I/O |
-| web-renderer | HTML/CSS semânticos e ilhas interativas; entrada server separada |
-| web-builder | Editor compartilhado tenant/superadmin; depende de core/renderer/ui |
-| security | Sanitização server-side de rich text/HTML/CSS/SVG e URLs |
-| ui | Controles genéricos de layout/estilo; sem regra de site, Food ou plano |
+| contracts/src/web | Documento inicial, estilos, propriedade, intenção de criação e evento platform separado |
+| contracts/src/catalog | Configuração inicial Food e formato monetário; sem cálculo comercial |
+| contracts/src/entitlements | Chaves, limites e projeção de concessões; enforcement pendente em BILL-001 |
+| web-builder-core | Comandos imutáveis, histórico e herança; migrações/registro extensível em PAGE-001 |
+| web-renderer | Quatro blocos com HTML/CSS validados; runtime público/domínios em cards posteriores |
+| web-builder-ui | Shell, controles, dispositivos, preview, navegação e sheet mobile; WPRO-004 continua |
+| web-builder | Consumidor real com galeria de edição local; sem ativação tenant/superadmin |
 
-Features de integração ficam nos apps; domínio em módulos 10-catalog, 11-pages e 12-billing. BILL-001 é a única fundação de entitlement e cota; o módulo de planos futuro reutiliza esses contratos. Eventos usam a infraestrutura de MSG-001/002, sem segundo outbox do editor.
+Rodar `pnpm bipewpro:dev`, `pnpm bipewpro:check` e `pnpm bipewpro:smoke`. Imports/graph são verificados por AST; builds de apps e banco são gates próprios. Novas dependências reutilizam versões já presentes no lockfile, sem atualizar resoluções das aplicações existentes.
 
-Extrair código gradualmente com consumidores e testes reais. Não reorganizar o index de contratos, schema Prisma, policies ou tokens em massa enquanto a frente do CRM está ativa. Preservar APIs públicas, evitar imports circulares e impedir que o site publicado carregue o editor. WPRO-002 coordena as mudanças aditivas e atualiza os verificadores de fronteira.
+Features ficam nos apps; domínio em 10-catalog, 11-pages e 12-billing. BILL-001 é a única fundação de entitlement/cota. Eventos usam MSG-001/002, sem segundo outbox. A organização é aditiva: contratos antigos, schema/policies e trabalho CRM do Gemini não são reorganizados nesta fatia.

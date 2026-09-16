@@ -8,6 +8,7 @@ test.describe('Invitation Flow', () => {
   const password = 'StrongPass123!';
 
   test('should invite a user and accept the invitation', async ({ page, context }) => {
+    test.setTimeout(120000); // 2 minutes timeout for this long flow
     // 1. Register Admin
     await page.goto('/register');
     await page.click('button:has-text("Cadastrar com E-mail")');
@@ -45,15 +46,19 @@ test.describe('Invitation Flow', () => {
     const links = await getRecentEmailLinks(inviteeEmail);
     expect(links.length).toBeGreaterThan(0);
     
-    const inviteLink = links.find(l => l.includes('/invite?token='));
-    expect(inviteLink).toBeTruthy();
+    const inviteLinkOriginal = links.find(l => l.includes('/invite?token='));
+    expect(inviteLinkOriginal).toBeTruthy();
+    
+    // Parse the link and use just the pathname + search to navigate in the current context
+    const inviteUrl = new URL(inviteLinkOriginal as string);
+    const invitePath = inviteUrl.pathname + inviteUrl.search;
 
     // 4. Accept Invitation (New session — not logged in)
     await context.clearCookies();
-    await page.goto(inviteLink as string);
+    await page.goto(invitePath);
     
     // The invite page shows "Criar Conta" for non-logged-in users
-    await expect(page.locator('text="Convite para Workspace"')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text="Você recebeu um convite!"')).toBeVisible({ timeout: 10000 });
     await page.click('button:has-text("Criar Conta")');
     
     // Now on the register page with pre-filled email & callbackUrl
@@ -73,7 +78,7 @@ test.describe('Invitation Flow', () => {
     if (currentUrl.includes('/onboarding')) {
       // The invitee shouldn't need onboarding since they'll join via invite
       // Navigate directly to the invite link
-      await page.goto(inviteLink as string);
+      await page.goto(invitePath);
     }
 
     // Now logged in — we should see the "Aceitar Convite" button

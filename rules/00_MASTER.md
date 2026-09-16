@@ -1,6 +1,6 @@
 # BipeSend Rules — regra mestre
 
-Versão: 2.1.0
+Versão: 2.2.0
 Status: contrato oficial de engenharia, UX/UI e segurança
 Bootstrap de agente: `!construibase`
 
@@ -101,7 +101,7 @@ Regra mais específica prevalece sobre regra genérica desde que não reduza seg
 - não criar endpoints, SQL, permissões, claims ou segredos fora do contrato;
 - validar entrada na borda e no domínio;
 - aplicar tenant context e autorização em cada operação;
-- usar componentes de `packages/ui` antes de criar componente local;
+- usar componentes de `packages/ui` antes de criar componente local; exceção específica autorizada: UI do BipeWPRO em `packages/web-builder-ui`, compartilhando os tokens atuais;
 - usar tokens semânticos em vez de valores soltos;
 - impedir duplo submit e operações concorrentes não idempotentes;
 - escrever testes proporcionais ao risco.
@@ -125,7 +125,7 @@ Regra mais específica prevalece sobre regra genérica desde que não reduza seg
 - `apps/superadmin-web` para operação da plataforma;
 - `apps/marketing-web` para presença pública;
 - `apps/api`, workers e pacotes compartilhados;
-- `packages/ui` é a casa dos componentes compartilhados;
+- `packages/ui` é a casa dos componentes compartilhados do SaaS; a UI específica do construtor fica em `packages/web-builder-ui`;
 - `packages/auth`, `packages/security`, `packages/contracts` e `packages/db` concentram contratos transversais.
 
 ### Padrão Arquitetural de Integração Frontend-Backend
@@ -165,3 +165,7 @@ O fluxo visual e comportamental dessas telas está em `29_AUTH_UX_FLOWS.md`.
 ## 9. Planejamento BipeWPRO - 2026-09-15
 
 O construtor compartilhado, catálogo Food, publicação e contratos de capacidade/cota estão especificados em `docs/plans/bipewpro.md`. Regras 36/37 complementam os padrões existentes. O planejamento não ativa funcionalidades nem conclui cards de implementação. O taskboard preserva PAGE/CAT/BILL e acrescenta WPRO para entregas distintas. Integração com a frente do Gemini é aditiva, sem mover código ou alterar migração histórica por conveniência.
+
+### Início da execução — 2026-09-16
+
+O usuário reservou a reforma completa de `packages/ui` para outra etapa. A primeira fatia do BipeWPRO cria `web-builder-ui`, `web-builder-core`, `web-renderer` e `web-builder`, sem alterar componentes/tokens atuais do SaaS. Estado real, gates e limites em `docs/audit/bipewpro-foundation.md`. A galeria é local; ela não constitui habilitação do produto, CRUD autorizado nem publicação.

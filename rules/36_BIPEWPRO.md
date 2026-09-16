@@ -1,6 +1,6 @@
 # BipeWPRO: criação, catálogo e publicação
 
-Contrato de planejamento, 2026-09-15. Fonte detalhada: `docs/plans/bipewpro.md`; execução em PAGE, CAT, BILL-001 e WPRO no taskboard. Esta regra não declara funcionalidades implementadas.
+Contrato de planejamento, 2026-09-15. Fonte detalhada: `docs/plans/bipewpro.md`; execução em PAGE, CAT, BILL-001 e WPRO no taskboard. O estado implementado é registrado no taskboard e em `docs/audit/bipewpro-foundation.md`.
 
 ## Produto e propriedade
 
@@ -12,6 +12,7 @@ Contrato de planejamento, 2026-09-15. Fonte detalhada: `docs/plans/bipewpro.md`;
 ## Documento e editor
 
 - Árvore única, JSON versionado validado em contracts; estilos base e overrides de tablet/desktop. Sem duplicar domínio, queries ou página por viewport.
+- A UI específica pertence a `packages/web-builder-ui`; a reforma completa de `packages/ui` foi adiada pelo usuário. Compartilhar tokens existentes sem copiá-los.
 - Core, renderer e editor têm fronteiras explícitas. O bundle público não carrega inspectors, DnD ou dependências de edição.
 - Usar `@hello-pangea/dnd` conforme a regra mestre; comprovar a interação no spike WPRO-003. Grid visual não comprova suporte a DnD bidimensional. Oferecer comandos de clique/teclado para hierarquia e ordem.
 - Undo/redo, autosave com revisão esperada, erro recuperável, conflito 409 e preview isolado. Salvar rascunho não publica.

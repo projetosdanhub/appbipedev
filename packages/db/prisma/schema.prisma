@@ -77,60 +77,69 @@ model VerificationToken {
 }
 
 model Tenant {
-  id                   String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                 String            @db.VarChar(255)
-  slug                 String            @unique @default(dbgenerated("gen_random_uuid()")) @db.VarChar(100)
-  ownerMembershipId    String?           @map("owner_membership_id") @db.Uuid
-  status               String            @default("active") @db.VarChar(50)
-  authorizationVersion Int               @default(1) @map("authorization_version")
-  createdAt            DateTime          @default(now()) @map("created_at")
-  updatedAt            DateTime          @default(now()) @updatedAt @map("updated_at")
-  apiKeys              ApiKey[]
-  departments          Department[]
-  invitations          Invitation[]
-  memberships          Membership[]
-  webhookEndpoints     WebhookEndpoint[]
-  contacts             Contact[]
-  customFields         CustomField[]
-  tags                 Tag[]
-  contactTags          ContactTag[]
-  segments             Segment[]
-  importBatches        ContactImportBatch[]
-  pipelines            Pipeline[]
-  pipelineStages       PipelineStage[]
-  deals                Deal[]
-  dealStageHistories   DealStageHistory[]
+  id                          String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                        String                      @db.VarChar(255)
+  slug                        String                      @unique @default(dbgenerated("gen_random_uuid()")) @db.VarChar(100)
+  ownerMembershipId           String?                     @map("owner_membership_id") @db.Uuid
+  status                      String                      @default("active") @db.VarChar(50)
+  authorizationVersion        Int                         @default(1) @map("authorization_version")
+  createdAt                   DateTime                    @default(now()) @map("created_at")
+  updatedAt                   DateTime                    @default(now()) @updatedAt @map("updated_at")
+  apiKeys                     ApiKey[]
+  departments                 Department[]
+  invitations                 Invitation[]
+  memberships                 Membership[]
+  webhookEndpoints            WebhookEndpoint[]
+  contacts                    Contact[]
+  customFields                CustomField[]
+  tags                        Tag[]
+  contactTags                 ContactTag[]
+  segments                    Segment[]
+  importBatches               ContactImportBatch[]
+  pipelines                   Pipeline[]
+  pipelineStages              PipelineStage[]
+  deals                       Deal[]
+  dealStageHistories          DealStageHistory[]
+  conversations               Conversation[]
+  messages                    Message[]
+  conversationReadStates      ConversationReadState[]
+  conversationStatusHistories ConversationStatusHistory[]
 
   @@map("tenants")
 }
 
 model Membership {
-  id                    String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId              String      @map("tenant_id") @db.Uuid
-  userId                String      @map("user_id") @db.Uuid
-  role                  String      @default("member") @db.VarChar(50)
-  displayName           String?     @map("display_name") @db.VarChar(120)
-  relationshipType      String      @default("team_partner") @map("relationship_type") @db.VarChar(50)
-  status                String      @default("active") @db.VarChar(50)
-  authorizationVersion  Int         @default(1) @map("authorization_version")
-  jobTitle              String?     @map("job_title") @db.VarChar(100)
-  invitedByMembershipId String?     @map("invited_by_membership_id") @db.Uuid
-  joinedAt              DateTime?   @map("joined_at")
-  suspendedAt           DateTime?   @map("suspended_at")
-  removedAt             DateTime?   @map("removed_at")
-  statusReason          String?     @map("status_reason")
-  active                Boolean     @default(true)
-  createdAt             DateTime    @default(now()) @map("created_at")
-  updatedAt             DateTime    @default(now()) @updatedAt @map("updated_at")
-  departmentId          String?     @map("department_id") @db.Uuid
-  alias                 String?     @db.VarChar(100)
-  department            Department? @relation(fields: [departmentId], references: [id])
-  dealsAssigned         Deal[]      @relation("DealAssignedMembership")
-  dealsCreated          Deal[]      @relation("DealCreatedByMembership")
-  dealsUpdated          Deal[]      @relation("DealUpdatedByMembership")
-  dealHistories         DealStageHistory[]
-  tenant                Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user                  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                          String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId                    String                      @map("tenant_id") @db.Uuid
+  userId                      String                      @map("user_id") @db.Uuid
+  role                        String                      @default("member") @db.VarChar(50)
+  displayName                 String?                     @map("display_name") @db.VarChar(120)
+  relationshipType            String                      @default("team_partner") @map("relationship_type") @db.VarChar(50)
+  status                      String                      @default("active") @db.VarChar(50)
+  authorizationVersion        Int                         @default(1) @map("authorization_version")
+  jobTitle                    String?                     @map("job_title") @db.VarChar(100)
+  invitedByMembershipId       String?                     @map("invited_by_membership_id") @db.Uuid
+  joinedAt                    DateTime?                   @map("joined_at")
+  suspendedAt                 DateTime?                   @map("suspended_at")
+  removedAt                   DateTime?                   @map("removed_at")
+  statusReason                String?                     @map("status_reason")
+  active                      Boolean                     @default(true)
+  createdAt                   DateTime                    @default(now()) @map("created_at")
+  updatedAt                   DateTime                    @default(now()) @updatedAt @map("updated_at")
+  departmentId                String?                     @map("department_id") @db.Uuid
+  alias                       String?                     @db.VarChar(100)
+  department                  Department?                 @relation(fields: [departmentId], references: [id])
+  dealsAssigned               Deal[]                      @relation("DealAssignedMembership")
+  dealsCreated                Deal[]                      @relation("DealCreatedByMembership")
+  dealsUpdated                Deal[]                      @relation("DealUpdatedByMembership")
+  dealHistories               DealStageHistory[]
+  conversationsAssigned       Conversation[]              @relation("ConversationAssignedMembership")
+  conversationsCreated        Conversation[]              @relation("ConversationCreatedByMembership")
+  messagesAuthored            Message[]
+  conversationReadStates      ConversationReadState[]
+  conversationStatusHistories ConversationStatusHistory[]
+  tenant                      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user                        User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, userId])
   @@map("memberships")
@@ -151,23 +160,24 @@ model DisconnectionRequest {
 }
 
 model Role {
-  id                    String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId              String      @map("tenant_id") @db.Uuid
-  departmentId          String?     @map("department_id") @db.Uuid
-  key                   String?     @unique @db.VarChar(100)
-  name                  String      @db.VarChar(100)
-  nameNormalized        String?     @map("name_normalized")
-  description           String?     @db.VarChar(500)
-  scopeKind             String      @default("TENANT") @map("scope_kind") @db.VarChar(50)
-  isBaseRole            Boolean     @default(false) @map("is_base_role")
-  status                String      @default("active") @db.VarChar(50)
-  policyVersion         Int         @default(1) @map("policy_version")
-  createdByMembershipId String?     @map("created_by_membership_id") @db.Uuid
-  updatedByMembershipId String?     @map("updated_by_membership_id") @db.Uuid
-  archivedAt            DateTime?   @map("archived_at")
-  createdAt             DateTime    @default(now()) @map("created_at")
-  department            Department? @relation(fields: [departmentId], references: [id])
+  id                    String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId              String         @map("tenant_id") @db.Uuid
+  departmentId          String?        @map("department_id") @db.Uuid
+  key                   String?        @unique @db.VarChar(100)
+  name                  String         @db.VarChar(100)
+  nameNormalized        String?        @map("name_normalized")
+  description           String?        @db.VarChar(500)
+  scopeKind             String         @default("TENANT") @map("scope_kind") @db.VarChar(50)
+  isBaseRole            Boolean        @default(false) @map("is_base_role")
+  status                String         @default("active") @db.VarChar(50)
+  policyVersion         Int            @default(1) @map("policy_version")
+  createdByMembershipId String?        @map("created_by_membership_id") @db.Uuid
+  updatedByMembershipId String?        @map("updated_by_membership_id") @db.Uuid
+  archivedAt            DateTime?      @map("archived_at")
+  createdAt             DateTime       @default(now()) @map("created_at")
+  department            Department?    @relation(fields: [departmentId], references: [id])
   deals                 Deal[]
+  Conversation          Conversation[]
 
   @@map("roles")
 }
@@ -180,22 +190,23 @@ model Permission {
 }
 
 model Department {
-  id                    String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId              String       @map("tenant_id") @db.Uuid
-  name                  String       @db.VarChar(100)
-  nameNormalized        String?      @map("name_normalized")
+  id                    String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId              String         @map("tenant_id") @db.Uuid
+  name                  String         @db.VarChar(100)
+  nameNormalized        String?        @map("name_normalized")
   description           String?
-  status                String       @default("active") @db.VarChar(50)
-  leadMembershipId      String?      @map("lead_membership_id") @db.Uuid
-  sortOrder             Int?         @map("sort_order")
-  createdByMembershipId String?      @map("created_by_membership_id") @db.Uuid
-  archivedAt            DateTime?    @map("archived_at")
-  createdAt             DateTime     @default(now()) @map("created_at")
-  updatedAt             DateTime     @updatedAt @map("updated_at")
-  tenant                Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  status                String         @default("active") @db.VarChar(50)
+  leadMembershipId      String?        @map("lead_membership_id") @db.Uuid
+  sortOrder             Int?           @map("sort_order")
+  createdByMembershipId String?        @map("created_by_membership_id") @db.Uuid
+  archivedAt            DateTime?      @map("archived_at")
+  createdAt             DateTime       @default(now()) @map("created_at")
+  updatedAt             DateTime       @updatedAt @map("updated_at")
+  tenant                Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   memberships           Membership[]
   roles                 Role[]
-  deals                 Deal[]
+  Deal                  Deal[]
+  Conversation          Conversation[]
 
   @@unique([tenantId, name])
   @@map("departments")
@@ -426,17 +437,18 @@ model CustomField {
 }
 
 model Contact {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId     String   @map("tenant_id") @db.Uuid
-  name         String   @db.VarChar(255)
-  email        String?  @db.VarChar(255)
-  phone        String?  @db.VarChar(50)
-  customFields Json?    @map("custom_fields")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
-  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  tags         ContactTag[]
-  deals        Deal[]
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId      String         @map("tenant_id") @db.Uuid
+  name          String         @db.VarChar(255)
+  email         String?        @db.VarChar(255)
+  phone         String?        @db.VarChar(50)
+  customFields  Json?          @map("custom_fields")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at")
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tags          ContactTag[]
+  deals         Deal[]
+  conversations Conversation[]
 
   @@map("contacts")
 }
@@ -492,6 +504,7 @@ model Segment {
 
   @@map("segments")
 }
+
 model ContactImportBatch {
   id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId              String    @map("tenant_id") @db.Uuid
@@ -523,18 +536,18 @@ model ContactImportBatch {
 }
 
 model Pipeline {
-  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId        String          @map("tenant_id") @db.Uuid
-  name            String          @db.VarChar(100)
-  nameNormalized  String          @map("name_normalized") @db.VarChar(100)
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  name            String   @db.VarChar(100)
+  nameNormalized  String   @map("name_normalized") @db.VarChar(100)
   description     String?
-  status          String          @default("active") @db.VarChar(50)
-  defaultCurrency String          @default("BRL") @map("default_currency") @db.VarChar(3)
-  version         Int             @default(1)
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at")
+  status          String   @default("active") @db.VarChar(50)
+  defaultCurrency String   @default("BRL") @map("default_currency") @db.VarChar(3)
+  version         Int      @default(1)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   stages PipelineStage[]
   deals  Deal[]
 
@@ -586,15 +599,15 @@ model Deal {
   createdAt             DateTime  @default(now()) @map("created_at")
   updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at")
 
-  tenant              Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  contact             Contact         @relation(fields: [contactId], references: [id], onDelete: Cascade)
-  pipeline            Pipeline        @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
-  stage               PipelineStage   @relation(fields: [stageId], references: [id], onDelete: Cascade)
-  department          Department?     @relation(fields: [departmentId], references: [id])
-  routingRole         Role?           @relation(fields: [routingRoleId], references: [id])
-  assignedMembership  Membership?     @relation("DealAssignedMembership", fields: [assignedMembershipId], references: [id])
-  createdByMembership Membership      @relation("DealCreatedByMembership", fields: [createdByMembershipId], references: [id])
-  updatedByMembership Membership      @relation("DealUpdatedByMembership", fields: [updatedByMembershipId], references: [id])
+  tenant              Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  contact             Contact            @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  pipeline            Pipeline           @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  stage               PipelineStage      @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  department          Department?        @relation(fields: [departmentId], references: [id])
+  routingRole         Role?              @relation(fields: [routingRoleId], references: [id])
+  assignedMembership  Membership?        @relation("DealAssignedMembership", fields: [assignedMembershipId], references: [id])
+  createdByMembership Membership         @relation("DealCreatedByMembership", fields: [createdByMembershipId], references: [id])
+  updatedByMembership Membership         @relation("DealUpdatedByMembership", fields: [updatedByMembershipId], references: [id])
   history             DealStageHistory[]
 
   // RLS / composite FK compliance: ensure relationships stay within the same tenant.
@@ -616,11 +629,100 @@ model DealStageHistory {
   occurredAt        DateTime @default(now()) @map("occurred_at")
   version           Int
 
-  tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  deal            Deal          @relation(fields: [dealId], references: [id], onDelete: Cascade)
-  actorMembership Membership?   @relation(fields: [actorMembershipId], references: [id])
+  tenant          Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  deal            Deal        @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  actorMembership Membership? @relation(fields: [actorMembershipId], references: [id])
 
   @@index([dealId])
   @@index([tenantId])
   @@map("deal_stage_history")
+}
+
+model Conversation {
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId              String    @map("tenant_id") @db.Uuid
+  contactId             String    @map("contact_id") @db.Uuid
+  subject               String?   @db.VarChar(255)
+  source                String    @default("internal_crm") @db.VarChar(50)
+  channelReference      String?   @map("channel_reference") @db.VarChar(255)
+  status                String    @default("open") @db.VarChar(50)
+  departmentId          String?   @map("department_id") @db.Uuid
+  routingRoleId         String?   @map("routing_role_id") @db.Uuid
+  assignedMembershipId  String?   @map("assigned_membership_id") @db.Uuid
+  createdByMembershipId String    @map("created_by_membership_id") @db.Uuid
+  version               Int       @default(1)
+  lastActivityAt        DateTime  @default(now()) @map("last_activity_at")
+  closedAt              DateTime? @map("closed_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  tenant              Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  contact             Contact                     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  department          Department?                 @relation(fields: [departmentId], references: [id])
+  routingRole         Role?                       @relation(fields: [routingRoleId], references: [id])
+  assignedMembership  Membership?                 @relation("ConversationAssignedMembership", fields: [assignedMembershipId], references: [id])
+  createdByMembership Membership                  @relation("ConversationCreatedByMembership", fields: [createdByMembershipId], references: [id])
+  messages            Message[]
+  readStates          ConversationReadState[]
+  statusHistories     ConversationStatusHistory[]
+
+  @@index([tenantId, contactId])
+  @@map("conversations")
+}
+
+model Message {
+  id                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId                String   @map("tenant_id") @db.Uuid
+  conversationId          String   @map("conversation_id") @db.Uuid
+  sequence                String   @db.VarChar(50)
+  kind                    String   @default("internal_note") @db.VarChar(50)
+  direction               String   @default("internal") @db.VarChar(50)
+  authorMembershipId      String?  @map("author_membership_id") @db.Uuid
+  externalSenderReference String?  @map("external_sender_reference") @db.VarChar(255)
+  text                    String
+  state                   String   @default("saved") @db.VarChar(50)
+  clientMessageId         String?  @map("client_message_id") @db.VarChar(255)
+  createdAt               DateTime @default(now()) @map("created_at")
+
+  tenant           Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  conversation     Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  authorMembership Membership?  @relation(fields: [authorMembershipId], references: [id])
+
+  @@unique([tenantId, conversationId, authorMembershipId, clientMessageId])
+  @@index([tenantId, conversationId])
+  @@map("messages")
+}
+
+model ConversationReadState {
+  tenantId         String   @map("tenant_id") @db.Uuid
+  conversationId   String   @map("conversation_id") @db.Uuid
+  membershipId     String   @map("membership_id") @db.Uuid
+  lastReadSequence String   @map("last_read_sequence") @db.VarChar(50)
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  membership   Membership   @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+
+  @@id([tenantId, conversationId, membershipId])
+  @@map("conversation_read_states")
+}
+
+model ConversationStatusHistory {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  conversationId    String   @map("conversation_id") @db.Uuid
+  fromStatus        String?  @map("from_status") @db.VarChar(50)
+  toStatus          String   @map("to_status") @db.VarChar(50)
+  actorMembershipId String?  @map("actor_membership_id") @db.Uuid
+  reason            String?  @db.VarChar(1000)
+  occurredAt        DateTime @default(now()) @map("occurred_at")
+  version           Int
+
+  tenant          Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  actorMembership Membership?  @relation(fields: [actorMembershipId], references: [id])
+
+  @@index([tenantId, conversationId])
+  @@map("conversation_status_history")
 }

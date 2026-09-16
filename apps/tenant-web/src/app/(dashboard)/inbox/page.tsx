@@ -208,7 +208,9 @@ export default function InboxPage() {
         </div>
 
         {/* Chat History */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar" style={{ backgroundImage: "url('/chat-bg.png')", backgroundSize: "cover", backgroundPosition: "center", backgroundBlendMode: "overlay", backgroundColor: "rgba(248, 250, 252, 0.95)" }}>
+        <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar bg-[#F8FAFC] dark:bg-[#0B1120] relative">
+          <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, rgba(0,0,0,0.15) 1px, transparent 0)", backgroundSize: "24px 24px" }} />
+          <div className="relative z-10">
           <div className="flex justify-center mb-6">
             <span className="px-3 py-1 bg-black/5 dark:bg-white/10 rounded-full text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8] backdrop-blur-sm">
               Hoje
@@ -237,6 +239,7 @@ export default function InboxPage() {
               </div>
             )
           })}
+          </div>
         </div>
 
         {/* Chat Input */}

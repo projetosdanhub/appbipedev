@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "reviewedAt": "2026-09-15",
-  "baseCommit": "489fae20e9370d099c1a77701fa1855deb4bb0c4",
+  "reviewedAt": "2026-09-16",
+  "baseCommit": "46832fcc6226665d545c69d4d2636df8722ba1e1",
   "cards": [
     {
       "id": "FND-001",
@@ -2262,7 +2262,7 @@
         "AUTH-016",
         "WPRO-002"
       ],
-      "status": "BACKLOG",
+      "status": "IN_PROGRESS",
       "objective": "Definir documento BipeWPRO único e versionado, com árvore, props allowlisted e herança responsiva.",
       "steps": [
         "Schemas Zod em contracts/web; IDs, versões, tipos, referências e limites de bytes/nós/profundidade.",
@@ -2278,7 +2278,9 @@
         "Testar ciclo, IDs duplicados, props desconhecidas, limite de tamanho, herança e upgrade de versão.",
         "Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação."
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/audit/bipewpro-foundation.md"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -2406,7 +2408,7 @@
         "AUTH-016",
         "WPRO-002"
       ],
-      "status": "BACKLOG",
+      "status": "READY",
       "objective": "Fundação única e antecipada de entitlements/cotas, reutilizada pelo BipeWPRO e pelos planos futuros.",
       "steps": [
         "Criar definições/concessões/contadores/reservas com revisão, vigência e motivo auditável.",
@@ -2978,7 +2980,7 @@
       "dependencies": [
         "WPRO-001"
       ],
-      "status": "READY",
+      "status": "DONE",
       "objective": "Preparar fronteiras consumíveis por editor/renderer sem refatorar CRM concorrente.",
       "steps": [
         "Adicionar contracts/web, catalog e entitlements com exports compatíveis e consumidores reais.",
@@ -2992,14 +2994,22 @@
         "packages/web-renderer",
         "packages/web-builder",
         "packages/logger",
-        "scripts/check-package-boundaries.mjs"
+        "scripts/check-package-boundaries.mjs",
+        "packages/web-builder-ui",
+        "apps/api/src/tests/unit/boot.test.ts",
+        "apps/api/src/modules/06-inbox/presentation/inbox.controller.ts"
       ],
       "tests": [
         "Testar imports client/server, ausência de dependência circular e compatibilidade dos consumidores.",
         "Testar redaction de contexto, Error e objetos aninhados com dados sintéticos.",
-        "Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação."
+        "Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.",
+        "pnpm bipewpro:check; pnpm bipewpro:smoke; pnpm foundation:check; build da galeria e typecheck dos consumidores. Correções mínimas de boot/lint da API documentadas na evidência."
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/audit/bipewpro-foundation.md",
+        "docs/audit/bipewpro-smoke.json",
+        "packages/web-builder/README.md"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend - frente BipeWPRO"
     },
@@ -3047,16 +3057,16 @@
       "dependencies": [
         "WPRO-002"
       ],
-      "status": "BACKLOG",
-      "objective": "Evoluir packages/ui por necessidade, seguindo PREMIUM_LAYOUT.",
+      "status": "IN_PROGRESS",
+      "objective": "Criar UI própria do BipeWPRO em packages/web-builder-ui, preservando packages/ui; reformulação global adiada por instrução do usuário.",
       "steps": [
-        "Reutilizar componentes atuais e implementar somente controles genéricos ausentes.",
+        "Criar controles próprios do construtor e reutilizar os tokens canônicos; não reformular packages/ui.",
         "Oferecer resize/fields de unidade/cor/espaçamento/breakpoint por teclado e valor textual.",
         "Preservar tokens, temas, altura estável e estados reais de salvamento."
       ],
       "codeAreas": [
-        "packages/ui",
-        "apps/tenant-web/src/app/design-system",
+        "packages/web-builder-ui",
+        "packages/web-builder/demo",
         "packages/web-builder"
       ],
       "tests": [
@@ -3064,7 +3074,9 @@
         "Testar conflito/erro de campo, herança e restauração sem perda de valor.",
         "Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação."
       ],
-      "evidence": [],
+      "evidence": [
+        "docs/audit/bipewpro-foundation.md"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend - frente BipeWPRO"
     },

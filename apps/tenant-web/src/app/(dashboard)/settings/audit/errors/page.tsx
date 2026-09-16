@@ -3,11 +3,10 @@ import { ErrorTriagePanel } from "@/features/support/components/error-triage-pan
 import { getWorkspaceUser } from "@/features/workspace/server/session";
 import { redirect } from "next/navigation";
 
-export default async function AuditErrorsPage({
-  searchParams,
-}: {
-  searchParams: { status?: string; errorCode?: string };
+export default async function AuditErrorsPage(props: {
+  searchParams: Promise<{ status?: string; errorCode?: string }>;
 }) {
+  const searchParams = await props.searchParams;
   const user = await getWorkspaceUser();
   if (!user) {
     redirect("/login");

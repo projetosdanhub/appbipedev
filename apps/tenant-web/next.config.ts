@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
   experimental: {
     // next-intl usa isso
     serverActions: {
-      allowedOrigins: ['app.localhost', ngrokHost].filter(Boolean),
+      allowedOrigins: ['app.localhost', ngrokHost, 'localhost:3000', '127.0.0.1:3000', 'localhost:3001', '127.0.0.1:3001'].filter(Boolean),
     },
   },
   allowedDevOrigins: ['127.0.0.1', 'localhost', '::1', ngrokHost, 'app.localhost', 'admin.localhost'].filter(Boolean),

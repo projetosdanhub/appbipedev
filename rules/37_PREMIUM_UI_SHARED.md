@@ -1,6 +1,6 @@
 # UI premium e pacotes compartilhados
 
-Complementa regras 12, 14, 22, 24, 30, 32 e 35. `packages/ui/src/styles/tokens.css` continua sendo a fonte executável dos valores. Guia de aplicação: `packages/ui/PREMIUM_LAYOUT.md`. Escopo: novas peças e refatorações autorizadas; não obriga reforma global fora do card.
+Complementa regras 12, 14, 22, 24, 30, 32 e 35. `packages/ui/src/styles/tokens.css` continua sendo a fonte executável dos valores. Guia do construtor: `packages/web-builder-ui/PREMIUM_LAYOUT.md`. A reforma de `packages/ui` está adiada pelo usuário; seu guia permanece referência futura. Escopo: novas peças e refatorações autorizadas; não obriga reforma global fora do card.
 
 ## Composição
 
@@ -13,7 +13,7 @@ Complementa regras 12, 14, 22, 24, 30, 32 e 35. `packages/ui/src/styles/tokens.c
 
 ## Componentes
 
-Antes de criar, procurar export existente. Primitives genéricas ficam em ui; o editor compartilhado fica em web-builder; regras de Food/publicação ficam nos módulos de negócio. UI não busca dados, lê env secreto ou decide permissão/plano.
+Antes de criar, procurar export existente. Primitives genéricas do SaaS ficam em ui; componentes próprios do construtor ficam em web-builder-ui; comandos e composição do editor compartilhado ficam em web-builder; regras de Food/publicação ficam nos módulos de negócio. UI não busca dados, lê env secreto ou decide permissão/plano.
 
 Novos controles de cor, unidade, espaçamento, gradiente e breakpoint precisam de labels, valor textual, estados de erro e teclado. Foco visível é obrigatório; tooltip pode complementar, nunca carregar a única explicação. Não remover uma implementação acessível existente apenas por preferência estética.
 

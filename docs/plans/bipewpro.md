@@ -4,7 +4,7 @@ Versão 1.0 | 15 de setembro de 2026 | Planejamento para implementação por eta
 
 Repositório: projetosdanhub/appbipedev. Branch: `feat/bipewpro-planning`. Base auditada: `489fae20e9370d099c1a77701fa1855deb4bb0c4`.
 
-Este documento especifica a evolução do BipeSend para criar sites, landing pages e catálogos Food. A entrega atual contém planejamento, regras, organização documental e taskboard; não contém o construtor implementado. O Markdown é a fonte técnica versionada; o PDF é sua edição para leitura. Cards e estado de execução continuam em `docs/taskboard.json`.
+Este documento especifica a evolução do BipeSend para criar sites, landing pages e catálogos Food. O planejamento foi entregue primeiro; a execução inicial de WPRO-002 está registrada em `docs/audit/bipewpro-foundation.md`. Já existe galeria local de edição com quatro blocos, sem CRUD, autorização/cotas persistidas ou publicação. O estado de implementação não deve ser inferido das funcionalidades futuras descritas neste plano. O Markdown é a fonte técnica versionada; o PDF é sua edição para leitura. Cards e estado de execução continuam em `docs/taskboard.json`.
 
 ## 1. Resultado esperado e decisões de partida
 
@@ -157,7 +157,8 @@ Preservar os oito pacotes existentes. Extrair por responsabilidade, com exports 
 | `packages/contracts/src/web/` | Espaços, sites, páginas, blocos, revisões, menus, domínios e publicação |
 | `packages/contracts/src/catalog/` | Food, preços, opções, disponibilidade, entrega e pedidos |
 | `packages/contracts/src/entitlements/` | Capacidades, quotas, disponibilidade e erros; fonte única compartilhada |
-| `packages/ui` | Primitives, tokens, campos de estilo genéricos, shell de editor e acessibilidade, sem domínio |
+| `packages/ui` | Primitives/tokens atuais do SaaS preservados; reforma completa adiada pelo usuário |
+| `packages/web-builder-ui` (novo) | UI específica do construtor, shell/controles/prévia; importa somente tokens de ui |
 | `packages/auth` | Policies tenant e platform; avaliar ação/escopo no backend |
 | `packages/security` | Sanitização server-side de conteúdo/SVG/CSS, URLs, uploads e redaction por finalidade |
 | `packages/db` | Prisma, migrations aditivas, constraints compostas, RLS, índices e transações |
@@ -166,7 +167,7 @@ Preservar os oito pacotes existentes. Extrair por responsabilidade, com exports 
 | `packages/logger` | Logs estruturados minimizados; completar README e revisar a fronteira de redaction |
 | `packages/web-builder-core` (novo) | Árvore, comandos, herança, migrações e registro lógico, sem React/I/O |
 | `packages/web-renderer` (novo) | Renderização semântica compartilhada; entrada server e ilhas interativas separadas |
-| `packages/web-builder` (novo) | Editor React usado por tenant e superadmin, consumindo core/renderer/ui |
+| `packages/web-builder` (novo) | Editor React usado por tenant e superadmin, consumindo core/renderer/web-builder-ui |
 | `apps/*/src/features/bipewpro` | Adapters de sessão/Actions/query, entrada e composição do contexto da superfície |
 | `apps/api/src/modules/11-pages` | Casos de uso de edição, publicação, domínios e persistência |
 | `apps/api/src/modules/10-catalog` | Dados Food, cálculo comercial e pedidos |
@@ -174,21 +175,21 @@ Preservar os oito pacotes existentes. Extrair por responsabilidade, com exports 
 | `apps/marketing-web` | Ativar runtime público Next para conteúdo institucional e sites publicados por host autorizado |
 | `apps/worker` | Jobs de publicação, mídia e DNS com adapters dos serviços, após infraestrutura compartilhada |
 
-Direção de dependências: contracts é folha; core depende de contracts; renderer depende de core/contracts e componentes públicos selecionados; builder depende de core/renderer/ui; apps compõem adapters. Nenhum pacote importa apps. Core, contracts e UI não importam Prisma, sessão, env secreto ou serviços HTTP. `web-renderer/server` não entra no bundle cliente. O site público nunca importa o editor, seus inspectors ou DnD.
+Direção de dependências: contracts é folha; core depende de contracts; renderer depende de core/contracts e componentes públicos selecionados; builder depende de core/renderer/web-builder-ui; apps compõem adapters. Nenhum pacote importa apps. Core, contracts e UI não importam Prisma, sessão, env secreto ou serviços HTTP. `web-renderer/server` não entra no bundle cliente. O site público nunca importa o editor, seus inspectors ou DnD.
 
 Core e renderer não possuem fetching oculto; recebem documento validado e projeção pública de dados. Next Server Actions validam a sessão e encaminham à API, sem Prisma direto. Fastify valida identidade/contexto e executa o caso de uso autorizado. Worker reaproveita serviços, sem inventar regra alternativa de preço, publicação ou limites.
 
 Novos pacotes só ganham package.json/exports na fatia com implementação e consumidores reais. O catálogo de diretórios propostos não declara pacotes existentes. Testar imports públicos e os bundles antes de mover exports legados.
 
-## 10. Padrão premium de packages/ui
+## 10. UI dedicada e padrão premium
 
-O guia normativo complementar fica em `packages/ui/PREMIUM_LAYOUT.md`. Premium significa previsibilidade, legibilidade, acabamento e comportamento completo: não depende de vidro, sombras grandes ou efeitos contínuos.
+Por instrução do usuário em 2026-09-16, os componentes do construtor ficam em `packages/web-builder-ui`; a reformulação completa de `packages/ui` não pertence a esta etapa. O guia ativo fica em `packages/web-builder-ui/PREMIUM_LAYOUT.md`. O guia anterior de ui permanece referência futura do SaaS. Premium significa previsibilidade, legibilidade, acabamento e comportamento completo: não depende de vidro, sombras grandes ou efeitos contínuos.
 
 Primitives previstas, a serem criadas apenas onde faltar equivalente: `EditorShell`, `ResizablePanel`, `InspectorSection`, `UnitField`, `SpacingField`, `ColorField`, `GradientField`, `ResponsiveValueField`, `DevicePreviewFrame`, `AssetPickerView`, `IconPickerView` e `SaveStatus`. O domínio decide capacidades, dados, salvamento e validação; a UI recebe props e callbacks.
 
 Layout preserva a altura do workspace e dos estados de conteúdo sem efeito sanfona. Não fixar alturas que cortem zoom ou teclado móvel. Painéis têm scroll previsível; divisórias e foco mantêm contraste. Busca não expande horizontalmente ao receber foco. Filtros, período e métricas reutilizam o padrão existente quando fizerem sentido; não adicionar métricas decorativas sem dados.
 
-Toda peça deve cobrir loading/empty/error/disabled/conflict quando aplicáveis, além de retorno de foco, teclado, temas, toque e reduced motion. Novas peças aparecem na galeria `/design-system` apenas em desenvolvimento. Valores de cor/tamanho/motion continuam no CSS canônico; novas necessidades viram tokens semânticos, não uma tabela paralela por módulo.
+Toda peça deve cobrir loading/empty/error/disabled/conflict quando aplicáveis, além de retorno de foco, teclado, temas, toque e reduced motion. Novas peças do construtor aparecem na galeria local `pnpm bipewpro:dev`; o `/design-system` atual do SaaS é preservado. Valores de cor/tamanho/motion continuam no CSS canônico; novas necessidades viram tokens semânticos, não uma tabela paralela por módulo.
 
 ## 11. Modelo de dados proposto
 
@@ -425,7 +426,7 @@ Branch desta frente: `feat/bipewpro-planning`, criada de main em 489fae2. Prefer
 
 Áreas de maior conflito: `packages/db/prisma/schema.prisma`, `packages/contracts/src/index.ts`, `packages/auth/src/policies.ts`, exports/CSS de UI, lockfile, taskboard JSON, decisões e registro de rotas da API. Alterações compartilhadas entram de modo aditivo e são revisadas contra a main atual antes de cada integração.
 
-Esta entrega altera documentação, READMEs e regras; não move arquivos de produção nem refatora o CRM. Não enviar mensagens ao Gemini por serviços externos. O handoff no repositório oferece a coordenação necessária para o usuário e ferramentas locais.
+A entrega inicial foi documental. A primeira implementação é aditiva e não refatora o CRM; arquivos e resultados exatos constam na auditoria da fundação BipeWPRO. Não enviar mensagens ao Gemini por serviços externos. O handoff no repositório oferece a coordenação necessária para o usuário e ferramentas locais.
 
 Ao integrar: buscar remoto, comparar por arquivo e por card, manter os dois históricos, resolver JSON por ID, regenerar Markdown e validar dependências. Não escolher a versão inteira de um taskboard para resolver conflito. Rebase/merge na branch de trabalho só com árvore limpa e revisão; não force-push no trabalho de outro agente.
 

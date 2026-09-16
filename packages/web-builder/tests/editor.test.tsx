@@ -1,0 +1,54 @@
+import { test, expect } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { DocumentEditor } from "../src/index.js";
+import { exampleDocument } from "../demo/example.js";
+import { findNode } from "@bipesend/web-builder-core";
+import type { WebDocument } from "@bipesend/contracts/web";
+
+test("edits content, applies responsive overrides, restores inheritance and supports undo/redo", async () => {
+  const user = userEvent.setup();
+  let latest: WebDocument = exampleDocument;
+  render(<DocumentEditor initialDocument={exampleDocument} onDocumentChange={(doc) => { latest = doc; }} />);
+  await user.click(screen.getByRole("button", { name: "Adicionar título" }));
+  const id = latest.root.children.at(-1)!.id;
+  await user.clear(screen.getByLabelText("Texto do título"));
+  await user.type(screen.getByLabelText("Texto do título"), "Título de teste");
+  await user.click(screen.getByRole("button", { name: "Aplicar conteúdo" }));
+  await waitFor(() => expect(findNode(latest, id)!.props).toMatchObject({ text: "Título de teste" }));
+  await user.type(screen.getByLabelText("Tamanho do texto (px)"), "42");
+  await user.click(screen.getByRole("button", { name: "Aplicar estilo" }));
+  expect(findNode(latest, id)!.styles).toEqual({ base: {}, desktop: { fontSize: 42 } });
+  await user.click(screen.getByRole("radio", { name: "Mobile" }));
+  expect(screen.getByLabelText("Tamanho do texto (px)")).toHaveValue(null);
+  await user.type(screen.getByLabelText("Tamanho do texto (px)"), "18");
+  await user.click(screen.getByRole("button", { name: "Aplicar estilo" }));
+  await user.click(screen.getByRole("radio", { name: "Desktop" }));
+  expect(screen.getByLabelText("Tamanho do texto (px)")).toHaveValue(42);
+  await user.click(screen.getByRole("button", { name: "Restaurar herança" }));
+  expect(findNode(latest, id)!.styles).toEqual({ base: { fontSize: 18 } });
+  await user.click(screen.getByRole("button", { name: "Desfazer", exact: true }));
+  expect(findNode(latest, id)!.styles.desktop?.fontSize).toBe(42);
+  await user.click(screen.getByRole("button", { name: "Refazer", exact: true }));
+  expect(findNode(latest, id)!.styles.desktop).toBeUndefined();
+  expect(latest.root.children.filter((node) => node.id === id)).toHaveLength(1);
+});
+
+test("invalid link stays in its labelled field, does not change document or weaken preview", async () => {
+  const user = userEvent.setup();
+  let latest: WebDocument = exampleDocument;
+  render(<DocumentEditor initialDocument={exampleDocument} onDocumentChange={(doc) => { latest = doc; }} />);
+  await user.click(screen.getByRole("button", { name: "Adicionar botão" }));
+  const before = JSON.stringify(latest);
+  const field = screen.getByLabelText("Destino do botão");
+  await user.clear(field);
+  await user.type(field, "javascript:alert(1)");
+  await user.click(screen.getByRole("button", { name: "Aplicar conteúdo" }));
+  expect(field).toHaveAttribute("aria-invalid", "true");
+  expect(field).toHaveAccessibleDescription("Use um caminho local, âncora ou endereço HTTPS válido.");
+  expect(JSON.stringify(latest)).toBe(before);
+  const frame = screen.getByTitle("Prévia da página — Desktop");
+  expect(frame).toHaveAttribute("sandbox", "");
+  expect(frame).toHaveAttribute("referrerpolicy", "no-referrer");
+  expect(frame.getAttribute("srcdoc")).not.toContain("javascript:");
+});

@@ -27,3 +27,13 @@ const input = tenantInvitationSchema.parse(untrustedBody);
 ## Verificação
 
 `pnpm --filter @bipesend/contracts build` e `test`. Mudanças incompatíveis devem versionar o contrato e migrar consumidores; não criar cópia do schema em um módulo novo. Validações legadas de tela conservam mensagens PT-BR e precisam acompanhar a mesma política de senha.
+
+## Subpaths BipeWPRO (WPRO-002)
+
+`@bipesend/contracts/web`: documento v1 (contêiner, título, texto e botão), estilos mobile/tablet/desktop, limites, URLs, propriedade, intenção de criação e evento platform separado. `parseWebDocumentJson` limita bytes antes de JSON.parse; o schema limita árvore antes de validação recursiva. Versões futuras são rejeitadas, não migradas silenciosamente.
+
+`@bipesend/contracts/catalog`: configuração Food inicial BRL/retirada/entrega e valores monetários decimais. Não calcula preço/frete/pedido.
+
+`@bipesend/contracts/entitlements`: chaves canônicas, limites explícitos e projeção de concessões com revisão/vigência. Ausência não implica permissão. Não é um serviço de concessão/reserva: BILL-001 fará enforcement atômico na API.
+
+O export raiz e o envelope tenant existente são preservados. Parsing de contexto/evento não autentica ator nem prova que um recurso pertence ao espaço. Reservas de domínio, slugs operacionais e RLS dependem dos casos de uso do backend.

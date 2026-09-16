@@ -1,6 +1,6 @@
 # Guia de layout premium BipeSend
 
-Este guia padroniza novas composições e a evolução do BipeWPRO. Não contém componentes implementados adicionais. Fontes canônicas: `README.md`, `src/index.ts`, `src/styles/tokens.css` e regras 12/14/22/24/30/32/35/37.
+Escopo revisado em 2026-09-16: a reforma de `packages/ui` está adiada pelo usuário. As peças do BipeWPRO são implementadas em `packages/web-builder-ui`, com [guia próprio](../web-builder-ui/PREMIUM_LAYOUT.md). Este documento permanece referência futura para o SaaS. Não contém componentes implementados adicionais. Fontes canônicas: `README.md`, `src/index.ts`, `src/styles/tokens.css` e regras 12/14/22/24/30/32/35/37.
 
 ## Identidade e hierarquia
 
@@ -29,7 +29,7 @@ Prévia por breakpoint usa iframe isolado ou renderer seguro definido no spike, 
 | Navegação | Tabs/DropdownMenu/Breadcrumb | Destino autorizado, rota ativa e menu real |
 | Carregamento | Skeleton/Progress | Fase e progresso observável; sem porcentagem inventada |
 
-Novos candidatos: EditorShell, ResizablePanel, InspectorSection, UnitField, SpacingField, ColorField, GradientField, ResponsiveValueField, DevicePreviewFrame, AssetPickerView, IconPickerView e SaveStatus. Eles entram em WPRO-004 conforme necessidade, não como exports vazios. Tree/layers com regras de nós ficam em web-builder, não em ui.
+Novos candidatos: EditorShell, ResizablePanel, InspectorSection, UnitField, SpacingField, ColorField, GradientField, ResponsiveValueField, DevicePreviewFrame, AssetPickerView, IconPickerView e SaveStatus. Eles entram em WPRO-004 conforme necessidade, não como exports vazios. Tree/layers com regras de nós ficam em web-builder, não em ui. Os controles desta lista pertencem à UI específica do construtor; não autorizam alterações neste pacote.
 
 ## Campos e feedback
 
