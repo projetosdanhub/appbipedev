@@ -605,3 +605,4 @@ export type CreateCrmDeal = z.infer<typeof createCrmDealSchema>;
 export type UpdateCrmDeal = z.infer<typeof updateCrmDealSchema>;
 export type MoveCrmDeal = z.infer<typeof moveCrmDealSchema>;
 export type CrmDealStageHistory = z.infer<typeof crmDealStageHistorySchema>;
+export * from "./inbox.js";

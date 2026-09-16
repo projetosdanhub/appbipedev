@@ -205,6 +205,14 @@ async function bootstrap(): Promise<void> {
   const { dealRoutes } = await import(
     "./modules/05-crm/presentation/deal.controller.js"
   );
+  
+  // Inbox Module
+  const { InboxService } = await import(
+    "./modules/06-inbox/application/inbox.service.js"
+  );
+  const { inboxRoutes } = await import(
+    "./modules/06-inbox/presentation/inbox.controller.js"
+  );
 
   const contactRepository = new ContactRepository(db);
   const tagRepository = new TagRepository(db);
@@ -221,6 +229,7 @@ async function bootstrap(): Promise<void> {
   const contactImportService = new ContactImportService(contactImportRepository);
   const pipelineService = new PipelineService(db, pipelineRepository);
   const dealService = new DealService(db, dealRepository, pipelineRepository, contactRepository);
+  const inboxService = new InboxService(db);
 
   // Register auth routes (no auth required for most, auth plugin handles middleware where needed)
   app.register(async (instance) => {
@@ -241,6 +250,7 @@ async function bootstrap(): Promise<void> {
     importRoutes(instance, db, contactImportService);
     pipelineRoutes(instance, db, pipelineService);
     dealRoutes(instance, db, dealService);
+    inboxRoutes(instance, db, inboxService);
   });
 
   // Reject the obsolete browser identity paths; Auth.js is the canonical web surface.

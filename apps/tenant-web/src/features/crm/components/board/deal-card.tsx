@@ -3,7 +3,7 @@
 import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { Calendar, MoreHorizontal } from "lucide-react";
 import { CrmDeal, CrmPipelineStage } from "@bipesend/contracts";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "@bipesend/ui/components/overlays";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "@bipesend/ui";
 
 interface DealCardProps {
   deal: CrmDeal;
@@ -45,7 +45,7 @@ export function DealCard({ deal, stages, provided, snapshot, onEdit, onMoveStage
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[180px]">
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(); }}>
+            <DropdownMenuItem onClick={(e: React.MouseEvent) => { e.stopPropagation(); onEdit(); }}>
               Editar lead
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -53,7 +53,7 @@ export function DealCard({ deal, stages, provided, snapshot, onEdit, onMoveStage
             {stages.map(stage => (
               <DropdownMenuItem 
                 key={stage.id} 
-                onClick={(e) => { e.stopPropagation(); onMoveStage(stage.id); }}
+                onClick={(e: React.MouseEvent) => { e.stopPropagation(); onMoveStage(stage.id); }}
                 disabled={stage.id === deal.stageId}
               >
                 <div className={`w-2 h-2 rounded-full mr-2 ${stage.colorToken}`} />
