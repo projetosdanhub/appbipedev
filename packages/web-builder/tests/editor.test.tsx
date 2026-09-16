@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DocumentEditor } from "../src/index.js";
 import { exampleDocument } from "../demo/example.js";
@@ -66,4 +66,19 @@ test("resizes the desktop panel with the keyboard and restores its default width
   expect(separator).toHaveAttribute("aria-valuenow", "520");
   await user.keyboard("{Home}");
   expect(separator).toHaveAttribute("aria-valuenow", "312");
+});
+
+test("resizes the desktop panel with a primary pointer and clamps the width", () => {
+  render(<DocumentEditor initialDocument={exampleDocument} />);
+  const separator = screen.getByRole("separator", { name: "Redimensionar painel de elementos" });
+  Object.defineProperty(separator, "setPointerCapture", { value: () => undefined });
+  Object.defineProperty(separator, "releasePointerCapture", { value: () => undefined });
+  fireEvent.pointerDown(separator, { pointerId: 7, isPrimary: true, button: 0, clientX: 312 });
+  fireEvent.pointerMove(separator, { pointerId: 7, isPrimary: true, clientX: 430 });
+  expect(separator).toHaveAttribute("aria-valuenow", "430");
+  fireEvent.pointerMove(separator, { pointerId: 7, isPrimary: true, clientX: 900 });
+  expect(separator).toHaveAttribute("aria-valuenow", "520");
+  fireEvent.pointerUp(separator, { pointerId: 7, isPrimary: true, clientX: 900 });
+  fireEvent.pointerMove(separator, { pointerId: 7, isPrimary: true, clientX: 256 });
+  expect(separator).toHaveAttribute("aria-valuenow", "520");
 });

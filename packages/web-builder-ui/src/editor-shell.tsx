@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, useSyncExternalStore, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+import { useId, useRef, useState, useSyncExternalStore, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { PanelsTopLeft, SlidersHorizontal, X } from "lucide-react";
 import { BuilderButton } from "./controls.js";
@@ -24,6 +24,7 @@ export function EditorShell({ title, actions, devices, panel, children }: {
   const mobile = useSyncExternalStore(subscribe, getSnapshot, serverSnapshot);
   const [open, setOpen] = useState(false);
   const [panelWidth, setPanelWidth] = useState(DEFAULT_PANEL_WIDTH);
+  const pointerResize = useRef<{ pointerId: number; startX: number; startWidth: number } | null>(null);
   const canvasId = useId();
   const [shell, setShell] = useState<HTMLDivElement | null>(null);
   const resizePanel = (next: number) => setPanelWidth(Math.min(MAX_PANEL_WIDTH, Math.max(MIN_PANEL_WIDTH, next)));
@@ -34,6 +35,23 @@ export function EditorShell({ title, actions, devices, panel, children }: {
     else if (event.key === "End") resizePanel(MAX_PANEL_WIDTH);
     else return;
     event.preventDefault();
+  };
+  const handleResizePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (!event.isPrimary || event.button !== 0) return;
+    pointerResize.current = { pointerId: event.pointerId, startX: event.clientX, startWidth: panelWidth };
+    event.currentTarget.focus();
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    event.preventDefault();
+  };
+  const handleResizePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const resize = pointerResize.current;
+    if (!resize || resize.pointerId !== event.pointerId) return;
+    resizePanel(resize.startWidth + event.clientX - resize.startX);
+  };
+  const finishResizePointer = (event: PointerEvent<HTMLDivElement>) => {
+    if (pointerResize.current?.pointerId !== event.pointerId) return;
+    pointerResize.current = null;
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
   };
   const workspaceStyle = { "--bw-panel-width": `${panelWidth}px` } as CSSProperties;
   return <div className="bw-ui-shell" ref={setShell}>
@@ -53,7 +71,7 @@ export function EditorShell({ title, actions, devices, panel, children }: {
     </Dialog.Root>}
     <div className="bw-ui-workspace" style={workspaceStyle}>
       {!mobile && <><aside className="bw-ui-panel" aria-label="Elementos e ajustes">{panel}</aside>
-        <div className="bw-ui-panel-resizer" role="separator" tabIndex={0} aria-label="Redimensionar painel de elementos" aria-orientation="vertical" aria-valuemin={MIN_PANEL_WIDTH} aria-valuemax={MAX_PANEL_WIDTH} aria-valuenow={panelWidth} aria-valuetext={`${panelWidth} pixels`} onKeyDown={handleResizeKey} onDoubleClick={() => resizePanel(DEFAULT_PANEL_WIDTH)} title="Use as setas para redimensionar; Home restaura a largura" />
+        <div className="bw-ui-panel-resizer" role="separator" tabIndex={0} aria-label="Redimensionar painel de elementos" aria-orientation="vertical" aria-valuemin={MIN_PANEL_WIDTH} aria-valuemax={MAX_PANEL_WIDTH} aria-valuenow={panelWidth} aria-valuetext={`${panelWidth} pixels`} onKeyDown={handleResizeKey} onPointerDown={handleResizePointerDown} onPointerMove={handleResizePointerMove} onPointerUp={finishResizePointer} onPointerCancel={finishResizePointer} onDoubleClick={() => resizePanel(DEFAULT_PANEL_WIDTH)} title="Arraste ou use as setas para redimensionar; Home restaura a largura" />
       </>}
       <main className="bw-ui-canvas" id={canvasId} tabIndex={-1} aria-label="Área de prévia">{children}</main>
     </div>
