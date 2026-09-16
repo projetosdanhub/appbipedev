@@ -24,6 +24,16 @@ test("roundtrip and versioned strict schema reject unsafe structure and props", 
   assert.equal(({} as any).polluted, undefined);
 });
 
+test("accepts bounded spacing units and rejects unsafe or excessive lengths", () => {
+  const valid = document();
+  valid.root.styles.base = { paddingTop: { value: 1.5, unit: "rem" }, paddingRight: { value: 10, unit: "%" }, paddingBottom: { value: 24, unit: "px" } };
+  assert.equal(webDocumentSchema.safeParse(valid).success, true);
+  for (const paddingTop of [{ value: 11, unit: "rem" }, { value: 101, unit: "%" }, { value: 1, unit: "vw" }, "calc(100% + 1px)"]) {
+    const invalid = document(); invalid.root.styles.base = { paddingTop };
+    assert.equal(webDocumentSchema.safeParse(invalid).success, false);
+  }
+});
+
 test("bounds run before recursion; cycles, excessive nodes/depth/UTF8 and getters fail closed", () => {
   const cyclic = document(); cyclic.root.children.push(cyclic.root);
   assert.equal(webDocumentSchema.safeParse(cyclic).success, false);

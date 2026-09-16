@@ -82,3 +82,26 @@ test("resizes the desktop panel with a primary pointer and clamps the width", ()
   fireEvent.pointerMove(separator, { pointerId: 7, isPrimary: true, clientX: 256 });
   expect(separator).toHaveAttribute("aria-valuenow", "520");
 });
+
+test("applies spacing per side with units and synchronizes the visual color control", async () => {
+  const user = userEvent.setup();
+  let latest: WebDocument = exampleDocument;
+  render(<DocumentEditor initialDocument={exampleDocument} onDocumentChange={(doc) => { latest = doc; }} />);
+  await user.click(screen.getByRole("button", { name: "Ajustes" }));
+  const top = screen.getByLabelText("Superior");
+  await user.clear(top);
+  await user.type(top, "1.5");
+  await user.selectOptions(screen.getByLabelText("Unidade de superior"), "rem");
+  const right = screen.getByLabelText("Direita");
+  await user.clear(right);
+  await user.type(right, "10");
+  await user.selectOptions(screen.getByLabelText("Unidade de direita"), "%");
+  fireEvent.change(screen.getByLabelText("Seletor visual de cor de fundo"), { target: { value: "#123456" } });
+  expect(screen.getByLabelText("Cor de fundo")).toHaveValue("#123456");
+  await user.click(screen.getByRole("button", { name: "Aplicar estilo" }));
+  await waitFor(() => expect(findNode(latest, latest.root.id)!.styles.desktop).toMatchObject({
+    paddingTop: { value: 1.5, unit: "rem" },
+    paddingRight: { value: 10, unit: "%" },
+    background: "#123456",
+  }));
+});

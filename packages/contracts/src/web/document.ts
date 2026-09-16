@@ -5,6 +5,12 @@ export const WEB_BREAKPOINTS = Object.freeze({ base: 0, tablet: 768, desktop: 10
 export const webBreakpointSchema = z.enum(["base", "tablet", "desktop"]);
 export const webNodeIdSchema = z.string().regex(/^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/);
 export const webColorSchema = z.string().regex(/^#[0-9a-fA-F]{6}$/, "Use uma cor hexadecimal, como #075fd8.");
+export const webLengthSchema = z.discriminatedUnion("unit", [
+  z.strictObject({ value: z.number().int().min(0).max(160), unit: z.literal("px") }),
+  z.strictObject({ value: z.number().min(0).max(10), unit: z.literal("rem") }),
+  z.strictObject({ value: z.number().min(0).max(100), unit: z.literal("%") }),
+]);
+const webSpacingSchema = z.union([z.number().int().min(0).max(160), webLengthSchema]);
 export const webLinkSchema = z.string().min(1).max(2048).refine((value) => {
   if (/[\u0000-\u0020\u007f\\]/.test(value)) return false;
   if (/^#[a-zA-Z][a-zA-Z0-9_-]{0,63}$/.test(value)) return true;
@@ -21,8 +27,12 @@ export const webStyleValuesSchema = z.strictObject({
   align: z.enum(["start", "center", "end", "stretch"]).optional(),
   justify: z.enum(["start", "center", "end", "space-between"]).optional(),
   columns: z.number().int().min(1).max(6).optional(),
-  gap: z.number().int().min(0).max(160).optional(),
-  padding: z.number().int().min(0).max(160).optional(),
+  gap: webSpacingSchema.optional(),
+  padding: webSpacingSchema.optional(),
+  paddingTop: webLengthSchema.optional(),
+  paddingRight: webLengthSchema.optional(),
+  paddingBottom: webLengthSchema.optional(),
+  paddingLeft: webLengthSchema.optional(),
   maxWidth: z.number().int().min(240).max(1920).optional(),
   fontSize: z.number().int().min(12).max(120).optional(),
   textAlign: z.enum(["left", "center", "right"]).optional(),

@@ -21,6 +21,14 @@ test("escapes text/attributes and compiles a single semantic responsive tree wit
   assert.match(result.css, /@media\(min-width:1024px\)/);
   assert.doesNotMatch(result.css, /undefined|url\(/);
 });
+test("renders allowlisted spacing units and individual sides", () => {
+  const document: any = fixture();
+  document.root.styles.base = { padding: 24, paddingTop: { value: 1.5, unit: "rem" }, paddingRight: { value: 10, unit: "%" } };
+  const result = renderPage(document);
+  assert.match(result.css, /padding:24px/);
+  assert.match(result.css, /padding-top:1.5rem/);
+  assert.match(result.css, /padding-right:10%/);
+});
 test("preview blocks navigation and network and includes escaped metadata", () => {
   const html = renderPreviewDocument(fixture());
   assert.match(html, /default-src 'none'/);
