@@ -52,3 +52,18 @@ test("invalid link stays in its labelled field, does not change document or weak
   expect(frame).toHaveAttribute("referrerpolicy", "no-referrer");
   expect(frame.getAttribute("srcdoc")).not.toContain("javascript:");
 });
+
+test("resizes the desktop panel with the keyboard and restores its default width", async () => {
+  const user = userEvent.setup();
+  render(<DocumentEditor initialDocument={exampleDocument} />);
+  const separator = screen.getByRole("separator", { name: "Redimensionar painel de elementos" });
+  expect(separator).toHaveAttribute("aria-valuenow", "312");
+  await user.click(separator);
+  await user.keyboard("{ArrowRight}{ArrowRight}");
+  expect(separator).toHaveAttribute("aria-valuenow", "344");
+  expect(separator).toHaveAttribute("aria-valuetext", "344 pixels");
+  await user.keyboard("{End}{ArrowRight}");
+  expect(separator).toHaveAttribute("aria-valuenow", "520");
+  await user.keyboard("{Home}");
+  expect(separator).toHaveAttribute("aria-valuenow", "312");
+});
