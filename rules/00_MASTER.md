@@ -1,6 +1,6 @@
 # BipeSend Rules — regra mestre
 
-Versão: 2.0.0
+Versão: 2.1.0
 Status: contrato oficial de engenharia, UX/UI e segurança
 Bootstrap de agente: `!construibase`
 
@@ -69,6 +69,8 @@ Estas regras são a fonte de verdade para humanos e agentes de IA. Quando códig
 33. `33_ENVIRONMENT_VARIABLES_GUIDELINES.md`
 34. `34_DELIVERY_EVIDENCE.md`
 35. `35_MOBILE_WEB_NATIVE.md`
+36. `36_BIPEWPRO.md`
+37. `37_PREMIUM_UI_SHARED.md`
 
 ## 4. Precedência em caso de conflito
 
@@ -159,3 +161,7 @@ O fluxo visual e comportamental dessas telas está em `29_AUTH_UX_FLOWS.md`.
 - Auth mantém composição clara específica; o workspace mobile suporta light/dark e navegação própria, conforme `35`.
 - Em conflitos de números/tokens, `packages/ui/src/styles/tokens.css` + regra `14` prevalecem; regras `31/32` foram reconciliadas nesta revisão.
 - Evidência atual: `docs/audit/validation.md`; histórico relatado não substitui execução. Arquivos arquivados fora de `rules/` não são regras ativas.
+
+## 9. Planejamento BipeWPRO - 2026-09-15
+
+O construtor compartilhado, catálogo Food, publicação e contratos de capacidade/cota estão especificados em `docs/plans/bipewpro.md`. Regras 36/37 complementam os padrões existentes. O planejamento não ativa funcionalidades nem conclui cards de implementação. O taskboard preserva PAGE/CAT/BILL e acrescenta WPRO para entregas distintas. Integração com a frente do Gemini é aditiva, sem mover código ou alterar migração histórica por conveniência.

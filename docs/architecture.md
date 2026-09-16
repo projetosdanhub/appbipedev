@@ -30,3 +30,7 @@ type TenantContext = {
 ```
 
 Nenhum use case tenant-owned recebe apenas `userId`. O `TenantContext` e criado pelo servidor depois da sessao e da membership serem validados.
+
+## Evolução planejada: BipeWPRO
+
+[Plano BipeWPRO](plans/bipewpro.md): motor de documento, editor compartilhado, renderer público, propriedade tenant/platform, catálogo Food, publicação e entitlements. Modelos e novos pacotes ali descritos ainda serão implementados pelos cards PAGE/CAT/BILL/WPRO. A superfície pública permanece em marketing-web, a ser ativada, sem misturar cookies dos painéis.

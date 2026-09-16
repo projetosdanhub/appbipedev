@@ -72,6 +72,8 @@ const counts = Object.fromEntries(
     cards.filter((c) => c.status === status).length,
   ]),
 );
+const nextCards = cards.filter((c) => c.status === "READY");
+const activeCards = cards.filter((c) => c.status === "IN_PROGRESS");
 const lines = [
   "# Taskboard BipeSend — executável",
   "",
@@ -87,13 +89,12 @@ const lines = [
   "",
   "## Próximo ciclo",
   "",
-  "1. INF-001: preparar ambiente isolado com PostgreSQL/Redis/SMTP.",
-  "2. AUTH-001: inventário e reconciliação do banco em clone, antes de rodar migrations.",
-  "3. AUTH-004/005/014: integrar sessão/recovery/MFA com banco real.",
-  "4. AUTH-002/003/006/007/008: cadastro verificado, onboarding, convites e autorização.",
-  "5. AUTH-009/010/011/012/016: conectar shell ao tenant e validar as superfícies ponta a ponta.",
+  ...nextCards.map((c, i) => `${i + 1}. ${c.id}: ${c.title}.`),
+  ...(nextCards.length ? [] : ["Nenhum card READY; verificar dependências e trabalhos em andamento."]),
+  ...activeCards.map((c) => `- Em andamento: ${c.id}: ${c.title}.`),
   "",
   "Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protótipos visuais podem ser revisados, identificados como exemplos.",
+  "BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-handoff.md. A fundação BILL-001 antecede os CRUDs com cota; planos futuros reutilizam sua estrutura. Respeitar a frente paralela do CRM e os gates de publicação/segurança.",
   "",
   "## Índice",
   "",

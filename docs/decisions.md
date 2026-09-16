@@ -231,3 +231,35 @@ Adotado o ADR em [architecture/foundation.md](architecture/foundation.md): token
 **Motivo:** Assegurar isolamento de tenant em FKs de CRM (evitar relacionamento cruzado), prevenir que configuracoes antigas quebrem entidades antigas, e fornecer base rigorosa para funis comerciais na primeira fase do MVP.
 **Risco:** A gestao manual de transicoes via scripts de banco podera estar sujeita a falhas (optimistic locking no ORM lidara com aplicacoes concorrentes via ersion).
 **Status:** Aprovada. Implementacao do CRM-003.
+
+## ADR-BW-001 - BipeWPRO compartilhado e documento responsivo
+
+**Decisão de planejamento:** um core, um renderer e um editor para tenant e conteúdo institucional, com documento versionado único e overrides por breakpoint. Preservar packages/ui e a marca atual do SaaS. O público não carrega o editor. Fonte: [plano BipeWPRO](plans/bipewpro.md), seções 5-10. **Implementação:** WPRO-002/003/004/007 e PAGE-001/002, ainda pendente.
+
+## ADR-BW-002 - Propriedade e isolamento de publicação
+
+**Decisão de planejamento:** PublishingSpace diferencia tenant e platform com invariantes explícitas. Contextos vêm da sessão/guard; não criar tenant fictício nem bypass por tenantId nulo. Dados públicos são projeções próprias. Eventos platform têm contrato separado/versionado, preservando tenantId obrigatório nos eventos tenant existentes. **Implementação:** WPRO-005 e integração de eventos.
+
+## ADR-BW-003 - Entitlements antes do editor publicável
+
+**Decisão de planejamento:** antecipar BILL-001; definições, concessões, quotas e reservas serão únicas para todo o produto. BILL-002/005 reutilizam o modelo, sem WebPlan/FoodPlan. Um site com inicial e três páginas consome um site e quatro páginas; links/âncoras não criam páginas. Conteúdo institucional tem criação comercial ilimitada, com limites técnicos. **Implementação:** BILL-001, ainda pendente.
+
+## ADR-BW-004 - Código personalizado e PHP
+
+**Decisão de planejamento:** HTML/CSS/SVG/shortcode passam por schemas, parsers, allowlists e isolamento. PHP não executa em Next/Fastify/worker geral; capability permanece indisponível até WPRO-016 validar runtime isolado sem credenciais do SaaS, rede/recursos controlados e kill switch. Filtro de strings não comprova segurança. **Implementação:** WPRO-006/009/016, ainda pendente.
+
+## ADR-BW-005 - Food separado de aparência e billing de assinatura
+
+**Decisão de planejamento:** produtos/adicionais/entrega/pedido ficam em 10-catalog e gestão própria; editor consome bindings tipados. Preço/frete e snapshot são server-side; atendimento e pagamento têm estados distintos. CAT-003 entrega núcleo de pedido sem depender de AUTO-001; integração avançada fica explicitamente em WPRO-017, preservando seu escopo original de automação. Cobrança Food é distinta da assinatura SaaS. **Implementação:** CAT e WPRO-012/013/017, ainda pendente.
+
+## ADR-BW-006 - Publicação imutável e domínio verificado
+
+**Decisão de planejamento:** release fixa revisões de páginas/tema/templates/menu/assets; job idempotente e ativação por geração evitam corrida. Reutilizar MSG-001/002. Slug/host são normalizados e únicos; propriedade DNS e TLS antecedem ativação. URL provisória tenant fica em origem separada de autenticação; conteúdo institucional pode usar domínio controlado da plataforma. **Implementação:** PAGE-003 e WPRO-011, ainda pendente.
+
+## ADR-BW-007 - DnD precisa de ensaio
+
+**Decisão de planejamento:** preservar @hello-pangea/dnd conforme AGENTS/regra mestre. Ensaiar camadas/listas e comandos de hierarquia em WPRO-003; Flex/Grid no renderer não implica suporte de drag livre bidimensional. Qualquer mudança de motor exige evidência e decisão específica, sem trocar o CRM silenciosamente. **Implementação:** WPRO-003, ainda pendente.
+
+## ADR-BW-008 - Integração aditiva e evidência
+
+**Decisão:** branch `feat/bipewpro-planning` desde `489fae2`, com documentação/regras/taskboard antes da implementação. Preservar estados históricos e resolver conflitos por card/arquivo. Packages novos só existem quando houver código/consumidor; não migrar schema/contratos em massa durante trabalho local concorrente. SEO/Lighthouse/CWV/WCAG são critérios de validação, sem promessa de ranking ou certificação automática. **Evidência desta etapa:** [auditoria de planejamento](audit/bipewpro-planning.md).

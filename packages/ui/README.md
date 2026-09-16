@@ -82,3 +82,7 @@ Usar HTML nativo antes de primitives adicionais. Ícones SVG decorativos ficam a
 `pnpm --filter @bipesend/ui test`, `lint` e `typecheck`; `pnpm ui:smoke` para galeria light/dark, tamanhos e teclado. Evidências em `docs/audit/validation.md`.
 
 Ao adicionar componente: documentar necessidade/props/estados, implementar sem domínio, incluir exemplo, testar a falha comportamental possível, validar temas/mobile e atualizar exports. Segurança real de tenant, upload e sessão permanece no servidor; aparência de disabled não autoriza nem revoga operação.
+
+## Evolução premium e BipeWPRO
+
+[PREMIUM_LAYOUT.md](PREMIUM_LAYOUT.md) define a composição do workspace/editor, responsividade, controles de estilo, estados e aceite. É um guia para a evolução de WPRO-004; não acrescenta exports implementados. O editor e suas regras de árvore ficam no futuro web-builder; este pacote recebe somente primitives genéricas, preservando tokens e consumidores atuais.
