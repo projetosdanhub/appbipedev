@@ -69,6 +69,12 @@ export const createConversationSchema = z.object({
   assignedMembershipId: idSchema.nullable().optional(),
 }).strict();
 
+export const updateConversationSchema = z.object({
+  departmentId: idSchema.nullable().optional(),
+  routingRoleId: idSchema.nullable().optional(),
+  assignedMembershipId: idSchema.nullable().optional(),
+}).strict();
+
 export const messageSchema = z.object({
   id: idSchema,
   tenantId: idSchema,
@@ -79,6 +85,11 @@ export const messageSchema = z.object({
   authorMembershipId: idSchema.nullable(),
   externalSenderReference: z.string().max(255).nullable(),
   text: z.string(),
+  hasMedia: z.boolean().default(false),
+  mediaUrl: z.string().nullable().optional(),
+  mediaType: z.string().nullable().optional(),
+  mediaName: z.string().nullable().optional(),
+  mediaSize: z.number().nullable().optional(),
   state: messageStateSchema,
   clientMessageId: z.string().max(255).nullable(),
   createdAt: z.string().datetime(),
@@ -88,6 +99,16 @@ export const addInternalNoteSchema = z.object({
   text: z.string().min(1),
   clientMessageId: z.string().max(255).optional(),
 }).strict();
+
+export const sendOutboundMessageSchema = z.object({
+  text: z.string().optional(),
+  mediaUrl: z.string().optional(),
+  mediaType: z.string().optional(),
+  mediaName: z.string().optional(),
+  clientMessageId: z.string().max(255).optional(),
+}).strict().refine(data => data.text || data.mediaUrl, {
+  message: "Either text or mediaUrl is required",
+});
 
 export const conversationReadStateSchema = z.object({
   tenantId: idSchema,
@@ -119,6 +140,7 @@ export type MessageState = z.infer<typeof messageStateSchema>;
 
 export type Conversation = z.infer<typeof conversationSchema>;
 export type CreateConversation = z.infer<typeof createConversationSchema>;
+export type UpdateConversation = z.infer<typeof updateConversationSchema>;
 
 export type Message = z.infer<typeof messageSchema>;
 export type AddInternalNote = z.infer<typeof addInternalNoteSchema>;

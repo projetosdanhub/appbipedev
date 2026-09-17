@@ -104,6 +104,8 @@ model Tenant {
   messages                    Message[]
   conversationReadStates      ConversationReadState[]
   conversationStatusHistories ConversationStatusHistory[]
+  connections                 Connection[]
+  AssignmentHistory           AssignmentHistory[]
 
   @@map("tenants")
 }
@@ -140,6 +142,7 @@ model Membership {
   conversationStatusHistories ConversationStatusHistory[]
   tenant                      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user                        User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  AssignmentHistory           AssignmentHistory[]
 
   @@unique([tenantId, userId])
   @@map("memberships")
@@ -443,6 +446,7 @@ model Contact {
   email         String?        @db.VarChar(255)
   phone         String?        @db.VarChar(50)
   customFields  Json?          @map("custom_fields")
+  version       Int            @default(1)
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at")
   tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -680,6 +684,11 @@ model Message {
   authorMembershipId      String?  @map("author_membership_id") @db.Uuid
   externalSenderReference String?  @map("external_sender_reference") @db.VarChar(255)
   text                    String
+  hasMedia                Boolean  @default(false) @map("has_media")
+  mediaUrl                String?  @map("media_url")
+  mediaType               String?  @map("media_type") @db.VarChar(100)
+  mediaName               String?  @map("media_name") @db.VarChar(255)
+  mediaSize               Int?     @map("media_size")
   state                   String   @default("saved") @db.VarChar(50)
   clientMessageId         String?  @map("client_message_id") @db.VarChar(255)
   createdAt               DateTime @default(now()) @map("created_at")
@@ -725,4 +734,72 @@ model ConversationStatusHistory {
 
   @@index([tenantId, conversationId])
   @@map("conversation_status_history")
+}
+
+model Connection {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  name         String   @db.VarChar(100)
+  provider     String   @default("evolution_api") @db.VarChar(50)
+  instanceName String   @unique @map("instance_name") @db.VarChar(255)
+  instanceId   String?  @map("instance_id") @db.VarChar(255)
+  status       String   @default("disconnected") @db.VarChar(50)
+  phone        String?  @db.VarChar(50)
+  metadata     Json?
+  qrcode       String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("connections")
+}
+
+model OutboxEvent {
+  id          String    @id @default(uuid())
+  tenantId    String    @map("tenant_id")
+  name        String
+  payload     Json
+  status      String    @default("PENDING") @db.VarChar(50)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
+  lockedUntil DateTime? @map("locked_until")
+
+  @@index([tenantId])
+  @@index([status, lockedUntil])
+  @@map("outbox_events")
+}
+
+model EventDedupe {
+  id          String   @id // Formato: tenantId:consumer:eventId
+  tenantId    String   @map("tenant_id")
+  consumer    String
+  eventId     String   @map("event_id")
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@index([tenantId])
+  @@map("event_dedupe")
+}
+
+model AssignmentHistory {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  entityType        String   @map("entity_type") @db.VarChar(50)
+  entityId          String   @map("entity_id") @db.Uuid
+  fromDepartmentId  String?  @map("from_department_id") @db.Uuid
+  fromRoutingRoleId String?  @map("from_routing_role_id") @db.Uuid
+  fromMembershipId  String?  @map("from_membership_id") @db.Uuid
+  toDepartmentId    String?  @map("to_department_id") @db.Uuid
+  toRoutingRoleId   String?  @map("to_routing_role_id") @db.Uuid
+  toMembershipId    String?  @map("to_membership_id") @db.Uuid
+  actorMembershipId String?  @map("actor_membership_id") @db.Uuid
+  occurredAt        DateTime @default(now()) @map("occurred_at")
+  version           Int
+
+  tenant          Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  actorMembership Membership? @relation(fields: [actorMembershipId], references: [id])
+
+  @@index([tenantId, entityType, entityId])
+  @@map("assignment_histories")
 }

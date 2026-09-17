@@ -2,9 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, LayoutGrid, List as ListIcon, Filter, Search, ChevronDown } from "lucide-react";
+import { Plus, LayoutGrid, List as ListIcon, Filter, Search, ChevronDown, Maximize2 } from "lucide-react";
 import { Button } from "@bipesend/ui";
-import { CrmPipeline, CrmPipelineStage, CrmDeal } from "@bipesend/contracts";
+import { CrmPipeline, CrmPipelineStage, CrmDeal, CrmContact } from "@bipesend/contracts";
 import { PipelineBoard } from "./board/pipeline-board";
 import { DealEditorModal } from "./deal-editor-modal";
 
@@ -13,9 +13,12 @@ interface CRMClientProps {
   initialPipelines: CrmPipeline[];
   initialStages: Record<string, CrmPipelineStage[]>;
   initialDeals: Record<string, CrmDeal[]>;
+  initialContacts: CrmContact[];
+  memberships?: { id: string; userId: string; name: string | null; email: string; }[];
+  sessionToken?: string;
 }
 
-export function CRMClient({ tenantId, initialPipelines, initialStages, initialDeals }: CRMClientProps) {
+export function CRMClient({ tenantId, initialPipelines, initialStages, initialDeals, initialContacts, memberships = [], sessionToken }: CRMClientProps) {
   const router = useRouter();
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
   const [isNewDealOpen, setIsNewDealOpen] = useState(false);
@@ -66,6 +69,16 @@ export function CRMClient({ tenantId, initialPipelines, initialStages, initialDe
           </Button>
 
           <Button 
+            variant="outline" 
+            className="h-[38px] px-3 bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] text-[#64748B] dark:text-[#94A3B8] hover:text-[#0A74FF] hover:border-[#0A74FF]/30 hover:bg-[#0A74FF]/5 transition-all shadow-sm rounded-lg text-[13px] font-medium"
+            onClick={() => window.open("/crm?focus=true", "_blank")}
+            title="Modo Foco"
+          >
+            <Maximize2 className="w-4 h-4 mr-2" />
+            Foco
+          </Button>
+
+          <Button 
             className="h-[38px] text-[14px] font-medium bg-[#0A74FF] hover:bg-[#0A74FF]/90 text-white shadow-sm transition-all rounded-[10px]" 
             disabled={!selectedPipeline || stages.length === 0}
             onClick={() => setIsNewDealOpen(true)}
@@ -93,6 +106,14 @@ export function CRMClient({ tenantId, initialPipelines, initialStages, initialDe
           ) : (
             <span className="text-[14px] text-slate-500">Nenhum pipeline criado</span>
           )}
+          
+          <Button 
+            variant="outline" 
+            className="h-[30px] ml-2 text-[12px] border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#0F172A] text-[#0F172A] dark:text-white"
+            onClick={() => router.push("/settings/pipelines")}
+          >
+            <Plus className="w-3 h-3 mr-1" /> Criar Funil
+          </Button>
         </div>
         
         <div className="relative">
@@ -116,7 +137,10 @@ export function CRMClient({ tenantId, initialPipelines, initialStages, initialDe
             pipeline={selectedPipeline} 
             stages={stages} 
             deals={deals} 
+            contacts={initialContacts}
+            memberships={memberships}
             viewMode={viewMode}
+            sessionToken={sessionToken}
           />
         ) : (
           <div className="flex items-center justify-center h-full text-slate-500">

@@ -4,7 +4,7 @@ Versão 1.0.0 · Revisão 2026-09-14 · Base auditada `fd3f4c3`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 86 cards. BACKLOG: 38 · READY: 0 · IN_PROGRESS: 1 · BLOCKED: 0 · DONE: 47.
+Total: 86 cards. BACKLOG: 33 · READY: 0 · IN_PROGRESS: 1 · BLOCKED: 0 · DONE: 52.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
@@ -66,11 +66,11 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 | [CRM-002](#crm-002) | DONE | Tags e segmentos | CRM-001, AUTH-016 |
 | [CRM-003](#crm-003) | DONE | Pipelines configuraveis | CRM-001, AUTH-016 |
 | [CRM-004](#crm-004) | DONE | Cards/lista/inbox views | CRM-003, AUTH-016 |
-| [CRM-005](#crm-005) | BACKLOG | Conversas e mensagens internas | CRM-001, AUTH-016 |
-| [CRM-006](#crm-006) | BACKLOG | Atribuicao a setor/cargo/membro | TEAM-001, AUTH-016 |
-| [CRM-007](#crm-007) | BACKLOG | WebSocket rooms | CRM-005, AUTH-016 |
-| [MSG-001](#msg-001) | BACKLOG | Outbox e eventos | INF-004, CRM-005, AUTH-016 |
-| [MSG-002](#msg-002) | BACKLOG | BullMQ e dead-letter | MSG-001, AUTH-016 |
+| [CRM-005](#crm-005) | DONE | Conversas e mensagens internas | CRM-001, AUTH-016 |
+| [CRM-006](#crm-006) | DONE | Atribuicao a setor/cargo/membro | TEAM-001, AUTH-016 |
+| [CRM-007](#crm-007) | DONE | WebSocket rooms | CRM-005, AUTH-016 |
+| [MSG-001](#msg-001) | DONE | Outbox e eventos | INF-004, CRM-005, AUTH-016 |
+| [MSG-002](#msg-002) | DONE | BullMQ e dead-letter | MSG-001, AUTH-016 |
 | [MSG-003](#msg-003) | BACKLOG | Adapter de provider | MSG-001, AUTH-016 |
 | [MSG-004](#msg-004) | BACKLOG | QR e conexao | MSG-003, AUTH-016 |
 | [MSG-005](#msg-005) | BACKLOG | Webhook normalizado | MSG-003, AUTH-016 |
@@ -1458,7 +1458,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 <a id="crm-005"></a>
 ### CRM-005 — Conversas e mensagens internas
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
 
 **Objetivo:** Conversas e mensagens internas. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1481,14 +1481,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - historico paginado e auditoria
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/api/src/tests/deal.service.test.ts](../apps/api/src/tests/deal.service.test.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="crm-006"></a>
 ### CRM-006 — Atribuicao a setor/cargo/membro
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
 
 **Objetivo:** Atribuicao a setor/cargo/membro. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1511,14 +1511,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - autorizacao e notificacao em tempo real
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/api/src/tests/assignment.test.ts](../apps/api/src/tests/assignment.test.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="crm-007"></a>
 ### CRM-007 — WebSocket rooms
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
 
 **Objetivo:** WebSocket rooms. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1541,14 +1541,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - usuario so recebe eventos autorizados
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/tenant-web/src/lib/useRealtime.ts](../apps/tenant-web/src/lib/useRealtime.ts), [apps/api/src/modules/15-events/infrastructure/websocket.gateway.ts](../apps/api/src/modules/15-events/infrastructure/websocket.gateway.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="msg-001"></a>
 ### MSG-001 — Outbox e eventos
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
 
 **Objetivo:** Outbox e eventos. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1571,14 +1571,14 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - sem evento fantasma apos rollback
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/worker/src/index.ts](../apps/worker/src/index.ts), [apps/api/src/modules/06-inbox/infrastructure/messages-queue.ts](../apps/api/src/modules/06-inbox/infrastructure/messages-queue.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="msg-002"></a>
 ### MSG-002 — BullMQ e dead-letter
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
 
 **Objetivo:** BullMQ e dead-letter. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1601,7 +1601,7 @@ Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protót
 - retry/backoff/timeout/idempotencia
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/worker/src/index.ts](../apps/worker/src/index.ts), [apps/api/src/modules/06-inbox/infrastructure/messages-queue.ts](../apps/api/src/modules/06-inbox/infrastructure/messages-queue.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 

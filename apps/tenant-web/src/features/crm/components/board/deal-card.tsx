@@ -8,13 +8,15 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 interface DealCardProps {
   deal: CrmDeal;
   stages: CrmPipelineStage[];
+  memberships?: any[];
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   onEdit: () => void;
   onMoveStage: (stageId: string) => void;
+  onAssign: (membershipId: string | null) => void;
 }
 
-export function DealCard({ deal, stages, provided, snapshot, onEdit, onMoveStage }: DealCardProps) {
+export function DealCard({ deal, stages, memberships, provided, snapshot, onEdit, onMoveStage, onAssign }: DealCardProps) {
   const formattedValue = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: deal.currency }).format(parseFloat(deal.amount));
   const dateStr = deal.expectedCloseDate ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short' }).format(new Date(deal.expectedCloseDate)) : "--";
 
@@ -48,6 +50,31 @@ export function DealCard({ deal, stages, provided, snapshot, onEdit, onMoveStage
             <DropdownMenuItem onClick={(e: React.MouseEvent) => { e.stopPropagation(); onEdit(); }}>
               Editar lead
             </DropdownMenuItem>
+            
+            {memberships && memberships.length > 0 && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Atribuir a...</DropdownMenuLabel>
+                {memberships.map((mem) => (
+                  <DropdownMenuItem 
+                    key={mem.id} 
+                    onClick={(e: React.MouseEvent) => { e.stopPropagation(); onAssign(mem.id); }}
+                    className={deal.assignedMembershipId === mem.id ? "font-bold text-[#0A74FF]" : ""}
+                  >
+                    {mem.user?.name || mem.id}
+                  </DropdownMenuItem>
+                ))}
+                {deal.assignedMembershipId && (
+                  <DropdownMenuItem 
+                    onClick={(e: React.MouseEvent) => { e.stopPropagation(); onAssign(null); }}
+                    className="text-red-500"
+                  >
+                    Remover responsável
+                  </DropdownMenuItem>
+                )}
+              </>
+            )}
+
             <DropdownMenuSeparator />
             <DropdownMenuLabel>Mover para...</DropdownMenuLabel>
             {stages.map(stage => (

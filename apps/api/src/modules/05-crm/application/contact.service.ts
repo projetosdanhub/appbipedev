@@ -29,9 +29,9 @@ export class ContactService {
     return contact;
   }
 
-  async updateContact(context: TenantContext, contactId: string, input: UpdateContactInput): Promise<Contact> {
+  async updateContact(context: TenantContext, contactId: string, expectedVersion: number, input: UpdateContactInput): Promise<Contact> {
     assertPermission(context, "crm.contacts.update");
-    const contact = await this.contactRepository.update(context.tenantId, contactId, input);
+    const contact = await this.contactRepository.update(context.tenantId, contactId, expectedVersion, input);
     if (!contact) {
       throw new Error("NOT_FOUND");
     }
@@ -44,5 +44,63 @@ export class ContactService {
     if (!deleted) {
       throw new Error("NOT_FOUND");
     }
+  }
+
+  async assign(
+    context: TenantContext, 
+    contactId: string, 
+    expectedVersion: number, 
+    departmentId: string | null, 
+    routingRoleId: string | null, 
+    assignedMembershipId: string | null
+  ): Promise<Contact> {
+    assertPermission(context, "crm.contacts.assign");
+    const contact = await this.contactRepository.assign(context.tenantId, contactId, expectedVersion, departmentId, routingRoleId, assignedMembershipId, context.membershipId);
+    if (!contact) {
+      throw new Error("CONFLICT");
+    }
+    return contact;
+  }
+
+  async claim(context: TenantContext, contactId: string, expectedVersion: number): Promise<Contact> {
+    assertPermission(context, "crm.contacts.claim");
+    const current = await this.contactRepository.findById(context.tenantId, contactId);
+    if (!current) throw new Error("NOT_FOUND");
+    if (current.version !== expectedVersion) throw new Error("CONFLICT");
+
+    const contact = await this.contactRepository.assign(
+      context.tenantId, 
+      contactId, 
+      expectedVersion, 
+      current.departmentId, 
+      current.routingRoleId, 
+      context.membershipId,
+      context.membershipId
+    );
+    if (!contact) {
+      throw new Error("CONFLICT");
+    }
+    return contact;
+  }
+
+  async release(context: TenantContext, contactId: string, expectedVersion: number): Promise<Contact> {
+    assertPermission(context, "crm.contacts.assign");
+    const current = await this.contactRepository.findById(context.tenantId, contactId);
+    if (!current) throw new Error("NOT_FOUND");
+    if (current.version !== expectedVersion) throw new Error("CONFLICT");
+
+    const contact = await this.contactRepository.assign(
+      context.tenantId, 
+      contactId, 
+      expectedVersion, 
+      current.departmentId, 
+      current.routingRoleId, 
+      null,
+      context.membershipId
+    );
+    if (!contact) {
+      throw new Error("CONFLICT");
+    }
+    return contact;
   }
 }

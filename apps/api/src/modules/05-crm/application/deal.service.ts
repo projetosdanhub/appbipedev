@@ -6,13 +6,15 @@ import { type CreateCrmDeal, type UpdateCrmDeal, type MoveCrmDeal } from "@bipes
 import { assertPermission } from "@bipesend/auth/policies";
 import type { TenantContext } from "@bipesend/contracts";
 import { DealEntity } from "../domain/deal.entity.js";
+import type { WebsocketGateway } from "../../15-events/infrastructure/websocket.gateway.js";
 
 export class DealService {
   constructor(
     private readonly db: Database,
     private readonly dealRepository: DealRepository,
     private readonly pipelineRepository: PipelineRepository,
-    private readonly contactRepository: ContactRepository
+    private readonly contactRepository: ContactRepository,
+    private readonly gateway?: WebsocketGateway
   ) {}
 
   async createDeal(context: TenantContext, input: CreateCrmDeal) {
@@ -21,7 +23,9 @@ export class DealService {
 
     await this.validateStageRules(context.tenantId, validated.stageId, validated.contactId, null, validated);
 
-    return this.dealRepository.createDeal(context.tenantId, context.membershipId, validated);
+    const deal = await this.dealRepository.createDeal(context.tenantId, context.membershipId, validated);
+    this.gateway?.broadcastToTenant(context.tenantId, "crm.deal.changed", { dealId: deal.id });
+    return deal;
   }
 
   async listDeals(context: TenantContext, pipelineId?: string) {
@@ -41,7 +45,9 @@ export class DealService {
   async updateDeal(context: TenantContext, dealId: string, version: number, input: UpdateCrmDeal) {
     assertPermission(context, "crm.deals.write");
     const validated = DealEntity.validateUpdate(input);
-    return this.dealRepository.updateDeal(context.tenantId, context.membershipId, dealId, version, validated);
+    const deal = await this.dealRepository.updateDeal(context.tenantId, context.membershipId, dealId, version, validated);
+    this.gateway?.broadcastToTenant(context.tenantId, "crm.deal.changed", { dealId });
+    return deal;
   }
 
   async moveDeal(context: TenantContext, dealId: string, input: MoveCrmDeal) {
@@ -52,7 +58,70 @@ export class DealService {
 
     await this.validateStageRules(context.tenantId, validated.toStageId, deal.contactId, dealId);
 
-    return this.dealRepository.moveDeal(context.tenantId, context.membershipId, dealId, validated.expectedVersion, validated.toStageId, validated.lostReason ?? undefined);
+    const updatedDeal = await this.dealRepository.moveDeal(context.tenantId, context.membershipId, dealId, validated.expectedVersion, validated.toStageId, validated.lostReason ?? undefined);
+    this.gateway?.broadcastToTenant(context.tenantId, "crm.deal.changed", { dealId });
+    return updatedDeal;
+  }
+
+  async assign(
+    context: TenantContext, 
+    dealId: string, 
+    expectedVersion: number, 
+    departmentId: string | null, 
+    routingRoleId: string | null, 
+    assignedMembershipId: string | null
+  ) {
+    assertPermission(context, "crm.deals.write");
+    const deal = await this.dealRepository.assign(context.tenantId, dealId, expectedVersion, departmentId, routingRoleId, assignedMembershipId, context.membershipId);
+    if (!deal) {
+      throw new Error("CONFLICT");
+    }
+    this.gateway?.broadcastToTenant(context.tenantId, "crm.deal.changed", { dealId });
+    return deal;
+  }
+
+  async claim(context: TenantContext, dealId: string, expectedVersion: number) {
+    assertPermission(context, "crm.deals.write");
+    const current = await this.dealRepository.getDeal(context.tenantId, dealId);
+    if (!current) throw new Error("NOT_FOUND");
+    if (current.version !== expectedVersion) throw new Error("CONFLICT");
+
+    const deal = await this.dealRepository.assign(
+      context.tenantId, 
+      dealId, 
+      expectedVersion, 
+      current.departmentId, 
+      current.routingRoleId, 
+      context.membershipId,
+      context.membershipId
+    );
+    if (!deal) {
+      throw new Error("CONFLICT");
+    }
+    this.gateway?.broadcastToTenant(context.tenantId, "crm.deal.changed", { dealId });
+    return deal;
+  }
+
+  async release(context: TenantContext, dealId: string, expectedVersion: number) {
+    assertPermission(context, "crm.deals.write");
+    const current = await this.dealRepository.getDeal(context.tenantId, dealId);
+    if (!current) throw new Error("NOT_FOUND");
+    if (current.version !== expectedVersion) throw new Error("CONFLICT");
+
+    const deal = await this.dealRepository.assign(
+      context.tenantId, 
+      dealId, 
+      expectedVersion, 
+      current.departmentId, 
+      current.routingRoleId, 
+      null,
+      context.membershipId
+    );
+    if (!deal) {
+      throw new Error("CONFLICT");
+    }
+    this.gateway?.broadcastToTenant(context.tenantId, "crm.deal.changed", { dealId });
+    return deal;
   }
 
   private async validateStageRules(tenantId: string, stageId: string, contactId: string | null | undefined, dealId: string | null, dealPayload: any = {}) {

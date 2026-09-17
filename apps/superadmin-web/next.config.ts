@@ -21,7 +21,7 @@ try {
 const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
-      allowedOrigins: ['admin.localhost', ngrokHost].filter(Boolean),
+      allowedOrigins: ['admin.localhost', 'admin.localhost:3443', 'admin.localhost:3080', ngrokHost].filter(Boolean),
     },
   },
   allowedDevOrigins: ['127.0.0.1', 'localhost', '::1', ngrokHost, 'app.localhost', 'admin.localhost'].filter(Boolean),

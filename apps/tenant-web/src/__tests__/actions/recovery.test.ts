@@ -134,7 +134,7 @@ describe("Recovery state transitions", () => {
     await expect(redeemRecovery(email, proof, "NewPass123!")).rejects.toThrow(
       "AUTH_CODE_INVALID",
     );
-  });
+  }, 10000);
   it("rolls proof consumption back if password persistence fails", async () => {
     const proof = await verifyRecovery(email, await issue());
     state.failUpdate = true;

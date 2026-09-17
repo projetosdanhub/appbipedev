@@ -1,9 +1,8 @@
 import { NextRequest } from "next/server";
 
 export async function handler(req: NextRequest) {
-  // Strip "/api/" from the pathname
-  const path = req.nextUrl.pathname.replace(/^\/api\//, "");
-  const url = `http://127.0.0.1:4000/${path}${req.nextUrl.search}`;
+  const path = req.nextUrl.pathname;
+  const url = `http://127.0.0.1:4000${path}${req.nextUrl.search}`;
 
   const headers = new Headers(req.headers);
   headers.delete("host");

@@ -35,6 +35,7 @@ export const permissionSchema = z.enum([
   "crm.contacts.delete",
   "crm.contacts.export",
   "crm.import.manage",
+
   "crm.deals.read",
   "crm.deals.write",
   "crm.pipelines.manage",
@@ -46,6 +47,11 @@ export const permissionSchema = z.enum([
   "inbox.conversations.read",
   "inbox.conversations.reply",
   "inbox.conversations.assign",
+  "inbox.conversations.claim",
+  "crm.contacts.assign",
+  "crm.contacts.claim",
+  "crm.deals.assign",
+  "crm.deals.claim",
   "campaigns.manage",
   "automations.manage",
   "catalog.manage",
@@ -605,4 +611,21 @@ export type CreateCrmDeal = z.infer<typeof createCrmDealSchema>;
 export type UpdateCrmDeal = z.infer<typeof updateCrmDealSchema>;
 export type MoveCrmDeal = z.infer<typeof moveCrmDealSchema>;
 export type CrmDealStageHistory = z.infer<typeof crmDealStageHistorySchema>;
+
+// --- CRM-006: Atribuição ---
+
+export const assignmentTargetSchema = z.object({
+  departmentId: idSchema.nullable(),
+  routingRoleId: idSchema.nullable(),
+  assignedMembershipId: idSchema.nullable(),
+  expectedVersion: z.number().int().positive(),
+}).strict();
+
+export const claimResourceBodySchema = z.object({
+  expectedVersion: z.number().int().positive(),
+}).strict();
+
+export type AssignmentTarget = z.infer<typeof assignmentTargetSchema>;
+export type ClaimResourceBody = z.infer<typeof claimResourceBodySchema>;
+
 export * from "./inbox.js";

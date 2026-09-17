@@ -1,13 +1,15 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { DealService } from "../application/deal.service.js";
+import { TeamService } from "../../04-team/application/team.service.js";
 import { createTenantMiddleware } from "../../00-shared/presentation/auth.middleware.js";
 import { Database } from "../../00-shared/infrastructure/database.js";
-import { createCrmDealSchema, updateCrmDealSchema, moveCrmDealSchema } from "@bipesend/contracts";
+import { createCrmDealSchema, updateCrmDealSchema, moveCrmDealSchema, assignmentTargetSchema, claimResourceBodySchema } from "@bipesend/contracts";
 
 export function dealRoutes(
   fastify: FastifyInstance,
   db: Database,
-  dealService: DealService
+  dealService: DealService,
+  teamService: TeamService
 ) {
   fastify.get(
     "/api/v1/tenants/:tenantId/deals",
@@ -116,6 +118,89 @@ export function dealRoutes(
       } catch (e: any) {
         if (e.message === "NOT_FOUND") return reply.status(404).send({ error: "Deal not found" });
         if (e.message === "CONCURRENCY_CONFLICT") return reply.status(409).send({ error: "Deal was updated by another user" });
+        return reply.status(403).send({ error: e.message || "Operation failed" });
+      }
+    }
+  );
+  fastify.get(
+    "/api/v1/tenants/:tenantId/deals/:dealId/assignment-candidates",
+    { preHandler: createTenantMiddleware(db) },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      if (!request.tenantContext) return reply.status(403).send({ error: "Tenant access denied" });
+      const query = request.query as { departmentId?: string };
+      if (!query.departmentId) return reply.status(400).send({ error: "Missing departmentId query" });
+      
+      try {
+        const candidates = await teamService.getAssignmentCandidates(request.tenantContext, query.departmentId);
+        return reply.status(200).send({ data: candidates });
+      } catch (e: any) {
+        return reply.status(403).send({ error: e.message || "Operation failed" });
+      }
+    }
+  );
+
+  fastify.put(
+    "/api/v1/tenants/:tenantId/deals/:dealId/assignment",
+    { preHandler: createTenantMiddleware(db) },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      if (!request.tenantContext) return reply.status(403).send({ error: "Tenant access denied" });
+      const parsed = assignmentTargetSchema.safeParse(request.body);
+      if (!parsed.success) return reply.status(400).send({ error: "Invalid data", details: parsed.error.issues });
+      
+      const params = request.params as { dealId: string };
+      try {
+        const deal = await dealService.assign(
+          request.tenantContext, 
+          params.dealId, 
+          parsed.data.expectedVersion, 
+          parsed.data.departmentId, 
+          parsed.data.routingRoleId, 
+          parsed.data.assignedMembershipId
+        );
+        return reply.status(200).send({ data: deal });
+      } catch (e: any) {
+        if (e.message === "NOT_FOUND") return reply.status(404).send({ error: "Deal not found" });
+        if (e.message === "CONFLICT") return reply.status(409).send({ error: "Conflict or version mismatch" });
+        return reply.status(403).send({ error: e.message || "Operation failed" });
+      }
+    }
+  );
+
+  fastify.post(
+    "/api/v1/tenants/:tenantId/deals/:dealId/assignment/claim",
+    { preHandler: createTenantMiddleware(db) },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      if (!request.tenantContext) return reply.status(403).send({ error: "Tenant access denied" });
+      const parsed = claimResourceBodySchema.safeParse(request.body);
+      if (!parsed.success) return reply.status(400).send({ error: "Invalid data", details: parsed.error.issues });
+      
+      const params = request.params as { dealId: string };
+      try {
+        const deal = await dealService.claim(request.tenantContext, params.dealId, parsed.data.expectedVersion);
+        return reply.status(200).send({ data: deal });
+      } catch (e: any) {
+        if (e.message === "NOT_FOUND") return reply.status(404).send({ error: "Deal not found" });
+        if (e.message === "CONFLICT") return reply.status(409).send({ error: "Conflict or version mismatch" });
+        return reply.status(403).send({ error: e.message || "Operation failed" });
+      }
+    }
+  );
+
+  fastify.post(
+    "/api/v1/tenants/:tenantId/deals/:dealId/assignment/release",
+    { preHandler: createTenantMiddleware(db) },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      if (!request.tenantContext) return reply.status(403).send({ error: "Tenant access denied" });
+      const parsed = claimResourceBodySchema.safeParse(request.body);
+      if (!parsed.success) return reply.status(400).send({ error: "Invalid data", details: parsed.error.issues });
+      
+      const params = request.params as { dealId: string };
+      try {
+        const deal = await dealService.release(request.tenantContext, params.dealId, parsed.data.expectedVersion);
+        return reply.status(200).send({ data: deal });
+      } catch (e: any) {
+        if (e.message === "NOT_FOUND") return reply.status(404).send({ error: "Deal not found" });
+        if (e.message === "CONFLICT") return reply.status(409).send({ error: "Conflict or version mismatch" });
         return reply.status(403).send({ error: e.message || "Operation failed" });
       }
     }

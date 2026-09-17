@@ -49,3 +49,5 @@ export const jobPolicy = Object.freeze({
   timeoutMs: 30_000,
   maxPayloadBytes: 64 * 1024,
 });
+
+export * from "./dedupe.js";

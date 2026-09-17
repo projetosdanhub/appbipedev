@@ -76,4 +76,31 @@ export class TeamRepository {
       [active, id, tenantId]
     );
   }
+
+  async getAssignmentCandidates(tenantId: string, departmentId: string) {
+    const membershipsQuery = await this.db.query(
+      `SELECT m.id, m.user_id as "userId", u.first_name as "firstName", u.last_name as "lastName"
+       FROM department_memberships dm
+       JOIN memberships m ON dm.membership_id = m.id
+       JOIN users u ON m.user_id = u.id
+       WHERE dm.tenant_id = $1 AND dm.department_id = $2 
+         AND dm.status = 'active' AND m.active = true
+       ORDER BY u.first_name ASC`,
+      [tenantId, departmentId]
+    );
+
+    const rolesQuery = await this.db.query(
+      `SELECT r.id, r.name, r.department_id as "departmentId"
+       FROM roles r
+       WHERE r.tenant_id = $1 AND r.status = 'active'
+         AND (r.department_id = $2 OR r.department_id IS NULL)
+       ORDER BY r.name ASC`,
+      [tenantId, departmentId]
+    );
+
+    return {
+      memberships: membershipsQuery,
+      roles: rolesQuery,
+    };
+  }
 }

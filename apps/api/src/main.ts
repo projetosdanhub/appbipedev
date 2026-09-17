@@ -12,6 +12,8 @@ import Fastify from "fastify";
 import { loadEnv } from "./config/env.js";
 import { logger } from "./modules/00-shared/infrastructure/logger.js";
 import { registerHealthController } from "./modules/00-shared/presentation/health.controller.js";
+import path from "node:path";
+import process from "node:process";
 
 async function bootstrap(): Promise<void> {
   const env = loadEnv();
@@ -39,6 +41,21 @@ async function bootstrap(): Promise<void> {
 
   // Setup plugins
   app.register(import("@fastify/cookie"));
+  app.register(import("@fastify/websocket"));
+  
+  const fastifyStatic = await import("@fastify/static");
+  const fastifyMultipart = await import("@fastify/multipart");
+  
+  app.register(fastifyMultipart.default, {
+    limits: {
+      fileSize: 50 * 1024 * 1024, // 50MB limit
+    },
+  });
+
+  app.register(fastifyStatic.default, {
+    root: path.join(process.cwd(), "uploads"),
+    prefix: "/uploads/",
+  });
 
   // Setup DB
   const { Database } = await import(
@@ -214,6 +231,14 @@ async function bootstrap(): Promise<void> {
     "./modules/06-inbox/presentation/inbox.controller.js"
   );
 
+  // Events / WS Gateway
+  const { WebsocketGateway } = await import(
+    "./modules/15-events/infrastructure/websocket.gateway.js"
+  );
+  const { websocketRoutes } = await import(
+    "./modules/15-events/presentation/websocket.controller.js"
+  );
+
   const contactRepository = new ContactRepository(db);
   const tagRepository = new TagRepository(db);
   const segmentRepository = new SegmentRepository(db);
@@ -228,8 +253,47 @@ async function bootstrap(): Promise<void> {
   const customFieldService = new CustomFieldService(customFieldRepository);
   const contactImportService = new ContactImportService(contactImportRepository);
   const pipelineService = new PipelineService(db, pipelineRepository);
-  const dealService = new DealService(db, dealRepository, pipelineRepository, contactRepository);
-  const inboxService = new InboxService(db);
+
+  const websocketGateway = new WebsocketGateway();
+
+  // Evolution Service
+  const { EvolutionService } = await import(
+    "./modules/13-integrations/application/evolution.service.js"
+  );
+  const evolutionService = new EvolutionService(db, websocketGateway);
+
+  const dealService = new DealService(db, dealRepository, pipelineRepository, contactRepository, websocketGateway);
+  
+  const inboxService = new InboxService(db, websocketGateway);
+
+  // Background Workers & Queue Management
+  const { startMessagesWorker, outboundMessagesQueue } = await import(
+    "./modules/06-inbox/infrastructure/messages-queue.js"
+  );
+  startMessagesWorker(db, websocketGateway);
+
+  const { shutdownWorkers } = await import(
+    "./modules/00-shared/infrastructure/queue/base-worker.js"
+  );
+
+  app.addHook("onClose", async () => {
+    await shutdownWorkers();
+  });
+
+  // Bull Board Setup
+  const { createBullBoard } = await import("@bull-board/api");
+  const { BullMQAdapter } = await import("@bull-board/api/bullMQAdapter");
+  const { FastifyAdapter } = await import("@bull-board/fastify");
+
+  const serverAdapter = new FastifyAdapter();
+  serverAdapter.setBasePath('/admin/queues');
+
+  createBullBoard({
+    queues: [new BullMQAdapter(outboundMessagesQueue as any)],
+    serverAdapter,
+  });
+
+  app.register(serverAdapter.registerPlugin(), { prefix: '/admin/queues' });
 
   // Register auth routes (no auth required for most, auth plugin handles middleware where needed)
   app.register(async (instance) => {
@@ -243,19 +307,36 @@ async function bootstrap(): Promise<void> {
     teamRoutes(instance, db, teamService);
     auditRoutes(instance, db, auditService);
     supportRoutes(instance, db, errorReportRepository);
-    contactRoutes(instance, db, contactService);
+    contactRoutes(instance, db, contactService, teamService);
     tagRoutes(instance, db, tagService);
     segmentRoutes(instance, db, segmentService);
     customFieldRoutes(instance, db, customFieldService);
     importRoutes(instance, db, contactImportService);
     pipelineRoutes(instance, db, pipelineService);
-    dealRoutes(instance, db, dealService);
-    inboxRoutes(instance, db, inboxService);
+    dealRoutes(instance, db, dealService, teamService);
+    inboxRoutes(instance, db, inboxService, teamService);
+    
+    // Connections routes
+    const { connectionsRoutes } = await import(
+      "./modules/13-integrations/presentation/connections.controller.js"
+    );
+    connectionsRoutes(instance, db, evolutionService);
+
+    // Register WebSocket Route (will handle its own auth via query token)
+    websocketRoutes(instance, websocketGateway, sessionRepository, userRepository);
   });
 
   // Reject the obsolete browser identity paths; Auth.js is the canonical web surface.
   app.register(async (instance) => {
     authRoutes(instance);
+  });
+
+  // Webhooks
+  app.register(async (instance) => {
+    const { evolutionWebhookRoutes } = await import(
+      "./modules/13-integrations/presentation/evolution-webhook.controller.js"
+    );
+    evolutionWebhookRoutes(instance, db, evolutionService);
   });
 
   try {

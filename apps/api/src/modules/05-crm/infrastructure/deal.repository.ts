@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { Database } from "../../00-shared/infrastructure/database.js";
 import { type CreateCrmDeal, type UpdateCrmDeal } from "@bipesend/contracts";
 import { DealEntity } from "../domain/deal.entity.js";
@@ -95,6 +96,9 @@ export class DealRepository {
     if (input.title !== undefined) { sets.push(`title = $${idx++}`); values.push(input.title); }
     if (input.amount !== undefined) { sets.push(`amount = $${idx++}`); values.push(input.amount); }
     if (input.expectedCloseDate !== undefined) { sets.push(`expected_close_date = $${idx++}`); values.push(input.expectedCloseDate); }
+    if (input.departmentId !== undefined) { sets.push(`department_id = $${idx++}`); values.push(input.departmentId); }
+    if (input.routingRoleId !== undefined) { sets.push(`routing_role_id = $${idx++}`); values.push(input.routingRoleId); }
+    if (input.assignedMembershipId !== undefined) { sets.push(`assigned_membership_id = $${idx++}`); values.push(input.assignedMembershipId); }
 
     if (sets.length === 0) {
       return (await this.getDeal(tenantId, dealId))!;
@@ -157,5 +161,86 @@ export class DealRepository {
     );
 
     return deal;
+  }
+
+  async assign(
+    tenantId: string, 
+    dealId: string, 
+    expectedVersion: number, 
+    departmentId: string | null, 
+    routingRoleId: string | null, 
+    assignedMembershipId: string | null,
+    actorMembershipId: string
+  ): Promise<DealEntity | null> {
+    return this.db.withTransaction(async (txDb) => {
+      // Fetch current state
+      const currentRows = await txDb.query(
+        `SELECT department_id as "departmentId", routing_role_id as "routingRoleId", assigned_membership_id as "assignedMembershipId" 
+         FROM deals 
+         WHERE id = $1 AND tenant_id = $2 FOR UPDATE`,
+        [dealId, tenantId]
+      );
+      
+      if (currentRows.length === 0) return null;
+      const current = currentRows[0];
+
+      const rows = await txDb.query(
+        `UPDATE deals 
+         SET department_id = $1, 
+             routing_role_id = $2, 
+             assigned_membership_id = $3, 
+             updated_by_membership_id = $4,
+             version = version + 1,
+             updated_at = NOW()
+         WHERE id = $5 AND tenant_id = $6 AND version = $7
+         RETURNING 
+          id, tenant_id as "tenantId", contact_id as "contactId", pipeline_id as "pipelineId", 
+          stage_id as "stageId", title, amount, currency, expected_close_date as "expectedCloseDate", 
+          closed_at as "closedAt", lost_reason as "lostReason", department_id as "departmentId", 
+          routing_role_id as "routingRoleId", assigned_membership_id as "assignedMembershipId", 
+          created_by_membership_id as "createdByMembershipId", updated_by_membership_id as "updatedByMembershipId", 
+          version, archived_at as "archivedAt", created_at as "createdAt", updated_at as "updatedAt"`,
+        [departmentId, routingRoleId, assignedMembershipId, actorMembershipId, dealId, tenantId, expectedVersion]
+      );
+
+      if (rows.length === 0) return null;
+      const deal = rows[0];
+
+      // Insert assignment history
+      await txDb.query(
+        `INSERT INTO assignment_histories (
+          tenant_id, entity_type, entity_id, 
+          from_department_id, from_routing_role_id, from_membership_id,
+          to_department_id, to_routing_role_id, to_membership_id,
+          actor_membership_id, version
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+        [
+          tenantId, 'deal', dealId,
+          current.departmentId, current.routingRoleId, current.assignedMembershipId,
+          departmentId, routingRoleId, assignedMembershipId,
+          actorMembershipId, deal.version
+        ]
+      );
+
+      // Post outbox event
+      await txDb.query(
+        `INSERT INTO outbox_events (id, tenant_id, name, payload) VALUES ($1, $2, $3, $4)`,
+        [
+          crypto.randomUUID(),
+          tenantId, 
+          'crm.deal.assigned', 
+          JSON.stringify({
+            dealId,
+            toDepartmentId: departmentId,
+            toRoutingRoleId: routingRoleId,
+            toMembershipId: assignedMembershipId,
+            actorMembershipId,
+            version: deal.version
+          })
+        ]
+      );
+
+      return deal;
+    }, tenantId);
   }
 }

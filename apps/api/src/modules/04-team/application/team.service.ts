@@ -82,4 +82,10 @@ export class TeamService {
       await repo.updateStatus(membershipId, context.tenantId, true);
     }, context.tenantId);
   }
+
+  async getAssignmentCandidates(context: TenantContext, departmentId: string) {
+    // The user must be authenticated. Since this is called from various resources,
+    // we don't assert a specific permission here (it's checked in the controller).
+    return this.teamRepository.getAssignmentCandidates(context.tenantId, departmentId);
+  }
 }

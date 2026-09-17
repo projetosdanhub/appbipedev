@@ -1,6 +1,8 @@
 import { Pool, PoolClient } from "pg";
 
-export class Database {
+import { OutboxTransaction } from "@bipesend/events";
+
+export class Database implements OutboxTransaction {
   private pool: Pool;
 
   private client?: PoolClient;
@@ -18,6 +20,14 @@ export class Database {
     const executor = this.client || this.pool;
     const result = await executor.query(text, params);
     return result.rows;
+  }
+
+  async insertOutbox(event: import("@bipesend/contracts").DomainEvent): Promise<void> {
+    const executor = this.client || this.pool;
+    await executor.query(
+      `INSERT INTO outbox_events (id, tenant_id, name, payload) VALUES ($1, $2, $3, $4)`,
+      [event.id, event.tenantId, event.name, JSON.stringify(event)]
+    );
   }
 
   /**

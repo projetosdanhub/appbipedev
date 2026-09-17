@@ -20,6 +20,16 @@ export async function createDealAction(tenantId: string, pipelineId: string, dat
   }
 }
 
+export async function createDealFromContactAction(tenantId: string, pipelineId: string, stageId: string, contactId: string, contactName: string) {
+  const data: CreateCrmDeal = {
+    pipelineId,
+    stageId,
+    contactId,
+    title: `Negócio de ${contactName}`,
+  };
+  return createDealAction(tenantId, pipelineId, data);
+}
+
 export async function updateDealAction(tenantId: string, pipelineId: string, dealId: string, data: UpdateCrmDeal) {
   try {
     const response = await fetchApi(`/api/v1/tenants/${tenantId}/pipelines/${pipelineId}/deals/${dealId}`, {

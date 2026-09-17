@@ -1586,7 +1586,7 @@
         "CRM-001",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "Conversas e mensagens internas. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Modelar conversas/mensagens com direção, estado, paginação e retenção.",
@@ -1602,7 +1602,9 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/api/src/tests/deal.service.test.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -1618,7 +1620,7 @@
         "TEAM-001",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "Atribuicao a setor/cargo/membro. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Autorizar atribuição por setor/cargo/membro ativo.",
@@ -1634,7 +1636,9 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/api/src/tests/assignment.test.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -1650,7 +1654,7 @@
         "CRM-005",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "WebSocket rooms. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Autenticar handshake e autorizar rooms por tenant/recurso.",
@@ -1666,7 +1670,10 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/tenant-web/src/lib/useRealtime.ts",
+        "apps/api/src/modules/15-events/infrastructure/websocket.gateway.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -1683,7 +1690,7 @@
         "CRM-005",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "Outbox e eventos. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Criar tabela/adapter de outbox na transação da entidade e relay com lease.",
@@ -1698,7 +1705,10 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/worker/src/index.ts",
+        "apps/api/src/modules/06-inbox/infrastructure/messages-queue.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -1714,7 +1724,7 @@
         "MSG-001",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "BullMQ e dead-letter. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Configurar filas BullMQ isoladas por escopo, payload pequeno e referências.",
@@ -1729,7 +1739,10 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/worker/src/index.ts",
+        "apps/api/src/modules/06-inbox/infrastructure/messages-queue.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },

@@ -2,27 +2,51 @@
 
 import { useState, useTransition, useEffect } from "react";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
-import { CrmPipeline, CrmPipelineStage, CrmDeal } from "@bipesend/contracts";
+import { CrmPipeline, CrmPipelineStage, CrmDeal, CrmContact } from "@bipesend/contracts";
 import { BoardColumn } from "./board-column";
+import { ContactsColumn } from "./contacts-column";
 import { PipelineList } from "./pipeline-list";
 import { DealEditorModal } from "../deal-editor-modal";
-import { moveDealAction } from "../../actions/deal.actions";
+import { moveDealAction, createDealFromContactAction, updateDealAction } from "../../actions/deal.actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useRealtime } from "@/lib/useRealtime";
 
 interface PipelineBoardProps {
   tenantId: string;
   pipeline: CrmPipeline;
   stages: CrmPipelineStage[];
   deals: CrmDeal[];
+  contacts?: CrmContact[];
+  memberships?: { id: string; userId: string; name: string | null; email: string; }[];
   viewMode: "kanban" | "list";
+  sessionToken?: string;
 }
 
-export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals, viewMode }: PipelineBoardProps) {
+export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals, contacts, memberships, viewMode, sessionToken }: PipelineBoardProps) {
+  const router = useRouter();
   const [deals, setDeals] = useState<CrmDeal[]>(initialDeals);
+  const [contactsState, setContactsState] = useState<CrmContact[]>(contacts || []);
+  
+  useRealtime({
+    tenantId: tenantId,
+    token: sessionToken || "",
+    onEvent: (event) => {
+      if (event === "crm.deal.changed") {
+        // Quando ocorre um evento no websocket, fazemos um router.refresh() 
+        // para re-buscar os deals no Server Component e passá-los nas props `deals`.
+        router.refresh();
+      }
+    }
+  });
   
   useEffect(() => {
     setDeals(initialDeals);
   }, [initialDeals]);
+
+  useEffect(() => {
+    if (contacts) setContactsState(contacts);
+  }, [contacts]);
 
   const [isPending, startTransition] = useTransition();
 
@@ -41,13 +65,61 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
       return;
     }
 
-    const draggedDeal = deals.find(d => d.id === draggableId);
-    if (!draggedDeal) return;
-
     const fromStageId = source.droppableId;
     const toStageId = destination.droppableId;
 
-    if (fromStageId === toStageId) {
+    if (fromStageId === 'contacts-inbox') {
+      const contactId = draggableId.replace('contact-', '');
+      if (toStageId === 'contacts-inbox') return;
+
+      const contact = contactsState.find(c => c.id === contactId);
+      if (!contact) return;
+
+      // Otimisticamente cria o deal e remove o contact da lista
+      const tempDeal: CrmDeal = {
+        id: `temp-${Date.now()}`,
+        tenantId,
+        contactId,
+        pipelineId: pipeline.id,
+        stageId: toStageId,
+        title: `Negócio de ${contact.name}`,
+        amount: "0.00",
+        currency: pipeline.defaultCurrency,
+        expectedCloseDate: null,
+        closedAt: null,
+        lostReason: null,
+        departmentId: null,
+        routingRoleId: null,
+        assignedMembershipId: null,
+        createdByMembershipId: "temp",
+        updatedByMembershipId: "temp",
+        version: 1,
+        archivedAt: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      setDeals([...deals, tempDeal]);
+      setContactsState(current => current.filter(c => c.id !== contactId));
+
+      startTransition(async () => {
+        const result = await createDealFromContactAction(tenantId, pipeline.id, toStageId, contactId, contact.name);
+        if (result.success) {
+          toast.success("Negócio criado com sucesso");
+          setDeals(current => current.map(d => d.id === tempDeal.id ? result.data as CrmDeal : d));
+        } else {
+          toast.error(result.message);
+          setDeals(current => current.filter(d => d.id !== tempDeal.id));
+          setContactsState(current => [contact, ...current]);
+        }
+      });
+      return;
+    }
+
+    const draggedDeal = deals.find(d => d.id === draggableId);
+    if (!draggedDeal) return;
+
+    if (source.droppableId === destination.droppableId) {
        // Apenas reordenação na mesma coluna. No CRM atual não temos ordem de deals na coluna salva no banco
        // Mas podemos atualizar a UI otimisticamente
        const columnDeals = deals.filter(d => d.stageId === fromStageId);
@@ -99,6 +171,30 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
     });
   };
 
+  const handleAssignDeal = (deal: CrmDeal, membershipId: string | null) => {
+    // Otimisticamente atualiza
+    const updatedDeals = deals.map(d => 
+      d.id === deal.id ? { ...d, assignedMembershipId: membershipId } : d
+    );
+    setDeals(updatedDeals);
+
+    startTransition(async () => {
+      const result = await updateDealAction(tenantId, pipeline.id, deal.id, {
+        assignedMembershipId: membershipId,
+      });
+
+      if (!result.success) {
+        toast.error(result.message);
+        setDeals(deals); // Reverte optimismo
+      } else {
+        toast.success("Responsável atualizado");
+        setDeals(currentDeals => 
+          currentDeals.map(d => d.id === deal.id ? { ...d, ...result.data } as CrmDeal : d)
+        );
+      }
+    });
+  };
+
   const handleEdit = (deal: CrmDeal) => {
     setEditingDeal(deal);
     setPendingMove(null);
@@ -131,6 +227,7 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
           stage={pendingMove ? stages.find(s => s.id === pendingMove.toStageId) : stages.find(s => s.id === editingDeal?.stageId)}
           existingDeal={editingDeal}
           isMoveMode={!!pendingMove}
+          memberships={memberships}
           onSuccess={(updatedDeal) => {
               if (pendingMove) {
                  setDeals(deals.map(d => d.id === updatedDeal.id ? updatedDeal : d));
@@ -157,16 +254,23 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
                Este pipeline não possui etapas. Vá nas configurações para adicionar etapas.
              </div>
           ) : (
-            stages.map(stage => (
-              <BoardColumn 
-                key={stage.id} 
-                stage={stage} 
-                stages={stages}
-                deals={deals.filter(d => d.stageId === stage.id)}
-                onEdit={handleEdit}
-                onMoveStage={handleMoveStage}
-              />
-            ))
+            <>
+              {contactsState && contactsState.length > 0 && viewMode === "kanban" && (
+                <ContactsColumn contacts={contactsState} />
+              )}
+              {stages.map(stage => (
+                <BoardColumn 
+                  key={stage.id} 
+                  stage={stage} 
+                  stages={stages}
+                  deals={deals.filter(d => d.stageId === stage.id)}
+                  memberships={memberships}
+                  onEdit={handleEdit}
+                  onMoveStage={handleMoveStage}
+                  onAssignDeal={handleAssignDeal}
+                />
+              ))}
+            </>
           )}
         </div>
       </DragDropContext>
@@ -186,6 +290,7 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
         stage={pendingMove ? stages.find(s => s.id === pendingMove.toStageId) : stages.find(s => s.id === editingDeal?.stageId)}
         existingDeal={editingDeal}
         isMoveMode={!!pendingMove}
+        memberships={memberships}
         onSuccess={(updatedDeal) => {
             if (pendingMove) {
                // Atualizou o deal e moveu

@@ -1747,3 +1747,12 @@ Consultadas em 15/09/2026. Confirmar detalhes na vers√£o efetivamente instalada 
 - [BullMQ ‚Äî jobs idempotentes](https://docs.bullmq.io/patterns/idempotent-jobs).
 
 **Limite desta an√°lise:** inspe√ß√£o do planejamento, regras e c√≥digo remoto. Os modelos, limites, rotas e crit√©rios propostos precisam ser implementados e verificados; este arquivo n√£o certifica desempenho, seguran√ßa operacional ou conclus√£o de nenhum card.
+
+## 21. CRM-010 - AutomaÁıes visuais (PrÛxima Sess„o)
+
+- Arrastar, pan e zoom estilo n8n.
+- Menu de gatilhos flutuante, ativado por clique.
+- Sincronizar eventos de mouse para evitar conflitos (clique esquerdo longo/arrastar para pan, scroll para zoom, ou mapear para bot„o do meio do mouse).
+- CorreÁ„o do scroll duplicado ao clicar em 'aÁ„o'.
+- Total personalizaÁ„o no fluxo (cards menos retangulares e mais bonitos).
+

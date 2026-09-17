@@ -36,6 +36,9 @@ export const apiEnvSchema = z.object({
   REDIS_URL: serviceUrl(["redis:", "rediss:"]),
   AUTH_SESSION_SECRET: secret,
   INTERNAL_API_KEY: secret,
+  EVOLUTION_API_URL: serviceUrl(["http:", "https:"]).default("http://127.0.0.1:8080"),
+  EVOLUTION_API_KEY: z.string().min(1).default("12345"),
+  API_PUBLIC_URL: z.string().url().optional(),
 });
 export type ApiEnv = z.infer<typeof apiEnvSchema>;
 export function parseApiEnv(

@@ -16,12 +16,20 @@ export async function fetchApi(path: string, options: RequestInit = {}) {
     apiUrl = "http://127.0.0.1:4000"; // Resolve ENOTFOUND on Windows Node.js
   }
 
+  const isFormData = options.body instanceof FormData;
+  const defaultHeaders: HeadersInit = {
+    Cookie: allCookies, // Provedor de Sessão do Tenant Web
+  };
+  
+  if (!isFormData) {
+    defaultHeaders["Content-Type"] = "application/json";
+  }
+
   const fetchOptions: RequestInit = {
     ...options,
     headers: {
+      ...defaultHeaders,
       ...options.headers,
-      "Content-Type": "application/json",
-      Cookie: allCookies, // Provedor de Sessão do Tenant Web
     },
   };
 

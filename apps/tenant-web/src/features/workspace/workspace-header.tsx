@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { RefreshCw, LogOut, Settings } from "lucide-react";
+import { RefreshCw, LogOut, Settings, Maximize2 } from "lucide-react";
 import {
   Avatar,
   IconButton,
@@ -45,6 +45,12 @@ export function WorkspaceHeader({
         </div>
       </div>
       <div className="ui-filter-bar">
+        <IconButton
+          label="Modo Foco (Nova Aba)"
+          onClick={() => window.open(`${path}?focus=true`, "_blank")}
+        >
+          <Maximize2 aria-hidden="true" />
+        </IconButton>
         <IconButton
           label="Atualizar página atual"
           isLoading={pending}
