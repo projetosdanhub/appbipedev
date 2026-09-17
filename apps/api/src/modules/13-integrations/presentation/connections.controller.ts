@@ -5,7 +5,7 @@ import type { EvolutionService } from "../application/evolution.service.js";
 export function connectionsRoutes(app: FastifyInstance, db: Database, evolutionService: EvolutionService) {
   // GET /api/v1/connections
   app.get("/api/v1/connections", async (req: FastifyRequest, reply: FastifyReply) => {
-    const tenantId = (req as any).user?.tenantId;
+    const tenantId = req.tenantId;
     if (!tenantId) {
       return reply.status(401).send({ error: "Unauthorized" });
     }
@@ -24,7 +24,7 @@ export function connectionsRoutes(app: FastifyInstance, db: Database, evolutionS
 
   // POST /api/v1/connections/whatsapp
   app.post("/api/v1/connections/whatsapp", async (req: FastifyRequest, reply: FastifyReply) => {
-    const tenantId = (req as any).user?.tenantId;
+    const tenantId = req.tenantId;
     if (!tenantId) {
       return reply.status(401).send({ error: "Unauthorized" });
     }

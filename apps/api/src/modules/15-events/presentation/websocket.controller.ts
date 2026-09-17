@@ -2,6 +2,8 @@ import type { FastifyInstance } from "fastify";
 import type { WebsocketGateway } from "../infrastructure/websocket.gateway.js";
 import type { SessionRepository } from "../../01-identity/infrastructure/session.repository.js";
 import type { UserRepository } from "../../01-identity/infrastructure/user.repository.js";
+import { verifySession } from "@bipesend/auth/session";
+import { decode } from "@auth/core/jwt";
 
 export async function websocketRoutes(
   app: FastifyInstance,
@@ -16,7 +18,7 @@ export async function websocketRoutes(
     let token = query.token;
 
     if (!token && req.cookies) {
-      token = req.cookies["authjs.session-token"] || req.cookies["__Secure-authjs.session-token"];
+      token = req.cookies["bipesend.tenant.session-token"] || req.cookies["__Secure-bipesend.tenant.session-token"];
     }
 
     if (!token) {
@@ -25,16 +27,35 @@ export async function websocketRoutes(
       return;
     }
 
-    // 2. Validação do Token
-    const session = await sessionRepository.findByTokenHash(token);
-    if (!session || new Date(session.expires_at) < new Date()) {
-      req.log.warn("[WS] Conexão rejeitada: token inválido ou expirado.");
-      socket.close(1008, "Invalid session");
+    let decoded;
+    try {
+      const cookieName = process.env.NODE_ENV === "production" ? "__Secure-bipesend.tenant.session-token" : "bipesend.tenant.session-token";
+      decoded = await decode({
+        token,
+        secret: process.env.AUTH_SECRET as string,
+        salt: cookieName,
+      });
+    } catch {
+      req.log.warn("[WS] Conexão rejeitada: erro ao decodificar token.");
+      socket.close(1008, "Invalid token");
+      return;
+    }
+
+    if (!decoded || !decoded.sessionId || decoded.surface !== "tenant") {
+      req.log.warn("[WS] Conexão rejeitada: token inválido ou não pertence a tenant.");
+      socket.close(1008, "Unauthorized");
+      return;
+    }
+
+    const isValid = await verifySession(decoded.sessionId as string, "tenant");
+    if (!isValid) {
+      req.log.warn("[WS] Conexão rejeitada: sessão expirada ou inválida.");
+      socket.close(1008, "Session expired");
       return;
     }
 
     // 3. Obtenção do Usuário
-    const user = await userRepository.findById(session.user_id);
+    const user = await userRepository.findById(decoded.id as string);
     if (!user) {
       socket.close(1008, "User not found");
       return;
