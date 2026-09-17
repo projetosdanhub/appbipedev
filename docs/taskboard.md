@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 36161)
-Total output lines: 3326
-
 # Taskboard BipeSend — executável
 
 Versão 1.0.0 · Revisão 2026-09-16 · Base auditada `46832fc`
@@ -1266,7 +1263,608 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
-<a id="team-…6161 tokens truncated…## AI-003 — Embeddings + pgvector
+<a id="team-004"></a>
+### TEAM-004 — Auditoria pesquisavel
+
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
+
+**Objetivo:** Auditoria pesquisavel. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** AUTH-004, AUTH-016
+
+**Passos:**
+
+1. Persistir eventos de auditoria minimizados com tenant/actor/requestId.
+2. Criar filtros e paginação autorizados, retenção e export controlado; testar acesso cruzado.
+
+**Áreas de código:** `apps/api/src/modules/04-team`, `apps/tenant-web/src/features`, `packages/auth`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- filtros por actor, acao, recurso e periodo
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** [apps/api/src/modules/04-team/presentation/audit.controller.ts](../apps/api/src/modules/04-team/presentation/audit.controller.ts), [apps/api/src/modules/04-team/infrastructure/audit.repository.ts](../apps/api/src/modules/04-team/infrastructure/audit.repository.ts), [apps/tenant-web/src/features/workspace/actions/audit.actions.ts](../apps/tenant-web/src/features/workspace/actions/audit.actions.ts), [apps/tenant-web/src/app/(dashboard)/settings/security/audit/audit-client.tsx](../apps/tenant-web/src/app/(dashboard)/settings/security/audit/audit-client.tsx), [apps/tenant-web/src/app/(dashboard)/settings/security/audit/page.tsx](../apps/tenant-web/src/app/(dashboard)/settings/security/audit/page.tsx)
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="team-005"></a>
+### TEAM-005 — Contrato de erros e reporte pelo painel tenant
+
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
+
+**Objetivo:** Contrato de erros e reporte pelo painel tenant. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** INF-004, AUTH-004, AUTH-016
+
+**Passos:**
+
+1. Padronizar erros técnicos + HTTP + protocolo BPS sem stack/PII.
+2. Criar reporte contextual com requestId e payload allowlisted; testar falha de envio e consentimento quando aplicável.
+
+**Áreas de código:** `apps/api/src/modules/04-team`, `apps/tenant-web/src/features`, `packages/auth`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- codigo BipeSend, request id, redacao e protocolo de reporte
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** [apps/api/src/modules/04-team/presentation/support.controller.ts](../apps/api/src/modules/04-team/presentation/support.controller.ts)
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="team-006"></a>
+### TEAM-006 — Dicionario e triagem de erros no superpainel
+
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
+
+**Objetivo:** Dicionario e triagem de erros no superpainel. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** TEAM-005, AUTH-008, AUTH-016
+
+**Passos:**
+
+1. Criar busca/triagem privilegiada por código/fingerprint/tenant/severidade.
+2. Implementar transições open/investigating/resolved/ignored com auditoria e autorização.
+
+**Áreas de código:** `apps/api/src/modules/04-team`, `apps/tenant-web/src/features`, `packages/auth`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- buscar, vincular, promover, resolver e auditar
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** [apps/tenant-web/src/features/support/actions/triage.actions.ts](../apps/tenant-web/src/features/support/actions/triage.actions.ts), [apps/tenant-web/src/features/support/actions/report.actions.ts](../apps/tenant-web/src/features/support/actions/report.actions.ts), [apps/tenant-web/src/features/support/components/error-triage-panel.tsx](../apps/tenant-web/src/features/support/components/error-triage-panel.tsx), [apps/api/src/modules/04-team/presentation/support.controller.ts](../apps/api/src/modules/04-team/presentation/support.controller.ts), [apps/api/src/modules/04-team/infrastructure/error-report.repository.ts](../apps/api/src/modules/04-team/infrastructure/error-report.repository.ts)
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="crm-001"></a>
+### CRM-001 — Contatos e campos customizados
+
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+
+**Objetivo:** Contatos e campos customizados. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** TEAM-001, AUTH-016
+
+**Passos:**
+
+1. Modelar contatos/campos customizados com tenant, índices e schema limitado.
+2. Conectar CRUD/importação ao backend; tratar duplicata, CSV injection, tamanho e rollback.
+
+**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- CRUD, importacao segura e tenant isolation
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/e2e/crm-pipeline.spec.ts](../apps/tenant-web/e2e/crm-pipeline.spec.ts)
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="crm-002"></a>
+### CRM-002 — Tags e segmentos
+
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+
+**Objetivo:** Tags e segmentos. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** CRM-001, AUTH-016
+
+**Passos:**
+
+1. Criar tags e filtros de segmentos com schema e limites por plano.
+2. Testar exclusão, associação cruzada, paginação e reavaliação de segmentos.
+
+**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- filtros e limites por plano
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/e2e/crm-pipeline.spec.ts](../apps/tenant-web/e2e/crm-pipeline.spec.ts)
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="crm-003"></a>
+### CRM-003 — Pipelines configuraveis
+
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+
+**Objetivo:** Pipelines configuraveis. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** CRM-001, AUTH-016
+
+**Passos:**
+
+1. Persistir pipelines/etapas/ordem e transições autorizadas.
+2. Validar cor acessível, movimento concorrente e remoção de etapa com negócios existentes.
+
+**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- etapas, ordem, cor e regras validas
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/e2e/crm-pipeline.spec.ts](../apps/tenant-web/e2e/crm-pipeline.spec.ts)
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="crm-004"></a>
+### CRM-004 — Cards/lista/inbox views
+
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+
+**Objetivo:** Cards/lista/inbox views. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** CRM-003, AUTH-016
+
+**Passos:**
+
+1. Conectar cards/lista às queries do tenant mantendo filtro/sort.
+2. Oferecer ação de mover etapa por teclado/menu além do drag; composição mobile própria.
+
+**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- alternativa acessivel ao drag-and-drop
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** [apps/tenant-web/src/features/crm/components/board/pipeline-board.tsx](../apps/tenant-web/src/features/crm/components/board/pipeline-board.tsx), [apps/tenant-web/src/features/crm/components/board/pipeline-list.tsx](../apps/tenant-web/src/features/crm/components/board/pipeline-list.tsx)
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="crm-005"></a>
+### CRM-005 — Conversas e mensagens internas
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+
+**Objetivo:** Conversas e mensagens internas. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** CRM-001, AUTH-016
+
+**Passos:**
+
+1. Modelar conversas/mensagens com direção, estado, paginação e retenção.
+2. Conectar inbox de três painéis no desktop e lista→conversa→contexto no mobile; preservar rascunho.
+
+**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- historico paginado e auditoria
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="crm-006"></a>
+### CRM-006 — Atribuicao a setor/cargo/membro
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+
+**Objetivo:** Atribuicao a setor/cargo/membro. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** TEAM-001, AUTH-016
+
+**Passos:**
+
+1. Autorizar atribuição por setor/cargo/membro ativo.
+2. Persistir atribuição atomicamente, auditar e emitir evento; testar membro suspenso e corrida.
+
+**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- autorizacao e notificacao em tempo real
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="crm-007"></a>
+### CRM-007 — WebSocket rooms
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 4 - CRM e inbox
+
+**Objetivo:** WebSocket rooms. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** CRM-005, AUTH-016
+
+**Passos:**
+
+1. Autenticar handshake e autorizar rooms por tenant/recurso.
+2. Revalidar após reconexão/revogação e fazer catch-up paginado; testar inscrição em sala alheia.
+
+**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- usuario so recebe eventos autorizados
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="msg-001"></a>
+### MSG-001 — Outbox e eventos
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+
+**Objetivo:** Outbox e eventos. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** INF-004, CRM-005, AUTH-016
+
+**Passos:**
+
+1. Criar tabela/adapter de outbox na transação da entidade e relay com lease.
+2. Persistir dedupe por tenant/consumer/eventId; testar rollback, publicação repetida e queda após envio.
+
+**Áreas de código:** `packages/events`, `apps/worker`, `apps/api/src/modules/07-messaging`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- sem evento fantasma apos rollback
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="msg-002"></a>
+### MSG-002 — BullMQ e dead-letter
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+
+**Objetivo:** BullMQ e dead-letter. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** MSG-001, AUTH-016
+
+**Passos:**
+
+1. Configurar filas BullMQ isoladas por escopo, payload pequeno e referências.
+2. Aplicar retry/backoff/timeout/cancelamento/DLQ e controle de concorrência/custo por tenant.
+
+**Áreas de código:** `packages/events`, `apps/worker`, `apps/api/src/modules/07-messaging`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- retry/backoff/timeout/idempotencia
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="msg-003"></a>
+### MSG-003 — Adapter de provider
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+
+**Objetivo:** Adapter de provider. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** MSG-001, AUTH-016
+
+**Passos:**
+
+1. Definir interface de provider e adapter fake contratual sem rede real.
+2. Implementar adapter real server-only com timeout, mapeamento de erros e testes de contrato.
+
+**Áreas de código:** `packages/events`, `apps/worker`, `apps/api/src/modules/07-messaging`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- provider fake coberto por contrato
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="msg-004"></a>
+### MSG-004 — QR e conexao
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+
+**Objetivo:** QR e conexao. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** MSG-003, AUTH-016
+
+**Passos:**
+
+1. Criar estado de conexão/QR com expiração, autorização e emissão segura.
+2. Não registrar QR/token; testar expiração, reconexão, logout provider e perda de rede.
+
+**Áreas de código:** `packages/events`, `apps/worker`, `apps/api/src/modules/07-messaging`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- QR expirado e status auditado
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="msg-005"></a>
+### MSG-005 — Webhook normalizado
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+
+**Objetivo:** Webhook normalizado. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** MSG-003, AUTH-016
+
+**Passos:**
+
+1. Verificar assinatura nos bytes originais conforme provider e mapear evento canônico.
+2. Persistir chave idempotente e enfileirar após confirmação segura; testar replay e eventos fora de ordem.
+
+**Áreas de código:** `packages/events`, `apps/worker`, `apps/api/src/modules/07-messaging`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- assinatura e duplicatas tratadas
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="auto-001"></a>
+### AUTO-001 — Gatilhos e condicoes
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+
+**Objetivo:** Gatilhos e condicoes. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** CRM-003, MSG-001, AUTH-016
+
+**Passos:**
+
+1. Modelar DSL declarativa de gatilhos/condições com schemas e versão.
+2. Proibir JS arbitrário e ciclos sem limite; avaliar com contexto autorizado e limite de passos.
+
+**Áreas de código:** `apps/api/src/modules/08-automation`, `apps/tenant-web/src/app/(dashboard)/automations`, `packages/events`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- DSL validada, sem execucao arbitraria
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="auto-002"></a>
+### AUTO-002 — Acoes e agendamento
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+
+**Objetivo:** Acoes e agendamento. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** MSG-002, AUTH-016
+
+**Passos:**
+
+1. Persistir agenda, timezone, cancelamento e idempotência da execução.
+2. Criar ações allowlisted com limite por plano, simulação explícita e rollback/compensação definida.
+
+**Áreas de código:** `apps/api/src/modules/08-automation`, `apps/tenant-web/src/app/(dashboard)/automations`, `packages/events`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- timezone, cancelamento e limite
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="auto-003"></a>
+### AUTO-003 — Campanhas com opt-out
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+
+**Objetivo:** Campanhas com opt-out. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** MSG-004, AUTH-016
+
+**Passos:**
+
+1. Implementar seleção de público com opt-in/opt-out e lista de supressão.
+2. Enfileirar com limites do provider/tenant, pausa/cancelamento e dedupe por destinatário/campanha.
+
+**Áreas de código:** `apps/api/src/modules/08-automation`, `apps/tenant-web/src/app/(dashboard)/automations`, `packages/events`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- supressao e rate limit obrigatorios
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="ai-001"></a>
+### AI-001 — Upload em quarentena
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 6 - IA, conhecimento e MCP
+
+**Objetivo:** Upload em quarentena. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** INF-001, TEAM-003, AUTH-016
+
+**Passos:**
+
+1. Criar upload privado em quarentena com tenant, limite, MIME real e assinatura temporária.
+2. Executar scan e rejeitar arquivo perigoso; testar zip bomb, tamanho e URL expirada.
+
+**Áreas de código:** `apps/api/src/modules/09-knowledge`, `apps/worker`, `packages/security`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- MIME, tamanho, scan e storage privado
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="ai-002"></a>
+### AI-002 — Pipeline de extracao/chunks
+
+**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 6 - IA, conhecimento e MCP
+
+**Objetivo:** Pipeline de extracao/chunks. Entregar comportamento verificável dentro do escopo do card.
+
+**Dependências:** AI-001, AUTH-016
+
+**Passos:**
+
+1. Extrair texto com sandbox/limites e versionar documento/chunks.
+2. Garantir reprocessamento idempotente, exclusão completa e rastreabilidade sem conteúdo em log.
+
+**Áreas de código:** `apps/api/src/modules/09-knowledge`, `apps/worker`, `packages/security`.
+
+**Testes a executar:**
+
+- Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.
+- Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado.
+
+**Aceite:**
+
+- documento versionado e reprocessavel
+- Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
+
+**Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="ai-003"></a>
+### AI-003 — Embeddings + pgvector
 
 **Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 6 - IA, conhecimento e MCP
 
@@ -2276,7 +2874,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - UI sem regras de Food/plano nem fetch oculto.
 - Documentação, galeria e exports correspondem à implementação.
 
-**Evidências:** [docs/audit/bipewpro-foundation.md](../docs/audit/bipewpro-foundation.md), [docs/audit/bipewpro-wpro-004.md](../docs/audit/bipewpro-wpro-004.md)
+**Evidências:** [docs/audit/bipewpro-foundation.md](../docs/audit/bipewpro-foundation.md)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
