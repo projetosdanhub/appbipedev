@@ -32,3 +32,7 @@ Nunca armazenar dados de cartão se o PSP pode tokenizar. Segredos do PSP não c
 ## Revisão de fundação — 2026-09-13
 
 Entitlement e cota no servidor, com consumo atômico. Pagamento é confirmado por webhook autenticado/idempotente; redirect não confirma. Decimais/moeda, timezone, downgrade não destrutivo e replay precisam de testes próprios. Não embutir secrets ou preços supostos na UI.
+
+## BipeWPRO - fundação antecipada
+
+BILL-001 deve entregar o catálogo único de capacidades/cotas e concessões auditadas antes do CRUD publicável de sites/Food. BILL-002/005 reutilizam essa estrutura: não criar WebPlan/FoodPlan nem um segundo contador ao implementar planos. Contratos e exemplos de contagem estão em `docs/plans/bipewpro.md`, seções 3 e 13. Site, página, catálogo, menu e item de menu são distintos. Criação, importação, duplicação e restauração usam a mesma reserva/contagem atômica. Conteúdo institucional platform é comercialmente ilimitado com limites técnicos; suporte a tenant continua sujeito à cota do cliente. PHP requer também disponibilidade técnica homologada.

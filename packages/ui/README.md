@@ -82,3 +82,9 @@ Usar HTML nativo antes de primitives adicionais. Ícones SVG decorativos ficam a
 `pnpm --filter @bipesend/ui test`, `lint` e `typecheck`; `pnpm ui:smoke` para galeria light/dark, tamanhos e teclado. Evidências em `docs/audit/validation.md`.
 
 Ao adicionar componente: documentar necessidade/props/estados, implementar sem domínio, incluir exemplo, testar a falha comportamental possível, validar temas/mobile e atualizar exports. Segurança real de tenant, upload e sessão permanece no servidor; aparência de disabled não autoriza nem revoga operação.
+
+## Evolução premium e BipeWPRO
+
+Por instrução do usuário em 2026-09-16, a reformulação completa deste pacote fica para uma etapa futura. O BipeWPRO possui sua UI em [../web-builder-ui](../web-builder-ui/README.md). A nova biblioteca importa somente os tokens canônicos deste pacote; não copia valores nem altera seus componentes, exports ou estilos de produção.
+
+[PREMIUM_LAYOUT.md](PREMIUM_LAYOUT.md) permanece referência para evolução futura do SaaS. WPRO-004 atua em web-builder-ui, conforme o guia próprio do construtor.

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -10,13 +10,14 @@ const mainPath = resolve(__dirname, "../../../src/main.ts");
 test("API boot fails fast when critical config is missing", () => {
   assert.throws(
     () => {
-      // Executa o script sem as variáveis de ambiente necessárias
-      execSync(`npx tsx ${mainPath}`, {
+      // Native import avoids npx resolution and the tsx CLI's unrelated IPC server.
+      execFileSync(process.execPath, ["--import", "tsx", mainPath], {
         env: {
           ...process.env,
           DATABASE_URL: "", // Faltando a DB url
         },
         stdio: "pipe",
+        timeout: 10000,
       });
     },
     (err: any) => {

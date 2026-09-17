@@ -4,7 +4,8 @@ Leia `rules/00_MASTER.md`, as regras do domínio, `docs/taskboard.md` e o README
 
 - Títulos Inter; corpo Poppins. Marca preservada: azul #007BFF, violeta #6366F1, tinta #0F172A e superfície #F8FAFC.
 - Valores executáveis em `packages/ui/src/styles/tokens.css`. Gradiente original é identidade visual; controles usam tons semânticos com contraste. Nunca copiar a paleta para cada app.
-- Novos componentes genéricos em `packages/ui`; fluxos de negócio em `apps/*/src/features`; rotas finas. Pacotes de servidor nunca no bundle cliente.
+- UI específica do BipeWPRO em `packages/web-builder-ui`, por instrução do usuário (2026-09-16). Reutilizar tokens sem alterar a implementação de `packages/ui`; sua reformulação completa fica para outra etapa.
+- Novos componentes genéricos das demais superfícies em `packages/ui`; fluxos de negócio em `apps/*/src/features`; rotas finas. Pacotes de servidor nunca no bundle cliente.
 - Ao implementar validações de interface condicionais (ex: campos de formulário dependentes de estágio), espelhe os schemas Zod de `packages/contracts` que ditam as regras do banco (ex: JSONB rules). 
 - Para Drag-and-Drop, use exclusivamente `@hello-pangea/dnd`. Sempre aplique regras de acessibilidade e meta tags para SEO em páginas do Next.js.
 - Autorização real em cada entrada de servidor. Tenant selecionado pelo cliente não é contexto confiável. Use policies e transação ligada à mesma conexão.

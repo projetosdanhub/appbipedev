@@ -37,7 +37,7 @@ export function inboxRoutes(
           parsed.data
         );
         return reply.status(201).send({ data: conversation });
-      } catch (_error: any) {
+      } catch {
         return reply.status(500).send({ error: "Internal server error" });
       }
     }
@@ -58,7 +58,7 @@ export function inboxRoutes(
           contactId
         );
         return reply.status(200).send({ data: conversations });
-      } catch (_error: any) {
+      } catch {
         return reply.status(500).send({ error: "Internal server error" });
       }
     }
@@ -88,7 +88,7 @@ export function inboxRoutes(
         );
         
         return reply.status(200).send({ data: { ...conversation, messages } });
-      } catch (_error: any) {
+      } catch {
         return reply.status(500).send({ error: "Internal server error" });
       }
     }
@@ -125,7 +125,7 @@ export function inboxRoutes(
           parsed.data
         );
         return reply.status(201).send({ data: note });
-      } catch (_error: any) {
+      } catch {
         return reply.status(500).send({ error: "Internal server error" });
       }
     }

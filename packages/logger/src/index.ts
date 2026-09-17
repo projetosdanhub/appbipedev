@@ -4,101 +4,62 @@ export interface LogContext {
   requestId?: string;
   tenantId?: string;
   userId?: string;
+  /** Compatibility only: unknown keys are omitted from emitted logs. */
   [key: string]: unknown;
 }
 
-// Fields that should never be logged
-const SENSITIVE_KEYS = new Set([
-  "password",
-  "token",
-  "cookie",
-  "authorization",
-  "secret",
-  "credit_card",
-  "ssn",
-  "session",
-  "otp",
-]);
+const identifierKeys = new Set(["requestId", "tenantId", "userId", "membershipId", "correlationId", "spaceId", "siteId", "pageId", "releaseId"]);
+const codeKeys = new Set(["code", "operation", "component", "app"]);
+const metricKeys = new Set(["durationMs", "count", "attempt", "generation", "revision"]);
+const errorPrototypes = new Map<object, string>([Error, TypeError, RangeError, SyntaxError, ReferenceError, URIError, EvalError, AggregateError].map((type) => [type.prototype, type.name]));
 
-function sanitize(obj: unknown): unknown {
-  if (obj === null || obj === undefined) return obj;
-  if (typeof obj !== "object") return obj;
-  
-  if (Array.isArray(obj)) {
-    return obj.map(sanitize);
-  }
+function safeError(error: Error): { name: string } {
+  // Do not serialize message, stack, cause or provider/custom error properties.
+  return { name: errorPrototypes.get(Object.getPrototypeOf(error)) ?? "Error" };
+}
 
-  if (obj instanceof Error) {
-    return {
-      name: obj.name,
-      message: obj.message,
-      stack: obj.stack,
-    };
+/** Explicit shallow projection. No traversal/toJSON/accessors of arbitrary payloads. */
+export function projectLogMetadata(value: unknown): Record<string, unknown> {
+  if (value instanceof Error) return { error: safeError(value) };
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return {};
+  const result: Record<string, unknown> = {};
+  for (const key of [...identifierKeys, ...codeKeys, ...metricKeys, "statusCode", "env", "error", "err"]) {
+    const descriptor = Object.getOwnPropertyDescriptor(value, key);
+    if (!descriptor || !("value" in descriptor)) continue;
+    const field = descriptor.value;
+    if (identifierKeys.has(key) && typeof field === "string" && /^[a-zA-Z0-9_-]{1,100}$/.test(field)) result[key] = field;
+    else if (codeKeys.has(key) && typeof field === "string" && /^[a-zA-Z][a-zA-Z0-9_.:-]{0,79}$/.test(field)) result[key] = field;
+    else if (metricKeys.has(key) && typeof field === "number" && Number.isFinite(field) && field >= 0 && field <= Number.MAX_SAFE_INTEGER) result[key] = field;
+    else if (key === "statusCode" && typeof field === "number" && Number.isInteger(field) && field >= 100 && field <= 599) result[key] = field;
+    else if (key === "env" && ["development", "test", "production"].includes(field)) result[key] = field;
+    else if ((key === "error" || key === "err") && field instanceof Error) result.error = safeError(field);
   }
-
-  const sanitized: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (SENSITIVE_KEYS.has(key.toLowerCase())) {
-      sanitized[key] = "[REDACTED]";
-    } else {
-      sanitized[key] = sanitize(value);
-    }
-  }
-  return sanitized;
+  return result;
 }
 
 export class Logger {
-  constructor(private defaultContext: LogContext = {}) {}
-
+  private readonly defaultContext: Record<string, unknown>;
+  constructor(defaultContext: LogContext = {}) { this.defaultContext = projectLogMetadata(defaultContext); }
   withContext(context: LogContext): Logger {
-    return new Logger({ ...this.defaultContext, ...context });
+    return new Logger({ ...this.defaultContext, ...projectLogMetadata(context) });
   }
-
-  private log(level: LogLevel, message: string, data?: unknown) {
-    const payload: Record<string, unknown> = {
-      timestamp: new Date().toISOString(),
-      level,
-      message,
+  private log(level: LogLevel, message: string | object, data?: unknown) {
+    // Fastify's error handler calls log(metadata, message); application code also
+    // uses log(message, metadata). Both paths pass through the same projection.
+    const text = typeof message === "string" ? message : typeof data === "string" ? data : "Structured log event";
+    const metadata = typeof message === "string" ? data : message;
+    const payload = {
       ...this.defaultContext,
+      timestamp: new Date().toISOString(), level,
+      // Callers must supply static messages; this is not PII detection in free text.
+      message: text.replace(/[\u0000-\u001f\u007f]/g, " ").slice(0, 300),
+      ...(metadata === undefined ? {} : { data: projectLogMetadata(metadata) }),
     };
-
-    if (data !== undefined) {
-      payload.data = sanitize(data);
-    }
-
-    const output = JSON.stringify(payload);
-
-    switch (level) {
-      case "debug":
-        console.debug(output);
-        break;
-      case "info":
-        console.info(output);
-        break;
-      case "warn":
-        console.warn(output);
-        break;
-      case "error":
-        console.error(output);
-        break;
-    }
+    console[level](JSON.stringify(payload));
   }
-
-  info(message: string, data?: unknown) {
-    this.log("info", message, data);
-  }
-
-  warn(message: string, data?: unknown) {
-    this.log("warn", message, data);
-  }
-
-  error(message: string, data?: unknown) {
-    this.log("error", message, data);
-  }
-
-  debug(message: string, data?: unknown) {
-    this.log("debug", message, data);
-  }
+  info(message: string | object, data?: unknown) { this.log("info", message, data); }
+  warn(message: string | object, data?: unknown) { this.log("warn", message, data); }
+  error(message: string | object, data?: unknown) { this.log("error", message, data); }
+  debug(message: string | object, data?: unknown) { this.log("debug", message, data); }
 }
-
 export const logger = new Logger();
