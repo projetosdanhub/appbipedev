@@ -16,7 +16,7 @@ Rascunho local, salvando, salvo e conflito devem refletir fatos. Só mostrar sal
 
 ## Próxima evolução WPRO-004
 
-O painel desktop oferece resize por ponteiro e teclado: arraste altera a largura dentro dos limites; setas usam passos controlados, `Home` restaura 312 px e `End` aplica o máximo. Duplo clique também restaura a largura. Próximas fatias: unidade/cor/espaçamento por lado, gradiente, previews de falha/empty/loading/conflict quando aplicáveis; navegação acessível de árvores extensas e busca. Preservar reduced motion, forced colors, noindex da galeria e semântica dos controles. Ícones SVG Lucide importados nominalmente; não empacotar bibliotecas inteiras de assets de sites.
+O painel desktop oferece resize por ponteiro e teclado: arraste altera a largura dentro dos limites; setas usam passos controlados, `Home` restaura 312 px e `End` aplica o máximo. Duplo clique também restaura a largura. Espaçamento interno aceita controles por lado em px, rem ou %, todos limitados pelo contrato; cores oferecem texto hexadecimal e seletor visual sincronizado. Próximas fatias: gradiente, previews de falha/empty/loading/conflict quando aplicáveis; navegação acessível de árvores extensas e busca. Preservar reduced motion, forced colors, noindex da galeria e semântica dos controles. Ícones SVG Lucide importados nominalmente; não empacotar bibliotecas inteiras de assets de sites.
 
 ## Aceite
 

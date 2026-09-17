@@ -4,6 +4,15 @@ function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]!);
 }
 
+function length(value: unknown): string {
+  if (typeof value === "number") return `${value}px`;
+  if (value && typeof value === "object" && "value" in value && "unit" in value) {
+    const typed = value as { value: number; unit: "px" | "rem" | "%" };
+    return `${typed.value}${typed.unit}`;
+  }
+  throw new TypeError("Invalid validated web length");
+}
+
 function declarations(styles: WebStyles): string {
   const result: string[] = [];
   for (const [key, value] of Object.entries(styles)) {
@@ -13,7 +22,11 @@ function declarations(styles: WebStyles): string {
       case "align": result.push(`align-items:${value}`); break;
       case "justify": result.push(`justify-content:${value}`); break;
       case "columns": result.push(`grid-template-columns:repeat(${value},minmax(0,1fr))`); break;
-      case "gap": case "padding": result.push(`${key}:${value}px`); break;
+      case "gap": case "padding": result.push(`${key}:${length(value)}`); break;
+      case "paddingTop": result.push(`padding-top:${length(value)}`); break;
+      case "paddingRight": result.push(`padding-right:${length(value)}`); break;
+      case "paddingBottom": result.push(`padding-bottom:${length(value)}`); break;
+      case "paddingLeft": result.push(`padding-left:${length(value)}`); break;
       case "maxWidth": result.push(`max-width:${value}px;width:100%`); break;
       case "fontSize": result.push(`font-size:${value}px`); break;
       case "textAlign": result.push(`text-align:${value}`); break;
