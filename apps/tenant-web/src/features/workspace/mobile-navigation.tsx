@@ -2,7 +2,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, LogOut } from "lucide-react";
+import { Menu } from "lucide-react";
 import {
   Drawer,
   DrawerTrigger,
@@ -12,7 +12,6 @@ import {
   BrandLogo,
 } from "@bipesend/ui";
 import { navigation, isActiveRoute } from "./navigation";
-import { logout } from "./actions";
 
 export function MobileNavigation() {
   const path = usePathname(),
@@ -23,6 +22,7 @@ export function MobileNavigation() {
         <Link
           key={item.href}
           href={item.href}
+          className="workspace-mobile-nav-link"
           aria-current={isActiveRoute(path, item.href) ? "page" : undefined}
         >
           <item.icon aria-hidden="true" />
@@ -31,12 +31,16 @@ export function MobileNavigation() {
       ))}
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
-          <button type="button">
+          <button
+            type="button"
+            className="workspace-mobile-nav-link"
+            aria-label="Abrir todas as opções do menu"
+          >
             <Menu aria-hidden="true" />
             <span>Mais</span>
           </button>
         </DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent className="workspace-mobile-drawer">
           <DialogTitle>Seu workspace</DialogTitle>
           <DialogDescription>
             Acesse todas as áreas do BipeSend.
@@ -58,12 +62,6 @@ export function MobileNavigation() {
               </Link>
             ))}
           </div>
-          <form action={logout}>
-            <button type="submit" className="workspace-nav-link">
-              <LogOut aria-hidden="true" />
-              Sair da conta
-            </button>
-          </form>
         </DrawerContent>
       </Drawer>
     </nav>

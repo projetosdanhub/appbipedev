@@ -117,9 +117,10 @@ export function WorkspaceHeader({
               onSelect={() => {
                 void logout();
               }}
+              className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
             >
               <LogOut aria-hidden="true" className="ui-icon" />
-              Sair da conta
+              Deslogar
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

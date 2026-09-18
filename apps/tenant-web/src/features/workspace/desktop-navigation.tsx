@@ -2,9 +2,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut } from "lucide-react";
 import { navigation, isActiveRoute } from "./navigation";
-import { logout } from "./actions";
 
 export function DesktopNavigation({
   open,
@@ -26,26 +24,24 @@ export function DesktopNavigation({
 
   return (
     <>
-      <button
-        type="button"
+      <div
         className="workspace-nav-backdrop"
-        aria-label="Fechar menu principal"
         data-open={open}
+        aria-hidden="true"
         onClick={onClose}
-        tabIndex={open ? 0 : -1}
       />
       <aside
         id="workspace-navigation-panel"
         className="workspace-sidebar"
         data-open={open}
-        aria-hidden={!open}
+        aria-label="Navegação principal"
       >
         <div className="workspace-nav-heading">
-          <span className="ui-section-label">Navegação</span>
-          <strong>Seu workspace</strong>
+          <strong>Navegação</strong>
+          <span className="text-slate-400 text-xs">Módulos do sistema</span>
         </div>
-        <nav aria-label="Navegação principal" className="workspace-nav">
-          {["Workspace", "Crescimento", "Gestão"].map((group) => (
+        <nav className="workspace-nav">
+          {["Operação", "Canais", "Configurações"].map((group) => (
             <div key={group} className="workspace-nav-group">
               <p className="workspace-nav-label">{group}</p>
               {navigation
@@ -68,17 +64,6 @@ export function DesktopNavigation({
             </div>
           ))}
         </nav>
-        <form action={logout} className="workspace-sidebar-footer">
-          <button
-            type="submit"
-            className="workspace-nav-link"
-            aria-label="Sair da conta"
-            tabIndex={open ? 0 : -1}
-          >
-            <LogOut aria-hidden="true" />
-            Sair da conta
-          </button>
-        </form>
       </aside>
     </>
   );

@@ -223,7 +223,10 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
           pipeline={pipeline}
           stages={stages}
           deals={deals}
+          contacts={contactsState}
+          memberships={memberships}
           onEdit={handleEdit}
+          onCreateStage={(stageId) => handleCreate(stageId)}
         />
         
         {/* Editor Modal is shared between Kanban and List view */}
@@ -279,6 +282,7 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
                   stage={stage} 
                   stages={stages}
                   deals={deals.filter(d => d.stageId === stage.id)}
+                  contacts={contactsState}
                   memberships={memberships}
                   onEdit={handleEdit}
                   onMoveStage={handleMoveStage}
