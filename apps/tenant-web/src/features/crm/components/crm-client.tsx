@@ -1,11 +1,29 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
-import { Plus, LayoutGrid, List as ListIcon, Funnel, Search, X, Maximize2, Sparkles, Palette } from "lucide-react";
+import { 
+  Plus, 
+  LayoutGrid, 
+  List as ListIcon, 
+  Funnel, 
+  Search, 
+  X, 
+  Maximize2, 
+  Sparkles, 
+  Palette,
+  ChevronsUpDown,
+  Check
+} from "lucide-react";
 import {
   Button,
   EmptyState,
   SegmentedControl,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from "@bipesend/ui";
 import { CrmPipeline, CrmPipelineStage, CrmDeal, CrmContact, CrmTag } from "@bipesend/contracts";
 import { PipelineBoard } from "./board/pipeline-board";
@@ -214,40 +232,75 @@ export function CRMClient({
       <div className="crm-top-bar">
         {/* Left: Funnel control, animated Create Funnel button, Add Flow */}
         <div className="crm-top-start">
-          <div className="crm-funnel-selector-wrap group">
-            <div className="crm-funnel-icon-box" title="Funil comercial">
-              <Funnel className="w-4 h-4 text-[#007BFF] transition-transform duration-300 group-hover:rotate-12" aria-hidden="true" />
-            </div>
-            <label htmlFor="crm-pipeline-select" className="crm-funnel-label">
-              Funil:
-            </label>
-            {pipelines.length > 0 ? (
-              <select
-                id="crm-pipeline-select"
-                value={selectedPipelineId || ""}
-                onChange={(e) => setSelectedPipelineId(e.target.value)}
-                className="crm-funnel-select"
-                aria-label="Selecionar funil"
-              >
-                {pipelines.map(p => (
-                  <option key={p.id} value={p.id}>{p.name}</option>
-                ))}
-              </select>
-            ) : (
-              <span className="crm-pipeline-empty">Nenhum funil</span>
-            )}
-          </div>
+          {/* Seletor de Funil no Estilo Workspace com Menu e Criar Funil no Topo */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="crm-funnel-trigger" aria-label="Selecionar funil">
+              <div className="crm-funnel-trigger-icon" title="Funil comercial">
+                <Funnel className="w-4 h-4 text-[#007BFF]" aria-hidden="true" />
+              </div>
+              <div className="crm-funnel-copy">
+                <span>Funil</span>
+                <strong>{selectedPipeline ? selectedPipeline.name : "Nenhum funil"}</strong>
+              </div>
+              <ChevronsUpDown className="crm-funnel-chevrons" aria-hidden="true" />
+            </DropdownMenuTrigger>
 
-          {/* Botão Inline de Criar Funil */}
-          <button 
-            type="button"
-            className="crm-btn-create-funnel group"
-            onClick={() => setIsCreatePipelineOpen(true)}
-            title="Criar novo funil comercial"
-          >
-            <Plus className="crm-plus-icon w-4 h-4 text-[#007BFF]" aria-hidden="true" />
-            <span>Criar funil</span>
-          </button>
+            <DropdownMenuContent align="start" className="crm-funnel-menu">
+              {/* Botão de criar pipeline no topo */}
+              <DropdownMenuItem
+                onSelect={() => setIsCreatePipelineOpen(true)}
+                className="crm-funnel-menu-create-item group"
+              >
+                <div className="crm-funnel-menu-create-icon">
+                  <Plus className="w-4 h-4 text-white" aria-hidden="true" />
+                </div>
+                <div className="crm-funnel-menu-create-copy">
+                  <strong>Criar novo funil</strong>
+                  <span>Adicionar novo fluxo de vendas</span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuLabel className="crm-funnel-menu-label">
+                Funis disponíveis ({pipelines.length})
+              </DropdownMenuLabel>
+
+              {/* Lista de pipelines com scroll interno após 5 itens */}
+              <div className="crm-funnel-menu-list">
+                {pipelines.length > 0 ? (
+                  pipelines.map((p) => {
+                    const isSelected = p.id === selectedPipelineId;
+                    const stageCount = stagesMap[p.id]?.length || 0;
+                    return (
+                      <DropdownMenuItem
+                        key={p.id}
+                        onSelect={() => setSelectedPipelineId(p.id)}
+                        className={`crm-funnel-menu-item ${isSelected ? "is-selected" : ""}`}
+                      >
+                        <div className="crm-funnel-item-left">
+                          <div className="crm-funnel-item-icon">
+                            <Funnel className="w-3.5 h-3.5" aria-hidden="true" />
+                          </div>
+                          <div className="crm-funnel-item-copy">
+                            <strong>{p.name}</strong>
+                            <span>{stageCount} {stageCount === 1 ? "etapa" : "etapas"}</span>
+                          </div>
+                        </div>
+                        {isSelected && (
+                          <Check className="w-4 h-4 text-[#007BFF] shrink-0 crm-check-icon" aria-hidden="true" />
+                        )}
+                      </DropdownMenuItem>
+                    );
+                  })
+                ) : (
+                  <div className="crm-funnel-menu-empty">
+                    Nenhum funil cadastrado
+                  </div>
+                )}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Botão de Adicionar Fluxo ao funil atual */}
           {selectedPipeline && (
