@@ -764,7 +764,7 @@
     align-items: center;
     justify-content: center;
     background: var(--bg-selected);
-    color: var(--action-primary);
+    color: var(--action-hover);
     font-size: var(--text-body);
     font-weight: 600;
     position: relative;
