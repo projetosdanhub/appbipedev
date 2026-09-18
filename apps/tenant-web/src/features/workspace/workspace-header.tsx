@@ -2,17 +2,19 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { RefreshCw, LogOut, Settings, Maximize2 } from "lucide-react";
+import { RefreshCw, LogOut, Settings, Maximize2, Menu, X, Bell, Users, ChevronDown } from "lucide-react";
 import {
   Avatar,
+  BrandLogo,
   IconButton,
-  ThemeToggle,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  NotificationPanel,
+  UserMenuSummary,
 } from "@bipesend/ui";
 import { navigation, isActiveRoute } from "./navigation";
 import { logout } from "./actions";
@@ -21,11 +23,15 @@ import { TenantSwitcher, type TenantData } from "./tenant-switcher";
 export function WorkspaceHeader({ 
   name, 
   activeTenant, 
-  availableTenants 
+  availableTenants,
+  navigationOpen,
+  onNavigationToggle,
 }: { 
   name: string; 
   activeTenant?: TenantData;
   availableTenants?: TenantData[];
+  navigationOpen: boolean;
+  onNavigationToggle(): void;
 }) {
   const router = useRouter(),
     path = usePathname(),
@@ -33,7 +39,20 @@ export function WorkspaceHeader({
   const current = navigation.find((item) => isActiveRoute(path, item.href));
   return (
     <header className="workspace-header">
-      <div className="flex items-center gap-4">
+      <div className="workspace-header-start">
+        <Link href="/" aria-label="BipeSend, início" className="workspace-header-brand">
+          <BrandLogo width={132} />
+        </Link>
+        <IconButton
+          label={navigationOpen ? "Fechar menu principal" : "Abrir menu principal"}
+          aria-expanded={navigationOpen}
+          aria-controls="workspace-navigation-panel"
+          onClick={onNavigationToggle}
+          className="workspace-menu-trigger"
+        >
+          {navigationOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+        </IconButton>
+        <div className="workspace-context">
         {activeTenant && availableTenants && (
           <>
             <TenantSwitcher activeTenant={activeTenant} availableTenants={availableTenants} />
@@ -43,8 +62,9 @@ export function WorkspaceHeader({
         <div className="workspace-breadcrumb">
           <strong>{current?.name ?? "Dashboard"}</strong>
         </div>
+        </div>
       </div>
-      <div className="ui-filter-bar">
+      <div className="workspace-header-actions">
         <IconButton
           label="Modo Foco (Nova Aba)"
           onClick={() => window.open(`${path}?focus=true`, "_blank")}
@@ -58,7 +78,16 @@ export function WorkspaceHeader({
         >
           <RefreshCw aria-hidden="true" />
         </IconButton>
-        <ThemeToggle />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <IconButton label="Abrir notificações">
+              <Bell aria-hidden="true" />
+            </IconButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="workspace-notifications">
+            <NotificationPanel items={[]} />
+          </DropdownMenuContent>
+        </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
@@ -66,16 +95,29 @@ export function WorkspaceHeader({
               className="workspace-profile"
               aria-label={`Opções da conta de ${name}`}
             >
-              <Avatar name={name} />
+              <Avatar name={name} size="sm" status="online" />
               <span>{name}</span>
+              <ChevronDown aria-hidden="true" className="workspace-profile-chevron" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{name}</DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="workspace-profile-menu">
+            <DropdownMenuLabel asChild>
+              <UserMenuSummary
+                name={name}
+                subtitle={`${activeTenant?.name ?? "Workspace"} · ${activeTenant?.role?.replaceAll("_", " ") ?? "membro"}`}
+              />
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/settings/security">
                 <Settings aria-hidden="true" className="ui-icon" />
                 Segurança da conta
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/settings/team">
+                <Users aria-hidden="true" className="ui-icon" />
+                Equipe e permissões
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

@@ -25,6 +25,12 @@ export const FilterBar = ({
 }: HTMLAttributes<HTMLDivElement>) => (
   <div {...props} className={cn("ui-filter-bar", className)} />
 );
+export const Toolbar = ({
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) => (
+  <div {...props} className={cn("ui-toolbar", className)} />
+);
 export const PageContainer = ({
   className,
   ...props

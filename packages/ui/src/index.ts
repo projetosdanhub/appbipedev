@@ -4,7 +4,6 @@ export * from "./components/input";
 export * from "./components/card";
 export * from "./components/alert";
 export * from "./components/toaster";
-export * from "./components/theme-toggle";
 
 export * from "./components/form";
 export * from "./components/label";
@@ -20,3 +19,7 @@ export * from "./components/combobox";
 export * from "./components/data-table";
 export * from "./components/file-upload";
 export * from "./components/table";
+export * from "./components/segmented-control";
+export * from "./components/filter-chip";
+export * from "./components/integration-card";
+export * from "./components/identity";

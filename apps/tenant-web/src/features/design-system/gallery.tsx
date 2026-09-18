@@ -8,8 +8,8 @@ import {
   Plus,
   Download,
   SlidersHorizontal,
+  Camera,
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import {
   Badge,
   Button,
@@ -64,6 +64,10 @@ import {
   DropdownMenuItem,
   ConfirmDialog,
   FilterBar,
+  FilterChip,
+  IntegrationCard,
+  NotificationPanel,
+  UserMenuSummary,
 } from "@bipesend/ui";
 import { DashboardShell } from "@/features/workspace/dashboard-shell";
 
@@ -73,7 +77,6 @@ const samples = [
   { id: "c", name: "Empresa de exemplo C", stage: "Proposta" },
 ];
 export function DesignSystemGallery() {
-  const { setTheme } = useTheme();
   const [query, setQuery] = useState(""),
     [search, setSearch] = useState(""),
     [selected, setSelected] = useState<string[]>([]),
@@ -104,28 +107,7 @@ export function DesignSystemGallery() {
           description="Referência interativa para construir experiências consistentes. Todos os dados desta página são exemplos."
           actions={
             <>
-              <Badge variant="info">Fundação v1</Badge>
-              <Button
-                size="md"
-                variant="outline"
-                onClick={() => setTheme("light")}
-              >
-                Claro
-              </Button>
-              <Button
-                size="md"
-                variant="outline"
-                onClick={() => setTheme("dark")}
-              >
-                Escuro
-              </Button>
-              <Button
-                size="md"
-                variant="ghost"
-                onClick={() => setTheme("system")}
-              >
-                Sistema
-              </Button>
+              <Badge variant="info">Fundação clara v2</Badge>
             </>
           }
         />
@@ -473,6 +455,38 @@ export function DesignSystemGallery() {
                     ))}
                   </FilterBar>
                   <LastCheckedLabel checkedAt={null} />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Filtros operacionais</CardTitle>
+                  <CardDescription>Seleção explícita, contagem e alvo confortável.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FilterBar>
+                    <FilterChip selected count={3}>Todas</FilterChip>
+                    <FilterChip count={1}>Mensageria</FilterChip>
+                    <FilterChip count={2}>Redes sociais</FilterChip>
+                  </FilterBar>
+                </CardContent>
+              </Card>
+              <IntegrationCard
+                name="Instagram"
+                provider="Exemplo de catálogo"
+                description="Card compartilhado para lojas e configurações de integração."
+                icon={<Camera />}
+                badge={<Badge variant="info">Em preparação</Badge>}
+                tags={["Social", "Direct"]}
+                features={["Estado explícito", "Ação contextual"]}
+                action={<Button variant="secondary" disabled>Indisponível</Button>}
+              />
+              <Card>
+                <CardHeader>
+                  <CardTitle>Identidade e notificações</CardTitle>
+                </CardHeader>
+                <CardContent className="grid gap-4">
+                  <UserMenuSummary name="Usuário de exemplo" subtitle="Workspace exemplo · owner" />
+                  <NotificationPanel items={[]} />
                 </CardContent>
               </Card>
               <Card>

@@ -93,54 +93,58 @@ try {
   for (const width of [320, 360, 768, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto(`${origin}/design-system`, { timeout: 60000 });
-    for (const theme of ["light", "dark"]) {
-      await page
-        .getByRole("button", {
-          name: theme === "light" ? "Claro" : "Escuro",
-          exact: true,
-        })
-        .click();
-      for (const tab of ["Componentes", "Dados e listas", "Estados"]) {
-        await page.getByRole("tab", { name: tab, exact: true }).click();
-        const overflow = await page.evaluate(
-          () => document.documentElement.scrollWidth > innerWidth + 1,
-        );
-        const { violations } = await new AxeBuilder({ page })
-          .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
-          .exclude("nextjs-portal")
-          .analyze();
-        report.checks.push({
+    for (const tab of ["Componentes", "Dados e listas", "Estados"]) {
+      await page.getByRole("tab", { name: tab, exact: true }).click();
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth > innerWidth + 1,
+      );
+      const { violations } = await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+        .exclude("nextjs-portal")
+        .analyze();
+      report.checks.push({
+        width,
+        theme: "light",
+        tab,
+        overflow,
+        violations: violations.length,
+      });
+      if (overflow || violations.length)
+        report.failures.push({
           width,
-          theme,
+          theme: "light",
           tab,
           overflow,
-          violations: violations.length,
-        });
-        if (overflow || violations.length)
-          report.failures.push({
-            width,
-            theme,
-            tab,
-            overflow,
-            violations: violations.map((v) => ({
-              id: v.id,
-              impact: v.impact,
-              nodes: v.nodes.map((n) => ({
-                target: n.target,
-                summary: n.failureSummary,
-              })),
+          violations: violations.map((v) => ({
+            id: v.id,
+            impact: v.impact,
+            nodes: v.nodes.map((n) => ({
+              target: n.target,
+              summary: n.failureSummary,
             })),
-          });
-      }
-      await page.getByRole("tab", { name: "Componentes", exact: true }).click();
-      if (width === 360 || width === 1440)
-        await page.screenshot({
-          path: `${output}/catalogue-${width}-${theme}.png`,
-          fullPage: true,
+          })),
         });
     }
+    await page.getByRole("tab", { name: "Componentes", exact: true }).click();
+    if (width === 360 || width === 1440)
+      await page.screenshot({
+        path: `${output}/catalogue-${width}-light.png`,
+        fullPage: true,
+      });
   }
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.getByRole("button", { name: "Abrir menu principal" }).click();
+  assert.ok(
+    await page.getByRole("navigation", { name: "Navegação principal" }).isVisible(),
+  );
+  await page.keyboard.press("Escape");
+  assert.ok(
+    await page.getByRole("button", { name: "Abrir menu principal" }).isVisible(),
+  );
+  report.checks.push({
+    interaction: "desktop menu opens and closes with Escape",
+    passed: true,
+  });
   const modal = page.getByRole("button", { name: "Abrir modal", exact: true });
   await modal.click();
   await page.getByRole("dialog").waitFor();

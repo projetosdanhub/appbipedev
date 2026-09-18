@@ -1,6 +1,5 @@
 @import "./styles/tokens.css";
 @import "./styles/components.css";
-@custom-variant dark (&:where(.dark, .dark *));
 @theme inline {
   --color-canvas: var(--bg-canvas);
   --color-surface: var(--bg-surface);

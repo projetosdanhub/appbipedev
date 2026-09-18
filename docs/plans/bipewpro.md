@@ -16,7 +16,7 @@ Decisões adotadas para esta proposta:
 
 - Painel de elementos/propriedades à esquerda e prévia à direita, conforme as imagens enviadas. A frase que menciona os dois à direita foi interpretada pelas referências visuais. O lado do painel pode virar preferência de interface sem alterar o documento.
 - Uma árvore de conteúdo com estilos por breakpoint; não criar duas páginas ou duas regras de negócio para desktop/mobile.
-- Manter Inter/Poppins, azul/violeta, light/dark/sistema e componentes existentes no painel. O tema do site publicado é personalizável e independente do tema do painel.
+- Manter Inter/Poppins, azul/violeta, tema claro único e componentes existentes no painel. O tema do site publicado é personalizável e independente do tema do painel.
 - Cabeçalho, rodapé, navegação, páginas, templates e conteúdo reutilizável usam o mesmo motor.
 - O Food terá menu próprio para produtos, categorias, adicionais, disponibilidade, entrega e pedidos. O editor visual seleciona e apresenta esses dados; não se torna o cadastro de comida.
 - Autorização, capacidades e cotas são verificadas no servidor desde o primeiro CRUD. A tela comercial de planos pode chegar depois.
