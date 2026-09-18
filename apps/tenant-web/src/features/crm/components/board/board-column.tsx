@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
-import { Plus, MoreHorizontal, PlusCircle, Tags, Tag, Sparkles, Palette } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Tags, Tag, Sparkles, Palette } from "lucide-react";
 import { CrmPipelineStage, CrmDeal, CrmContact, CrmTag } from "@bipesend/contracts";
 import { 
   DropdownMenu, 
@@ -82,15 +82,6 @@ export function BoardColumn({
               {formattedTotal}
             </span>
           )}
-          <button
-            type="button"
-            className="crm-column-header-add"
-            onClick={() => onAddCards(stage)}
-            aria-label={`Adicionar cards em ${stage.name}`}
-            title={`Adicionar cards em ${stage.name}`}
-          >
-            <Plus className="w-3.5 h-3.5" />
-          </button>
 
           {/* Menu Dropdown com as 4 opções obrigatórias do fluxo */}
           <DropdownMenu>
@@ -164,15 +155,6 @@ export function BoardColumn({
             ))}
             {provided.placeholder}
             </div>
-            <button 
-              type="button" 
-              className="crm-add-card-stage group" 
-              onClick={() => onAddCards(stage)}
-              aria-label={`Adicionar cards em ${stage.name}`}
-            >
-              <Plus aria-hidden="true" className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
-              <span>+ {stage.name}</span>
-            </button>
           </div>
         )}
       </Droppable>

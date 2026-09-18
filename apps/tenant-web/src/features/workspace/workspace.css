@@ -9,7 +9,7 @@
 .workspace-sidebar {
   position: fixed;
   inset: var(--header-height) auto 0 0;
-  z-index: var(--z-dropdown);
+  z-index: 500;
   width: var(--sidebar-overlay);
   display: flex;
   flex-direction: column;
@@ -34,7 +34,7 @@
 .workspace-nav-backdrop {
   position: fixed;
   inset: var(--header-height) 0 0;
-  z-index: calc(var(--z-dropdown) - 1);
+  z-index: 499;
   background: var(--overlay);
   opacity: 0;
   visibility: hidden;
@@ -280,55 +280,29 @@
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.18);
 }
 
-.workspace-menu-icon-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
 .workspace-menu-icon {
-  position: absolute;
   width: 1.25rem;
   height: 1.25rem;
-  transition: opacity 0.25s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--text-secondary);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
 }
 
-.workspace-menu-icon.icon-panel {
-  opacity: 1;
-  transform: rotate(0deg) scale(1);
+/* Micro-rotação antecipatória de 30deg ao passar o mouse */
+.workspace-menu-trigger:not(.is-open):hover .workspace-menu-icon {
+  transform: rotate(30deg) scale(1.08);
+  color: #007BFF;
 }
 
-.workspace-menu-icon.icon-close {
-  opacity: 0;
-  transform: rotate(-90deg) scale(0.6);
-  pointer-events: none;
-}
-
-/* Micro-rotação antecipatória de 35deg ao passar o mouse */
-.workspace-menu-trigger:not(.is-open):hover .workspace-menu-icon-wrapper {
-  transform: rotate(35deg) scale(1.1);
-}
-
-/* Animação completa de girar 180deg para abrir o menu */
-.workspace-menu-trigger.is-open .workspace-menu-icon-wrapper,
-.workspace-menu-trigger[data-open="true"] .workspace-menu-icon-wrapper {
+/* Animação de girar 180deg para abrir o menu e girar de volta ao estado padrão para fechar */
+.workspace-menu-trigger.is-open .workspace-menu-icon,
+.workspace-menu-trigger[data-open="true"] .workspace-menu-icon {
   transform: rotate(180deg);
+  color: #007BFF;
 }
 
-.workspace-menu-trigger.is-open .icon-panel,
-.workspace-menu-trigger[data-open="true"] .icon-panel {
-  opacity: 0;
-  transform: rotate(90deg) scale(0.5);
-}
-
-.workspace-menu-trigger.is-open .icon-close,
-.workspace-menu-trigger[data-open="true"] .icon-close {
-  opacity: 1;
-  transform: rotate(0deg) scale(1);
+.workspace-menu-trigger.is-open:hover .workspace-menu-icon,
+.workspace-menu-trigger[data-open="true"]:hover .workspace-menu-icon {
+  transform: rotate(150deg) scale(1.08);
 }
 .workspace-breadcrumb {
   display: flex;

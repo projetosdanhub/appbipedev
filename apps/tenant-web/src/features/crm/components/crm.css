@@ -16,7 +16,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1.25rem;
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border-default);
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03);
@@ -120,14 +120,15 @@
   color: #007BFF;
 }
 
-/* ── Funnel Dropdown Menu ── */
+/* ── Funnel Dropdown Menu (Arredondado, Espaçoso & Elegante) ── */
 .crm-funnel-menu {
-  width: 18rem;
-  padding: 0.375rem;
+  min-width: 21.5rem;
+  width: 23rem;
+  padding: 0.75rem;
   background: var(--bg-surface);
   border: 1px solid var(--border-default);
-  border-radius: var(--radius-panel);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  border-radius: 1.125rem; /* Bem arredondado */
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 8px 16px -4px rgba(0, 0, 0, 0.06);
   z-index: var(--z-dropdown);
   animation: ui-fade-in 0.15s ease-out;
 }
@@ -136,16 +137,16 @@
 .crm-funnel-menu-create-item {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  padding: 0.5rem 0.625rem;
-  border-radius: var(--radius-control);
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.75rem;
   background: #f0f7ff;
   border: 1px dashed #93c5fd;
   color: #007BFF;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
 }
 
 .crm-funnel-menu-create-item:hover,
@@ -161,15 +162,15 @@
 }
 
 .crm-funnel-menu-create-icon {
-  width: 1.85rem;
-  height: 1.85rem;
-  border-radius: 0.375rem;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 0.5rem;
   background: linear-gradient(135deg, #007BFF 0%, #6366F1 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.25);
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.28);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -185,40 +186,41 @@
 }
 
 .crm-funnel-menu-create-copy strong {
-  font-size: var(--text-small);
+  font-size: 0.875rem;
   font-weight: 600;
   color: #0056D2;
 }
 
 .crm-funnel-menu-create-copy span {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: #3b82f6;
   font-weight: 400;
+  margin-top: 1px;
 }
 
 .crm-funnel-menu-separator {
-  margin: 0.35rem 0;
+  margin: 0.45rem 0;
   height: 1px;
   background: var(--border-default);
 }
 
 .crm-funnel-menu-label {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
-  padding: 0.3rem 0.5rem 0.25rem;
+  padding: 0.35rem 0.5rem 0.25rem;
 }
 
 /* ── Scroll interno para mais de 5 pipelines (5px, gradiente BipeSend) ── */
 .crm-funnel-menu-list {
-  max-height: 230px; /* ~5 itens com altura padrão */
+  max-height: 250px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding-right: 3px;
+  gap: 0.35rem;
+  padding-right: 4px;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
 }
@@ -253,10 +255,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.45rem 0.625rem;
-  border-radius: var(--radius-control);
-  border-left: 2.5px solid transparent;
+  gap: 0.75rem;
+  padding: 0.625rem 0.85rem;
+  border-radius: 0.75rem;
+  border-left: 3px solid transparent;
   cursor: pointer;
   transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
@@ -266,7 +268,7 @@
 .crm-funnel-menu-item[data-highlighted] {
   background: rgba(0, 123, 255, 0.07);
   border-left-color: #007BFF;
-  padding-left: 0.75rem;
+  padding-left: 0.95rem;
 }
 
 .crm-funnel-menu-item:hover .crm-funnel-item-icon,
@@ -304,14 +306,14 @@
 .crm-funnel-item-left {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   min-width: 0;
 }
 
 .crm-funnel-item-icon {
-  width: 1.65rem;
-  height: 1.65rem;
-  border-radius: 0.35rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
   background: var(--bg-subtle);
   color: var(--text-soft);
   display: flex;
@@ -456,6 +458,7 @@
   min-width: 0;
   min-height: 0;
   overflow: auto;
+  background: #f1f5f9; /* Fundo cinza bem claro */
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
 }
@@ -490,23 +493,23 @@
 .crm-board {
   display: flex;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 0.75rem;
   width: max-content;
   min-width: 100%;
   min-height: 100%;
-  padding: 1.25rem 1.5rem;
+  padding: 0.65rem 1rem 1rem;
 }
 
 .crm-column {
   display: flex;
   flex-direction: column;
-  width: 19.5rem;
-  max-height: calc(100vh - 120px);
+  width: 17.5rem;
+  max-height: calc(100vh - 105px);
   flex-shrink: 0;
   overflow: hidden;
-  border: 1px solid var(--border-default);
-  border-radius: 1rem;
-  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background: #ffffff;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04);
 }
 
@@ -520,10 +523,10 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
-  min-height: 3.25rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-default);
-  background: white;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
 }
 
 .crm-column-title {
@@ -639,13 +642,13 @@
 
 /* ── Deal Card (Trello Style with Stage Color Indicator) ── */
 .crm-deal-card {
-  padding: 0.875rem 1rem;
-  border-top: 1px solid var(--border-default);
-  border-right: 1px solid var(--border-default);
-  border-bottom: 1px solid var(--border-default);
+  padding: 0.75rem 0.85rem;
+  border-top: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
   border-left-width: 4px;
   border-left-style: solid;
-  border-radius: var(--radius-control);
+  border-radius: 0.625rem;
   background: white;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
   cursor: grab;
@@ -867,9 +870,9 @@
 
 /* ── Coluna "Adicionar Fluxo" no final do Kanban ── */
 .crm-add-column-card {
-  width: 18rem;
-  min-width: 18rem;
-  max-width: 18rem;
+  width: 17.5rem;
+  min-width: 17.5rem;
+  max-width: 17.5rem;
   display: flex;
   flex-direction: column;
   align-self: flex-start;
@@ -880,11 +883,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.625rem;
-  height: 9rem;
-  border-radius: var(--radius-lg);
+  gap: 0.5rem;
+  height: 7.5rem;
+  border-radius: 0.75rem;
   border: 2px dashed #cbd5e1;
-  background: rgba(248, 250, 252, 0.6);
+  background: #ffffff;
   color: var(--text-muted);
   font-family: var(--font-body);
   font-size: 0.875rem;

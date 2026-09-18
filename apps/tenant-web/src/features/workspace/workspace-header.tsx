@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { RefreshCw, LogOut, Settings, Maximize2, PanelLeft, X, Bell, Users, ChevronDown } from "lucide-react";
+import { RefreshCw, LogOut, Settings, Maximize2, PanelLeft, Bell, Users, ChevronDown } from "lucide-react";
 import {
   Avatar,
   BrandLogo,
@@ -54,10 +54,7 @@ export function WorkspaceHeader({
           data-open={navigationOpen}
           title={navigationOpen ? "Fechar menu" : "Abrir menu de navegação"}
         >
-          <div className="workspace-menu-icon-wrapper">
-            <PanelLeft className="workspace-menu-icon icon-panel" aria-hidden="true" />
-            <X className="workspace-menu-icon icon-close" aria-hidden="true" />
-          </div>
+          <PanelLeft className="workspace-menu-icon" aria-hidden="true" />
         </button>
         <div className="workspace-context">
         {activeTenant && availableTenants && (

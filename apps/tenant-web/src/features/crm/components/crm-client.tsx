@@ -69,9 +69,28 @@ export function CRMClient({
   const [tags, setTags] = useState<CrmTag[]>([]);
   const [connectedAccounts, setConnectedAccounts] = useState<ConnectedAccount[]>([]);
 
-  const [selectedPipelineId, setSelectedPipelineId] = useState<string | null>(
-    initialPipelines.length > 0 ? initialPipelines[0].id : null
-  );
+  const storageKey = `bipesend_crm_last_pipeline_${tenantId}`;
+
+  const [selectedPipelineId, setSelectedPipelineId] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved && initialPipelines.some(p => p.id === saved)) {
+          return saved;
+        }
+      } catch {}
+    }
+    return initialPipelines.length > 0 ? initialPipelines[0].id : null;
+  });
+
+  const handleSelectPipeline = useCallback((pipelineId: string) => {
+    setSelectedPipelineId(pipelineId);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(storageKey, pipelineId);
+      } catch {}
+    }
+  }, [storageKey]);
 
   // Estados dos modais
   const [isCreatePipelineOpen, setIsCreatePipelineOpen] = useState(false);
@@ -275,7 +294,7 @@ export function CRMClient({
                     return (
                       <DropdownMenuItem
                         key={p.id}
-                        onSelect={() => setSelectedPipelineId(p.id)}
+                        onSelect={() => handleSelectPipeline(p.id)}
                         className={`crm-funnel-menu-item ${isSelected ? "is-selected" : ""}`}
                       >
                         <div className="crm-funnel-item-left">
@@ -301,19 +320,6 @@ export function CRMClient({
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          {/* Botão de Adicionar Fluxo ao funil atual */}
-          {selectedPipeline && (
-            <button
-              type="button"
-              className="crm-btn-add-flow group"
-              onClick={handleOpenCreateStage}
-              title="Adicionar novo fluxo (etapa) a este funil"
-            >
-              <Palette className="w-3.5 h-3.5 text-indigo-500 transition-transform group-hover:rotate-12" aria-hidden="true" />
-              <span>+ Adicionar Fluxo</span>
-            </button>
-          )}
         </div>
 
         {/* Right: Expandable Search, View Switcher & Focus Mode */}
