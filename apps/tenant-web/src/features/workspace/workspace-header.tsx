@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { RefreshCw, LogOut, Settings, Maximize2, Menu, X, Bell, Users, ChevronDown } from "lucide-react";
+import { RefreshCw, LogOut, Settings, Maximize2, PanelLeft, X, Bell, Users, ChevronDown } from "lucide-react";
 import {
   Avatar,
   BrandLogo,
@@ -44,15 +44,21 @@ export function WorkspaceHeader({
         <Link href="/" aria-label="BipeSend, início" className="workspace-header-brand">
           <BrandLogo width={132} />
         </Link>
-        <IconButton
-          label={navigationOpen ? "Fechar menu principal" : "Abrir menu principal"}
+        <button
+          type="button"
+          aria-label={navigationOpen ? "Fechar menu principal" : "Abrir menu principal"}
           aria-expanded={navigationOpen}
           aria-controls="workspace-navigation-panel"
           onClick={onNavigationToggle}
-          className="workspace-menu-trigger"
+          className={`workspace-menu-trigger ${navigationOpen ? "is-open" : ""}`}
+          data-open={navigationOpen}
+          title={navigationOpen ? "Fechar menu" : "Abrir menu de navegação"}
         >
-          {navigationOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
-        </IconButton>
+          <div className="workspace-menu-icon-wrapper">
+            <PanelLeft className="workspace-menu-icon icon-panel" aria-hidden="true" />
+            <X className="workspace-menu-icon icon-close" aria-hidden="true" />
+          </div>
+        </button>
         <div className="workspace-context">
         {activeTenant && availableTenants && (
           <>
