@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
-import { MoreHorizontal, PlusCircle, Tags, Tag, Sparkles, Palette } from "lucide-react";
+import { Plus, PlusCircle, Tags, Tag, Sparkles, Palette } from "lucide-react";
 import { CrmPipelineStage, CrmDeal, CrmContact, CrmTag } from "@bipesend/contracts";
 import { 
   DropdownMenu, 
@@ -47,14 +47,13 @@ export function BoardColumn({
   onConfigureTags,
   onApplyTags,
   onCreatePipeline,
-  onEditStageColor,
+  onEditStageColor
 }: BoardColumnProps) {
-  const totalAmount = deals.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
-  const currency = deals[0]?.currency || "BRL";
-  const formattedTotal = new Intl.NumberFormat("pt-BR", { 
-    style: "currency", 
-    currency, 
-    maximumFractionDigits: 0 
+  const totalAmount = deals.reduce((acc, deal) => acc + (deal.amount ? Number(deal.amount) : 0), 0);
+  const formattedTotal = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 0
   }).format(totalAmount);
 
   return (
@@ -88,11 +87,11 @@ export function BoardColumn({
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="crm-column-header-menu w-7 h-7 rounded-md flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
-                aria-label={`Opções do fluxo ${stage.name}`}
+                className="crm-column-header-add-btn"
+                aria-label={`Opções e adicionar no fluxo ${stage.name}`}
                 title="Opções do fluxo"
               >
-                <MoreHorizontal className="w-3.5 h-3.5" />
+                <Plus className="crm-column-add-icon" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[210px]">
