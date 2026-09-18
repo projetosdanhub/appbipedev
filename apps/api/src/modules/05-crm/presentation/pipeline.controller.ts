@@ -79,17 +79,57 @@ export function pipelineRoutes(
     }
   );
 
+  fastify.delete(
+    "/api/v1/tenants/:tenantId/pipelines/:pipelineId",
+    { preHandler: createTenantMiddleware(db) },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      if (!request.tenantContext) return reply.status(403).send({ error: "Tenant access denied" });
+
+      const params = request.params as { pipelineId: string };
+      try {
+        await pipelineService.deletePipeline(request.tenantContext, params.pipelineId);
+        return reply.status(200).send({ success: true });
+      } catch (e: any) {
+        if (e.message === "NOT_FOUND") return reply.status(404).send({ error: "Pipeline not found" });
+        if (e.message === "CANNOT_DELETE_PIPELINE_WITH_DEALS") {
+          return reply.status(400).send({ error: "Não é possível excluir pipeline com negócios vinculados." });
+        }
+        return reply.status(403).send({ error: e.message || "Operation failed" });
+      }
+    }
+  );
+
   // Stages
+  fastify.get(
+    "/api/v1/tenants/:tenantId/pipelines/:pipelineId/stages",
+    { preHandler: createTenantMiddleware(db) },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      if (!request.tenantContext) return reply.status(403).send({ error: "Tenant access denied" });
+      
+      const params = request.params as { pipelineId: string };
+      try {
+        const stages = await pipelineService.listStages(request.tenantContext, params.pipelineId);
+        return reply.status(200).send({ data: stages });
+      } catch (e: any) {
+        return reply.status(403).send({ error: e.message || "Operation failed" });
+      }
+    }
+  );
+
   fastify.post(
     "/api/v1/tenants/:tenantId/pipelines/:pipelineId/stages",
     { preHandler: createTenantMiddleware(db) },
     async (request: FastifyRequest, reply: FastifyReply) => {
       if (!request.tenantContext) return reply.status(403).send({ error: "Tenant access denied" });
       
-      const parsed = createCrmPipelineStageSchema.safeParse(request.body);
+      const params = request.params as { pipelineId: string };
+      const body = typeof request.body === "object" && request.body !== null ? request.body : {};
+      const parsed = createCrmPipelineStageSchema.safeParse({
+        ...body,
+        pipelineId: (body as any).pipelineId || params.pipelineId,
+      });
       if (!parsed.success) return reply.status(400).send({ error: "Invalid data", details: parsed.error.issues });
       
-      const params = request.params as { pipelineId: string };
       try {
         const stage = await pipelineService.createStage(request.tenantContext, params.pipelineId, parsed.data);
         return reply.status(201).send({ data: stage });
@@ -118,4 +158,25 @@ export function pipelineRoutes(
       }
     }
   );
+
+  fastify.delete(
+    "/api/v1/tenants/:tenantId/pipelines/:pipelineId/stages/:stageId",
+    { preHandler: createTenantMiddleware(db) },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      if (!request.tenantContext) return reply.status(403).send({ error: "Tenant access denied" });
+      
+      const params = request.params as { stageId: string };
+      try {
+        await pipelineService.deleteStage(request.tenantContext, params.stageId);
+        return reply.status(200).send({ success: true });
+      } catch (e: any) {
+        if (e.message === "NOT_FOUND") return reply.status(404).send({ error: "Stage not found" });
+        if (e.message === "CANNOT_DELETE_STAGE_WITH_DEALS") {
+          return reply.status(400).send({ error: "Não é possível excluir etapa com negócios vinculados." });
+        }
+        return reply.status(403).send({ error: e.message || "Operation failed" });
+      }
+    }
+  );
 }
+

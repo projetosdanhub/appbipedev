@@ -106,23 +106,23 @@ O schema atual apresenta estruturas de equipe que precisam ser comparadas com o 
 
 ### 3.1 Preparação P-01 — repositório e evidências
 
-- [ ] Conferir branch, commit e alterações locais; criar branch de trabalho adequada sem reset/clean.
-- [ ] Conferir as dependências declaradas de cada card e abrir suas evidências.
-- [ ] Ler os guias da versão local de Next em node_modules/next/dist/docs, conforme apps/tenant-web/AGENTS.md.
-- [ ] Registrar decisões deste roteiro que forem adotadas, diferenças em relação ao código e responsáveis pelos bloqueios.
-- [ ] Confirmar o caminho real da API no proxy e o prefixo versionado antes de publicar contratos.
-- [ ] Preparar somente dados sintéticos de pelo menos dois tenants e múltiplos perfis.
+- [x] Conferir branch, commit e alterações locais; criar branch de trabalho adequada sem reset/clean.
+- [x] Conferir as dependências declaradas de cada card e abrir suas evidências.
+- [x] Ler os guias da versão local de Next em node_modules/next/dist/docs, conforme apps/tenant-web/AGENTS.md.
+- [x] Registrar decisões deste roteiro que forem adotadas, diferenças em relação ao código e responsáveis pelos bloqueios.
+- [x] Confirmar o caminho real da API no proxy e o prefixo versionado antes de publicar contratos.
+- [x] Preparar somente dados sintéticos de pelo menos dois tenants e múltiplos perfis.
 
 ### 3.2 Preparação P-02 — banco e transação
 
-- [ ] Seguir packages/db/README.md e docs/architecture/database-reconciliation.md.
-- [ ] Identificar o histórico do ambiente; inspecionar schema, constraints, índices, roles e policies.
-- [ ] Comparar as entidades novas de equipe com migrations efetivamente aplicadas.
-- [ ] Usar um único histórico de migration futura; não executar Prisma e node-pg-migrate sobre o mesmo banco como tentativa de conserto.
-- [ ] Reconciliar em ambiente isolado; não editar SQL histórico já aplicado.
-- [ ] Confirmar role de execução sem superuser/BYPASSRLS/DDL e sem propriedade das tabelas.
-- [ ] Validar withTenantTransaction com a versão real do Prisma, incluindo a chamada que define o contexto.
-- [ ] Testar que contexto e query usam o mesmo cliente transacional e não vazam pelo pool.
+- [x] Seguir packages/db/README.md e docs/architecture/database-reconciliation.md.
+- [x] Identificar o histórico do ambiente; inspecionar schema, constraints, índices, roles e policies.
+- [x] Comparar as entidades novas de equipe com migrations efetivamente aplicadas.
+- [x] Usar um único histórico de migration futura; não executar Prisma e node-pg-migrate sobre o mesmo banco como tentativa de conserto.
+- [x] Reconciliar em ambiente isolado; não editar SQL histórico já aplicado.
+- [x] Confirmar role de execução sem superuser/BYPASSRLS/DDL e sem propriedade das tabelas.
+- [x] Validar withTenantTransaction com a versão real do Prisma, incluindo a chamada que define o contexto.
+- [x] Testar que contexto e query usam o mesmo cliente transacional e não vazam pelo pool.
 
 ### 3.3 Preparação P-03 — contexto e políticas do CRM
 
@@ -565,38 +565,38 @@ Exportação de base completa, fusão de contatos e expurgo definitivo são expa
 
 **CRM-001.A — contratos e persistência**
 
-- [ ] Criar arquivos temáticos em packages/contracts/src/crm para contatos, campos, importação e filtros; exportar pelo ponto público existente.
-- [ ] Criar migration de Contact/CustomField/ContactImportBatch, índices, FKs compostas e RLS.
-- [ ] Preparar campos comuns de autoria/atribuição; não duplicar entidades de equipe.
-- [ ] Preparar persistência mínima de outbox reutilizável conforme seção 14.
-- [ ] Definir DTOs de lista e detalhe, com projeção mínima e serialização explícita.
+- [x] Criar arquivos temáticos em packages/contracts/src/crm para contatos, campos, importação e filtros; exportar pelo ponto público existente.
+- [x] Criar migration de Contact/CustomField/ContactImportBatch, índices, FKs compostas e RLS.
+- [x] Preparar campos comuns de autoria/atribuição; não duplicar entidades de equipe.
+- [x] Preparar persistência mínima de outbox reutilizável conforme seção 14.
+- [x] Definir DTOs de lista e detalhe, com projeção mínima e serialização explícita.
 
 **CRM-001.B — serviço e API**
 
-- [ ] Criar contact.service.ts, custom-field.service.ts e contact-import.service.ts em application.
-- [ ] Criar validadores de campo, normalização e duplicidade assistida em domain.
-- [ ] Criar repositórios que recebam cliente transacional/contexto; proibir Prisma global dentro da transação.
-- [ ] Criar controllers separados por responsabilidade em presentation e registrá-los no bootstrap.
-- [ ] Implementar CRUD com auth, escopo, versão, erros e auditoria.
-- [ ] Demonstrar criar/consultar contato real pela API antes de compor toda a interface.
+- [x] Criar contact.service.ts, custom-field.service.ts e contact-import.service.ts em application.
+- [x] Criar validadores de campo, normalização e duplicidade assistida em domain.
+- [x] Criar repositórios que recebam cliente transacional/contexto; proibir Prisma global dentro da transação.
+- [x] Criar controllers separados por responsabilidade em presentation e registrá-los no bootstrap.
+- [x] Implementar CRUD com auth, escopo, versão, erros e auditoria.
+- [x] Demonstrar criar/consultar contato real pela API antes de compor toda a interface.
 
 **CRM-001.C — experiência**
 
-- [ ] Criar /contacts como rota canônica e /contacts/:id para detalhe.
-- [ ] Redirecionar /users para /contacts, preservando apenas parâmetros seguros; atualizar navegação desktop/mobile.
-- [ ] Manter /crm para negócios, evitando duas telas canônicas de contatos.
-- [ ] Criar /settings/crm/fields.
-- [ ] Compor DataTable, formulário, seção de campos e wizard de importação em features/crm.
-- [ ] Actions chamam API; loaders fazem leituras; erro não apaga formulário.
-- [ ] Implementar leitura sem edição, rótulos, mensagens de conflito e estados reais.
+- [x] Criar /contacts como rota canônica e /contacts/:id para detalhe.
+- [x] Redirecionar /users para /contacts, preservando apenas parâmetros seguros; atualizar navegação desktop/mobile.
+- [x] Manter /crm para negócios, evitando duas telas canônicas de contatos.
+- [x] Criar /settings/crm/fields.
+- [x] Compor DataTable, formulário, seção de campos e wizard de importação em features/crm.
+- [x] Actions chamam API; loaders fazem leituras; erro não apaga formulário.
+- [x] Implementar leitura sem edição, rótulos, mensagens de conflito e estados reais.
 
 **CRM-001.D — importação e fechamento**
 
-- [ ] Implementar prévia/commit/expiração/idempotência.
-- [ ] Testar limites reais no proxy, Next e Fastify.
-- [ ] Implementar purga dos dados temporários.
-- [ ] Executar os casos abaixo e registrar latência/memória sem PII.
-- [ ] Remover mocks da rota entregue; atualizar documentação e taskboard.
+- [x] Implementar prévia/commit/expiração/idempotência.
+- [x] Testar limites reais no proxy, Next e Fastify.
+- [x] Implementar purga dos dados temporários.
+- [x] Executar os casos abaixo e registrar latência/memória sem PII.
+- [x] Remover mocks da rota entregue; atualizar documentação e taskboard.
 
 ### 7.10 Critérios de aceite
 
@@ -683,12 +683,12 @@ A reavaliação inicial dos segmentos acontece na consulta. Cache de contagem é
 
 ### 8.5 Passos
 
-- [ ] **CRM-002.A:** modelar Tag/ContactTag/Segment; criar constraints/RLS e contratos.
-- [ ] **CRM-002.B:** criar compilador de filtros compartilhado com contatos; testar tipos, limites e ausência.
-- [ ] **CRM-002.C:** implementar serviços de gestão e associação; limites e consumo concorrente de quota.
-- [ ] **CRM-002.D:** compor editor de tags, seleção em contatos e construtor de segmentos por condições.
-- [ ] **CRM-002.E:** exibir prévia real, contador autorizado, salvar/editar/arquivar e explicar definição inválida.
-- [ ] **CRM-002.F:** verificar paginação, desempenho e isolamento; registrar evidência.
+- [x] **CRM-002.A:** modelar Tag/ContactTag/Segment; criar constraints/RLS e contratos.
+- [x] **CRM-002.B:** criar compilador de filtros compartilhado com contatos; testar tipos, limites e ausência.
+- [x] **CRM-002.C:** implementar serviços de gestão e associação; limites e consumo concorrente de quota.
+- [x] **CRM-002.D:** compor editor de tags, seleção em contatos e construtor de segmentos por condições.
+- [x] **CRM-002.E:** exibir prévia real, contador autorizado, salvar/editar/arquivar e explicar definição inválida.
+- [x] **CRM-002.F:** verificar paginação, desempenho e isolamento; registrar evidência.
 
 Na interface, cor vem de tokens permitidos e acompanha label. O construtor de filtros mostra frases compreensíveis, validação junto à condição e diferença entre filtro temporário e segmento salvo. Alterar filtro limpa cursor e preserva o rascunho da definição.
 
@@ -787,13 +787,13 @@ Regras e configurações de funil exigem crm.pipelines.manage. Operar negócio e
 
 ### 9.6 Passos e arquivos
 
-- [ ] **CRM-003.A:** criar contratos pipeline/stage/deal/move e schemas de regras limitadas.
-- [ ] **CRM-003.B:** adicionar modelos e SQL de integridade, índices por tenant/pipeline/stage e RLS.
-- [ ] **CRM-003.C:** criar serviços separados de configuração e operação de negócios.
-- [ ] **CRM-003.D:** implementar concorrência, transições, histórico, auditoria/outbox.
-- [ ] **CRM-003.E:** criar /settings/crm/pipelines e formulário/detalhe de negócio em features/crm.
-- [ ] **CRM-003.F:** conectar criação/edição simples; deixar visualizações avançadas para CRM-004.
-- [ ] **CRM-003.G:** testar regras, moedas, remoções e corridas; registrar evidência.
+- [x] **CRM-003.A:** criar contratos pipeline/stage/deal/move e schemas de regras limitadas.
+- [x] **CRM-003.B:** adicionar modelos e SQL de integridade, índices por tenant/pipeline/stage e RLS.
+- [x] **CRM-003.C:** criar serviços separados de configuração e operação de negócios.
+- [x] **CRM-003.D:** implementar concorrência, transições, histórico, auditoria/outbox.
+- [x] **CRM-003.E:** criar /settings/crm/pipelines e formulário/detalhe de negócio em features/crm.
+- [x] **CRM-003.F:** conectar criação/edição simples; deixar visualizações avançadas para CRM-004.
+- [x] **CRM-003.G:** testar regras, moedas, remoções e corridas; registrar evidência.
 
 ### 9.7 Critérios de aceite
 
@@ -857,13 +857,13 @@ O inbox completo pertence à feature inbox. CRM-004 compõe links/contexto e vis
 
 ### 10.5 Passos
 
-- [ ] **CRM-004.A1:** criar queries de quadro, lista e contagem com mesmo filtro/escopo.
-- [ ] **CRM-004.A2:** substituir mocks da rota /crm por loader e componentes de features/crm.
-- [ ] **CRM-004.A3:** implementar paginação por coluna, seleção, detalhe e menu de movimento.
-- [ ] **CRM-004.A4:** implementar composição mobile, teclado e estados de conflito.
-- [ ] **CRM-004.B1:** integrar conversas relacionadas após CRM-005.
-- [ ] **CRM-004.B2:** testar navegação de ida/volta, cache, permissões e troca de tenant.
-- [ ] Atualizar o card somente quando ambas as fatias e seus testes estiverem completos.
+- [x] **CRM-004.A1:** criar queries de quadro, lista e contagem com mesmo filtro/escopo.
+- [x] **CRM-004.A2:** substituir mocks da rota /crm por loader e componentes de features/crm.
+- [x] **CRM-004.A3:** implementar paginação por coluna, seleção, detalhe e menu de movimento.
+- [x] **CRM-004.A4:** implementar composição mobile, teclado e estados de conflito.
+- [x] **CRM-004.B1:** integrar conversas relacionadas após CRM-005.
+- [x] **CRM-004.B2:** testar navegação de ida/volta, cache, permissões e troca de tenant.
+- [x] Atualizar o card somente quando ambas as fatias e seus testes estiverem completos.
 
 ### 10.6 Critérios de aceite
 
@@ -971,14 +971,14 @@ Salvar nota, atualizar lastActivityAt, consumir sequência, registrar auditoria 
 
 ### 11.6 Passos
 
-- [ ] **CRM-005.A:** definir contratos de conversa/nota/status/histórico e políticas de retenção.
-- [ ] **CRM-005.B:** criar tabelas, índices, sequência transacional, FKs, RLS e idempotência.
-- [ ] **CRM-005.C:** implementar serviços e API, incluindo acesso ao contato e histórico paginado.
-- [ ] **CRM-005.D:** persistir auditoria/outbox na transação; não emitir evento antes do commit.
-- [ ] **CRM-005.E:** substituir mocks de /inbox e compor experiência desktop/mobile.
-- [ ] **CRM-005.F:** validar rascunho, retry, fechamento/reabertura e marcadores de leitura.
-- [ ] **CRM-005.G:** registrar evidência; habilitar a fatia de integração CRM-004.B.
-- [ ] Manter canais externos e chat da equipe em suas entregas próprias.
+- [x] **CRM-005.A:** definir contratos de conversa/nota/status/histórico e políticas de retenção.
+- [x] **CRM-005.B:** criar tabelas, índices, sequência transacional, FKs, RLS e idempotência.
+- [x] **CRM-005.C:** implementar serviços e API, incluindo acesso ao contato e histórico paginado.
+- [x] **CRM-005.D:** persistir auditoria/outbox na transação; não emitir evento antes do commit.
+- [x] **CRM-005.E:** substituir mocks de /inbox e compor experiência desktop/mobile.
+- [x] **CRM-005.F:** validar rascunho, retry, fechamento/reabertura e marcadores de leitura.
+- [x] **CRM-005.G:** registrar evidência; habilitar a fatia de integração CRM-004.B.
+- [x] Manter canais externos e chat da equipe em suas entregas próprias.
 
 ### 11.7 Critérios de aceite
 
@@ -1108,14 +1108,14 @@ Modelo mínimo de Notification: id, tenantId, recipientMembershipId, eventId, ki
 
 ### 12.8 Passos
 
-- [ ] **CRM-006.A:** completar contratos de atribuição e catálogo assign/claim.
-- [ ] **CRM-006.B:** implementar consultas mínimas de candidatos pela fronteira de 04-team.
-- [ ] **CRM-006.C:** implementar comandos por domínio com validação de origem/destino.
-- [ ] **CRM-006.D:** adicionar locks/versão/idempotência e histórico de atribuição.
-- [ ] **CRM-006.E:** conectar seletores no contato, negócio e atendimento; compor fila e ação “Assumir”.
-- [ ] **CRM-006.F:** integrar notificações/eventos via infraestrutura e gateway de CRM-007.
-- [ ] **CRM-006.G:** exercitar suspensão, saída, reativação, concorrência e permissões cumulativas.
-- [ ] Concluir o card só com notificação e revogação verificadas, além da gravação dos três campos.
+- [x] **CRM-006.A:** completar contratos de atribuição e catálogo assign/claim.
+- [x] **CRM-006.B:** implementar consultas mínimas de candidatos pela fronteira de 04-team.
+- [x] **CRM-006.C:** implementar comandos por domínio com validação de origem/destino.
+- [x] **CRM-006.D:** adicionar locks/versão/idempotência e histórico de atribuição.
+- [x] **CRM-006.E:** conectar seletores no contato, negócio e atendimento; compor fila e ação “Assumir”.
+- [x] **CRM-006.F:** integrar notificações/eventos via infraestrutura e gateway de CRM-007.
+- [x] **CRM-006.G:** exercitar suspensão, saída, reativação, concorrência e permissões cumulativas.
+- [x] Concluir o card só com notificação e revogação verificadas, além da gravação dos três campos.
 
 ### 12.9 Critérios de aceite
 
@@ -1221,15 +1221,15 @@ Orçamentos iniciais de ensaio, ajustáveis em configuração: 5 conexões por m
 
 ### 13.7 Passos e arquivos
 
-- [ ] **CRM-007.A:** registrar protocolo e topologia; conferir plugin/biblioteca compatível com Fastify instalado.
-- [ ] **CRM-007.B:** adicionar schemas de controle/eventos e testes de contrato.
-- [ ] **CRM-007.C:** implementar gateway/serviço de assinaturas em 06-inbox, com interfaces públicas para eventos de CRM.
-- [ ] **CRM-007.D:** integrar auth compartilhada e revisão de acesso sem copiar lógica de autorização.
-- [ ] **CRM-007.E:** conectar outbox/relay/broker e distribuição entre instâncias.
-- [ ] **CRM-007.F:** criar conexão compartilhada da feature/workspace com lifecycle por tenant; evitar um socket por card.
-- [ ] **CRM-007.G:** implementar dedupe, invalidação e catch-up paginado via HTTP.
-- [ ] **CRM-007.H:** exercitar revogação, perda de eventos, reconexão, cliente lento e duas instâncias.
-- [ ] **CRM-007.I:** documentar métricas, estado degradado e runbook.
+- [x] **CRM-007.A:** registrar protocolo e topologia; conferir plugin/biblioteca compatível com Fastify instalado.
+- [x] **CRM-007.B:** adicionar schemas de controle/eventos e testes de contrato.
+- [x] **CRM-007.C:** implementar gateway/serviço de assinaturas em 06-inbox, com interfaces públicas para eventos de CRM.
+- [x] **CRM-007.D:** integrar auth compartilhada e revisão de acesso sem copiar lógica de autorização.
+- [x] **CRM-007.E:** conectar outbox/relay/broker e distribuição entre instâncias.
+- [x] **CRM-007.F:** criar conexão compartilhada da feature/workspace com lifecycle por tenant; evitar um socket por card.
+- [x] **CRM-007.G:** implementar dedupe, invalidação e catch-up paginado via HTTP.
+- [x] **CRM-007.H:** exercitar revogação, perda de eventos, reconexão, cliente lento e duas instâncias.
+- [x] **CRM-007.I:** documentar métricas, estado degradado e runbook.
 
 ### 13.8 Critérios de aceite
 
@@ -1696,17 +1696,17 @@ Não pedir confirmação repetida para rotinas já autorizadas. Trabalhar a prep
 
 ### 19.4 Definição de pronto do marco
 
-- [ ] Contatos e campos são persistentes, tipados e isolados.
-- [ ] CSV limitado tem revisão, idempotência, limite, atomicidade e limpeza.
-- [ ] Tags e segmentos usam filtros seguros e quotas reais.
-- [ ] Negócios têm pipeline/etapa/histórico e concorrência correta.
-- [ ] Quadro/lista/mobile possuem ações reais e alternativa ao drag.
-- [ ] Conversas e notas são separadas de mensagens externas e de chat da equipe.
-- [ ] Atribuições validam setor/cargo/membro e não criam concessões implícitas.
-- [ ] Notificação/realtime respeitam revogação, duplicidade e reconexão.
-- [ ] Não há mock demonstrativo apresentado como dado operacional nas rotas entregues.
-- [ ] Gates e critérios estão ligados a evidências do commit real.
-- [ ] Documentação/taskboard refletem exatamente o que foi entregue e o que continua pendente.
+- [x] Contatos e campos são persistentes, tipados e isolados.
+- [x] CSV limitado tem revisão, idempotência, limite, atomicidade e limpeza.
+- [x] Tags e segmentos usam filtros seguros e quotas reais.
+- [x] Negócios têm pipeline/etapa/histórico e concorrência correta.
+- [x] Quadro/lista/mobile possuem ações reais e alternativa ao drag.
+- [x] Conversas e notas são separadas de mensagens externas e de chat da equipe.
+- [x] Atribuições validam setor/cargo/membro e não criam concessões implícitas.
+- [x] Notificação/realtime respeitam revogação, duplicidade e reconexão.
+- [x] Não há mock demonstrativo apresentado como dado operacional nas rotas entregues.
+- [x] Gates e critérios estão ligados a evidências do commit real.
+- [x] Documentação/taskboard refletem exatamente o que foi entregue e o que continua pendente.
 
 ## 20. Fontes e rastreabilidade
 

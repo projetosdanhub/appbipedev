@@ -4,7 +4,7 @@ Versão 1.0.0 · Revisão 2026-09-18 · Base auditada `fa17091`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 106 cards. BACKLOG: 45 · READY: 1 · IN_PROGRESS: 5 · BLOCKED: 1 · DONE: 54.
+Total: 107 cards. BACKLOG: 42 · READY: 1 · IN_PROGRESS: 6 · BLOCKED: 1 · DONE: 57.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
@@ -12,6 +12,7 @@ DONE exige aceite integral, evidência e dependências concluídas. Código parc
 
 1. BILL-001: Entitlements e contadores.
 - Em andamento: FND-002: Definir nome de trabalho e dominios candidatos.
+- Em andamento: MSG-004: QR e conexao.
 - Em andamento: PAGE-001: Schema de blocos.
 - Em andamento: FND-015: Padronizar workspace claro e CRM.
 - Em andamento: FND-016: Completar fundação UI e loja nativa de integrações.
@@ -60,7 +61,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 | [AUTH-016](#auth-016) | DONE | E2E das superficies de acesso | AUTH-013, AUTH-014, AUTH-015 |
 | [TEAM-001](#team-001) | DONE | CRUD de setores | AUTH-008, AUTH-016 |
 | [TEAM-002](#team-002) | DONE | CRUD de cargos customizados | AUTH-008, AUTH-016 |
-| [TEAM-003](#team-003) | BACKLOG | Gestao de membros | TEAM-002, AUTH-016 |
+| [TEAM-003](#team-003) | DONE | Gestao de membros | TEAM-002, AUTH-016 |
 | [TEAM-004](#team-004) | DONE | Auditoria pesquisavel | AUTH-004, AUTH-016 |
 | [TEAM-005](#team-005) | DONE | Contrato de erros e reporte pelo painel tenant | INF-004, AUTH-004, AUTH-016 |
 | [TEAM-006](#team-006) | DONE | Dicionario e triagem de erros no superpainel | TEAM-005, AUTH-008, AUTH-016 |
@@ -73,8 +74,8 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 | [CRM-007](#crm-007) | DONE | WebSocket rooms | CRM-005, AUTH-016 |
 | [MSG-001](#msg-001) | DONE | Outbox e eventos | INF-004, CRM-005, AUTH-016 |
 | [MSG-002](#msg-002) | DONE | BullMQ e dead-letter | MSG-001, AUTH-016 |
-| [MSG-003](#msg-003) | BACKLOG | Adapter de provider | MSG-001, AUTH-016 |
-| [MSG-004](#msg-004) | BACKLOG | QR e conexao | MSG-003, AUTH-016 |
+| [MSG-003](#msg-003) | DONE | Adapter de provider | MSG-001, AUTH-016 |
+| [MSG-004](#msg-004) | IN_PROGRESS | QR e conexao | MSG-003, AUTH-016 |
 | [MSG-005](#msg-005) | BACKLOG | Webhook normalizado | MSG-003, AUTH-016 |
 | [AUTO-001](#auto-001) | BACKLOG | Gatilhos e condicoes | CRM-003, MSG-001, AUTH-016 |
 | [AUTO-002](#auto-002) | BACKLOG | Acoes e agendamento | MSG-002, AUTH-016 |
@@ -130,6 +131,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 | [WPRO-016](#wpro-016) | BLOCKED | Extensões PHP com execução isolada | WPRO-015 |
 | [WPRO-017](#wpro-017) | BACKLOG | Food: pagamentos online e automações | CAT-003, AUTO-001, BILL-002 |
 | [WPRO-018](#wpro-018) | BACKLOG | Biblioteca de templates oficiais | WPRO-008, WPRO-009 |
+| [CRM-010](#crm-010) | DONE | Implement Visual Automations (IMPLEMENTATION) | — |
 
 ## Execução dos cards
 
@@ -1240,7 +1242,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 <a id="team-003"></a>
 ### TEAM-003 — Gestao de membros
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
 
 **Objetivo:** Gestao de membros. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1263,7 +1265,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - suspender, reativar, transferir e auditar
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [packages/auth/src/session.ts](../packages/auth/src/session.ts), [apps/api/src/modules/04-team/infrastructure/team.repository.ts](../apps/api/src/modules/04-team/infrastructure/team.repository.ts), [apps/api/src/modules/04-team/application/team.service.ts](../apps/api/src/modules/04-team/application/team.service.ts), [apps/api/src/modules/05-crm/infrastructure/deal.repository.ts](../apps/api/src/modules/05-crm/infrastructure/deal.repository.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
@@ -1630,7 +1632,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 <a id="msg-003"></a>
 ### MSG-003 — Adapter de provider
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
 
 **Objetivo:** Adapter de provider. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1653,14 +1655,14 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - provider fake coberto por contrato
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/api/src/modules/07-messaging/infrastructure/evolution-messaging.provider.ts](../apps/api/src/modules/07-messaging/infrastructure/evolution-messaging.provider.ts), [apps/api/src/tests/messaging-provider.test.ts](../apps/api/src/tests/messaging-provider.test.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="msg-004"></a>
 ### MSG-004 — QR e conexao
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
 
 **Objetivo:** QR e conexao. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1683,7 +1685,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - QR expirado e status auditado
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/api/src/modules/07-messaging/http/controllers/connection.controller.ts](../apps/api/src/modules/07-messaging/http/controllers/connection.controller.ts), [apps/api/src/modules/07-messaging/application/connection.service.ts](../apps/api/src/modules/07-messaging/application/connection.service.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
@@ -3394,5 +3396,37 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - Nenhum template depende de widget ainda indisponível.
 
 **Evidências:** Nenhuma execução registrada.
+
+**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="crm-010"></a>
+### CRM-010 — Implement Visual Automations (IMPLEMENTATION)
+
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - automações
+
+**Objetivo:** Implementar uma interface de automação visual semelhante ao n8n.
+
+**Dependências:** Nenhuma.
+
+**Passos:**
+
+1. Instalar e configurar @xyflow/react
+2. Criar os nós customizados e sidebar
+3. Criar api route
+
+**Áreas de código:** `apps/tenant-web/src/app/(dashboard)/automations`, `apps/tenant-web/src/features/automations`.
+
+**Testes a executar:**
+
+- pnpm rules:check
+- pnpm taskboard:check
+
+**Aceite:**
+
+- React Flow canvas renderizado
+- Sidebar de configuração funcionando
+- API route mockada
+
+**Evidências:** [apps/tenant-web/src/app/(dashboard)/automations/page.tsx](../apps/tenant-web/src/app/(dashboard)/automations/page.tsx), [apps/tenant-web/src/app/api/automations/route.ts](../apps/tenant-web/src/app/api/automations/route.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.

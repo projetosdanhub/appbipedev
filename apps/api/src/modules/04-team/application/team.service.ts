@@ -2,6 +2,10 @@ import { Database } from "../../00-shared/infrastructure/database.js";
 import { TeamRepository, TeamMemberRow } from "../infrastructure/team.repository.js";
 import { assertPermission, canManageTargetRole } from "@bipesend/auth/policies";
 import type { TenantContext } from "@bipesend/contracts";
+import { DealRepository } from "../../05-crm/infrastructure/deal.repository.js";
+import { ConversationRepository } from "../../06-inbox/infrastructure/conversation.repository.js";
+import { revokeAllSessionsByUserId } from "@bipesend/auth/session";
+import { randomBytes } from "node:crypto";
 
 export class TeamService {
   constructor(
@@ -12,6 +16,28 @@ export class TeamService {
   async listMembers(context: TenantContext): Promise<TeamMemberRow[]> {
     assertPermission(context, "team.members.read");
     return this.teamRepository.listMembers(context.tenantId);
+  }
+
+  async inviteMember(context: TenantContext, email: string, role: string): Promise<{ tokenHash: string }> {
+    assertPermission(context, "team.members.invite");
+    
+    // Simplification for MVP: just generate token and return
+    const tokenHash = randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+    await this.teamRepository.createInvitation(
+      context.tenantId,
+      email,
+      role,
+      tokenHash,
+      context.membershipId,
+      expiresAt
+    );
+
+    // Logging token for MVP since email sending is deferred
+    console.log(`[TEAM-003] Invitation created for ${email}. Token: ${tokenHash}`);
+
+    return { tokenHash };
   }
 
   async updateRole(context: TenantContext, membershipId: string, newRole: string): Promise<void> {
@@ -42,7 +68,7 @@ export class TeamService {
     }, context.tenantId);
   }
 
-  async suspendMember(context: TenantContext, membershipId: string): Promise<void> {
+  async suspendMember(context: TenantContext, membershipId: string, transferToMembershipId?: string): Promise<void> {
     assertPermission(context, "team.members.manage");
 
     await this.db.withTransaction(async (tx) => {
@@ -63,7 +89,24 @@ export class TeamService {
         }
       }
 
+      // Transfer assets if requested
+      if (transferToMembershipId && transferToMembershipId !== membershipId) {
+        const transferTarget = await repo.findMembership(transferToMembershipId, context.tenantId);
+        if (!transferTarget || !transferTarget.active) {
+          throw new Error("TRANSFER_TARGET_INVALID");
+        }
+
+        const dealRepo = new DealRepository(tx);
+        await dealRepo.transferMemberAssets(context.tenantId, membershipId, transferToMembershipId, context.membershipId);
+
+        const convRepo = new ConversationRepository(tx);
+        await convRepo.transferMemberAssets(context.tenantId, membershipId, transferToMembershipId);
+      }
+
       await repo.updateStatus(membershipId, context.tenantId, false);
+      
+      // Revoke sessions
+      await revokeAllSessionsByUserId(target.userId, "tenant").catch(() => {});
     }, context.tenantId);
   }
 

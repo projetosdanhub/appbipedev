@@ -33,7 +33,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRealtime } from "@/lib/useRealtime";
-import { createWhatsAppConnectionAction } from "@/features/integrations/actions/connection.actions";
+import { createWhatsAppConnectionAction, deleteConnectionAction } from "@/features/integrations/actions/connection.actions";
 import "./integrations.css";
 
 type StoreCategory = "all" | "messaging" | "social";
@@ -71,9 +71,11 @@ const storeCatalog = [
 export function IntegrationsClient({
   tenantId,
   initialConnections,
+  sessionToken,
 }: {
   tenantId: string;
   initialConnections: ConnectionRecord[];
+  sessionToken?: string;
 }) {
   const router = useRouter();
   const [category, setCategory] = useState<StoreCategory>("all");
@@ -83,8 +85,10 @@ export function IntegrationsClient({
   const [showQrModal, setShowQrModal] = useState(false);
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
 
+
   useRealtime({
     tenantId,
+    token: sessionToken,
     onEvent: (event, payload) => {
       if (event === "connection.changed") {
         router.refresh();
@@ -156,6 +160,7 @@ export function IntegrationsClient({
           <span>Em preparação</span>
           <strong>2</strong>
           <small>Instagram e TikTok</small>
+        </div>
         </div>
         <div>
           <span>Conexões ativas</span>

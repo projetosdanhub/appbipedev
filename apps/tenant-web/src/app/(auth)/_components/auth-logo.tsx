@@ -26,8 +26,8 @@ export function AuthLogo() {
       width={150}
       height={52}
       priority
-      style={{ width: "auto", height: "52px" }}
-      className="object-contain"
+      style={{ width: "auto", height: "auto" }}
+      className="object-contain h-[52px]"
       onError={() => setHasError(true)}
     />
   );

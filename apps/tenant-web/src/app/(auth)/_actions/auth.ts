@@ -88,14 +88,20 @@ export async function registerAction(data: RegisterInput) {
   if (!parsed.success) return { success: false, message: "Dados inválidos." };
   try {
     const input = parsed.data;
-    await checkAuthRateLimit("register", input.email, 5, 3_600_000);
-    const existing = await prisma.user.findUnique({
-      where: { email: input.email },
+    const normalizedEmail = input.email.toLowerCase();
+    await checkAuthRateLimit("register", normalizedEmail, 5, 3_600_000);
+    const existing = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: input.email },
+          { emailNormalized: normalizedEmail }
+        ]
+      }
     });
     if (existing)
       return {
-        success: true,
-        message: "Se o e-mail não estiver em uso, sua conta foi criada com sucesso! Verifique sua caixa de entrada.",
+        success: false,
+        message: "Este e-mail já está em uso. Faça login para continuar.",
       };
     const password = await argon2.hash(input.password, {
       type: argon2.argon2id,
@@ -104,7 +110,8 @@ export async function registerAction(data: RegisterInput) {
       data: {
         name: input.name,
         companyName: input.companyName,
-        email: input.email,
+        email: normalizedEmail,
+        emailNormalized: normalizedEmail,
         password,
       },
     });

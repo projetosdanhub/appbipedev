@@ -28,7 +28,7 @@ describe("CRM Contact Actions", () => {
       json: async () => ({ data: { id: "contact-1", name: "John Doe" } }),
     });
 
-    const result = await createContactAction(tenantId, { name: "John Doe", email: "john@example.com", phone: null, customFields: null });
+    const result = await createContactAction(tenantId, { name: "John Doe", email: "john@example.com", phone: null, customFields: {} } as any);
     
     expect(result.success).toBe(true);
     expect(result.data.id).toBe("contact-1");
@@ -42,7 +42,7 @@ describe("CRM Contact Actions", () => {
       json: async () => ({ error: "Validation failed" }),
     });
 
-    const result = await createContactAction(tenantId, { name: "", email: null, phone: null, customFields: null });
+    const result = await createContactAction(tenantId, { name: "", email: null, phone: null, customFields: {} } as any);
     
     expect(result.success).toBe(false);
     expect(result.message).toBe("Validation failed");

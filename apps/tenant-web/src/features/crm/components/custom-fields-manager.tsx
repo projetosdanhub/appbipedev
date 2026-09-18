@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Button, Input, Label } from "@bipesend/ui";
@@ -21,7 +21,8 @@ export function CustomFieldsManagerModal({ tenantId, initialFields = [] }: { ten
       key,
       label,
       type,
-      options: null
+      options: null,
+      status: "active"
     });
     if (data) {
       setFields([...fields, data]);

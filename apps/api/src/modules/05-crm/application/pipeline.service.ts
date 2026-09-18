@@ -37,6 +37,11 @@ export class PipelineService {
     return this.pipelineRepository.updatePipeline(context.tenantId, pipelineId, validated);
   }
 
+  async listStages(context: TenantContext, pipelineId: string) {
+    assertPermission(context, "crm.deals.read");
+    return this.pipelineRepository.listStages(context.tenantId, pipelineId);
+  }
+
   async createStage(context: TenantContext, pipelineId: string, input: CreateCrmPipelineStage) {
     assertPermission(context, "crm.pipelines.manage");
     const validated = PipelineStageEntity.validateCreate({ ...input, pipelineId });
@@ -47,5 +52,15 @@ export class PipelineService {
     assertPermission(context, "crm.pipelines.manage");
     const validated = PipelineStageEntity.validateUpdate(input);
     return this.pipelineRepository.updateStage(context.tenantId, stageId, validated);
+  }
+
+  async deletePipeline(context: TenantContext, pipelineId: string) {
+    assertPermission(context, "crm.pipelines.manage");
+    return this.pipelineRepository.deletePipeline(context.tenantId, pipelineId);
+  }
+
+  async deleteStage(context: TenantContext, stageId: string) {
+    assertPermission(context, "crm.pipelines.manage");
+    return this.pipelineRepository.deleteStage(context.tenantId, stageId);
   }
 }

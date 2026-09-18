@@ -4,12 +4,14 @@ import type { SessionRepository } from "../../01-identity/infrastructure/session
 import type { UserRepository } from "../../01-identity/infrastructure/user.repository.js";
 import { verifySession } from "@bipesend/auth/session";
 import { decode } from "@auth/core/jwt";
+import type { MembershipRepository } from "../../02-tenancy/infrastructure/membership.repository.js";
 
 export async function websocketRoutes(
   app: FastifyInstance,
   gateway: WebsocketGateway,
   sessionRepository: SessionRepository,
-  userRepository: UserRepository
+  userRepository: UserRepository,
+  membershipRepository: MembershipRepository
 ) {
   // The types for fastify-websocket extend the RouteOptions but might not be perfectly inferred here
   app.get("/ws", { websocket: true }, async (socket: any, req: any) => {
@@ -21,24 +23,38 @@ export async function websocketRoutes(
       token = req.cookies["bipesend.tenant.session-token"] || req.cookies["__Secure-bipesend.tenant.session-token"];
     }
 
+    if (!token && req.headers?.cookie) {
+      const match = req.headers.cookie.match(/(?:^|;\s*)(?:__Secure-)?bipesend\.tenant\.session-token=([^;]+)/);
+      if (match) {
+        token = decodeURIComponent(match[1]);
+      }
+    }
+
     if (!token) {
-      req.log.warn("[WS] Conexão rejeitada: token ausente.");
+      req.log?.warn?.("[WS] Conexão rejeitada: token ausente.");
       socket.close(1008, "Token missing");
       return;
     }
 
     let decoded;
     try {
-      const cookieName = process.env.NODE_ENV === "production" ? "__Secure-bipesend.tenant.session-token" : "bipesend.tenant.session-token";
       decoded = await decode({
         token,
         secret: process.env.AUTH_SECRET as string,
-        salt: cookieName,
+        salt: "bipesend.tenant.session-token",
       });
     } catch {
-      req.log.warn("[WS] Conexão rejeitada: erro ao decodificar token.");
-      socket.close(1008, "Invalid token");
-      return;
+      try {
+        decoded = await decode({
+          token,
+          secret: process.env.AUTH_SECRET as string,
+          salt: "__Secure-bipesend.tenant.session-token",
+        });
+      } catch {
+        req.log?.warn?.("[WS] Conexão rejeitada: erro ao decodificar token.");
+        socket.close(1008, "Invalid token");
+        return;
+      }
     }
 
     if (!decoded || !decoded.sessionId || decoded.surface !== "tenant") {
@@ -70,11 +86,17 @@ export async function websocketRoutes(
     gateway.addClient(client);
 
     // 4. Listeners da conexão
-    socket.on("message", (raw: string) => {
+    socket.on("message", async (raw: string) => {
       try {
         const msg = JSON.parse(raw.toString());
         if (msg.action === "subscribe" && msg.tenantId) {
           if (!client.tenantIds.includes(msg.tenantId)) {
+            const membership = await membershipRepository.findByUserAndTenant(user.id, msg.tenantId);
+            if (!membership) {
+              req.log.warn(`[WS] Acesso negado ao tenant ${msg.tenantId} para o user ${user.id}`);
+              socket.close(1008, "Policy Violation");
+              return;
+            }
             client.tenantIds.push(msg.tenantId);
             req.log.info(`[WS] User ${user.id} subscribed to tenant ${msg.tenantId}`);
           }

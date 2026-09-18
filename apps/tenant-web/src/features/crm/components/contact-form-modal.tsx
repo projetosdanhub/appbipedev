@@ -20,12 +20,17 @@ export function ContactFormModal({ isOpen, setIsOpen, tenantId, initialData, onS
   const [loading, setLoading] = useState(false);
 
   const form = useForm<CreateCrmContact>({
-    resolver: zodResolver(createCrmContactSchema),
+    resolver: zodResolver(createCrmContactSchema) as any,
     defaultValues: {
       name: initialData?.name || "",
-      email: initialData?.email || "",
-      phone: initialData?.phone || "",
-      customFields: initialData?.customFields || null,
+      email: initialData?.email || null,
+      phone: initialData?.phone || null,
+      customFields: initialData?.customFields || {},
+      departmentId: initialData?.departmentId || null,
+      routingRoleId: initialData?.routingRoleId || null,
+      assignedMembershipId: initialData?.assignedMembershipId || null,
+      status: initialData?.status || "active",
+      source: initialData?.source || "manual",
     },
   });
 
@@ -68,9 +73,9 @@ export function ContactFormModal({ isOpen, setIsOpen, tenantId, initialData, onS
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-4">
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="name"
               render={({ field }) => (
                 <FormItem>
@@ -84,7 +89,7 @@ export function ContactFormModal({ isOpen, setIsOpen, tenantId, initialData, onS
             />
             
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="email"
               render={({ field }) => (
                 <FormItem>
@@ -98,7 +103,7 @@ export function ContactFormModal({ isOpen, setIsOpen, tenantId, initialData, onS
             />
 
             <FormField
-              control={form.control}
+              control={form.control as any}
               name="phone"
               render={({ field }) => (
                 <FormItem>

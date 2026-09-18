@@ -18,7 +18,7 @@ interface PipelineSettingsProps {
 export function PipelineSettings({ tenantId, initialPipelines }: PipelineSettingsProps) {
   const [pipelines, setPipelines] = useState<CrmPipeline[]>(initialPipelines);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [selectedPipeline, setSelectedPipeline] = useState<CrmPipeline | null>(null);
+  const [selectedPipeline, setSelectedPipeline] = useState<CrmPipeline | null>(initialPipelines[0] || null);
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<CreateCrmPipeline>({
@@ -35,7 +35,9 @@ export function PipelineSettings({ tenantId, initialPipelines }: PipelineSetting
       const result = await createPipelineAction(tenantId, data);
       if (result.success) {
         toast.success(result.message);
-        setPipelines([...pipelines, result.data as CrmPipeline]);
+        const newPipeline = result.data as CrmPipeline;
+        setPipelines([...pipelines, newPipeline]);
+        setSelectedPipeline(newPipeline);
         setIsCreateOpen(false);
         form.reset();
       } else {

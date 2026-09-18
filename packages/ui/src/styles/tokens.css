@@ -51,6 +51,45 @@
   --shadow-control: 0 1px 2px rgb(15 23 42 / 5%), 0 4px 12px rgb(37 55 88 / 5%);
   --shadow-card-hover: 0 18px 38px rgb(37 55 88 / 12%);
   --shadow-focus: 0 0 0 4px var(--focus-halo);
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-blur: blur(12px);
+  --shadow-glass: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
+  --button-shadow: 0 4px 14px 0 rgba(7, 95, 216, 0.3);
+}
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-canvas: #0d1422;
+  --bg-surface: #141e2f;
+  --bg-subtle: #1e2a3e;
+  --bg-selected: #203654;
+  --text-primary: #edf3fc;
+  --text-secondary: #b6c4da;
+  --text-muted: #a0b1ca;
+  --border-default: #2e405b;
+  --border-control: #6f829f;
+  --action-primary: #9ac3ff;
+  --action-hover: #c2daff;
+  --action-foreground: #101b30;
+  --action-gradient: linear-gradient(110deg, #9ac3ff, #c0b7ff);
+  --focus-ring: #9ac3ff;
+  --status-success: #7ee2b8;
+  --status-success-bg: #12362e;
+  --status-warning: #f5ca7a;
+  --status-warning-bg: #3b2c19;
+  --status-danger: #ffacb9;
+  --status-danger-bg: #422332;
+  --status-info: #96d6ff;
+  --status-info-bg: #153247;
+  --overlay: rgb(0 0 0 / 64%);
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 12%);
+  --shadow-md: 0 16px 48px rgb(0 0 0 / 32%);
+  --glass-bg: rgba(20, 30, 47, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(12px);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --button-shadow: 0 4px 14px 0 rgba(154, 195, 255, 0.2);
 }
 :root {
   --font-body: var(--font-poppins, ui-sans-serif), system-ui, sans-serif;
@@ -99,6 +138,9 @@
   --z-overlay: 300;
   --z-dialog: 400;
   --z-toast: 500;
+  
+  --button-active-scale: scale(0.95);
+  --transition-button: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 /* Aliases for existing screens. Resolved per surface, not frozen at the root. */
 :root,

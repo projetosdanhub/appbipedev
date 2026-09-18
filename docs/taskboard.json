@@ -1306,7 +1306,7 @@
         "TEAM-002",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "Gestao de membros. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Implementar lista, convite, suspensão, reativação e transferência com policies.",
@@ -1321,7 +1321,12 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "packages/auth/src/session.ts",
+        "apps/api/src/modules/04-team/infrastructure/team.repository.ts",
+        "apps/api/src/modules/04-team/application/team.service.ts",
+        "apps/api/src/modules/05-crm/infrastructure/deal.repository.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -1758,7 +1763,7 @@
         "MSG-001",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "DONE",
       "objective": "Adapter de provider. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Definir interface de provider e adapter fake contratual sem rede real.",
@@ -1773,7 +1778,10 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/api/src/modules/07-messaging/infrastructure/evolution-messaging.provider.ts",
+        "apps/api/src/tests/messaging-provider.test.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -1789,7 +1797,7 @@
         "MSG-003",
         "AUTH-016"
       ],
-      "status": "BACKLOG",
+      "status": "IN_PROGRESS",
       "objective": "QR e conexao. Entregar comportamento verificável dentro do escopo do card.",
       "steps": [
         "Criar estado de conexão/QR com expiração, autorização e emissão segura.",
@@ -1804,7 +1812,10 @@
         "Executar os testes específicos descritos nos passos acima, incluindo falha/recuperação.",
         "Rodar typecheck, testes e build dos apps/pacotes alterados; documentar comando e resultado."
       ],
-      "evidence": [],
+      "evidence": [
+        "apps/api/src/modules/07-messaging/http/controllers/connection.controller.ts",
+        "apps/api/src/modules/07-messaging/application/connection.service.ts"
+      ],
       "blockers": [],
       "owner": "Engenharia BipeSend"
     },
@@ -3653,6 +3664,38 @@
       "evidence": [],
       "blockers": [],
       "owner": "Engenharia BipeSend - frente BipeWPRO"
+    },
+    {
+      "id": "CRM-010",
+      "title": "Implement Visual Automations (IMPLEMENTATION)",
+      "milestone": "Milestone 4 - automações",
+      "acceptance": [
+        "React Flow canvas renderizado",
+        "Sidebar de configuração funcionando",
+        "API route mockada"
+      ],
+      "dependencies": [],
+      "status": "DONE",
+      "objective": "Implementar uma interface de automação visual semelhante ao n8n.",
+      "steps": [
+        "Instalar e configurar @xyflow/react",
+        "Criar os nós customizados e sidebar",
+        "Criar api route"
+      ],
+      "codeAreas": [
+        "apps/tenant-web/src/app/(dashboard)/automations",
+        "apps/tenant-web/src/features/automations"
+      ],
+      "tests": [
+        "pnpm rules:check",
+        "pnpm taskboard:check"
+      ],
+      "evidence": [
+        "apps/tenant-web/src/app/(dashboard)/automations/page.tsx",
+        "apps/tenant-web/src/app/api/automations/route.ts"
+      ],
+      "blockers": [],
+      "owner": "Engenharia BipeSend"
     }
   ]
 }

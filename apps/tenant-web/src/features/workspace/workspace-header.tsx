@@ -19,6 +19,7 @@ import {
 import { navigation, isActiveRoute } from "./navigation";
 import { logout } from "./actions";
 import { TenantSwitcher, type TenantData } from "./tenant-switcher";
+import { NotificationBell } from "../notifications/components/notification-bell";
 
 export function WorkspaceHeader({ 
   name, 
@@ -78,16 +79,7 @@ export function WorkspaceHeader({
         >
           <RefreshCw aria-hidden="true" />
         </IconButton>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <IconButton label="Abrir notificações">
-              <Bell aria-hidden="true" />
-            </IconButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="workspace-notifications">
-            <NotificationPanel items={[]} />
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <NotificationBell tenantId={activeTenant?.id} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button

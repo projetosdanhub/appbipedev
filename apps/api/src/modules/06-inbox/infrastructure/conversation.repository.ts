@@ -190,6 +190,24 @@ export class ConversationRepository {
           })
         ]
       );
+
+      const toMembershipId = data.assignedMembershipId !== undefined ? data.assignedMembershipId : current.assignedMembershipId;
+      if (toMembershipId && toMembershipId !== current.assignedMembershipId) {
+        await this.db.query(
+          `INSERT INTO notifications (
+            tenant_id, membership_id, type, title, content, dedupe_key
+          ) VALUES ($1, $2, $3, $4, $5, $6)
+          ON CONFLICT DO NOTHING`,
+          [
+            tenantId,
+            toMembershipId,
+            'inbox.conversation.assigned',
+            'Nova conversa atribuída',
+            JSON.stringify({ conversationId, subject: conv.subject }),
+            `conversation-${conversationId}-assigned-v${conv.version}`
+          ]
+        );
+      }
     }
 
     return conv;
@@ -231,4 +249,20 @@ export class ConversationRepository {
       updatedAt: doc.updated_at.toISOString(),
     };
   }
+
+  async transferMemberAssets(
+    tenantId: string,
+    fromMembershipId: string,
+    toMembershipId: string
+  ): Promise<void> {
+    await this.db.query(
+      `UPDATE conversations 
+       SET assigned_membership_id = $1, 
+           version = version + 1,
+           updated_at = NOW()
+       WHERE assigned_membership_id = $2 AND tenant_id = $3`,
+      [toMembershipId, fromMembershipId, tenantId]
+    );
+  }
 }
+

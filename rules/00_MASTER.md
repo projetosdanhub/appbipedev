@@ -69,8 +69,7 @@ Estas regras são a fonte de verdade para humanos e agentes de IA. Quando códig
 33. `33_ENVIRONMENT_VARIABLES_GUIDELINES.md`
 34. `34_DELIVERY_EVIDENCE.md`
 35. `35_MOBILE_WEB_NATIVE.md`
-36. `36_BIPEWPRO.md`
-37. `37_PREMIUM_UI_SHARED.md`
+36. `36_PREMIUM_UI_SHARED.md`
 
 ## 4. Precedência em caso de conflito
 

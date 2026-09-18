@@ -22,4 +22,12 @@ export class MembershipRepository {
     );
     return res;
   }
+  async findByUserAndTenant(userId: string, tenantId: string): Promise<Membership | null> {
+    const res = await this.db.query<Membership>(
+      `SELECT id, tenant_id as "tenantId", user_id as "userId", role, created_at as "createdAt", updated_at as "updatedAt" 
+       FROM memberships WHERE user_id = $1 AND tenant_id = $2`,
+      [userId, tenantId]
+    );
+    return res[0] || null;
+  }
 }

@@ -47,6 +47,9 @@
       box-shadow var(--motion-fast),
       transform var(--motion-fast);
   }
+  .ui-button:active:not(:disabled) {
+    transform: var(--button-active-scale);
+  }
   .ui-button:disabled {
     opacity: 0.55;
     cursor: not-allowed;
@@ -128,6 +131,14 @@
     min-height: var(--control-height);
     width: var(--control-height);
     padding: var(--space-2);
+  }
+  .ui-button-pushable {
+    transition: var(--transition-button);
+    box-shadow: var(--button-shadow);
+  }
+  .ui-button-pushable:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.2);
   }
   .ui-button > svg,
   .ui-icon {
@@ -414,6 +425,14 @@
     background: var(--overlay);
     z-index: var(--z-overlay);
     animation: ui-fade var(--motion-base);
+  }
+  .ui-glass {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-glass);
+    border-radius: var(--radius-card);
   }
   .ui-dialog {
     position: fixed;

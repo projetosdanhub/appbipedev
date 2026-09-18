@@ -54,7 +54,6 @@ export const permissionSchema = z.enum([
   "crm.deals.claim",
   "campaigns.manage",
   "automations.manage",
-  "catalog.manage",
   "knowledge.manage",
   "integrations.manage",
   "team.members.read",
@@ -91,7 +90,8 @@ export const tenantContextSchema = z
     membershipId: idSchema,
     requestId: requestIdSchema,
     role: tenantRoleSchema,
-    permissions: z.array(permissionSchema),
+    globalPermissions: z.array(permissionSchema),
+    departmentGrants: z.record(idSchema, z.array(permissionSchema)),
   })
   .strict();
 /** A parsed shape is NOT proof of authentication; resolve membership server-side. */
@@ -253,13 +253,27 @@ export const errorReportListResponseSchema = z.object({
 });
 export type ErrorReportListResponse = z.infer<typeof errorReportListResponseSchema>;
 
+export const crmContactStatusSchema = z.enum(["active", "archived"]);
+
 export const crmContactSchema = z.object({
   id: idSchema,
   tenantId: idSchema,
   name: z.string().min(1).max(255),
   email: emailSchema.nullable(),
+  emailNormalized: emailSchema.nullable(),
   phone: z.string().max(50).nullable(),
-  customFields: z.record(z.string(), z.unknown()).nullable(),
+  phoneE164: z.string().max(50).nullable(),
+  phoneCountry: z.string().max(2).nullable(),
+  source: z.enum(["manual", "csv_import"]).default("manual"),
+  customFields: z.record(z.string(), z.unknown()).default({}),
+  departmentId: idSchema.nullable(),
+  routingRoleId: idSchema.nullable(),
+  assignedMembershipId: idSchema.nullable(),
+  createdByMembershipId: idSchema.nullable(),
+  updatedByMembershipId: idSchema.nullable(),
+  status: crmContactStatusSchema.default("active"),
+  archivedAt: z.iso.datetime().nullable(),
+  version: z.number().int().positive().default(1),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
 }).strict();
@@ -269,10 +283,18 @@ export const createCrmContactSchema = crmContactSchema.omit({
   tenantId: true,
   createdAt: true,
   updatedAt: true,
+  emailNormalized: true,
+  phoneE164: true,
+  phoneCountry: true,
+  version: true,
+  archivedAt: true,
+  createdByMembershipId: true,
+  updatedByMembershipId: true,
 }).strict();
 
 export const updateCrmContactSchema = createCrmContactSchema.partial().strict();
 
+export type CrmContactStatus = z.infer<typeof crmContactStatusSchema>;
 export type CrmContact = z.infer<typeof crmContactSchema>;
 export type CreateCrmContact = z.infer<typeof createCrmContactSchema>;
 export type UpdateCrmContact = z.infer<typeof updateCrmContactSchema>;
@@ -388,14 +410,23 @@ export type CrmSegment = z.infer<typeof crmSegmentSchema>;
 export type CreateCrmSegment = z.infer<typeof createCrmSegmentSchema>;
 export type UpdateCrmSegment = z.infer<typeof updateCrmSegmentSchema>;
 
+export const customFieldStatusSchema = z.enum(["active", "archived"]);
+
 export const customFieldSchema = z.object({
   id: idSchema,
   tenantId: idSchema,
   entityType: z.enum(["contact"]),
-  key: z.string().min(1).max(100),
+  key: z.string().min(1).max(50),
   label: z.string().min(1).max(100),
+  description: z.string().nullable().optional(),
+  placeholder: z.string().nullable().optional(),
+  tooltip: z.string().nullable().optional(),
   type: z.enum(["text", "number", "date", "boolean", "select"]),
   options: z.array(z.string()).nullable(),
+  validation: z.record(z.string(), z.unknown()).nullable().optional(),
+  status: customFieldStatusSchema.default("active"),
+  createdByMembershipId: idSchema.nullable(),
+  updatedByMembershipId: idSchema.nullable(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
 }).strict();
@@ -405,10 +436,13 @@ export const createCustomFieldSchema = customFieldSchema.omit({
   tenantId: true,
   createdAt: true,
   updatedAt: true,
+  createdByMembershipId: true,
+  updatedByMembershipId: true,
 }).strict();
 
 export const updateCustomFieldSchema = createCustomFieldSchema.partial().strict();
 
+export type CustomFieldStatus = z.infer<typeof customFieldStatusSchema>;
 export type CustomField = z.infer<typeof customFieldSchema>;
 export type CreateCustomField = z.infer<typeof createCustomFieldSchema>;
 export type UpdateCustomField = z.infer<typeof updateCustomFieldSchema>;
@@ -629,3 +663,5 @@ export type AssignmentTarget = z.infer<typeof assignmentTargetSchema>;
 export type ClaimResourceBody = z.infer<typeof claimResourceBodySchema>;
 
 export * from "./inbox.js";
+export * from "./messaging.js";
+export * from "./connection.js";
