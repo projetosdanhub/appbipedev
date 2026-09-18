@@ -132,6 +132,15 @@ export function BoardColumn({
         </div>
       </div>
 
+      {/* Divisória Estilizada do Fluxo */}
+      <div className="crm-flow-divider">
+        <div className="crm-flow-divider-accent" />
+        <span className="crm-flow-divider-badge">
+          {deals.length === 0 ? "Fluxo Vazio" : `${deals.length} ${deals.length === 1 ? "Lead" : "Leads"}`}
+        </span>
+        <div className="crm-flow-divider-line" />
+      </div>
+
       <Droppable droppableId={stage.id}>
         {(provided, snapshot) => (
           <div
@@ -160,6 +169,11 @@ export function BoardColumn({
                 )}
               </Draggable>
             ))}
+            {deals.length === 0 && !snapshot.isDraggingOver && (
+              <div className="crm-stage-empty-state">
+                <span className="crm-stage-empty-text">Nenhum card neste fluxo</span>
+              </div>
+            )}
             {provided.placeholder}
             </div>
           </div>
