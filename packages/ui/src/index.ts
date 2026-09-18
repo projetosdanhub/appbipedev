@@ -20,3 +20,6 @@ export * from "./components/data-table";
 export * from "./components/file-upload";
 export * from "./components/table";
 export * from "./components/segmented-control";
+export * from "./components/filter-chip";
+export * from "./components/integration-card";
+export * from "./components/identity";

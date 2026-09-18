@@ -4,7 +4,7 @@ import { getConnectionsAction } from "@/features/integrations/actions/connection
 import { getWorkspaceUser } from "@/features/workspace/server/session";
 
 export const metadata: Metadata = {
-  title: "Integrações",
+  title: "Loja de integrações",
 };
 
 export default async function IntegrationsPage() {

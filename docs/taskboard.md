@@ -4,7 +4,7 @@ Versão 1.0.0 · Revisão 2026-09-18 · Base auditada `fa17091`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 105 cards. BACKLOG: 45 · READY: 1 · IN_PROGRESS: 4 · BLOCKED: 1 · DONE: 54.
+Total: 106 cards. BACKLOG: 45 · READY: 1 · IN_PROGRESS: 5 · BLOCKED: 1 · DONE: 54.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
@@ -14,6 +14,7 @@ DONE exige aceite integral, evidência e dependências concluídas. Código parc
 - Em andamento: FND-002: Definir nome de trabalho e dominios candidatos.
 - Em andamento: PAGE-001: Schema de blocos.
 - Em andamento: FND-015: Padronizar workspace claro e CRM.
+- Em andamento: FND-016: Completar fundação UI e loja nativa de integrações.
 - Em andamento: WPRO-004: Primitives e layout premium do editor.
 
 Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protótipos visuais podem ser revisados, identificados como exemplos.
@@ -109,6 +110,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 | [FND-013](#fnd-013) | DONE | Documentar reconciliação dos históricos de banco | FND-005 |
 | [FND-014](#fnd-014) | DONE | Entregar branch e guia de validação para Antigravity | FND-010, FND-011, FND-012, FND-013 |
 | [FND-015](#fnd-015) | IN_PROGRESS | Padronizar workspace claro e CRM | FND-011, AUTH-009, CRM-004 |
+| [FND-016](#fnd-016) | IN_PROGRESS | Completar fundação UI e loja nativa de integrações | FND-015 |
 | [TEAM-007](#team-007) | DONE | Godmode e Impersonation (Superadmin e Contratante) | TEAM-002 |
 | [WPRO-001](#wpro-001) | DONE | Planejamento e regras do BipeWPRO | — |
 | [WPRO-002](#wpro-002) | DONE | Organização aditiva de packages e contratos | WPRO-001 |
@@ -2753,6 +2755,40 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 **Evidências:** [docs/audit/ui-light-crm.md](../docs/audit/ui-light-crm.md)
 
 **Bloqueios:** Validação visual em 360/768/1440 px pendente: Chromium do Playwright indisponível e download bloqueado por timeout de rede no ambiente de execução.
+
+<a id="fnd-016"></a>
+### FND-016 — Completar fundação UI e loja nativa de integrações
+
+**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 0 - implementação auditada
+
+**Objetivo:** Completar os padrões compartilhados de interação e aplicar a fundação a perfil, notificações e à loja nativa de integrações.
+
+**Dependências:** FND-015
+
+**Passos:**
+
+1. Adicionar filtros, cards de integração, identidade, avatar, presença e notificações ao packages/ui.
+2. Aplicar os padrões ao shell sem inventar notificações ou ações sem backend.
+3. Entregar catálogo responsivo com WhatsApp real e Instagram/TikTok explicitamente planejados.
+
+**Áreas de código:** `packages/ui`, `apps/tenant-web/src/features/workspace`, `apps/tenant-web/src/app/(dashboard)/integrations`, `rules`.
+
+**Testes a executar:**
+
+- pnpm --filter @bipesend/ui test, lint e typecheck
+- pnpm --filter @bipesend/tenant-web test, typecheck e build
+- pnpm ui:smoke e inspeção em 360/768/1440 px
+- pnpm rules:check, taskboard:check, architecture:check, secrets:check e brand:check
+
+**Aceite:**
+
+- Filtros, botões, motion, sombras, avatar, perfil, notificações e cards de integração possuem contrato compartilhado e catálogo.
+- WhatsApp utiliza somente a action real da Evolution API e é identificado como não oficial.
+- Instagram e TikTok não aparentam instalação funcional antes dos respectivos adapters e OAuth.
+
+**Evidências:** [docs/audit/ui-foundation-integrations.md](../docs/audit/ui-foundation-integrations.md)
+
+**Bloqueios:** Inspeção visual automatizada depende do Chromium do Playwright. Instalação de Instagram/TikTok depende de adapters, OAuth, permissões, persistência e auditoria ainda não implementados.
 
 <a id="team-007"></a>
 ### TEAM-007 — Godmode e Impersonation (Superadmin e Contratante)

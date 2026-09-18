@@ -286,3 +286,13 @@ Adotado o ADR em [architecture/foundation.md](architecture/foundation.md): token
 **Motivo:** reduzir variações, aumentar consistência entre módulos e liberar largura útil para inbox, kanban e editor, preservando acessibilidade e navegação responsiva.
 
 **Evidência:** [auditoria do workspace claro e CRM](audit/ui-light-crm.md), card FND-015.
+
+## ADR-0032 — Fundação completa do SaaS e loja nativa de integrações
+
+**Decisão do usuário, 2026-09-18:** `packages/ui` concentra o contrato visual detalhado do painel, incluindo botões, filtros, sombras, motion, identidade, perfil, avatar, notificações e cards de integração. Shell, CRM e Integrações consomem essa fundação; o BipeWPRO permanece isolado.
+
+**Loja nativa:** WhatsApp usa o fluxo real já existente da Evolution API por QR Code e deve ser identificado como integração não oficial. Instagram e TikTok entram no catálogo com apresentação completa, porém sem CTA de instalação enquanto não existirem OAuth, permissões, endpoints, auditoria e testes do provider. A interface não transforma planejamento em conexão disponível.
+
+**Notificações:** o sino abre uma central funcional. Na ausência de fonte autorizada, mostra empty state sem contador fictício. Dados e ações entram depois por contrato próprio.
+
+**Evidência:** [auditoria da fundação e integrações](audit/ui-foundation-integrations.md), card FND-016.

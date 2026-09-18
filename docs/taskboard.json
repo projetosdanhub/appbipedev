@@ -2954,6 +2954,46 @@
       "owner": "Engenharia BipeSend"
     },
     {
+      "id": "FND-016",
+      "title": "Completar fundação UI e loja nativa de integrações",
+      "milestone": "Milestone 0 - implementação auditada",
+      "objective": "Completar os padrões compartilhados de interação e aplicar a fundação a perfil, notificações e à loja nativa de integrações.",
+      "dependencies": [
+        "FND-015"
+      ],
+      "status": "IN_PROGRESS",
+      "steps": [
+        "Adicionar filtros, cards de integração, identidade, avatar, presença e notificações ao packages/ui.",
+        "Aplicar os padrões ao shell sem inventar notificações ou ações sem backend.",
+        "Entregar catálogo responsivo com WhatsApp real e Instagram/TikTok explicitamente planejados."
+      ],
+      "codeAreas": [
+        "packages/ui",
+        "apps/tenant-web/src/features/workspace",
+        "apps/tenant-web/src/app/(dashboard)/integrations",
+        "rules"
+      ],
+      "tests": [
+        "pnpm --filter @bipesend/ui test, lint e typecheck",
+        "pnpm --filter @bipesend/tenant-web test, typecheck e build",
+        "pnpm ui:smoke e inspeção em 360/768/1440 px",
+        "pnpm rules:check, taskboard:check, architecture:check, secrets:check e brand:check"
+      ],
+      "acceptance": [
+        "Filtros, botões, motion, sombras, avatar, perfil, notificações e cards de integração possuem contrato compartilhado e catálogo.",
+        "WhatsApp utiliza somente a action real da Evolution API e é identificado como não oficial.",
+        "Instagram e TikTok não aparentam instalação funcional antes dos respectivos adapters e OAuth."
+      ],
+      "evidence": [
+        "docs/audit/ui-foundation-integrations.md"
+      ],
+      "blockers": [
+        "Inspeção visual automatizada depende do Chromium do Playwright.",
+        "Instalação de Instagram/TikTok depende de adapters, OAuth, permissões, persistência e auditoria ainda não implementados."
+      ],
+      "owner": "Engenharia BipeSend"
+    },
+    {
       "id": "TEAM-007",
       "title": "Godmode e Impersonation (Superadmin e Contratante)",
       "milestone": "Milestone 2 - identidade e tenant (primeiro desenvolvimento)",

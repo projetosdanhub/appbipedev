@@ -146,6 +146,73 @@
 .workspace-context {
   gap: var(--space-4);
 }
+.workspace-tenant-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 13rem;
+  min-height: var(--control-height);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-control);
+  transition: background var(--motion-fast);
+}
+.workspace-tenant-trigger:hover {
+  background: var(--bg-subtle);
+}
+.workspace-tenant-copy {
+  display: grid;
+  min-width: 0;
+  text-align: left;
+}
+.workspace-tenant-copy span {
+  color: var(--text-muted);
+  font-size: var(--text-caption);
+  font-weight: 500;
+}
+.workspace-tenant-copy strong {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: var(--text-body);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.workspace-tenant-trigger > svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  color: var(--text-soft);
+}
+.workspace-tenant-menu {
+  width: 16rem;
+}
+.workspace-tenant-option {
+  justify-content: space-between;
+}
+.workspace-tenant-option > div {
+  display: grid;
+  min-width: 0;
+}
+.workspace-tenant-option strong,
+.workspace-tenant-option span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.workspace-tenant-option strong {
+  font-size: var(--text-body);
+}
+.workspace-tenant-option span {
+  color: var(--text-muted);
+  font-size: var(--text-caption);
+  text-transform: capitalize;
+}
+.workspace-tenant-option > svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  color: var(--action-primary);
+}
 .workspace-header-brand {
   display: inline-flex;
   flex-shrink: 0;
@@ -174,17 +241,30 @@
   gap: var(--space-3);
   min-height: var(--control-height);
   border-radius: var(--radius-control);
-  padding: var(--space-1);
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1);
   font-size: var(--text-body);
 }
 .workspace-profile:hover {
   background: var(--bg-subtle);
 }
-.workspace-profile > span:last-child {
+.workspace-profile > span:nth-child(2) {
   max-width: 10rem;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.workspace-profile-chevron {
+  width: 1rem;
+  height: 1rem;
+  color: var(--text-soft);
+}
+.workspace-profile-menu {
+  min-width: 18rem;
+  padding: var(--space-2);
+}
+.workspace-notifications {
+  padding: 0;
+  overflow: hidden;
 }
 .workspace-content {
   flex: 1;
@@ -304,7 +384,8 @@
   .workspace-breadcrumb > span {
     display: none;
   }
-  .workspace-profile > span:last-child:not(:first-child) {
+  .workspace-profile > span:nth-child(2),
+  .workspace-profile-chevron {
     display: none;
   }
   .workspace-home-columns {

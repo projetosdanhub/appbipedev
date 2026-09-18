@@ -166,6 +166,6 @@ O fluxo visual e comportamental dessas telas está em `29_AUTH_UX_FLOWS.md`.
 
 O construtor compartilhado, catálogo Food, publicação e contratos de capacidade/cota estão especificados em `docs/plans/bipewpro.md`. Regras 36/37 complementam os padrões existentes. O planejamento não ativa funcionalidades nem conclui cards de implementação. O taskboard preserva PAGE/CAT/BILL e acrescenta WPRO para entregas distintas. Integração com a frente do Gemini é aditiva, sem mover código ou alterar migração histórica por conveniência.
 
-### Início da execução — 2026-09-16
+### Início da execução — 2026-09-16; evolução do SaaS — 2026-09-18
 
-O usuário reservou a reforma completa de `packages/ui` para outra etapa. A primeira fatia do BipeWPRO cria `web-builder-ui`, `web-builder-core`, `web-renderer` e `web-builder`, sem alterar componentes/tokens atuais do SaaS. Estado real, gates e limites em `docs/audit/bipewpro-foundation.md`. A galeria é local; ela não constitui habilitação do produto, CRUD autorizado nem publicação.
+A primeira fatia do BipeWPRO criou `web-builder-ui`, `web-builder-core`, `web-renderer` e `web-builder` de forma isolada. A evolução posterior do SaaS consolidou `packages/ui` como fundação visual clara para shell, CRM e loja de integrações, sem mover componentes do construtor. Estado real, gates e limites ficam nas auditorias correspondentes. A galeria é local; ela não constitui habilitação de produto, CRUD autorizado nem publicação.

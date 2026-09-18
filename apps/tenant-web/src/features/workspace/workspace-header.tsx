@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { RefreshCw, LogOut, Settings, Maximize2, Menu, X } from "lucide-react";
+import { RefreshCw, LogOut, Settings, Maximize2, Menu, X, Bell, Users, ChevronDown } from "lucide-react";
 import {
   Avatar,
   BrandLogo,
@@ -13,6 +13,8 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  NotificationPanel,
+  UserMenuSummary,
 } from "@bipesend/ui";
 import { navigation, isActiveRoute } from "./navigation";
 import { logout } from "./actions";
@@ -78,21 +80,44 @@ export function WorkspaceHeader({
         </IconButton>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
+            <IconButton label="Abrir notificações">
+              <Bell aria-hidden="true" />
+            </IconButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="workspace-notifications">
+            <NotificationPanel items={[]} />
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
             <button
               type="button"
               className="workspace-profile"
               aria-label={`Opções da conta de ${name}`}
             >
-              <Avatar name={name} />
+              <Avatar name={name} size="sm" status="online" />
               <span>{name}</span>
+              <ChevronDown aria-hidden="true" className="workspace-profile-chevron" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{name}</DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="workspace-profile-menu">
+            <DropdownMenuLabel asChild>
+              <UserMenuSummary
+                name={name}
+                subtitle={`${activeTenant?.name ?? "Workspace"} · ${activeTenant?.role?.replaceAll("_", " ") ?? "membro"}`}
+              />
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/settings/security">
                 <Settings aria-hidden="true" className="ui-icon" />
                 Segurança da conta
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/settings/team">
+                <Users aria-hidden="true" className="ui-icon" />
+                Equipe e permissões
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

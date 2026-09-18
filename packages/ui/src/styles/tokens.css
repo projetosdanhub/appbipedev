@@ -15,6 +15,7 @@
   --bg-muted: #e7edf7;
   --bg-selected: #e9f1ff;
   --bg-accent: #f2efff;
+  --bg-brand-soft: #edf5ff;
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #64748b;
@@ -47,6 +48,9 @@
   --shadow-sm: 0 4px 14px rgb(37 55 88 / 7%);
   --shadow-md: 0 18px 48px rgb(37 55 88 / 14%);
   --shadow-panel: 0 24px 64px rgb(37 55 88 / 18%);
+  --shadow-control: 0 1px 2px rgb(15 23 42 / 5%), 0 4px 12px rgb(37 55 88 / 5%);
+  --shadow-card-hover: 0 18px 38px rgb(37 55 88 / 12%);
+  --shadow-focus: 0 0 0 4px var(--focus-halo);
 }
 :root {
   --font-body: var(--font-poppins, ui-sans-serif), system-ui, sans-serif;
@@ -87,7 +91,9 @@
   --motion-fast: 140ms;
   --motion-base: 180ms;
   --motion-panel: 240ms;
+  --motion-slow: 320ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0.8, 0.2, 1);
   --z-sticky: 100;
   --z-dropdown: 200;
   --z-overlay: 300;

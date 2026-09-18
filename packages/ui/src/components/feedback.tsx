@@ -202,9 +202,25 @@ export function Progress({
     />
   );
 }
-export function Avatar({ name, src }: { name: string; src?: string }) {
+export function Avatar({
+  name,
+  src,
+  size = "md",
+  status,
+}: {
+  name: string;
+  src?: string;
+  size?: "sm" | "md" | "lg";
+  status?: "online" | "away" | "offline";
+}) {
   return (
-    <span className="ui-avatar" role="img" aria-label={name}>
+    <span
+      className="ui-avatar"
+      data-size={size}
+      data-status={status}
+      role="img"
+      aria-label={status ? `${name}, ${status === "online" ? "online" : status === "away" ? "ausente" : "offline"}` : name}
+    >
       {src ? (
         <img src={src} alt="" width={40} height={40} />
       ) : (
@@ -216,6 +232,7 @@ export function Avatar({ name, src }: { name: string; src?: string }) {
           .join("")
           .toUpperCase()
       )}
+      {status && <span className="ui-avatar-status" aria-hidden="true" />}
     </span>
   );
 }

@@ -19,6 +19,8 @@ import {
   TabsContent,
 } from "../components/overlays";
 import { SegmentedControl } from "../components/segmented-control";
+import { FilterChip } from "../components/filter-chip";
+import { NotificationPanel } from "../components/identity";
 
 describe("Reusable interaction contracts", () => {
   it("keeps button loading disabled even if disabled=false was passed", async () => {
@@ -143,5 +145,23 @@ describe("Reusable interaction contracts", () => {
     await userEvent.click(list);
     expect(list).toHaveAttribute("aria-pressed", "true");
     expect(board).toHaveAttribute("aria-pressed", "false");
+  });
+  it("exposes filter state and result count", async () => {
+    const toggle = vi.fn();
+    render(
+      <FilterChip selected count={3} onClick={toggle}>
+        Redes sociais
+      </FilterChip>,
+    );
+    const filter = screen.getByRole("button", { name: /Redes sociais/ });
+    expect(filter).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByLabelText("3 resultados")).toBeVisible();
+    await userEvent.click(filter);
+    expect(toggle).toHaveBeenCalledOnce();
+  });
+  it("renders an honest empty notification center", () => {
+    render(<NotificationPanel items={[]} />);
+    expect(screen.getByRole("region", { name: "Central de notificações" })).toBeVisible();
+    expect(screen.getByText("Tudo em dia")).toBeVisible();
   });
 });
