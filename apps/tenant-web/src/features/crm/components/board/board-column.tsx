@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
-import { Plus, PlusCircle, Tags, Tag, Sparkles, Palette } from "lucide-react";
+import { Plus, PlusCircle, Tags, Tag, Palette } from "lucide-react";
 import { CrmPipelineStage, CrmDeal, CrmContact, CrmTag } from "@bipesend/contracts";
 import { 
   DropdownMenu, 
@@ -29,7 +29,7 @@ interface BoardColumnProps {
   onAddCards: (stage: CrmPipelineStage) => void;
   onConfigureTags: () => void;
   onApplyTags: (stage: CrmPipelineStage) => void;
-  onCreatePipeline: () => void;
+  onCreatePipeline?: () => void;
   onEditStageColor: (stage: CrmPipelineStage) => void;
 }
 
@@ -82,7 +82,7 @@ export function BoardColumn({
             </span>
           )}
 
-          {/* Menu Dropdown com as 4 opções obrigatórias do fluxo */}
+          {/* Menu Dropdown com as opções do fluxo */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
@@ -94,30 +94,38 @@ export function BoardColumn({
                 <Plus className="crm-column-add-icon" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[210px]">
-              <DropdownMenuLabel className="text-[11px] text-slate-400 font-normal px-2 py-1">
+            <DropdownMenuContent align="end" className="min-w-[220px] w-auto p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg">
+              <DropdownMenuLabel className="text-[11px] text-slate-400 font-medium px-3 py-1.5 uppercase tracking-wider">
                 Opções do Fluxo
               </DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onAddCards(stage)} className="cursor-pointer">
-                <PlusCircle className="w-4 h-4 mr-2 text-[#007BFF]" />
-                Adicionar cards
+              <DropdownMenuItem 
+                onClick={() => onAddCards(stage)} 
+                className="cursor-pointer whitespace-nowrap flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 rounded-lg hover:bg-slate-100/80 transition-colors"
+              >
+                <PlusCircle className="w-4 h-4 text-[#007BFF] shrink-0" />
+                <span>Adicionar cards</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={onConfigureTags} className="cursor-pointer">
-                <Tags className="w-4 h-4 mr-2 text-indigo-500" />
-                Configurar etiquetas
+              <DropdownMenuItem 
+                onClick={onConfigureTags} 
+                className="cursor-pointer whitespace-nowrap flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 rounded-lg hover:bg-slate-100/80 transition-colors"
+              >
+                <Tags className="w-4 h-4 text-indigo-500 shrink-0" />
+                <span>Configurar etiquetas</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onApplyTags(stage)} className="cursor-pointer">
-                <Tag className="w-4 h-4 mr-2 text-emerald-500" />
-                Adicionar etiquetas
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={onCreatePipeline} className="cursor-pointer">
-                <Sparkles className="w-4 h-4 mr-2 text-amber-500" />
-                Criar funil
+              <DropdownMenuItem 
+                onClick={() => onApplyTags(stage)} 
+                className="cursor-pointer whitespace-nowrap flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 rounded-lg hover:bg-slate-100/80 transition-colors"
+              >
+                <Tag className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span>Adicionar etiquetas</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onEditStageColor(stage)} className="cursor-pointer">
-                <Palette className="w-4 h-4 mr-2 text-purple-500" />
-                Alterar cor do fluxo
+              <DropdownMenuItem 
+                onClick={() => onEditStageColor(stage)} 
+                className="cursor-pointer whitespace-nowrap flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 rounded-lg hover:bg-slate-100/80 transition-colors"
+              >
+                <Palette className="w-4 h-4 text-purple-500 shrink-0" />
+                <span>Alterar cor do fluxo</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

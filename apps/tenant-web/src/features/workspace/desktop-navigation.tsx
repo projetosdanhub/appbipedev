@@ -41,7 +41,7 @@ export function DesktopNavigation({
           <span className="text-slate-400 text-xs">Módulos do sistema</span>
         </div>
         <nav className="workspace-nav">
-          {["Operação", "Canais", "Configurações"].map((group) => (
+          {Array.from(new Set(navigation.map((item) => item.group))).map((group) => (
             <div key={group} className="workspace-nav-group">
               <p className="workspace-nav-label">{group}</p>
               {navigation
