@@ -46,13 +46,13 @@ export class EvolutionService {
     
     if (existing.length === 0) {
       await this.db.query(
-        "INSERT INTO connections (id, tenant_id, name, provider, instance_name, status, qrcode, created_at, updated_at) VALUES ($1, $2, $3, 'evolution_api', $4, 'connecting', $5, NOW(), NOW())",
-        [connectionId, tenantId, name, instanceName, qrcode]
+        "INSERT INTO connections (id, tenant_id, name, provider, instance_name, status, created_at, updated_at) VALUES ($1, $2, $3, 'evolution_api', $4, 'connecting', NOW(), NOW())",
+        [connectionId, tenantId, name, instanceName]
       );
     } else {
       await this.db.query(
-        "UPDATE connections SET status = 'connecting', qrcode = $1, updated_at = NOW() WHERE tenant_id = $2 AND instance_name = $3",
-        [qrcode, tenantId, instanceName]
+        "UPDATE connections SET status = 'connecting', updated_at = NOW() WHERE tenant_id = $1 AND instance_name = $2",
+        [tenantId, instanceName]
       );
     }
     
@@ -258,8 +258,8 @@ export class EvolutionService {
     if (!qrcode) return;
 
     await this.db.query(
-      "UPDATE connections SET qrcode = $1, status = 'connecting', updated_at = NOW() WHERE instance_name = $2",
-      [qrcode, instanceName]
+      "UPDATE connections SET status = 'connecting', updated_at = NOW() WHERE instance_name = $1",
+      [instanceName]
     );
 
     const connections = await this.db.query("SELECT tenant_id FROM connections WHERE instance_name = $1 LIMIT 1", [instanceName]);
@@ -267,5 +267,27 @@ export class EvolutionService {
       this.gateway?.broadcastToTenant(connections[0].tenant_id, "connection.qrcode", { instanceName, qrcode });
     }
   }
-}
+  async deleteInstance(tenantId: string, instanceName: string) {
+    // Apaga na API do Evolution
+    try {
+      const url = `${env.EVOLUTION_API_URL}/instance/delete/${instanceName}`;
+      await fetch(url, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": env.EVOLUTION_API_KEY || "",
+        }
+      });
+    } catch (e) {
+      console.error("Error deleting instance in Evolution API:", e);
+    }
 
+    // Apaga no Banco de Dados
+    await this.db.query(
+      "DELETE FROM connections WHERE tenant_id = $1 AND instance_name = $2",
+      [tenantId, instanceName]
+    );
+
+    this.gateway?.broadcastToTenant(tenantId, "connection.deleted", { instanceName });
+  }
+}

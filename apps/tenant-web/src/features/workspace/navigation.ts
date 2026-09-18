@@ -18,7 +18,6 @@ export const navigation = [
   { name: "Contatos", href: "/users", icon: Users, group: "Workspace" },
   { name: "Campanhas", href: "/campaigns", icon: Send, group: "Crescimento" },
   { name: "Automações", href: "/automations", icon: Zap, group: "Crescimento" },
-  { name: "Catálogo", href: "/catalog", icon: Boxes, group: "Crescimento" },
   { name: "Integrações", href: "/integrations", icon: Plug, group: "Gestão" },
   { name: "Faturamento", href: "/billing", icon: CreditCard, group: "Gestão" },
   { name: "Configurações", href: "/settings", icon: Settings, group: "Gestão" },

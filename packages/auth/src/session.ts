@@ -62,9 +62,10 @@ export async function verifySession(sessionId: string, surface: "tenant" | "plat
   try {
     const session = await prisma.session.findUnique({
       where: { id: sessionId },
+      include: { user: true },
     });
 
-    if (!session || session.expires < new Date() || session.surface !== surface) {
+    if (!session || session.expires < new Date() || session.surface !== surface || session.user.status !== "active") {
       // Se tiver Redis, cache o miss para evitar repetição (TTL curto, 5 min)
       if (r) {
         r.set(cacheKey, "invalid", "EX", 300).catch(() => {});
@@ -104,5 +105,41 @@ export async function revokeSession(sessionId: string, surface: "tenant" | "plat
     });
   } catch {
     // Pode já ter sido deletado
+  }
+}
+
+export async function revokeAllSessionsByUserId(userId: string, surface?: "tenant" | "platform"): Promise<void> {
+  const r = getRedis();
+  
+  try {
+    const whereClause: any = { userId };
+    if (surface) {
+      whereClause.surface = surface;
+    }
+    
+    // Buscar todas as sessões para poder invalidar no Redis
+    const sessions = await prisma.session.findMany({
+      where: whereClause,
+      select: { id: true, surface: true }
+    });
+
+    if (r && sessions.length > 0) {
+      if (connecting) await connecting;
+      
+      const pipeline = r.pipeline();
+      for (const s of sessions) {
+        pipeline.del(`auth-session:${s.surface}:${s.id}`);
+      }
+      await pipeline.exec().catch(() => {});
+    }
+
+    // Remover do banco
+    if (sessions.length > 0) {
+      await prisma.session.deleteMany({
+        where: whereClause,
+      });
+    }
+  } catch {
+    // Falha silenciosa aceitável para MVP, log ideal no futuro
   }
 }

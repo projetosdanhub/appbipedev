@@ -27,11 +27,7 @@
     "architecture:check": "node scripts/check-package-boundaries.mjs",
     "secrets:check": "node scripts/check-secrets.mjs",
     "ui:smoke": "node scripts/ui-smoke.mjs",
-    "foundation:check": "pnpm --filter @bipesend/db generate && pnpm foundation:test && pnpm --filter @bipesend/ui test && pnpm --filter @bipesend/tenant-web test && pnpm --filter @bipesend/api test && pnpm --filter @bipesend/ui lint && pnpm --filter @bipesend/api lint && pnpm --filter @bipesend/tenant-web --filter @bipesend/superadmin-web --filter @bipesend/api --filter @bipesend/ui --filter @bipesend/db -r typecheck && pnpm rules:check && pnpm taskboard:check && pnpm security:check && pnpm architecture:check && pnpm secrets:check && pnpm brand:check && pnpm bipewpro:check",
-    "bipewpro:build": "pnpm --filter @bipesend/contracts --filter @bipesend/logger --filter @bipesend/web-builder-core --filter @bipesend/web-renderer --filter @bipesend/web-builder-ui --filter @bipesend/web-builder -r build",
-    "bipewpro:check": "pnpm bipewpro:build && pnpm --filter @bipesend/contracts --filter @bipesend/logger --filter @bipesend/web-builder-core --filter @bipesend/web-renderer --filter @bipesend/web-builder -r test && pnpm --filter @bipesend/web-builder-ui --filter @bipesend/web-builder -r lint && node --test scripts/tests/package-boundaries.test.mjs && pnpm architecture:check",
-    "bipewpro:dev": "pnpm bipewpro:build && pnpm --filter @bipesend/web-builder dev",
-    "bipewpro:smoke": "pnpm bipewpro:build && node scripts/bipewpro-smoke.mjs"
+    "foundation:check": "pnpm --filter @bipesend/db generate && pnpm foundation:test && pnpm --filter @bipesend/ui test && pnpm --filter @bipesend/tenant-web test && pnpm --filter @bipesend/api test && pnpm --filter @bipesend/ui lint && pnpm --filter @bipesend/api lint && pnpm --filter @bipesend/tenant-web --filter @bipesend/superadmin-web --filter @bipesend/api --filter @bipesend/ui --filter @bipesend/db -r typecheck && pnpm rules:check && pnpm taskboard:check && pnpm security:check && pnpm architecture:check && pnpm secrets:check && pnpm brand:check"
   },
   "devDependencies": {
     "@types/qrcode": "^1.5.6",

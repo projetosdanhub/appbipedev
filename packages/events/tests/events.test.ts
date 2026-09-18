@@ -11,7 +11,8 @@ const ctx = {
   userId: "22222222-2222-4222-8222-222222222222",
   membershipId: "33333333-3333-4333-8333-333333333333",
   role: "agent" as const,
-  permissions: [],
+  globalPermissions: [],
+  departmentGrants: {},
   requestId: "req1",
 };
 test("events carry validated tenant scope; rollback failure never becomes success", async () => {

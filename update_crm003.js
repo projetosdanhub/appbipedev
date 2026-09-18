@@ -1,0 +1,1 @@
+const fs = require('fs'); const data = JSON.parse(fs.readFileSync('docs/taskboard.json', 'utf8')); const card = data.cards.find(c => c.id === 'CRM-003'); if (card) { card.status = 'DONE'; fs.writeFileSync('docs/taskboard.json', JSON.stringify(data, null, 2)); console.log('Updated CRM-003 to DONE'); } else { console.log('Card not found'); }

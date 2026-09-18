@@ -84,20 +84,27 @@ export function hasPermission(
   context: TenantContext,
   permission: Permission,
   resourceTenantId: string,
+  departmentId?: string,
 ): boolean {
-  return (
-    context.tenantId === resourceTenantId &&
-    context.permissions.includes(permission) &&
-    rolePermissions[context.role]?.includes(permission) === true
-  );
+  if (context.tenantId !== resourceTenantId) return false;
+  if (!rolePermissions[context.role]?.includes(permission)) return false;
+
+  if (context.globalPermissions.includes(permission)) return true;
+
+  if (departmentId && context.departmentGrants[departmentId]?.includes(permission)) {
+    return true;
+  }
+
+  return false;
 }
 export function assertPermission(
   context: TenantContext,
   permission: Permission,
   resourceTenantId = context.tenantId,
+  departmentId?: string,
 ): void {
   tenantContextSchema.parse(context);
-  if (!hasPermission(context, permission, resourceTenantId))
+  if (!hasPermission(context, permission, resourceTenantId, departmentId))
     throw new Error("PERMISSION_DENIED");
 }
 export function canGrantRole(
@@ -111,7 +118,7 @@ export function canGrantRole(
     return false;
   return rolePermissions[role].every(
     (permission) =>
-      context.permissions.includes(permission) &&
+      context.globalPermissions.includes(permission) &&
       rolePermissions[context.role].includes(permission),
   );
 }
@@ -134,6 +141,7 @@ export interface MembershipLookup {
     tenantId: string;
     role: string;
     active: boolean;
+    departmentGrants?: Record<string, string[]>;
   } | null>;
 }
 /** Call only after verifying the session. The tenant selector never grants authority. */
@@ -154,7 +162,8 @@ export async function resolveTenantContext(
       ...input,
       membershipId: member.id,
       role,
-      permissions: rolePermissions[role],
+      globalPermissions: rolePermissions[role],
+      departmentGrants: (member.departmentGrants as Record<string, Permission[]>) ?? {},
     }),
   );
 }

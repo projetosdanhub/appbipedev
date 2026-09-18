@@ -47,8 +47,10 @@ export function StageManager({ tenantId, pipeline }: StageManagerProps) {
     getPipelineStagesAction(tenantId, pipeline.id).then((res) => {
       if (mounted) {
         if (res.success) {
-          // Ordenar por position
-          const sorted = (res.data as CrmPipelineStage[]).sort((a, b) => a.position - b.position);
+          // Ordenar por position e createdAt
+          const sorted = (res.data as CrmPipelineStage[]).sort(
+            (a, b) => a.position - b.position || new Date((a as any).createdAt || 0).getTime() - new Date((b as any).createdAt || 0).getTime()
+          );
           setStages(sorted);
         } else {
           toast.error(res.message);
@@ -107,6 +109,7 @@ export function StageManager({ tenantId, pipeline }: StageManagerProps) {
         if (result.success) {
           toast.success(result.message);
           setStages([...stages, result.data as CrmPipelineStage]);
+          form.reset({ name: "", category: "open", colorToken: "bg-slate-200" });
           setIsModalOpen(false);
         } else {
           toast.error(result.message);

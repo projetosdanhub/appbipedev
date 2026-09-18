@@ -106,6 +106,7 @@ model Tenant {
   conversationStatusHistories ConversationStatusHistory[]
   connections                 Connection[]
   AssignmentHistory           AssignmentHistory[]
+  Notification                Notification[]
 
   @@map("tenants")
 }
@@ -143,6 +144,7 @@ model Membership {
   tenant                      Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user                        User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
   AssignmentHistory           AssignmentHistory[]
+  Notification                Notification[]
 
   @@unique([tenantId, userId])
   @@map("memberships")
@@ -802,4 +804,23 @@ model AssignmentHistory {
 
   @@index([tenantId, entityType, entityId])
   @@map("assignment_histories")
+}
+
+model Notification {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String   @map("tenant_id") @db.Uuid
+  membershipId String   @map("membership_id") @db.Uuid
+  type         String   @db.VarChar(100)
+  title        String   @db.VarChar(255)
+  content      Json?    @db.JsonB
+  read         Boolean  @default(false)
+  dedupeKey    String?  @map("dedupe_key") @db.VarChar(255)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  membership Membership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, membershipId])
+  @@index([dedupeKey])
+  @@map("notifications")
 }

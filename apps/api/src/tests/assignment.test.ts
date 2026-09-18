@@ -36,7 +36,7 @@ describe("CRM-006 Assignment Concurrency", () => {
       const membership = await txDb.query(`INSERT INTO memberships (tenant_id, user_id, role) VALUES ($1, $2, $3) RETURNING id`, [tenant.id, userId, 'tenant_admin']);
       const membershipId = membership[0].id;
       const requestId = crypto.randomUUID();
-      const ctx = { tenantId: tenant.id, userId, membershipId, requestId, role: "tenant_admin" as any, permissions: ["crm.deals.write", "crm.deals.assign"] as any };
+      const ctx = { tenantId: tenant.id, userId, membershipId, requestId, role: "tenant_admin" as any, globalPermissions: ["crm.deals.write", "crm.deals.assign"] as any, departmentGrants: {} };
 
       const pipelineRepo = new PipelineRepository(txDb);
       const dealRepo = new DealRepository(txDb);

@@ -1,4 +1,0 @@
-body { margin: 0; }
-.demo-notice { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 24px; font: 12px var(--font-body); background: var(--bg-subtle); color: var(--text-secondary); }
-.demo-notice button { font: inherit; color: var(--action-primary); background: var(--bg-surface); border: 1px solid var(--border-control); border-radius: var(--radius-sm); min-height: 44px; padding-inline: 12px; cursor: pointer; }
-.demo-notice button:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }

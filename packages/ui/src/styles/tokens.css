@@ -29,6 +29,11 @@
   --overlay: rgb(15 23 42 / 48%);
   --shadow-sm: 0 2px 8px rgb(15 23 42 / 4%);
   --shadow-md: 0 16px 48px rgb(15 23 42 / 16%);
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-blur: blur(12px);
+  --shadow-glass: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
+  --button-shadow: 0 4px 14px 0 rgba(7, 95, 216, 0.3);
 }
 .dark,
 [data-theme="dark"] {
@@ -58,6 +63,11 @@
   --overlay: rgb(0 0 0 / 64%);
   --shadow-sm: 0 2px 8px rgb(0 0 0 / 12%);
   --shadow-md: 0 16px 48px rgb(0 0 0 / 32%);
+  --glass-bg: rgba(20, 30, 47, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(12px);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --button-shadow: 0 4px 14px 0 rgba(154, 195, 255, 0.2);
 }
 :root {
   --font-body: var(--font-poppins, ui-sans-serif), system-ui, sans-serif;
@@ -97,6 +107,9 @@
   --z-overlay: 300;
   --z-dialog: 400;
   --z-toast: 500;
+  
+  --button-active-scale: scale(0.95);
+  --transition-button: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 /* Aliases for existing screens. Resolved per surface, not frozen at the root. */
 :root,

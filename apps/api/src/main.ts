@@ -231,6 +231,17 @@ async function bootstrap(): Promise<void> {
     "./modules/06-inbox/presentation/inbox.controller.js"
   );
 
+  // Notifications Module
+  const { NotificationRepository } = await import(
+    "./modules/16-notifications/infrastructure/notification.repository.js"
+  );
+  const { NotificationService } = await import(
+    "./modules/16-notifications/application/notification.service.js"
+  );
+  const { notificationRoutes } = await import(
+    "./modules/16-notifications/presentation/notification.controller.js"
+  );
+
   // Events / WS Gateway
   const { WebsocketGateway } = await import(
     "./modules/15-events/infrastructure/websocket.gateway.js"
@@ -247,11 +258,11 @@ async function bootstrap(): Promise<void> {
   const pipelineRepository = new PipelineRepository(db);
   const dealRepository = new DealRepository(db);
 
-  const contactService = new ContactService(db, contactRepository);
+  const contactService = new ContactService(db, contactRepository, customFieldRepository);
   const tagService = new TagService(tagRepository, db);
   const segmentService = new SegmentService(segmentRepository, db);
   const customFieldService = new CustomFieldService(customFieldRepository);
-  const contactImportService = new ContactImportService(contactImportRepository);
+  const contactImportService = new ContactImportService(contactImportRepository, contactService);
   const pipelineService = new PipelineService(db, pipelineRepository);
 
   const websocketGateway = new WebsocketGateway();
@@ -266,11 +277,20 @@ async function bootstrap(): Promise<void> {
   
   const inboxService = new InboxService(db, websocketGateway);
 
+  const notificationRepository = new NotificationRepository(db);
+  const notificationService = new NotificationService(notificationRepository);
+
   // Background Workers & Queue Management
   const { startMessagesWorker, outboundMessagesQueue } = await import(
     "./modules/06-inbox/infrastructure/messages-queue.js"
   );
   startMessagesWorker(db, websocketGateway);
+
+  const { OutboxProcessor } = await import(
+    "./modules/15-events/application/outbox.worker.js"
+  );
+  const outboxProcessor = new OutboxProcessor(db, websocketGateway);
+  outboxProcessor.start();
 
   const { shutdownWorkers } = await import(
     "./modules/00-shared/infrastructure/queue/base-worker.js"
@@ -278,6 +298,7 @@ async function bootstrap(): Promise<void> {
 
   app.addHook("onClose", async () => {
     await shutdownWorkers();
+    await outboxProcessor.stop();
   });
 
   // Bull Board Setup
@@ -289,7 +310,10 @@ async function bootstrap(): Promise<void> {
   serverAdapter.setBasePath('/admin/queues');
 
   createBullBoard({
-    queues: [new BullMQAdapter(outboundMessagesQueue as any)],
+    queues: [
+      new BullMQAdapter(outboundMessagesQueue as any),
+      new BullMQAdapter(outboxProcessor.queue as any)
+    ],
     serverAdapter,
   });
 
@@ -315,15 +339,27 @@ async function bootstrap(): Promise<void> {
     pipelineRoutes(instance, db, pipelineService);
     dealRoutes(instance, db, dealService, teamService);
     inboxRoutes(instance, db, inboxService, teamService);
+    notificationRoutes(instance, db, notificationService);
     
     // Connections routes
-    const { connectionsRoutes } = await import(
-      "./modules/13-integrations/presentation/connections.controller.js"
+    const { connectionRoutes } = await import(
+      "./modules/07-messaging/http/controllers/connection.controller.js"
     );
-    connectionsRoutes(instance, db, evolutionService);
+    const { ConnectionService } = await import(
+      "./modules/07-messaging/application/connection.service.js"
+    );
+    const connectionService = new ConnectionService(db, evolutionService);
+    
+    // Register messaging routes
+    instance.register(async (app) => {
+      connectionRoutes(app, connectionService);
+    }, { prefix: "/api/v1/messaging" });
+  });
 
-    // Register WebSocket Route (will handle its own auth via query token)
-    websocketRoutes(instance, websocketGateway, sessionRepository, userRepository);
+  // WebSocket Route — registered outside auth middleware block;
+  // WS handles its own cookie/token auth in the handler itself.
+  app.register(async (instance) => {
+    websocketRoutes(instance, websocketGateway, sessionRepository, userRepository, membershipRepository);
   });
 
   // Reject the obsolete browser identity paths; Auth.js is the canonical web surface.

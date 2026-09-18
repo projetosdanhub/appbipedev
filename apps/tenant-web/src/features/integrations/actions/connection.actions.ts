@@ -4,13 +4,13 @@ import { fetchApi } from "@/lib/api-client";
 
 export async function getConnectionsAction() {
   try {
-    const res = await fetchApi("/api/v1/connections", { cache: "no-store" });
+    const res = await fetchApi("/api/v1/messaging/connections", { cache: "no-store" });
     if (!res.ok) {
       const data = await res.json();
       return { success: false, message: data.error || "Failed to load connections" };
     }
     const data = await res.json();
-    return { success: true, data: data.connections };
+    return { success: true, data };
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Failed to load connections";
     return { success: false, message };
@@ -19,7 +19,7 @@ export async function getConnectionsAction() {
 
 export async function createWhatsAppConnectionAction(name: string) {
   try {
-    const res = await fetchApi("/api/v1/connections/whatsapp", {
+    const res = await fetchApi("/api/v1/messaging/connections", {
       method: "POST",
       body: JSON.stringify({ name }),
     });
@@ -34,3 +34,22 @@ export async function createWhatsAppConnectionAction(name: string) {
     return { success: false, message };
   }
 }
+
+export async function deleteConnectionAction(instanceName: string) {
+  try {
+    const res = await fetchApi(`/api/v1/messaging/connections/${instanceName}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) {
+      if (res.status !== 204) {
+        const data = await res.json().catch(() => ({}));
+        return { success: false, message: data.error || 'Failed to delete connection' };
+      }
+    }
+    return { success: true };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to delete connection';
+    return { success: false, message };
+  }
+}
+

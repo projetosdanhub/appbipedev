@@ -2,16 +2,30 @@ import crypto from "node:crypto";
 import { Database } from "../../00-shared/infrastructure/database.js";
 import { Contact, CreateContactInput, UpdateContactInput } from "../domain/contact.entity.js";
 
+const SELECT_FIELDS = `id, tenant_id as "tenantId", name, email, email_normalized as "emailNormalized", phone, phone_e164 as "phoneE164", phone_country as "phoneCountry", source, custom_fields as "customFields", department_id as "departmentId", routing_role_id as "routingRoleId", assigned_membership_id as "assignedMembershipId", created_by_membership_id as "createdByMembershipId", updated_by_membership_id as "updatedByMembershipId", status, archived_at as "archivedAt", version, created_at as "createdAt", updated_at as "updatedAt"`;
+
 export class ContactRepository {
   constructor(private readonly db: Database) {}
 
   async create(tenantId: string, input: CreateContactInput): Promise<Contact> {
     return this.db.withTransaction(async (txDb) => {
       const res = await txDb.query(
-        `INSERT INTO contacts (tenant_id, name, email, phone, custom_fields)
-         VALUES ($1, $2, $3, $4, $5)
-         RETURNING id, tenant_id as "tenantId", name, email, phone, custom_fields as "customFields", department_id as "departmentId", routing_role_id as "routingRoleId", assigned_membership_id as "assignedMembershipId", version, created_at as "createdAt", updated_at as "updatedAt"`,
-        [tenantId, input.name, input.email, input.phone, input.customFields ? JSON.stringify(input.customFields) : null]
+        `INSERT INTO contacts (tenant_id, name, email, email_normalized, phone, phone_e164, phone_country, source, custom_fields, created_by_membership_id, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+         RETURNING ${SELECT_FIELDS}`,
+        [
+          tenantId, 
+          input.name, 
+          input.email || null, 
+          input.emailNormalized || null,
+          input.phone || null, 
+          input.phoneE164 || null,
+          input.phoneCountry || null,
+          input.source || "manual",
+          input.customFields ? JSON.stringify(input.customFields) : '{}',
+          input.createdByMembershipId || null,
+          input.status || "active"
+        ]
       );
       return res[0];
     }, tenantId);
@@ -20,7 +34,7 @@ export class ContactRepository {
   async list(tenantId: string, limit = 50, offset = 0): Promise<Contact[]> {
     return this.db.withTransaction(async (txDb) => {
       const res = await txDb.query(
-        `SELECT id, tenant_id as "tenantId", name, email, phone, custom_fields as "customFields", department_id as "departmentId", routing_role_id as "routingRoleId", assigned_membership_id as "assignedMembershipId", version, created_at as "createdAt", updated_at as "updatedAt"
+        `SELECT ${SELECT_FIELDS}
          FROM contacts
          WHERE tenant_id = $1
          ORDER BY created_at DESC
@@ -34,7 +48,7 @@ export class ContactRepository {
   async findById(tenantId: string, id: string): Promise<Contact | null> {
     return this.db.withTransaction(async (txDb) => {
       const res = await txDb.query(
-        `SELECT id, tenant_id as "tenantId", name, email, phone, custom_fields as "customFields", department_id as "departmentId", routing_role_id as "routingRoleId", assigned_membership_id as "assignedMembershipId", version, created_at as "createdAt", updated_at as "updatedAt"
+        `SELECT ${SELECT_FIELDS}
          FROM contacts
          WHERE tenant_id = $1 AND id = $2`,
         [tenantId, id]
@@ -64,13 +78,41 @@ export class ContactRepository {
         setClauses.push(`email = $${idx++}`);
         values.push(input.email);
       }
+      if (input.emailNormalized !== undefined) {
+        setClauses.push(`email_normalized = $${idx++}`);
+        values.push(input.emailNormalized);
+      }
       if (input.phone !== undefined) {
         setClauses.push(`phone = $${idx++}`);
         values.push(input.phone);
       }
+      if (input.phoneE164 !== undefined) {
+        setClauses.push(`phone_e164 = $${idx++}`);
+        values.push(input.phoneE164);
+      }
+      if (input.phoneCountry !== undefined) {
+        setClauses.push(`phone_country = $${idx++}`);
+        values.push(input.phoneCountry);
+      }
+      if (input.source !== undefined) {
+        setClauses.push(`source = $${idx++}`);
+        values.push(input.source);
+      }
       if (input.customFields !== undefined) {
         setClauses.push(`custom_fields = $${idx++}`);
-        values.push(input.customFields ? JSON.stringify(input.customFields) : null);
+        values.push(input.customFields ? JSON.stringify(input.customFields) : '{}');
+      }
+      if (input.status !== undefined) {
+        setClauses.push(`status = $${idx++}`);
+        values.push(input.status);
+      }
+      if (input.archivedAt !== undefined) {
+        setClauses.push(`archived_at = $${idx++}`);
+        values.push(input.archivedAt);
+      }
+      if (input.updatedByMembershipId !== undefined) {
+        setClauses.push(`updated_by_membership_id = $${idx++}`);
+        values.push(input.updatedByMembershipId);
       }
 
       if (setClauses.length === 0) {
@@ -80,7 +122,7 @@ export class ContactRepository {
       setClauses.push(`updated_at = NOW()`);
       setClauses.push(`version = version + 1`);
       
-      const query = `UPDATE contacts SET ${setClauses.join(", ")} WHERE tenant_id = $${idx++} AND id = $${idx++} RETURNING id, tenant_id as "tenantId", name, email, phone, custom_fields as "customFields", department_id as "departmentId", routing_role_id as "routingRoleId", assigned_membership_id as "assignedMembershipId", version, created_at as "createdAt", updated_at as "updatedAt"`;
+      const query = `UPDATE contacts SET ${setClauses.join(", ")} WHERE tenant_id = $${idx++} AND id = $${idx++} RETURNING ${SELECT_FIELDS}`;
       values.push(tenantId, id);
 
       const res = await txDb.query(query, values);
@@ -123,7 +165,7 @@ export class ContactRepository {
         `UPDATE contacts 
          SET department_id = $1, routing_role_id = $2, assigned_membership_id = $3, version = version + 1, updated_at = NOW() 
          WHERE tenant_id = $4 AND id = $5 AND version = $6 
-         RETURNING id, tenant_id as "tenantId", name, email, phone, custom_fields as "customFields", department_id as "departmentId", routing_role_id as "routingRoleId", assigned_membership_id as "assignedMembershipId", version, created_at as "createdAt", updated_at as "updatedAt"`,
+         RETURNING ${SELECT_FIELDS}`,
         [departmentId, routingRoleId, assignedMembershipId, tenantId, id, expectedVersion]
       );
       

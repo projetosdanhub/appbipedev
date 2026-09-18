@@ -59,6 +59,9 @@ export function useRealtime({ tenantId, onEvent, token }: UseRealtimeOptions) {
           const data = JSON.parse(message.data);
           if (data.event === "connected") {
             // Permite que o frontend faça catch-up
+            if (reconnectCountRef.current > 0 && onEventRef.current) {
+              onEventRef.current("reconnected", data.payload);
+            }
           }
           
           // Dispara o callback customizado
@@ -83,8 +86,10 @@ export function useRealtime({ tenantId, onEvent, token }: UseRealtimeOptions) {
         }, timeout);
       };
 
-      ws.onerror = (err) => {
-        console.error("[WS] Erro:", err);
+      ws.onerror = (_err) => {
+        if (process.env.NODE_ENV === "development") {
+          console.warn("[WS] Conexão em tempo real interrompida. Tentando reconectar...");
+        }
         ws.close();
       };
     };

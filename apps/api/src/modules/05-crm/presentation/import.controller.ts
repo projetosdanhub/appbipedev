@@ -23,8 +23,7 @@ export function importRoutes(
         assertPermission(request.tenantContext, "crm.import.manage");
         
         const batch = await importService.createPreview(
-          request.tenantContext.tenantId,
-          request.tenantContext.membershipId,
+          request.tenantContext,
           parsed.data
         );
         return reply.status(201).send({ data: batch });
@@ -48,7 +47,7 @@ export function importRoutes(
         assertPermission(request.tenantContext, "crm.import.manage");
         
         const batch = await importService.commit(
-          request.tenantContext.tenantId,
+          request.tenantContext,
           params.id,
           parsed.data
         );

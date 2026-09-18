@@ -25,10 +25,6 @@ const packageNames = [
   "security",
   "ui",
   "logger",
-  "web-builder-core",
-  "web-renderer",
-  "web-builder-ui",
-  "web-builder",
 ];
 for (const name of packageNames) {
   const pkg = JSON.parse(

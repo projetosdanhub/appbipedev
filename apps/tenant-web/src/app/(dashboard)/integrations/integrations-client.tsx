@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { MessageCircle, Globe, Link2, CreditCard, Box, Webhook, Plus, Loader2, Check } from "lucide-react";
 import { Button } from "@bipesend/ui";
 import { useRealtime } from "@/lib/useRealtime";
-import { createWhatsAppConnectionAction } from "@/features/integrations/actions/connection.actions";
+import { createWhatsAppConnectionAction, deleteConnectionAction } from "@/features/integrations/actions/connection.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -16,7 +16,7 @@ const MOCK_INTEGRATIONS = [
   { id: 6, provider: "shopify", name: "Shopify", desc: "E-commerce", icon: <Box className="w-8 h-8 text-green-600" />, status: "available" },
 ];
 
-export function IntegrationsClient({ tenantId, initialConnections }: { tenantId: string, initialConnections: any[] }) {
+export function IntegrationsClient({ tenantId, initialConnections, sessionToken }: { tenantId: string, initialConnections: any[], sessionToken?: string }) {
   const router = useRouter();
   const [connections, setConnections] = useState<any[]>(initialConnections);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,8 +28,22 @@ export function IntegrationsClient({ tenantId, initialConnections }: { tenantId:
     setConnections(initialConnections);
   }, [initialConnections]);
 
+  const whatsappConn = connections.find(c => c.provider === "evolution_api" || c.name === "WhatsApp");
+  const isWhatsappConnected = whatsappConn?.status === "connected";
+  const isWhatsappConnecting = whatsappConn?.status === "connecting";
+
+  useEffect(() => {
+    if (isWhatsappConnected && showQrModal) {
+      const timer = setTimeout(() => {
+        setShowQrModal(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isWhatsappConnected, showQrModal]);
+
   useRealtime({
     tenantId,
+    token: sessionToken,
     onEvent: (event, payload) => {
       if (event === "connection.changed") {
         router.refresh();
@@ -60,9 +74,18 @@ export function IntegrationsClient({ tenantId, initialConnections }: { tenantId:
     setIsLoading(false);
   };
 
-  const whatsappConn = connections.find(c => c.provider === "evolution_api");
-  const isWhatsappConnected = whatsappConn?.status === "connected";
-  const isWhatsappConnecting = whatsappConn?.status === "connecting";
+  const handleDisconnect = async (instanceName: string) => {
+    setIsLoading(true);
+    const res = await deleteConnectionAction(instanceName);
+    if (res.success) {
+      toast.success("Desconectado com sucesso");
+      router.refresh();
+    } else {
+      toast.error(res.message || "Erro ao desconectar");
+    }
+    setIsLoading(false);
+  };
+
   return (
     <div className="flex flex-col h-full space-y-6">
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E2E8F0] dark:border-[#1E293B]">
@@ -100,7 +123,7 @@ export function IntegrationsClient({ tenantId, initialConnections }: { tenantId:
 
           <div className="pt-3 border-t border-[#E2E8F0] dark:border-[#334155] mt-3">
             {isWhatsappConnected ? (
-              <Button variant="ghost" size="sm" className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 h-8">
+              <Button onClick={() => whatsappConn?.instanceName && handleDisconnect(whatsappConn.instanceName)} disabled={isLoading} variant="ghost" size="sm" className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 h-8">
                 Desconectar
               </Button>
             ) : (

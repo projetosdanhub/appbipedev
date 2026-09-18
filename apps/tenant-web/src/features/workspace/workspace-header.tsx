@@ -17,6 +17,7 @@ import {
 import { navigation, isActiveRoute } from "./navigation";
 import { logout } from "./actions";
 import { TenantSwitcher, type TenantData } from "./tenant-switcher";
+import { NotificationBell } from "../notifications/components/notification-bell";
 
 export function WorkspaceHeader({ 
   name, 
@@ -58,6 +59,7 @@ export function WorkspaceHeader({
         >
           <RefreshCw aria-hidden="true" />
         </IconButton>
+        <NotificationBell tenantId={activeTenant?.id} />
         <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

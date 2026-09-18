@@ -10,8 +10,9 @@ import { CrmPipeline, CrmPipelineStage } from "@bipesend/contracts";
 export default async function InboxPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const resolvedSearchParams = await searchParams;
   const user = await getWorkspaceUser();
   if (!user) {
     redirect("/login");
@@ -29,8 +30,8 @@ export default async function InboxPage({
   const { success, data } = await getAllConversationsAction(membership.tenantId);
   const initialConversations = success && data ? data : [];
   
-  const isFullscreen = searchParams.fullscreen === "true";
-  const chatId = typeof searchParams.chatId === "string" ? searchParams.chatId : undefined;
+  const isFullscreen = resolvedSearchParams.fullscreen === "true";
+  const chatId = typeof resolvedSearchParams.chatId === "string" ? resolvedSearchParams.chatId : undefined;
 
   const memberships = (await prisma.membership.findMany({
     where: { tenantId: membership.tenantId, active: true },
@@ -45,7 +46,7 @@ export default async function InboxPage({
   }));
 
   const cookieStore = await cookies();
-  const sessionToken = cookieStore.get("authjs.session-token")?.value || cookieStore.get("__Secure-authjs.session-token")?.value || "";
+  const sessionToken = cookieStore.get("bipesend.tenant.session-token")?.value || cookieStore.get("__Secure-bipesend.tenant.session-token")?.value || "";
 
   // Fetch pipelines for "Criar Negócio" modal
   const pipelinesRes = await fetchApi(`/api/v1/tenants/${membership.tenantId}/pipelines`);

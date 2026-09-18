@@ -1,0 +1,1 @@
+const fs = require('fs'); const data = JSON.parse(fs.readFileSync('docs/taskboard.json', 'utf8')); ['CRM-006', 'CRM-007'].forEach(id => { const card = data.cards.find(c => c.id === id); if (card) { card.status = 'IN_PROGRESS'; console.log('Updated ' + id + ' to IN_PROGRESS'); } }); fs.writeFileSync('docs/taskboard.json', JSON.stringify(data, null, 2)); console.log('Done');

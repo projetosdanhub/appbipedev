@@ -240,7 +240,46 @@ export class DealRepository {
         ]
       );
 
+      // Insert persistent notification if assigned to a new member
+      if (assignedMembershipId && assignedMembershipId !== current.assignedMembershipId) {
+        await txDb.query(
+          `INSERT INTO notifications (
+            tenant_id, membership_id, type, title, content, dedupe_key
+          ) VALUES ($1, $2, $3, $4, $5, $6)
+          ON CONFLICT DO NOTHING`,
+          [
+            tenantId,
+            assignedMembershipId,
+            'crm.deal.assigned',
+            'Novo negócio atribuído',
+            JSON.stringify({ dealId, dealTitle: deal.title }),
+            `deal-${dealId}-assigned-v${deal.version}`
+          ]
+        );
+      }
+
       return deal;
     }, tenantId);
+  }
+
+  async transferMemberAssets(
+    tenantId: string,
+    fromMembershipId: string,
+    toMembershipId: string,
+    actorMembershipId: string
+  ): Promise<void> {
+    await this.db.query(
+      `UPDATE deals 
+       SET assigned_membership_id = $1, 
+           updated_by_membership_id = $2,
+           version = version + 1,
+           updated_at = NOW()
+       WHERE assigned_membership_id = $3 AND tenant_id = $4`,
+      [toMembershipId, actorMembershipId, fromMembershipId, tenantId]
+    );
+    
+    // Opcional: Inserir em assignment_histories e outbox_events para cada deal afetado
+    // Em um cenário de bulk update massivo, isso pode exigir inserção em lote. 
+    // Para MVP de suspensão, o UPDATE direto resolve a consistência relacional.
   }
 }

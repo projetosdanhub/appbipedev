@@ -40,7 +40,7 @@ export function customFieldRoutes(
       
       try {
         assertPermission(request.tenantContext, "crm.contacts.update"); // Modifying schema requires update permission
-        const field = await customFieldService.create(request.tenantContext.tenantId, parsed.data);
+        const field = await customFieldService.create(request.tenantContext, parsed.data);
         return reply.status(201).send({ data: field });
       } catch (e: any) {
         return reply.status(403).send({ error: e.message || "Operation failed" });
@@ -60,7 +60,7 @@ export function customFieldRoutes(
       const params = request.params as { id: string };
       try {
         assertPermission(request.tenantContext, "crm.contacts.update");
-        const field = await customFieldService.update(request.tenantContext.tenantId, params.id, parsed.data);
+        const field = await customFieldService.update(request.tenantContext, params.id, parsed.data);
         return reply.status(200).send({ data: field });
       } catch (e: any) {
         if (e.message === "NOT_FOUND") return reply.status(404).send({ error: "Field not found" });

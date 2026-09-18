@@ -110,7 +110,7 @@ export function CRMClient({ tenantId, initialPipelines, initialStages, initialDe
           <Button 
             variant="outline" 
             className="h-[30px] ml-2 text-[12px] border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#0F172A] text-[#0F172A] dark:text-white"
-            onClick={() => router.push("/settings/pipelines")}
+            onClick={() => router.push("/settings/crm/pipelines")}
           >
             <Plus className="w-3 h-3 mr-1" /> Criar Funil
           </Button>

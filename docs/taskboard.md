@@ -4,7 +4,7 @@ Versão 1.0.0 · Revisão 2026-09-16 · Base auditada `46832fc`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 104 cards. BACKLOG: 50 · READY: 1 · IN_PROGRESS: 3 · BLOCKED: 1 · DONE: 49.
+Total: 76 cards. BACKLOG: 22 · READY: 1 · IN_PROGRESS: 2 · BLOCKED: 0 · DONE: 51.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
@@ -12,8 +12,7 @@ DONE exige aceite integral, evidência e dependências concluídas. Código parc
 
 1. BILL-001: Entitlements e contadores.
 - Em andamento: FND-002: Definir nome de trabalho e dominios candidatos.
-- Em andamento: PAGE-001: Schema de blocos.
-- Em andamento: WPRO-004: Primitives e layout premium do editor.
+- Em andamento: MSG-004: QR e conexao.
 
 Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protótipos visuais podem ser revisados, identificados como exemplos.
 BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-handoff.md. A fundação BILL-001 antecede os CRUDs com cota; planos futuros reutilizam sua estrutura. Respeitar a frente paralela do CRM e os gates de publicação/segurança.
@@ -58,21 +57,21 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 | [AUTH-016](#auth-016) | DONE | E2E das superficies de acesso | AUTH-013, AUTH-014, AUTH-015 |
 | [TEAM-001](#team-001) | DONE | CRUD de setores | AUTH-008, AUTH-016 |
 | [TEAM-002](#team-002) | DONE | CRUD de cargos customizados | AUTH-008, AUTH-016 |
-| [TEAM-003](#team-003) | BACKLOG | Gestao de membros | TEAM-002, AUTH-016 |
+| [TEAM-003](#team-003) | DONE | Gestao de membros | TEAM-002, AUTH-016 |
 | [TEAM-004](#team-004) | DONE | Auditoria pesquisavel | AUTH-004, AUTH-016 |
 | [TEAM-005](#team-005) | DONE | Contrato de erros e reporte pelo painel tenant | INF-004, AUTH-004, AUTH-016 |
 | [TEAM-006](#team-006) | DONE | Dicionario e triagem de erros no superpainel | TEAM-005, AUTH-008, AUTH-016 |
 | [CRM-001](#crm-001) | DONE | Contatos e campos customizados | TEAM-001, AUTH-016 |
 | [CRM-002](#crm-002) | DONE | Tags e segmentos | CRM-001, AUTH-016 |
 | [CRM-003](#crm-003) | DONE | Pipelines configuraveis | CRM-001, AUTH-016 |
-| [CRM-004](#crm-004) | DONE | Cards/lista/inbox views | CRM-003, AUTH-016 |
+| [CRM-004](#crm-004) | DONE | Cards/lista/inbox views | CRM-003, AUTH-016, CRM-005 |
 | [CRM-005](#crm-005) | DONE | Conversas e mensagens internas | CRM-001, AUTH-016 |
-| [CRM-006](#crm-006) | DONE | Atribuicao a setor/cargo/membro | TEAM-001, AUTH-016 |
-| [CRM-007](#crm-007) | DONE | WebSocket rooms | CRM-005, AUTH-016 |
+| [CRM-006](#crm-006) | DONE | Atribuicao a setor/cargo/membro | TEAM-001, AUTH-016, CRM-001, CRM-003, CRM-005, TEAM-002, TEAM-003, CRM-007 |
+| [CRM-007](#crm-007) | DONE | WebSocket rooms | CRM-005, AUTH-016, MSG-001, MSG-002 |
 | [MSG-001](#msg-001) | DONE | Outbox e eventos | INF-004, CRM-005, AUTH-016 |
 | [MSG-002](#msg-002) | DONE | BullMQ e dead-letter | MSG-001, AUTH-016 |
-| [MSG-003](#msg-003) | BACKLOG | Adapter de provider | MSG-001, AUTH-016 |
-| [MSG-004](#msg-004) | BACKLOG | QR e conexao | MSG-003, AUTH-016 |
+| [MSG-003](#msg-003) | DONE | Adapter de provider | MSG-001, AUTH-016 |
+| [MSG-004](#msg-004) | IN_PROGRESS | QR e conexao | MSG-003, AUTH-016 |
 | [MSG-005](#msg-005) | BACKLOG | Webhook normalizado | MSG-003, AUTH-016 |
 | [AUTO-001](#auto-001) | BACKLOG | Gatilhos e condicoes | CRM-003, MSG-001, AUTH-016 |
 | [AUTO-002](#auto-002) | BACKLOG | Acoes e agendamento | MSG-002, AUTH-016 |
@@ -84,14 +83,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 | [AI-005](#ai-005) | BACKLOG | Copiloto read-only | AI-004, CRM-005, AUTH-016 |
 | [AI-006](#ai-006) | BACKLOG | Gateway MCP interno | AI-005, AUTH-016 |
 | [AI-007](#ai-007) | BACKLOG | Testes de prompt injection | AI-005, AUTH-016 |
-| [CAT-001](#cat-001) | BACKLOG | Categorias/produtos/opcoes | CRM-001, AUTH-016, WPRO-005, WPRO-006, BILL-001 |
-| [CAT-002](#cat-002) | BACKLOG | Loja/catalogo publico | CAT-001, AUTH-016, WPRO-007, WPRO-012, PAGE-003 |
-| [CAT-003](#cat-003) | BACKLOG | Carrinho, cotação e pedido Food | CAT-002, AUTH-016, WPRO-012, MSG-002 |
-| [PAGE-001](#page-001) | IN_PROGRESS | Schema de blocos | AUTH-009, CRM-001, AUTH-016, WPRO-002 |
-| [PAGE-002](#page-002) | BACKLOG | Editor e preview | PAGE-001, AUTH-016, WPRO-003, WPRO-004, WPRO-005, WPRO-007 |
-| [PAGE-003](#page-003) | BACKLOG | Publicacao, slug e dominio | PAGE-002, AUTH-016, WPRO-007, WPRO-008, BILL-001, MSG-001, MSG-002 |
-| [PAGE-004](#page-004) | BACKLOG | SEO/pixel/consentimento | PAGE-003, AUTH-016, WPRO-009 |
-| [BILL-001](#bill-001) | READY | Entitlements e contadores | AUTH-006, AUTH-016, WPRO-002 |
+| [BILL-001](#bill-001) | READY | Entitlements e contadores | AUTH-006, AUTH-016 |
 | [BILL-002](#bill-002) | BACKLOG | CRUD de planos superadmin | BILL-001, AUTH-016 |
 | [BILL-003](#bill-003) | BACKLOG | Stripe Connect sandbox | BILL-002, AUTH-016 |
 | [BILL-004](#bill-004) | BACKLOG | Mercado Pago OAuth sandbox | BILL-002, AUTH-016 |
@@ -103,29 +95,8 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 | [OPS-005](#ops-005) | BACKLOG | Indicadores de API e integracao no painel | OPS-004, AUTH-009 |
 | [MOB-001](#mob-001) | BACKLOG | Especificar app nativo | OPS-003 |
 | [MOB-002](#mob-002) | BACKLOG | Implementar mobile | MOB-001 |
-| [FND-011](#fnd-011) | DONE | Implementar biblioteca UI e catálogo interativo | FND-009 |
-| [FND-012](#fnd-012) | DONE | Implementar pacotes compartilhados e testes de contrato | FND-003, FND-006 |
-| [FND-013](#fnd-013) | DONE | Documentar reconciliação dos históricos de banco | FND-005 |
-| [FND-014](#fnd-014) | DONE | Entregar branch e guia de validação para Antigravity | FND-010, FND-011, FND-012, FND-013 |
 | [TEAM-007](#team-007) | DONE | Godmode e Impersonation (Superadmin e Contratante) | TEAM-002 |
-| [WPRO-001](#wpro-001) | DONE | Planejamento e regras do BipeWPRO | — |
-| [WPRO-002](#wpro-002) | DONE | Organização aditiva de packages e contratos | WPRO-001 |
-| [WPRO-003](#wpro-003) | BACKLOG | Spike do canvas, DnD e preview responsivo | WPRO-002, PAGE-001 |
-| [WPRO-004](#wpro-004) | IN_PROGRESS | Primitives e layout premium do editor | WPRO-002 |
-| [WPRO-005](#wpro-005) | BACKLOG | Espaços, sites e páginas com autorização | PAGE-001, BILL-001, AUTH-016 |
-| [WPRO-006](#wpro-006) | BACKLOG | Mídia e SVG seguros e reutilizáveis | WPRO-005, INF-001 |
-| [WPRO-007](#wpro-007) | BACKLOG | Renderer compartilhado e runtime público | WPRO-005, WPRO-006, PAGE-001 |
-| [WPRO-008](#wpro-008) | BACKLOG | Theme builder, cabeçalho, rodapé e menus | PAGE-002 |
-| [WPRO-009](#wpro-009) | BACKLOG | Widgets avançados, motion e extensões restritas | PAGE-002, WPRO-006, WPRO-008 |
-| [WPRO-010](#wpro-010) | BACKLOG | Formulários públicos e integração com CRM | PAGE-003, CRM-001, MSG-002 |
-| [WPRO-011](#wpro-011) | BACKLOG | Domínios próprios, subdomínios e URL padrão | PAGE-003 |
-| [WPRO-012](#wpro-012) | BACKLOG | Food: adicionais, horários e entrega | CAT-001 |
-| [WPRO-013](#wpro-013) | BACKLOG | Food: fila operacional e status do pedido | CAT-003 |
-| [WPRO-014](#wpro-014) | BACKLOG | Importação, exportação e migração de conteúdo | PAGE-003, CAT-001 |
-| [WPRO-015](#wpro-015) | BACKLOG | Gate de qualidade e lançamento do BipeWPRO | PAGE-004, WPRO-011, WPRO-013, WPRO-014, WPRO-010, WPRO-018 |
-| [WPRO-016](#wpro-016) | BLOCKED | Extensões PHP com execução isolada | WPRO-015 |
-| [WPRO-017](#wpro-017) | BACKLOG | Food: pagamentos online e automações | CAT-003, AUTO-001, BILL-002 |
-| [WPRO-018](#wpro-018) | BACKLOG | Biblioteca de templates oficiais | WPRO-008, WPRO-009 |
+| [CRM-010](#crm-010) | DONE | Implement Visual Automations (IMPLEMENTATION) | — |
 
 ## Execução dos cards
 
@@ -1236,7 +1207,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 <a id="team-003"></a>
 ### TEAM-003 — Gestao de membros
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 3 - equipe, setores e auditoria
 
 **Objetivo:** Gestao de membros. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1259,7 +1230,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - suspender, reativar, transferir e auditar
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [packages/auth/src/session.ts](../packages/auth/src/session.ts), [apps/api/src/modules/04-team/infrastructure/team.repository.ts](../apps/api/src/modules/04-team/infrastructure/team.repository.ts), [apps/api/src/modules/04-team/application/team.service.ts](../apps/api/src/modules/04-team/application/team.service.ts), [apps/api/src/modules/05-crm/infrastructure/deal.repository.ts](../apps/api/src/modules/05-crm/infrastructure/deal.repository.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
@@ -1367,7 +1338,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 1. Modelar contatos/campos customizados com tenant, índices e schema limitado.
 2. Conectar CRUD/importação ao backend; tratar duplicata, CSV injection, tamanho e rollback.
 
-**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`.
+**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`, `packages/db`, `packages/auth`, `packages/config`, `packages/events`.
 
 **Testes a executar:**
 
@@ -1379,7 +1350,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - CRUD, importacao segura e tenant isolation
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/e2e/crm-pipeline.spec.ts](../apps/tenant-web/e2e/crm-pipeline.spec.ts)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/e2e/crm-pipeline.spec.ts](../apps/tenant-web/e2e/crm-pipeline.spec.ts), [docs/audit/CRM-001.md](../docs/audit/CRM-001.md)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
@@ -1409,7 +1380,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - filtros e limites por plano
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/e2e/crm-pipeline.spec.ts](../apps/tenant-web/e2e/crm-pipeline.spec.ts)
+**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [apps/tenant-web/e2e/crm-pipeline.spec.ts](../apps/tenant-web/e2e/crm-pipeline.spec.ts), [docs/audit/CRM-002.md](../docs/audit/CRM-002.md)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
@@ -1450,7 +1421,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 
 **Objetivo:** Cards/lista/inbox views. Entregar comportamento verificável dentro do escopo do card.
 
-**Dependências:** CRM-003, AUTH-016
+**Dependências:** CRM-003, AUTH-016, CRM-005
 
 **Passos:**
 
@@ -1487,7 +1458,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 1. Modelar conversas/mensagens com direção, estado, paginação e retenção.
 2. Conectar inbox de três painéis no desktop e lista→conversa→contexto no mobile; preservar rascunho.
 
-**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`.
+**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`, `06-inbox`.
 
 **Testes a executar:**
 
@@ -1510,7 +1481,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 
 **Objetivo:** Atribuicao a setor/cargo/membro. Entregar comportamento verificável dentro do escopo do card.
 
-**Dependências:** TEAM-001, AUTH-016
+**Dependências:** TEAM-001, AUTH-016, CRM-001, CRM-003, CRM-005, TEAM-002, TEAM-003, CRM-007
 
 **Passos:**
 
@@ -1529,7 +1500,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - autorizacao e notificacao em tempo real
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [apps/api/src/tests/assignment.test.ts](../apps/api/src/tests/assignment.test.ts)
+**Evidências:** [apps/api/src/modules/16-notifications/infrastructure/notification.repository.ts](../apps/api/src/modules/16-notifications/infrastructure/notification.repository.ts), [apps/tenant-web/src/features/notifications/components/notification-bell.tsx](../apps/tenant-web/src/features/notifications/components/notification-bell.tsx), [apps/api/src/modules/05-crm/infrastructure/deal.repository.ts](../apps/api/src/modules/05-crm/infrastructure/deal.repository.ts), [apps/api/src/modules/06-inbox/infrastructure/conversation.repository.ts](../apps/api/src/modules/06-inbox/infrastructure/conversation.repository.ts), [apps/api/src/tests/assignment.test.ts](../apps/api/src/tests/assignment.test.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
@@ -1540,14 +1511,14 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 
 **Objetivo:** WebSocket rooms. Entregar comportamento verificável dentro do escopo do card.
 
-**Dependências:** CRM-005, AUTH-016
+**Dependências:** CRM-005, AUTH-016, MSG-001, MSG-002
 
 **Passos:**
 
 1. Autenticar handshake e autorizar rooms por tenant/recurso.
 2. Revalidar após reconexão/revogação e fazer catch-up paginado; testar inscrição em sala alheia.
 
-**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`.
+**Áreas de código:** `apps/api/src/modules/05-crm`, `apps/tenant-web/src/app/(dashboard)`, `packages/contracts`, `packages/ui`, `06-inbox`.
 
 **Testes a executar:**
 
@@ -1589,7 +1560,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - sem evento fantasma apos rollback
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [apps/worker/src/index.ts](../apps/worker/src/index.ts), [apps/api/src/modules/06-inbox/infrastructure/messages-queue.ts](../apps/api/src/modules/06-inbox/infrastructure/messages-queue.ts)
+**Evidências:** [apps/api/src/modules/15-events/infrastructure/outbox.repository.ts](../apps/api/src/modules/15-events/infrastructure/outbox.repository.ts), [apps/api/src/modules/15-events/application/outbox.worker.ts](../apps/api/src/modules/15-events/application/outbox.worker.ts), [apps/api/src/main.ts](../apps/api/src/main.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
@@ -1619,14 +1590,14 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - retry/backoff/timeout/idempotencia
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** [apps/worker/src/index.ts](../apps/worker/src/index.ts), [apps/api/src/modules/06-inbox/infrastructure/messages-queue.ts](../apps/api/src/modules/06-inbox/infrastructure/messages-queue.ts)
+**Evidências:** [apps/api/src/modules/15-events/infrastructure/outbox.repository.ts](../apps/api/src/modules/15-events/infrastructure/outbox.repository.ts), [apps/api/src/modules/15-events/application/outbox.worker.ts](../apps/api/src/modules/15-events/application/outbox.worker.ts), [apps/api/src/main.ts](../apps/api/src/main.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="msg-003"></a>
 ### MSG-003 — Adapter de provider
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
 
 **Objetivo:** Adapter de provider. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1649,14 +1620,14 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - provider fake coberto por contrato
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/api/src/modules/07-messaging/infrastructure/evolution-messaging.provider.ts](../apps/api/src/modules/07-messaging/infrastructure/evolution-messaging.provider.ts), [apps/api/src/tests/messaging-provider.test.ts](../apps/api/src/tests/messaging-provider.test.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
 <a id="msg-004"></a>
 ### MSG-004 — QR e conexao
 
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
+**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 5 - filas, WhatsApp e automacoes
 
 **Objetivo:** QR e conexao. Entregar comportamento verificável dentro do escopo do card.
 
@@ -1679,7 +1650,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 - QR expirado e status auditado
 - Todos os passos deste card executados, com comportamento e cenários negativos documentados quando aplicáveis.
 
-**Evidências:** Nenhuma execução registrada.
+**Evidências:** [apps/api/src/modules/07-messaging/http/controllers/connection.controller.ts](../apps/api/src/modules/07-messaging/http/controllers/connection.controller.ts), [apps/api/src/modules/07-messaging/application/connection.service.ts](../apps/api/src/modules/07-messaging/application/connection.service.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
@@ -2013,229 +1984,6 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
-<a id="cat-001"></a>
-### CAT-001 — Categorias/produtos/opcoes
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 7 - catalogo e paginas
-
-**Objetivo:** Dados comerciais Food reutilizáveis por páginas, com produtos/categorias/variações/opções.
-
-**Dependências:** CRM-001, AUTH-016, WPRO-005, WPRO-006, BILL-001
-
-**Passos:**
-
-1. CRUD tenant/platform em módulo 10-catalog, com categorias, produtos, variantes, moeda BRL e disponibilidade.
-2. Usar mídia aprovada e contratos/versionamento/cotas compartilhados.
-3. Separar formulário comercial da composição visual; configuração detalhada em WPRO-012.
-
-**Áreas de código:** `apps/api/src/modules/10-catalog`, `packages/contracts/src/catalog`, `packages/db`, `apps/tenant-web/src/features/catalog`, `apps/superadmin-web/src/features/catalog`.
-
-**Testes a executar:**
-
-- CRUD/permissão/cross-space, precisão decimal e upload/mídia não aprovada.
-- Limites de catálogo/produto e referência de outro catálogo rejeitados.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Produtos reais persistidos e separados de layout.
-- Servidor valida preço/moeda e escopo; sem cota paralela.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="cat-002"></a>
-### CAT-002 — Loja/catalogo publico
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 7 - catalogo e paginas
-
-**Objetivo:** Vitrine Food pública com widgets dinâmicos e interação responsiva.
-
-**Dependências:** CAT-001, AUTH-016, WPRO-007, WPRO-012, PAGE-003
-
-**Passos:**
-
-1. Renderizar cards/grid/carrossel, categorias/busca e ficha com opções comerciais.
-2. Exibir horários, cobertura e disponibilidade sem vazar dados privados.
-3. Usar renderer/templates compartilhados e cache apenas de projeção pública.
-
-**Áreas de código:** `apps/api/src/modules/10-catalog`, `apps/tenant-web/src/features`, `packages/contracts`.
-
-**Testes a executar:**
-
-- Opções/variações e produto indisponível; categorias/filters com paginação segura.
-- SEO, teclado, mobile, estado vazio e cache isolado por espaço/catalogo.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Vitrine consulta produtos reais e herda tema responsivo.
-- Rota dinâmica de produto não consome página autoral; catálogo reutilizado não duplica dados.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="cat-003"></a>
-### CAT-003 — Carrinho, cotação e pedido Food
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 7 - catalogo e paginas
-
-**Objetivo:** Criar núcleo transacional de compra Food independente da automação avançada, detalhada em WPRO-017.
-
-**Dependências:** CAT-002, AUTH-016, WPRO-012, MSG-002
-
-**Passos:**
-
-1. Carrinho de um catálogo/moeda; servidor cota itens/opções/frete e expiração.
-2. Criar pedido idempotente com snapshot financeiro e reserva/baixa controlada de disponibilidade.
-3. Separar atendimento e financeiro; emissão pós-commit. Automações e gateway online entram em WPRO-017.
-
-**Áreas de código:** `apps/api/src/modules/10-catalog`, `apps/tenant-web/src/features`, `packages/contracts`.
-
-**Testes a executar:**
-
-- Preço/frete adulterado, quote expirado, estoque concorrente, duplicata/retry e rollback.
-- Total não negativo, regras de adicionais/pizza e loja fechada; pagamento não confirmado por redirect.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Pedido básico real, valores precisos e histórico; sem dependência de AUTO-001 para existir.
-- Plano/tenant verificados; pagamento na entrega/retirada tem estado explícito.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="page-001"></a>
-### PAGE-001 — Schema de blocos
-
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 7 - catalogo e paginas
-
-**Objetivo:** Definir documento BipeWPRO único e versionado, com árvore, props allowlisted e herança responsiva.
-
-**Dependências:** AUTH-009, CRM-001, AUTH-016, WPRO-002
-
-**Passos:**
-
-1. Schemas Zod em contracts/web; IDs, versões, tipos, referências e limites de bytes/nós/profundidade.
-2. Mobile base + overrides tablet/desktop, comandos puros e migração versionada sem duplicar árvore.
-3. Registro de widgets com props, capabilities, renderer e controles; texto/URLs seguros.
-
-**Áreas de código:** `packages/contracts/src/web`, `packages/web-builder-core`, `packages/security`.
-
-**Testes a executar:**
-
-- Testar ciclo, IDs duplicados, props desconhecidas, limite de tamanho, herança e upgrade de versão.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Documento único estrito com migração e roundtrip; sem execução arbitrária.
-- Core puro, testado e reutilizado por editor/renderer.
-
-**Evidências:** [docs/audit/bipewpro-foundation.md](../docs/audit/bipewpro-foundation.md)
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="page-002"></a>
-### PAGE-002 — Editor e preview
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 7 - catalogo e paginas
-
-**Objetivo:** Editor BipeWPRO compartilhado com prévia responsiva, undo/redo e salvamento persistente.
-
-**Dependências:** PAGE-001, AUTH-016, WPRO-003, WPRO-004, WPRO-005, WPRO-007
-
-**Passos:**
-
-1. Compor toolbar, elementos/propriedades/camadas e canvas; mobile via sheet do mesmo estado.
-2. Editar texto/imagem/botão/Flex/Grid, inserir/mover/duplicar e restaurar herança.
-3. Undo/redo e autosave com expectedRevision, 409, fila de escrita e recuperação de rede.
-
-**Áreas de código:** `packages/web-builder`, `packages/web-renderer`, `apps/tenant-web/src/features/bipewpro`, `apps/superadmin-web/src/features/bipewpro`, `apps/api/src/modules/11-pages`.
-
-**Testes a executar:**
-
-- Editar/salvar/reabrir; duas abas em conflito; falha de rede; perda de acesso durante edição.
-- Teclado, clique sem arraste, preview responsivo, foco/reduced motion e nenhuma execução de conteúdo no painel.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Editor real tenant/platform sobre o mesmo motor; nenhum botão inerte.
-- Rascunho e publicado distintos; autosave nunca afirma salvo antes do ACK.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="page-003"></a>
-### PAGE-003 — Publicacao, slug e dominio
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 7 - catalogo e paginas
-
-**Objetivo:** Publicar release imutável em URL provisória e manter resolução segura, rollback e cache.
-
-**Dependências:** PAGE-002, AUTH-016, WPRO-007, WPRO-008, BILL-001, MSG-001, MSG-002
-
-**Passos:**
-
-1. Gerar manifesto de revisões, assets e template; validar política/cota/links e persistir job/outbox.
-2. Publicar artefatos imutáveis e ativar por comparação de geração; retry e rollback idempotentes.
-3. Prover URL provisória configurada com HTTPS, slug, host/path único, estado de domínio e canonical; domínio próprio avançado em WPRO-011.
-
-**Áreas de código:** `apps/api/src/modules/11-pages`, `apps/tenant-web/src/features`, `packages/ui`.
-
-**Testes a executar:**
-
-- Rollback, falha de build/upload, job atrasado, retry duplicado e cache entre tenants.
-- Draft não público, slug/host reservado e rota duplicada; publicação exige origem provisória TLS provisionada.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Release só muda após artefato válido; rascunho/preview não vazam.
-- URL provisória real com HTTPS; publicação customizada só após WPRO-011.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="page-004"></a>
-### PAGE-004 — SEO/pixel/consentimento
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend · Milestone 7 - catalogo e paginas
-
-**Objetivo:** SEO e consentimento do renderer público com diagnóstico de qualidade real.
-
-**Dependências:** PAGE-003, AUTH-016, WPRO-009
-
-**Passos:**
-
-1. Metadata/canonical/robots/sitemap/Open Graph/idioma e dados estruturados fiéis.
-2. Redirects e 404 corretos, provisório/domínio canônico e noindex privado.
-3. Pixels por adapter/capability/consentimento; preflight diferencia bloqueio de orientação.
-
-**Áreas de código:** `apps/api/src/modules/11-pages`, `apps/tenant-web/src/features`, `packages/ui`.
-
-**Testes a executar:**
-
-- HTML inicial sem JS, sitemap/robots/canonical, 404/redirect e consentimento sem rede prévia não autorizada.
-- Lighthouse nos templates oficiais e revisão manual de teclado/semântica.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- SEO verificável sem promessa de ranking; métricas reais e contexto registrado.
-- Scripts de tenant não executam no painel nem escapam à política.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
 <a id="bill-001"></a>
 ### BILL-001 — Entitlements e contadores
 
@@ -2243,7 +1991,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 
 **Objetivo:** Fundação única e antecipada de entitlements/cotas, reutilizada pelo BipeWPRO e pelos planos futuros.
 
-**Dependências:** AUTH-006, AUTH-016, WPRO-002
+**Dependências:** AUTH-006, AUTH-016
 
 **Passos:**
 
@@ -2601,123 +2349,6 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
-<a id="fnd-011"></a>
-### FND-011 — Implementar biblioteca UI e catálogo interativo
-
-**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 0 - implementação auditada
-
-**Objetivo:** Implementar biblioteca UI e catálogo interativo
-
-**Dependências:** FND-009
-
-**Passos:**
-
-1. Criar componentes base, overlays, tabelas, campos, estados e tokens light/dark.
-2. Validar teclado, foco, contraste automático e mobile no catálogo sem dados reais.
-
-**Áreas de código:** `packages/ui`, `apps/tenant-web/src/features/design-system`.
-
-**Testes a executar:**
-
-- pnpm --filter @bipesend/ui test
-- pnpm --filter @bipesend/ui lint
-- pnpm ui:smoke
-
-**Aceite:**
-
-- Biblioteca importável e catálogo acessível em desenvolvimento, sem simular backend.
-
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md), [docs/audit/evidence/ui-report.json](../docs/audit/evidence/ui-report.json)
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="fnd-012"></a>
-### FND-012 — Implementar pacotes compartilhados e testes de contrato
-
-**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 0 - implementação auditada
-
-**Objetivo:** Implementar pacotes compartilhados e testes de contrato
-
-**Dependências:** FND-003, FND-006
-
-**Passos:**
-
-1. Construir contracts/config/security/events/auth-policies com limites server/client explícitos.
-2. Testar rejeição de escopo, validação, adulteração, rate limit e documentar adapters ainda necessários.
-
-**Áreas de código:** `packages`.
-
-**Testes a executar:**
-
-- pnpm foundation:test
-- pnpm --filter @bipesend/api test:unit
-
-**Aceite:**
-
-- Pacotes buildam e testes de unidade passam; limitações de integração estão explícitas.
-
-**Evidências:** [docs/audit/validation.md](../docs/audit/validation.md)
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="fnd-013"></a>
-### FND-013 — Documentar reconciliação dos históricos de banco
-
-**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 0 - implementação auditada
-
-**Objetivo:** Documentar reconciliação dos históricos de banco
-
-**Dependências:** FND-005
-
-**Passos:**
-
-1. Comparar schema e ambos os históricos sem alterar migrations aplicadas.
-2. Entregar inventário somente leitura, plano por origem, testes e rollback em clone.
-
-**Áreas de código:** `packages/db/audit`, `docs/architecture/database-reconciliation.md`.
-
-**Testes a executar:**
-
-- Revisar SQL de inventário e matriz de diferenças.
-
-**Aceite:**
-
-- Runbook pronto; aplicação/integração permanece em AUTH-001.
-
-**Evidências:** [docs/architecture/database-reconciliation.md](../docs/architecture/database-reconciliation.md)
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="fnd-014"></a>
-### FND-014 — Entregar branch e guia de validação para Antigravity
-
-**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 0 - implementação auditada
-
-**Objetivo:** Entregar branch e guia de validação para Antigravity
-
-**Dependências:** FND-010, FND-011, FND-012, FND-013
-
-**Passos:**
-
-1. Rodar gates da fundação e builds; registrar evidência e falhas de infraestrutura.
-2. Publicar branch sem merge e entregar comandos de checkout e próximo card.
-
-**Áreas de código:** `docs/ANTIGRAVITY_HANDOFF.md`, `docs/audit/validation.md`.
-
-**Testes a executar:**
-
-- pnpm foundation:check
-- pnpm ui:smoke
-- Build tenant-web/superadmin-web/API
-
-**Aceite:**
-
-- Branch remota disponível; relatório diferencia checks passados e blockers.
-
-**Evidências:** [docs/ANTIGRAVITY_HANDOFF.md](../docs/ANTIGRAVITY_HANDOFF.md), [docs/audit/validation.md](../docs/audit/validation.md), [docs/audit/evidence/checks.json](../docs/audit/evidence/checks.json)
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
 <a id="team-007"></a>
 ### TEAM-007 — Godmode e Impersonation (Superadmin e Contratante)
 
@@ -2748,579 +2379,34 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
 
-<a id="wpro-001"></a>
-### WPRO-001 — Planejamento e regras do BipeWPRO
+<a id="crm-010"></a>
+### CRM-010 — Implement Visual Automations (IMPLEMENTATION)
 
-**Estado:** DONE · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
+**Estado:** DONE · **Responsável:** Engenharia BipeSend · Milestone 4 - automações
 
-**Objetivo:** Entregar plano completo, branch isolada, mapa de pacotes, guia premium e taskboard sem ativar funcionalidades.
+**Objetivo:** Implementar uma interface de automação visual semelhante ao n8n.
 
 **Dependências:** Nenhuma.
 
 **Passos:**
 
-1. Auditar regras, taskboard e packages na base remota; criar branch própria.
-2. Definir conceitos, ownership, cotas, editor, Food, publicação e fases.
-3. Atualizar contratos documentais e gerar PDF revisado.
+1. Instalar e configurar @xyflow/react
+2. Criar os nós customizados e sidebar
+3. Criar api route
 
-**Áreas de código:** `docs/plans/bipewpro.md`, `docs/plans/bipewpro-handoff.md`, `rules/36_BIPEWPRO.md`, `rules/37_PREMIUM_UI_SHARED.md`, `packages/README.md`, `packages/ui/PREMIUM_LAYOUT.md`.
-
-**Testes a executar:**
-
-- pnpm taskboard:render && pnpm taskboard:check
-- pnpm rules:check && pnpm architecture:check && pnpm secrets:check
-- git diff --check; renderizar/inspecionar PDF.
-
-**Aceite:**
-
-- Plano cobre requisitos do usuário e diferencia capacidades planejadas de implementadas.
-- Branch revisável, evidências documentais e PDF disponível; sem merge/deploy.
-
-**Evidências:** [docs/audit/bipewpro-planning.md](../docs/audit/bipewpro-planning.md)
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-002"></a>
-### WPRO-002 — Organização aditiva de packages e contratos
-
-**Estado:** DONE · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Preparar fronteiras consumíveis por editor/renderer sem refatorar CRM concorrente.
-
-**Dependências:** WPRO-001
-
-**Passos:**
-
-1. Adicionar contracts/web, catalog e entitlements com exports compatíveis e consumidores reais.
-2. Preparar fronteiras core/renderer/editor; não criar módulos vazios como entrega.
-3. Introduzir projeção allowlist dos metadados de log e revisar Error/defaultContext.
-4. Documentar propriedade tenant/platform e extensão de eventos sem tornar tenantId opcional no contrato global.
-
-**Áreas de código:** `packages/contracts`, `packages/web-builder-core`, `packages/web-renderer`, `packages/web-builder`, `packages/logger`, `scripts/check-package-boundaries.mjs`, `packages/web-builder-ui`, `apps/api/src/tests/unit/boot.test.ts`, `apps/api/src/modules/06-inbox/presentation/inbox.controller.ts`.
+**Áreas de código:** `apps/tenant-web/src/app/(dashboard)/automations`, `apps/tenant-web/src/features/automations`.
 
 **Testes a executar:**
 
-- Testar imports client/server, ausência de dependência circular e compatibilidade dos consumidores.
-- Testar redaction de contexto, Error e objetos aninhados com dados sintéticos.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-- pnpm bipewpro:check; pnpm bipewpro:smoke; pnpm foundation:check; build da galeria e typecheck dos consumidores. Correções mínimas de boot/lint da API documentadas na evidência.
+- pnpm rules:check
+- pnpm taskboard:check
 
 **Aceite:**
 
-- Nenhum pacote importa apps; cliente não carrega servidor.
-- Contracts e logger mantêm consumidores compatíveis; alterações aditivas documentadas.
-
-**Evidências:** [docs/audit/bipewpro-foundation.md](../docs/audit/bipewpro-foundation.md), [docs/audit/bipewpro-smoke.json](../docs/audit/bipewpro-smoke.json), [packages/web-builder/README.md](../packages/web-builder/README.md)
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-003"></a>
-### WPRO-003 — Spike do canvas, DnD e preview responsivo
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Comprovar limites da interação antes de expandir o editor.
-
-**Dependências:** WPRO-002, PAGE-001
-
-**Passos:**
-
-1. Ensaiar Pangea com lista/camadas, hierarquia e transferência; registrar limites de grid/nesting.
-2. Provar documento único, preview por largura real e handshake seguro do iframe.
-3. Medir seleção/edição de documento de 200 nós e suporte a 500 dentro dos budgets.
-
-**Áreas de código:** `packages/web-builder`, `packages/web-builder-core`, `packages/web-renderer`.
-
-**Testes a executar:**
-
-- Teclado e clique sem arraste; nesting inválido; foco e reduced motion.
-- Comparar preview/publicação em 320/360/390/768/1024/1440; origem/remetente inválidos negados.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Decisão de interação baseada em protótipo medido, sem promessa de DnD grid não suportado.
-- ADR necessário se outro motor for indispensável; nenhuma troca silenciosa no CRM.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-004"></a>
-### WPRO-004 — Primitives e layout premium do editor
-
-**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Criar UI própria do BipeWPRO em packages/web-builder-ui, preservando packages/ui; reformulação global adiada por instrução do usuário.
-
-**Dependências:** WPRO-002
-
-**Passos:**
-
-1. Criar controles próprios do construtor e reutilizar os tokens canônicos; não reformular packages/ui.
-2. Oferecer resize/fields de unidade/cor/espaçamento/breakpoint por teclado e valor textual.
-3. Preservar tokens, temas, altura estável e estados reais de salvamento.
-
-**Áreas de código:** `packages/web-builder-ui`, `packages/web-builder/demo`, `packages/web-builder`.
-
-**Testes a executar:**
-
-- Galeria light/dark; teclado, foco, zoom, reduced motion e 320/360/768/1024/1440.
-- Testar conflito/erro de campo, herança e restauração sem perda de valor.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- UI sem regras de Food/plano nem fetch oculto.
-- Documentação, galeria e exports correspondem à implementação.
-
-**Evidências:** [docs/audit/bipewpro-foundation.md](../docs/audit/bipewpro-foundation.md)
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-005"></a>
-### WPRO-005 — Espaços, sites e páginas com autorização
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Implementar CRUD real e ownership tenant/platform com cota atômica.
-
-**Dependências:** PAGE-001, BILL-001, AUTH-016
-
-**Passos:**
-
-1. Criar modelo PublishingSpace/WebSite/WebPage e revisões com FKs/constraints compostas.
-2. Usar contextos tenant/platform resolvidos no servidor e RLS por runtime não privilegiado.
-3. Criar/listar/duplicar/excluir/restaurar via Actions finas e API; cotas compartilhadas.
-
-**Áreas de código:** `apps/api/src/modules/11-pages`, `packages/db`, `packages/auth`, `apps/tenant-web/src/features/bipewpro`, `apps/superadmin-web/src/features/bipewpro`.
-
-**Testes a executar:**
-
-- Integração PostgreSQL de IDOR, space/tenant cruzados, platform forjado e concorrência na última vaga.
-- Sessão revogada, ação sem permissão e idempotency key com payload diferente negados.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Tenant não pode acessar espaço institucional; suporte preserva cota do tenant.
-- Schema/migrations aditivos e reversão documentada sem reset do banco existente.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-006"></a>
-### WPRO-006 — Mídia e SVG seguros e reutilizáveis
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Fornecer assets reais para páginas e Food com variantes e isolamento.
-
-**Dependências:** WPRO-005, INF-001
-
-**Passos:**
-
-1. Upload autenticado com cota, MIME real, quarentena e processamento limitado.
-2. Gerar derivados responsivos, alt/licença e referências imutáveis por release.
-3. Sanitizar SVG; proteger importação remota contra SSRF; bloquear remoção em uso.
-
-**Áreas de código:** `apps/api/src/modules/11-pages`, `packages/security`, `packages/db`, `packages/ui`, `apps/worker`.
-
-**Testes a executar:**
-
-- Arquivo ativo, extensão falsa, imagem expansiva, SVG malicioso, IP privado/redirect e cross-tenant.
-- Repetição de upload/job e consumo/liberação de bytes.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Originais privados e somente derivados aprovados publicados.
-- Seleção de arquivo em UI não é confundida com scan/autorização.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-007"></a>
-### WPRO-007 — Renderer compartilhado e runtime público
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Ativar marketing-web e renderizar documentos sem carregar o editor.
-
-**Dependências:** WPRO-005, WPRO-006, PAGE-001
-
-**Passos:**
-
-1. Criar runtime Next público com projeção autorizada e fronteiras server/client.
-2. Renderizar HTML significativo com estilos determinísticos e ilhas necessárias.
-3. Separar dados públicos, draft autenticado e cache por espaço/site/release.
-
-**Áreas de código:** `packages/web-renderer`, `apps/marketing-web`, `packages/config`.
-
-**Testes a executar:**
-
-- Teste de bundle sem editor/DnD/auth; HTML sem JS; preview e público equivalentes.
-- Cache entre espaços e exposição de PII/cookies/draft negados.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Conteúdo público acessível/semântico com orçamento registrado.
-- Runtime público real e instruções locais, sem presumir que skeleton já é app.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-008"></a>
-### WPRO-008 — Theme builder, cabeçalho, rodapé e menus
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Criar composição global versionada para sites multipágina.
-
-**Dependências:** PAGE-002
-
-**Passos:**
-
-1. Implementar tema e templates globais com aplicação determinística por página/tipo.
-2. Criar menus com destino tipado por Page/âncora/URL e navegação mobile.
-3. Diferenciar cópia de referência global e congelar revisão no release.
-
-**Áreas de código:** `packages/web-builder`, `packages/web-renderer`, `apps/api/src/modules/11-pages`.
-
-**Testes a executar:**
-
-- Referência circular, link quebrado, slug alterado e menu acima da cota.
-- Menu teclado/mobile; rascunho de cabeçalho não altera release existente.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Uma inicial e três páginas são um site/quatro páginas; âncoras não criam páginas.
-- Template global editado mostra impacto antes de republicar.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-009"></a>
-### WPRO-009 — Widgets avançados, motion e extensões restritas
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Expandir o registro de widgets sem comprometer segurança ou desempenho.
-
-**Dependências:** PAGE-002, WPRO-006, WPRO-008
-
-**Passos:**
-
-1. Implementar famílias da matriz do plano gradualmente com schemas, versões e budgets.
-2. Adicionar shortcodes registrados, HTML/CSS restritos e embeds por adapter.
-3. Ícones sob demanda; carrossel sem autoplay padrão; gradiente animado opt-in com fallback.
-
-**Áreas de código:** `packages/web-builder`, `packages/web-renderer`, `packages/contracts/src/web`, `packages/security`.
-
-**Testes a executar:**
-
-- XSS/escape de CSS/SVG, URLs, limites e saída de shortcode maliciosa.
-- Motion reduzido, leitor de tela, foco/carrossel, lazy load e bundles por widget.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Widget só aparece disponível quando funcional e permitido; PHP continua desligado.
-- Matriz de widgets atualizada com implementados/pendentes e critérios de aceite.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-010"></a>
-### WPRO-010 — Formulários públicos e integração com CRM
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Receber leads reais com política de dados, antispam e consentimento.
-
-**Dependências:** PAGE-003, CRM-001, MSG-002
-
-**Passos:**
-
-1. Criar schema de formulário, destinos autorizados e retenção por finalidade.
-2. Persistir envio limitado/idempotente e emitir evento após commit.
-3. Conectar a Contact sem criar conta User/Membership ou mandar mensagens implicitamente.
-
-**Áreas de código:** `apps/api/src/modules/11-pages`, `apps/api/src/modules/05-crm`, `packages/contracts/src/web`, `packages/web-renderer`.
-
-**Testes a executar:**
-
-- Spam/rate limit, dados cruzados, duplicata, rede indisponível e PII em logs/cache.
-- Labels, erros persistentes, foco e consentimento separado.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Envio público com resultado real e erro recuperável.
-- Integrações indisponíveis são explícitas; nenhum segredo em destino do browser.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-011"></a>
-### WPRO-011 — Domínios próprios, subdomínios e URL padrão
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Adicionar binding DNS/TLS e controles avançados de roteamento sobre publicação provisória.
-
-**Dependências:** PAGE-003
-
-**Passos:**
-
-1. Normalizar host/IDNA, verificar TXT e apontamento, emitir TLS e revalidar DNS.
-2. Implementar estado/detach/quarentena contra takeover, colisão global e rotas reservadas.
-3. Aplicar capacidades de subdomínio/raiz e redirects/canonical sem loops.
-
-**Áreas de código:** `apps/api/src/modules/11-pages`, `apps/worker`, `apps/marketing-web`, `infra`, `packages/config`.
-
-**Testes a executar:**
-
-- TXT errado, CNAME sem propriedade, TLS pendente, host duplicado/forjado e DNS perdido.
-- Renovação, fallback, suspensão e regra tenant versus platform.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Somente host verificado/TLS ativo serve conteúdo.
-- Origem tenant separada de autenticação; URL padrão não vira open redirect.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-012"></a>
-### WPRO-012 — Food: adicionais, horários e entrega
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Implementar configuração comercial Food em menu específico.
-
-**Dependências:** CAT-001
-
-**Passos:**
-
-1. Grupos min/max, gratuitos/pagos, variações, sabores de pizza e combos.
-2. Horários/timezone, pausas, exceções e janelas limitadas quando habilitadas.
-3. Zonas CEP/região, taxa/mínimo/gratuidade/prazo e retirada; raio depende de adapter real.
-
-**Áreas de código:** `apps/api/src/modules/10-catalog`, `apps/tenant-web/src/features/catalog`, `apps/superadmin-web/src/features/catalog`, `packages/contracts/src/catalog`.
-
-**Testes a executar:**
-
-- Pizza maior sabor/média, arredondamento, min/max, item sem estoque e adicionais de outro catálogo.
-- Fora de cobertura, zonas sobrepostas, fechamento, exceção de horário e frete não negativo.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Servidor calcula preço/frete e rejeita combinações inválidas.
-- Gestão de produtos separada de layout; não simular cotação geográfica.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-013"></a>
-### WPRO-013 — Food: fila operacional e status do pedido
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Entregar acompanhamento operacional responsivo sobre pedidos persistidos.
-
-**Dependências:** CAT-003
-
-**Passos:**
-
-1. Transições autorizadas de recebido a concluído/cancelado com histórico.
-2. Fila/lista por status/prazo com refresh contextual e mobile próprio.
-3. Página pública de status com capability limitada sem IDs enumeráveis.
-
-**Áreas de código:** `apps/api/src/modules/10-catalog`, `apps/tenant-web/src/features/catalog`, `apps/superadmin-web/src/features/catalog`, `packages/web-renderer`.
-
-**Testes a executar:**
-
-- Transição inválida/conflitante, actor sem permissão e acesso a pedido de outro cliente/tenant.
-- Pedido duplicado, falha/reconexão, teclado e PII não pública.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Status financeiro é separado do atendimento.
-- Pedido não depende de click em WhatsApp para existir e não vira pago por redirect.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-014"></a>
-### WPRO-014 — Importação, exportação e migração de conteúdo
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Permitir portabilidade do documento nativo com validação e cotas.
-
-**Dependências:** PAGE-003, CAT-001
-
-**Passos:**
-
-1. Inventariar dados reais antes de afirmar ausência de legado.
-2. Exportar documento/manifesto sem segredo/PII de pedido; importar com IDs remapeados.
-3. Validar versão, limites/path/zip, referências e cotas; conversão idempotente quando necessária.
-
-**Áreas de código:** `apps/api/src/modules/11-pages`, `packages/web-builder-core`, `packages/contracts/src/web`.
-
-**Testes a executar:**
-
-- Versão desconhecida, archive malicioso, falta de mídia, referência cruzada e duplicata de import.
-- Roundtrip sem perda do formato nativo e relatório explícito de incompatibilidade.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Importação não executa código e não contorna plano.
-- Não prometer compatibilidade automática com Elementor ou outros formatos.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-015"></a>
-### WPRO-015 — Gate de qualidade e lançamento do BipeWPRO
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Validar a versão completa com evidência de risco, carga, SEO e acessibilidade.
-
-**Dependências:** PAGE-004, WPRO-011, WPRO-013, WPRO-014, WPRO-010, WPRO-018
-
-**Passos:**
-
-1. Executar matriz de aceite da seção 20 com dados sintéticos e ambiente isolado.
-2. Lighthouse em produção/staging, mediana de três execuções mobile/desktop; relatório de bundle.
-3. Revisar manualmente leitor de tela/teclado/zoom/contraste e falhas de publicação.
-4. Preparar rollout, observabilidade, backup/restore e rollback; publicação externa segue autorização.
-
-**Áreas de código:** `apps/e2e-tests`, `apps/marketing-web`, `packages/web-renderer`, `docs/audit`.
-
-**Testes a executar:**
-
-- pnpm foundation:check e builds relevantes; E2E PostgreSQL/Redis/SMTP/edge quando utilizados.
-- Registrar p75 de CWV somente com dados de campo; não inferir de Lighthouse.
-
-**Aceite:**
-
-- Nenhuma falha crítica de isolamento/cálculo/publicação; resultados ligados ao commit.
-- Limitações explícitas; gates externos não são marcados como aprovados sem execução.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-016"></a>
-### WPRO-016 — Extensões PHP com execução isolada
-
-**Estado:** BLOCKED · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Avaliar e homologar capability avançada fora dos processos e segredos do SaaS.
-
-**Dependências:** WPRO-015
-
-**Passos:**
-
-1. Projetar isolamento forte por execução, rede/FS negados, limites e cadeia de imagem revisada.
-2. Preferir saída estática de build sanitizada, sem acesso ao banco/credenciais do SaaS.
-3. Implementar kill switch/auditoria e vincular capacidade comercial à disponibilidade técnica.
-
-**Áreas de código:** `services`, `packages/security`, `apps/api/src/modules/11-pages`, `docs/architecture`.
-
-**Testes a executar:**
-
-- Ensaios de escape, exaustão CPU/memória/saída, rede privada, isolamento entre execuções e falha do sandbox.
-- Revisão independente de isolamento antes de habilitar; registrar custo e limites.
-
-**Aceite:**
-
-- Nenhum eval/PHP arbitrário no Next/Fastify/worker geral.
-- Permissão de plano não habilita runtime ainda não homologado.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Runtime isolado para executar código não confiável não está provisionado nem homologado na base auditada; capability permanece indisponível.
-
-<a id="wpro-017"></a>
-### WPRO-017 — Food: pagamentos online e automações
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Integrar pedido a cobrança comercial e automações após seus módulos reais.
-
-**Dependências:** CAT-003, AUTO-001, BILL-002
-
-**Passos:**
-
-1. Escolher adapter de pagamento homologado e separar compra Food de assinatura SaaS.
-2. Validar recebedor/credenciais, idempotência, webhook, reembolso e conciliação.
-3. Conectar eventos a automações autorizadas sem duplicar pedido/mensagem/cobrança.
-
-**Áreas de código:** `apps/api/src/modules/10-catalog`, `apps/api/src/modules/12-billing`, `apps/api/src/modules/08-automation`, `apps/api/src/modules/13-integrations`.
-
-**Testes a executar:**
-
-- Provider escolhido: assinatura/replay/conta errada, callback forjado, retry e pagamento concorrente.
-- Automação sem permissão/capacidade e falha externa sem confirmar pagamento.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Só habilitar após evidência do adapter específico BILL-003/BILL-004 ou card próprio aprovado.
-- Nenhum pagamento real presumido pelo planejamento; políticas do canal e opt-out preservados.
-
-**Evidências:** Nenhuma execução registrada.
-
-**Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
-
-<a id="wpro-018"></a>
-### WPRO-018 — Biblioteca de templates oficiais
-
-**Estado:** BACKLOG · **Responsável:** Engenharia BipeSend - frente BipeWPRO · BipeWPRO - construtor, Food e publicação
-
-**Objetivo:** Entregar modelos responsivos e versionados com mídia licenciada.
-
-**Dependências:** WPRO-008, WPRO-009
-
-**Passos:**
-
-1. Criar modelos de serviço, campanha, institucional, pizza, hambúrguer e açaí.
-2. Registrar versão/licença/dados sintéticos e configuração mobile.
-3. Aplicar por cópia/referência explícita e revalidar recursos/cotas na instanciação.
-
-**Áreas de código:** `packages/web-builder`, `apps/marketing-web`, `docs/audit`.
-
-**Testes a executar:**
-
-- Todos os templates em larguras padrão, teclado/reduced motion e baseline Lighthouse.
-- Template desatualizado, asset indisponível e cota esgotada.
-- Rodar testes/typecheck/build dos pacotes e apps alterados e os gates pertinentes; registrar comandos, commit e limites da validação.
-
-**Aceite:**
-
-- Modelos publicáveis após personalização, sem avaliações falsas.
-- Nenhum template depende de widget ainda indisponível.
-
-**Evidências:** Nenhuma execução registrada.
+- React Flow canvas renderizado
+- Sidebar de configuração funcionando
+- API route mockada
+
+**Evidências:** [apps/tenant-web/src/app/(dashboard)/automations/page.tsx](../apps/tenant-web/src/app/(dashboard)/automations/page.tsx), [apps/tenant-web/src/app/api/automations/route.ts](../apps/tenant-web/src/app/api/automations/route.ts)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.

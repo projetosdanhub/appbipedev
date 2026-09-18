@@ -103,4 +103,32 @@ export class TeamRepository {
       roles: rolesQuery,
     };
   }
+
+  async createInvitation(
+    tenantId: string,
+    email: string,
+    role: string,
+    tokenHash: string,
+    createdByMembershipId: string,
+    expiresAt: Date
+  ): Promise<{ id: string }> {
+    const res = await this.db.query(
+      `INSERT INTO invitations (
+        tenant_id, email, role, token_hash, created_by_membership_id, expires_at
+      ) VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING id`,
+      [tenantId, email, role, tokenHash, createdByMembershipId, expiresAt]
+    );
+    return res[0];
+  }
+
+  async findMembershipByUserId(userId: string, tenantId: string) {
+    const res = await this.db.query(
+      `SELECT id, tenant_id as "tenantId", user_id as "userId", role, active 
+       FROM memberships 
+       WHERE user_id = $1 AND tenant_id = $2`,
+      [userId, tenantId]
+    );
+    return res[0] || null;
+  }
 }
