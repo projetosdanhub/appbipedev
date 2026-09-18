@@ -100,8 +100,8 @@ export async function registerAction(data: RegisterInput) {
     });
     if (existing)
       return {
-        success: false,
-        message: "Este e-mail já está em uso. Faça login para continuar.",
+        success: true,
+        message: "Se o e-mail não estiver em uso, sua conta foi criada com sucesso! Verifique sua caixa de entrada.",
       };
     const password = await argon2.hash(input.password, {
       type: argon2.argon2id,

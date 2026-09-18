@@ -4,28 +4,43 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Building, Globe, AlertCircle, CheckCircle2, Loader2, ArrowRight } from "lucide-react";
+import { Building, Globe, AlertCircle, CheckCircle2, Loader2, ArrowRight, Lock } from "lucide-react";
 import {
   Button,
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
   Input,
 } from "@bipesend/ui";
 
 import { onboardingSchema, type OnboardingInput } from "@/lib/validations/auth";
 import { onboardingAction } from "../_actions/onboarding";
 
-export default function OnboardingPage() {
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+interface OnboardingClientProps {
+  initialWorkspaceName?: string;
+}
+
+export default function OnboardingPage({ initialWorkspaceName = "" }: OnboardingClientProps) {
   const [authStep, setAuthStep] = useState<"form" | "success-loading" | "success-done">("form");
   const [serverError, setServerError] = useState("");
   const router = useRouter();
 
+  const initialName = initialWorkspaceName || "";
+  const initialSlug = generateSlug(initialName);
+
   const form = useForm<OnboardingInput>({
     resolver: zodResolver(onboardingSchema),
-    defaultValues: { companyName: "", slug: "" },
+    defaultValues: { companyName: initialName, slug: initialSlug },
     mode: "onBlur",
   });
 
@@ -61,24 +76,6 @@ export default function OnboardingPage() {
 
   const isSuccessView = authStep === "success-loading" || authStep === "success-done";
 
-  // Auto-generate slug from company name if empty
-  const handleCompanyNameBlur = () => {
-    const companyName = form.getValues("companyName");
-    const currentSlug = form.getValues("slug");
-    
-    if (companyName && !currentSlug) {
-      const suggestedSlug = companyName
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]/g, "-")
-        .replace(/-+/g, "-")
-        .replace(/^-|-$/g, "");
-      
-      form.setValue("slug", suggestedSlug, { shouldValidate: true, shouldDirty: true });
-    }
-  };
-
   return (
     <div className="auth-content-enter w-full space-y-4">
       {/* ── Heading ── */}
@@ -88,7 +85,7 @@ export default function OnboardingPage() {
             Configure seu Workspace
           </h1>
           <p className="text-[15px] md:text-[16px] text-[#475569] leading-[1.45] font-normal">
-            Como devemos chamar a sua empresa?
+            Como devemos chamar o seu workspace?
           </p>
         </div>
       )}
@@ -109,22 +106,36 @@ export default function OnboardingPage() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full" noValidate>
             
             <div className="space-y-3">
-              {/* Nome da Empresa */}
+              {/* Nome do Workspace */}
               <FormField control={form.control} name="companyName"
                 render={({ field, fieldState }) => (
                   <FormItem className="!space-y-1">
                     <FormControl>
                       <Input
-                        id="onboarding-company"
-                        placeholder="Nome da empresa"
+                        id="onboarding-workspace"
+                        placeholder="Nome do Workspace"
                         autoComplete="organization" error={!!fieldState.error}
                         errorMessage={fieldState.error?.message}
                         leftIcon={<Building className={getIconClass(field.value, fieldState.isTouched, fieldState.invalid)} />}
                         className="h-[50px] text-[15px] md:h-[46px] md:text-[14px]"
                         {...field}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value);
+                          const generated = generateSlug(value);
+                          form.setValue("slug", generated, {
+                            shouldValidate: form.formState.isSubmitted,
+                            shouldDirty: true,
+                          });
+                        }}
                         onBlur={(e) => {
                           field.onBlur();
-                          handleCompanyNameBlur();
+                          const currentName = form.getValues("companyName");
+                          const generated = generateSlug(currentName);
+                          form.setValue("slug", generated, {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          });
                         }}
                       />
                     </FormControl>
@@ -132,7 +143,7 @@ export default function OnboardingPage() {
                 )}
               />
 
-              {/* Slug */}
+              {/* Slug (Bloqueado / Gerado Automaticamente) */}
               <FormField control={form.control} name="slug"
                 render={({ field, fieldState }) => (
                   <FormItem className="!space-y-1">
@@ -141,17 +152,23 @@ export default function OnboardingPage() {
                         <Input
                           id="onboarding-slug"
                           placeholder="meu-slug"
+                          readOnly
+                          tabIndex={-1}
                           autoComplete="off" error={!!fieldState.error}
                           errorMessage={fieldState.error?.message}
                           leftIcon={<Globe className={getIconClass(field.value, fieldState.isTouched, fieldState.invalid)} />}
-                          className="h-[50px] text-[15px] md:h-[46px] md:text-[14px] pr-32"
+                          className="h-[50px] text-[15px] md:h-[46px] md:text-[14px] pr-36 bg-slate-50/80 text-slate-600 cursor-not-allowed select-none border-slate-200/80 focus-visible:ring-0 focus-visible:border-slate-300"
                           {...field}
                         />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px] text-slate-400 font-medium pointer-events-none">
-                          .bipesend.com.br
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-[12px] md:text-[13px] text-slate-400 font-medium pointer-events-none">
+                          <Lock className="h-3.5 w-3.5 text-slate-400" />
+                          <span>.bipesend.com.br</span>
                         </div>
                       </div>
                     </FormControl>
+                    <p className="text-[12px] text-slate-400 pl-1 font-normal">
+                      O endereço do workspace é gerado automaticamente.
+                    </p>
                   </FormItem>
                 )}
               />

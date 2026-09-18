@@ -63,10 +63,10 @@ export const verifyCodeSchema = z.object({
 
 export const onboardingSchema = z.object({
   companyName: z.string().trim().max(160).min(2, {
-    message: "O nome da empresa deve ter pelo menos 2 caracteres.",
+    message: "O nome do workspace deve ter pelo menos 2 caracteres.",
   }),
-  slug: z.string().trim().max(100).min(3, {
-    message: "O slug deve ter pelo menos 3 caracteres.",
+  slug: z.string().trim().max(100).min(2, {
+    message: "O slug deve ter pelo menos 2 caracteres.",
   }).regex(/^[a-z0-9-]+$/, {
     message: "O slug deve conter apenas letras minúsculas, números e hifens.",
   }),

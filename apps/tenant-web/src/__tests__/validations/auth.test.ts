@@ -5,6 +5,7 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   verifyCodeSchema,
+  onboardingSchema,
 } from "@/lib/validations/auth";
 
 describe("loginSchema", () => {
@@ -128,3 +129,47 @@ describe("verifyCodeSchema", () => {
     expect(result.success).toBe(false);
   });
 });
+
+describe("onboardingSchema", () => {
+  it("validates valid workspace name and slug", () => {
+    const result = onboardingSchema.safeParse({
+      companyName: "Meu Workspace",
+      slug: "meu-workspace",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects workspace name with less than 2 characters", () => {
+    const result = onboardingSchema.safeParse({
+      companyName: "A",
+      slug: "workspace",
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toContain("workspace");
+    }
+  });
+
+  it("rejects slug with invalid characters like uppercase or spaces", () => {
+    const resultUppercase = onboardingSchema.safeParse({
+      companyName: "Workspace",
+      slug: "Meu-Workspace",
+    });
+    expect(resultUppercase.success).toBe(false);
+
+    const resultSpaces = onboardingSchema.safeParse({
+      companyName: "Workspace",
+      slug: "meu workspace",
+    });
+    expect(resultSpaces.success).toBe(false);
+  });
+
+  it("rejects slug with less than 2 characters", () => {
+    const result = onboardingSchema.safeParse({
+      companyName: "Workspace",
+      slug: "a",
+    });
+    expect(result.success).toBe(false);
+  });
+});
+

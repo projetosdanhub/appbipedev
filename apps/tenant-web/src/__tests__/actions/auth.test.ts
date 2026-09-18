@@ -26,7 +26,7 @@ vi.mock("next/headers", () => ({
   cookies: async () => ({ get: mocks.getCookie, set: mocks.setCookie }),
 }));
 vi.mock("@bipesend/db", () => ({
-  prisma: { user: { findUnique: mocks.findUser, create: mocks.createUser } },
+  prisma: { user: { findUnique: mocks.findUser, findFirst: mocks.findUser, create: mocks.createUser } },
   withTenantCreationTransaction: vi.fn(async (prisma, tenantId, cb) => cb({
     user: { create: mocks.createUser },
     tenant: { create: mocks.createTenant },
