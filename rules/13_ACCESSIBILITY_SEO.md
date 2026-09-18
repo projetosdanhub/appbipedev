@@ -50,4 +50,4 @@ Scripts e pixels dependem de política e consentimento. Nunca permitir JavaScrip
 
 ## Revisão de fundação — 2026-09-13
 
-Novo workspace: light/dark, teclado, foco não encoberto, erros associados e reflow 320 px. WCAG 2.2 AA é meta, não certificação por axe. Painel/login/reset/catalogo de componentes são noindex; SEO público pertence ao marketing/catalogo publicado. Core Web Vitals de campo não são inferidos de um build ou Lighthouse local.
+Novo workspace: tema claro único, teclado, foco não encoberto, erros associados e reflow 320 px. WCAG 2.2 AA é meta, não certificação por axe. Painel/login/reset/catalogo de componentes são noindex; SEO público pertence ao marketing/catalogo publicado. Core Web Vitals de campo não são inferidos de um build ou Lighthouse local.

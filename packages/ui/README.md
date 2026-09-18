@@ -1,10 +1,10 @@
 # @bipesend/ui — BipeSend Foundation v1
 
-Biblioteca React DOM compartilhada entre tenant-web e superadmin-web. Mantém a marca e oferece light/dark/sistema, cantos arredondados, foco visível, estados claros e composição confortável. O catálogo executável fica em `/design-system` no tenant-web **apenas em desenvolvimento**; em produção retorna 404.
+Biblioteca React DOM compartilhada entre tenant-web e superadmin-web. Mantém a marca em um workspace claro, com cantos arredondados, foco visível, estados explícitos e composição confortável. O catálogo executável fica em `/design-system` no tenant-web **apenas em desenvolvimento**; em produção retorna 404.
 
 ## Instalação e tema
 
-O workspace já declara a dependência. No CSS global do app, depois de `@import "tailwindcss"`, importar `@bipesend/ui/styles.css`. Não importar esse CSS em cada componente. O app fornece Inter (`--font-inter`) e Poppins (`--font-poppins`) e envolve o conteúdo em ThemeProvider com atributo class, defaultTheme=system e enableSystem. A preferência é visual; nunca incluir dados de usuário no tema persistido.
+O workspace já declara a dependência. No CSS global do app, depois de `@import "tailwindcss"`, importar `@bipesend/ui/styles.css`. Não importar esse CSS em cada componente. O app fornece Inter (`--font-inter`) e Poppins (`--font-poppins`). Não adicionar ThemeProvider ou seletor de tema ao painel; temas de sites publicados vivem em escopo isolado.
 
 Tokens de referência estão em `src/styles/tokens.css`; aliases permitem migração incremental dos consumidores legados. Novas telas usam `--bg-canvas`, `--bg-surface`, `--text-primary`, `--text-secondary`, `--border-control`, `--action-primary`, `--action-foreground`, `--focus-ring`, `--status-*`, `--radius-*` e `--motion-*`.
 
@@ -16,7 +16,7 @@ Tokens de referência estão em `src/styles/tokens.css`; aliases permitem migra�
 | Altura | operacional 44 px; auth 54 px; compacto 32 px só quando a composição mantém alvo/espaçamento adequado |
 | Layout | sidebar 256/80 px; header 64 px; leitura/formulário têm largura limitada |
 | Motion | 140/180/240 ms; reduced motion reduz deslocamento/duração sem esconder estado |
-| Tema | light/dark/sistema no workspace; AuthLayout delimita sua superfície clara |
+| Tema | claro único no workspace e auth; conteúdo publicado tem contrato isolado |
 | Breakpoints | mobile web próprio <1024 px; tabela vira cards <768 px; reflow desde 320 px |
 
 ## Catálogo de componentes
@@ -35,7 +35,7 @@ Tokens de referência estão em `src/styles/tokens.css`; aliases permitem migra�
 | Dados | DataTable, DataColumn | sorting/seleção/paginação controlados; caption; renderMobileCard separado |
 | Feedback | Badge, StatusBadge, Alert, EmptyState, ErrorState, Skeleton, MetricCard, Progress | texto além de cor; sem inventar métrica zero; erro persistente |
 | Integração | IntegrationStatusBadge, LastCheckedLabel | sete estados canônicos; unknown se não verificado; horário explícito |
-| Identidade | BrandLogo, Avatar, ThemeToggle | proporção da marca, alternativa textual, preferência de tema |
+| Identidade | BrandLogo, Avatar | proporção da marca e alternativa textual |
 | Arquivos | FileUpload | seleção/validação local; não envia, não executa scan, não valida autorização |
 | Compatibilidade | AuthLayout, GlassPill, Toaster, primitives de Form | consumidores existentes preservados; novos fluxos seguem o contrato de estados |
 
@@ -79,7 +79,7 @@ Usar HTML nativo antes de primitives adicionais. Ícones SVG decorativos ficam a
 
 ## Validar e evoluir
 
-`pnpm --filter @bipesend/ui test`, `lint` e `typecheck`; `pnpm ui:smoke` para galeria light/dark, tamanhos e teclado. Evidências em `docs/audit/validation.md`.
+`pnpm --filter @bipesend/ui test`, `lint` e `typecheck`; `pnpm ui:smoke` para galeria clara, tamanhos e teclado. Evidências em `docs/audit/validation.md`.
 
 Ao adicionar componente: documentar necessidade/props/estados, implementar sem domínio, incluir exemplo, testar a falha comportamental possível, validar temas/mobile e atualizar exports. Segurança real de tenant, upload e sessão permanece no servidor; aparência de disabled não autoriza nem revoga operação.
 

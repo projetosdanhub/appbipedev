@@ -1,14 +1,17 @@
 "use client";
 
+/* eslint-disable react-hooks/refs -- @hello-pangea/dnd exposes callback refs and style props through its provided object. */
+
 import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { Calendar, MoreHorizontal } from "lucide-react";
 import { CrmDeal, CrmPipelineStage } from "@bipesend/contracts";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "@bipesend/ui";
+import type { CrmMembershipOption } from "../../types";
 
 interface DealCardProps {
   deal: CrmDeal;
   stages: CrmPipelineStage[];
-  memberships?: any[];
+  memberships?: CrmMembershipOption[];
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   onEdit: () => void;
@@ -29,11 +32,12 @@ export function DealCard({ deal, stages, memberships, provided, snapshot, onEdit
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
-      className={`group flex flex-col p-4 bg-white dark:bg-[#0F172A] rounded-[10px] border border-[#E2E8F0] dark:border-[#334155] shadow-sm transition-all cursor-grab active:cursor-grabbing ${snapshot.isDragging ? 'shadow-lg ring-2 ring-[#0A74FF]' : 'hover:shadow-md'}`}
+      className="crm-deal-card"
+      data-dragging={snapshot.isDragging}
       style={provided.draggableProps.style}
     >
-      <div className="flex justify-between items-start mb-2">
-        <h4 className="text-[14px] font-semibold text-[#0F172A] dark:text-white leading-tight">
+      <div className="flex justify-between items-start gap-3 mb-3">
+        <h4 className="text-[14px] font-semibold text-[var(--text-primary)] leading-snug">
           {deal.title}
         </h4>
         <DropdownMenu>
@@ -41,7 +45,8 @@ export function DealCard({ deal, stages, memberships, provided, snapshot, onEdit
             <button 
               type="button"
               onClick={(e) => e.stopPropagation()}
-              className="opacity-0 group-hover:opacity-100 p-1 text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-white transition-opacity rounded-md hover:bg-[#F1F5F9] dark:hover:bg-[#1E293B]"
+              className="crm-card-menu"
+              aria-label={`Ações de ${deal.title}`}
             >
               <MoreHorizontal className="w-4 h-4" />
             </button>
@@ -59,9 +64,9 @@ export function DealCard({ deal, stages, memberships, provided, snapshot, onEdit
                   <DropdownMenuItem 
                     key={mem.id} 
                     onClick={(e: React.MouseEvent) => { e.stopPropagation(); onAssign(mem.id); }}
-                    className={deal.assignedMembershipId === mem.id ? "font-bold text-[#0A74FF]" : ""}
+                    className={deal.assignedMembershipId === mem.id ? "font-bold text-[var(--action-primary)]" : ""}
                   >
-                    {mem.user?.name || mem.id}
+                    {mem.name || mem.email}
                   </DropdownMenuItem>
                 ))}
                 {deal.assignedMembershipId && (
@@ -91,17 +96,17 @@ export function DealCard({ deal, stages, memberships, provided, snapshot, onEdit
         </DropdownMenu>
       </div>
       
-      <div className="flex items-center gap-1.5 text-[#64748B] dark:text-[#94A3B8] text-[13px] mb-3">
-        <div className="w-5 h-5 rounded-full bg-[#0A74FF]/10 text-[#0A74FF] flex items-center justify-center font-bold text-[10px]">
+      <div className="flex items-center gap-2 text-[var(--text-secondary)] text-[13px] mb-3">
+        <div className="w-6 h-6 rounded-full bg-[var(--bg-selected)] text-[var(--action-primary)] flex items-center justify-center font-bold text-[10px]">
           C
         </div>
         Contato Vinculado
       </div>
 
-      <div className="h-[1px] w-full bg-[#F1F5F9] dark:bg-[#1E293B] mb-3" />
+      <div className="h-px w-full bg-[var(--border-default)] mb-3" />
 
-      <div className="flex items-center justify-between text-[12px] text-[#64748B] dark:text-[#94A3B8] font-medium">
-        <div className="flex items-center gap-1 text-[#10B981] dark:text-[#34D399] font-semibold bg-[#10B981]/10 px-2 py-1 rounded-md">
+      <div className="flex items-center justify-between text-[12px] text-[var(--text-muted)] font-medium">
+        <div className="flex items-center gap-1 text-[var(--status-success)] font-semibold bg-[var(--status-success-bg)] px-2 py-1 rounded-md">
           {formattedValue}
         </div>
         <div className="flex items-center gap-1">

@@ -41,7 +41,7 @@ pnpm --filter @bipesend/tenant-web dev
 
 Acesse `http://127.0.0.1:3001/design-system` durante desenvolvimento. A galeria mostra dados de exemplo, componentes, tabelas, formulários, estados, temas, modal/drawer e menu mobile. Em produção esta rota retorna 404. O smoke inicia servidor próprio; encerre outro next dev da mesma pasta antes de executá-lo.
 
-Revisão humana: temas claro/escuro/sistema; 320/360/768/1440 px; zoom; Tab/Shift+Tab, Enter/setas/Escape; retorno de foco; leitor de tela; teclado móvel e safe-area. Confirme legibilidade da marca, contraste sobre imagem/gradiente e recuperação de erros. A navegação do catálogo aponta para as rotas reais, que continuam exigindo sessão.
+Revisão humana: tema claro em 320/360/768/1440 px; zoom; Tab/Shift+Tab, Enter/setas/Escape; retorno de foco; leitor de tela; teclado móvel e safe-area. Confirme legibilidade da marca, contraste sobre imagem/gradiente e recuperação de erros. A navegação do catálogo aponta para as rotas reais, que continuam exigindo sessão.
 
 ## Testar identidade e dados
 

@@ -26,7 +26,7 @@ interface StageManagerProps {
 
 export function StageManager({ tenantId, pipeline }: StageManagerProps) {
   const [stages, setStages] = useState<CrmPipelineStage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadedPipelineId, setLoadedPipelineId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,7 +43,6 @@ export function StageManager({ tenantId, pipeline }: StageManagerProps) {
 
   useEffect(() => {
     let mounted = true;
-    setIsLoading(true);
     getPipelineStagesAction(tenantId, pipeline.id).then((res) => {
       if (mounted) {
         if (res.success) {
@@ -53,7 +52,7 @@ export function StageManager({ tenantId, pipeline }: StageManagerProps) {
         } else {
           toast.error(res.message);
         }
-        setIsLoading(false);
+        setLoadedPipelineId(pipeline.id);
       }
     });
     return () => { mounted = false; };
@@ -140,7 +139,7 @@ export function StageManager({ tenantId, pipeline }: StageManagerProps) {
     });
   };
 
-  if (isLoading) return <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-slate-400" /></div>;
+  if (loadedPipelineId !== pipeline.id) return <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-slate-400" /></div>;
 
   return (
     <div className="space-y-4">
@@ -210,7 +209,7 @@ export function StageManager({ tenantId, pipeline }: StageManagerProps) {
               <Label>Categoria</Label>
               <select 
                 {...form.register("category")} 
-                className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300"
+                className="ui-input h-10"
                 disabled={isPending}
               >
                 <option value="open">Aberto (Open)</option>
@@ -222,7 +221,7 @@ export function StageManager({ tenantId, pipeline }: StageManagerProps) {
               <Label>Cor</Label>
               <select 
                 {...form.register("colorToken")} 
-                className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300"
+                className="ui-input h-10"
                 disabled={isPending}
               >
                 <option value="bg-slate-200">Cinza</option>

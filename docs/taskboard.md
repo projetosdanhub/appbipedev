@@ -1,10 +1,10 @@
 # Taskboard BipeSend — executável
 
-Versão 1.0.0 · Revisão 2026-09-16 · Base auditada `46832fc`
+Versão 1.0.0 · Revisão 2026-09-18 · Base auditada `fa17091`
 
 **Fonte:** docs/taskboard.json. Não editar este Markdown diretamente; rode `pnpm taskboard:render` e `pnpm taskboard:check`.
 
-Total: 104 cards. BACKLOG: 50 · READY: 1 · IN_PROGRESS: 3 · BLOCKED: 1 · DONE: 49.
+Total: 105 cards. BACKLOG: 45 · READY: 1 · IN_PROGRESS: 4 · BLOCKED: 1 · DONE: 54.
 
 DONE exige aceite integral, evidência e dependências concluídas. Código parcial não comprova integração. Áreas de código são alvos de trabalho, podendo incluir pastas a criar. “Testes” são instruções de execução; resultados realmente observados ficam nas evidências.
 
@@ -13,6 +13,7 @@ DONE exige aceite integral, evidência e dependências concluídas. Código parc
 1. BILL-001: Entitlements e contadores.
 - Em andamento: FND-002: Definir nome de trabalho e dominios candidatos.
 - Em andamento: PAGE-001: Schema de blocos.
+- Em andamento: FND-015: Padronizar workspace claro e CRM.
 - Em andamento: WPRO-004: Primitives e layout premium do editor.
 
 Não ativar CRM, mensageria, IA ou billing reais antes do gate AUTH-016; protótipos visuais podem ser revisados, identificados como exemplos.
@@ -107,6 +108,7 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 | [FND-012](#fnd-012) | DONE | Implementar pacotes compartilhados e testes de contrato | FND-003, FND-006 |
 | [FND-013](#fnd-013) | DONE | Documentar reconciliação dos históricos de banco | FND-005 |
 | [FND-014](#fnd-014) | DONE | Entregar branch e guia de validação para Antigravity | FND-010, FND-011, FND-012, FND-013 |
+| [FND-015](#fnd-015) | IN_PROGRESS | Padronizar workspace claro e CRM | FND-011, AUTH-009, CRM-004 |
 | [TEAM-007](#team-007) | DONE | Godmode e Impersonation (Superadmin e Contratante) | TEAM-002 |
 | [WPRO-001](#wpro-001) | DONE | Planejamento e regras do BipeWPRO | — |
 | [WPRO-002](#wpro-002) | DONE | Organização aditiva de packages e contratos | WPRO-001 |
@@ -2717,6 +2719,40 @@ BipeWPRO: plano em docs/plans/bipewpro.md e handoff em docs/plans/bipewpro-hando
 **Evidências:** [docs/ANTIGRAVITY_HANDOFF.md](../docs/ANTIGRAVITY_HANDOFF.md), [docs/audit/validation.md](../docs/audit/validation.md), [docs/audit/evidence/checks.json](../docs/audit/evidence/checks.json)
 
 **Bloqueios:** Nenhum impedimento adicional registrado; respeitar dependências e estado.
+
+<a id="fnd-015"></a>
+### FND-015 — Padronizar workspace claro e CRM
+
+**Estado:** IN_PROGRESS · **Responsável:** Engenharia BipeSend · Milestone 0 - implementação auditada
+
+**Objetivo:** Evoluir packages/ui, o shell responsivo e o CRM para o contrato visual claro aprovado pelo usuário.
+
+**Dependências:** FND-011, AUTH-009, CRM-004
+
+**Passos:**
+
+1. Consolidar tokens claros, tipografia, espaçamento, raios, sombras, motion e componentes compartilhados.
+2. Substituir a sidebar permanente por menu expansível sob o cabeçalho e preservar drawer/navegação própria no mobile.
+3. Aplicar o sistema ao CRM em quadro e lista, com busca, empty state, ações reais e reflow móvel.
+
+**Áreas de código:** `packages/ui`, `apps/tenant-web/src/features/workspace`, `apps/tenant-web/src/features/crm`, `rules`.
+
+**Testes a executar:**
+
+- pnpm --filter @bipesend/ui test, lint e typecheck
+- pnpm --filter @bipesend/tenant-web typecheck e lint dos arquivos alterados
+- pnpm ui:smoke e inspeção em 360/768/1440 px, teclado e reduced motion
+- pnpm rules:check, taskboard:check, architecture:check e secrets:check
+
+**Aceite:**
+
+- Workspace sem seletor ou dependência de tema escuro, com tokens claros canônicos.
+- Menu desktop abre abaixo do cabeçalho e fecha por Escape, rota ou backdrop; mobile mantém navegação própria.
+- CRM usa componentes/tokens compartilhados, ações não inertes e apresentação legível em quadro, lista e mobile.
+
+**Evidências:** [docs/audit/ui-light-crm.md](../docs/audit/ui-light-crm.md)
+
+**Bloqueios:** Validação visual em 360/768/1440 px pendente: Chromium do Playwright indisponível e download bloqueado por timeout de rede no ambiente de execução.
 
 <a id="team-007"></a>
 ### TEAM-007 — Godmode e Impersonation (Superadmin e Contratante)

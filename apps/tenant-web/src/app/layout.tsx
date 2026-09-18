@@ -35,14 +35,7 @@ export default function RootLayout({
       className={`${inter.variable} ${poppins.variable} antialiased h-full`}
     >
       <body className="min-h-full flex flex-col">
-        <Providers
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

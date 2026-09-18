@@ -23,7 +23,7 @@ Estas regras são a fonte de verdade para humanos e agentes de IA. Quando códig
 9. Segredos nunca chegam ao frontend, logs públicos, URLs ou repositório.
 10. Toda ação sensível gera auditoria segura e minimizada.
 11. Integrações externas usam adaptador, timeout, retry, idempotência e observabilidade.
-12. Suporte nativo a temas (Light/Dark) via `next-themes` sem "FOUC", lendo a preferência do sistema operacional por padrão.
+12. O workspace do SaaS usa tema claro único e consistente. Temas de conteúdo publicado são isolados e não alteram o painel.
 13. IA nunca recebe autoridade implícita para executar ações destrutivas ou acessar dados fora do escopo.
 14. Nenhum módulo concentra domínio, banco, HTTP e UI em arquivo monolítico.
 15. Não inventar novo padrão visual se já existir token, componente ou fluxo equivalente.
@@ -158,7 +158,7 @@ O fluxo visual e comportamental dessas telas está em `29_AUTH_UX_FLOWS.md`.
 - O layout do SaaS deve seguir `12`, `14`, `22`, `24` e `30` sem criar variações ad hoc.
 - Gradiente pode reforçar marca; nunca é a única forma de comunicar estado.
 - Motion nunca bloqueia tarefa, foco, leitura ou navegação.
-- Auth mantém composição clara específica; o workspace mobile suporta light/dark e navegação própria, conforme `35`.
+- Auth e workspace mantêm composição clara; o mobile web possui navegação própria, conforme `35`.
 - Em conflitos de números/tokens, `packages/ui/src/styles/tokens.css` + regra `14` prevalecem; regras `31/32` foram reconciliadas nesta revisão.
 - Evidência atual: `docs/audit/validation.md`; histórico relatado não substitui execução. Arquivos arquivados fora de `rules/` não são regras ativas.
 

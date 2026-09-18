@@ -1,6 +1,6 @@
 "use client";
 import { useState, type ReactNode } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { SkipLink } from "@bipesend/ui";
 import { DesktopNavigation } from "./desktop-navigation";
 import { MobileNavigation } from "./mobile-navigation";
@@ -15,7 +15,7 @@ export function DashboardShell({
   children: ReactNode;
   user: { name: string; activeTenant: TenantData; availableTenants: TenantData[] };
 }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [navigationOpen, setNavigationOpen] = useState(false);
   const searchParams = useSearchParams();
   const isFocusMode = searchParams.get("focus") === "true";
 
@@ -30,17 +30,19 @@ export function DashboardShell({
   }
 
   return (
-    <div className="workspace-shell" data-collapsed={collapsed}>
+    <div className="workspace-shell">
       <SkipLink />
       <DesktopNavigation
-        collapsed={collapsed}
-        onToggle={() => setCollapsed(!collapsed)}
+        open={navigationOpen}
+        onClose={() => setNavigationOpen(false)}
       />
       <div className="workspace-body">
-        <WorkspaceHeader 
-          name={user.name} 
-          activeTenant={user.activeTenant} 
-          availableTenants={user.availableTenants} 
+        <WorkspaceHeader
+          name={user.name}
+          activeTenant={user.activeTenant}
+          availableTenants={user.availableTenants}
+          navigationOpen={navigationOpen}
+          onNavigationToggle={() => setNavigationOpen((current) => !current)}
         />
         <main className="workspace-content" id="main-content" tabIndex={-1}>
           {children}

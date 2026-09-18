@@ -276,3 +276,13 @@ Adotado o ADR em [architecture/foundation.md](architecture/foundation.md): token
 **Logs:** manter as assinaturas e campos operacionais usados pela API, substituindo serialização ampla por allowlist em contexto/dados; Error sem message/stack/cause. Campo livre/e-mail antes emitido deixa de ser logado por decisão de minimização explícita.
 
 **Evidência e limites:** [WPRO-002](audit/bipewpro-foundation.md). PAGE-001/WPRO-004 continuam até suas entregas completas. A branch incorpora main `46832fc` (CRM/inbox) sem alterar esses arquivos nesta implementação; não confundir merge técnico na branch com merge em main/deploy.
+
+## ADR-0031 — Workspace claro e navegação expansível
+
+**Decisão do usuário, 2026-09-18:** o painel BipeSend usa tema claro único. Remover seletor e integração de preferência escura do workspace; os temas do conteúdo publicado pelo BipeWPRO continuam independentes e isolados da interface operacional.
+
+**Composição:** marca, gatilho de navegação, contexto do workspace e ações globais vivem no cabeçalho. Em desktop, o gatilho abre o menu principal abaixo do cabeçalho com backdrop e fechamento por Escape; em mobile, permanece a composição própria com drawer completo. O CRM é a primeira superfície migrada integralmente para os novos tokens.
+
+**Motivo:** reduzir variações, aumentar consistência entre módulos e liberar largura útil para inbox, kanban e editor, preservando acessibilidade e navegação responsiva.
+
+**Evidência:** [auditoria do workspace claro e CRM](audit/ui-light-crm.md), card FND-015.

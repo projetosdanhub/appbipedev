@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, Input, Label, Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@bipesend/ui";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createCrmPipelineSchema, CreateCrmPipeline, CrmPipeline } from "@bipesend/contracts";
 import { createPipelineAction, deletePipelineAction } from "../actions/pipeline.actions";
@@ -22,7 +22,7 @@ export function PipelineSettings({ tenantId, initialPipelines }: PipelineSetting
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<CreateCrmPipeline>({
-    resolver: zodResolver(createCrmPipelineSchema) as any,
+    resolver: zodResolver(createCrmPipelineSchema) as Resolver<CreateCrmPipeline>,
     defaultValues: {
       name: "",
       description: "",
@@ -63,7 +63,7 @@ export function PipelineSettings({ tenantId, initialPipelines }: PipelineSetting
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Pipelines de Negócios</h2>
+          <h2 className="text-2xl font-semibold text-[var(--text-primary)]">Pipelines de Negócios</h2>
           <p className="text-sm text-slate-500">Gerencie seus funis de vendas e etapas.</p>
         </div>
         <Button onClick={() => setIsCreateOpen(true)} className="gap-2">
@@ -133,7 +133,7 @@ export function PipelineSettings({ tenantId, initialPipelines }: PipelineSetting
           <DialogHeader>
             <DialogTitle>Novo Pipeline</DialogTitle>
           </DialogHeader>
-          <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Nome do Pipeline</Label>
               <Input id="name" {...form.register("name")} placeholder="Ex: Vendas B2B" disabled={isPending} />

@@ -8,7 +8,7 @@
 4. Fornecer nome acessível, foco, erro persistente, carregamento, vazio, disabled e redução de movimento quando aplicáveis. ConfirmDialog precisa de descrição, cancelamento seguro e estado de falha.
 5. Adicionar exemplo no catálogo `/design-system` (somente desenvolvimento), com dados identificados como exemplo e sem autenticação fictícia nas rotas reais.
 6. Testar a interação que pode falhar: Escape, retorno de foco, seta/Enter, colagem, seleção, reenvio, duplo submit e erros de rede. Não testar apenas className.
-7. Validar light/dark, 320/360/768/1440 px, teclado e reflow. Native mobile será implementação própria; o mobile web usa composição própria da mesma feature.
+7. Validar o tema claro em 320/360/768/1440 px, teclado e reflow. Native mobile será implementação própria; o mobile web usa composição própria da mesma feature.
 8. Documentar API, limites, dependências e compatibilidade. Introduzir mudanças incompatíveis com migração de consumidores, nunca apenas renomear props.
 
 A lista do pacote é uma fundação reutilizável, não uma afirmação de que todos os módulos CRM estão operacionais. Tabelas, gráficos, editores, datas e upload pesado exigem evolução por card, com orçamento de bundle e validação proporcional.

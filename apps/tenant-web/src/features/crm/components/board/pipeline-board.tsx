@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
-import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { CrmPipeline, CrmPipelineStage, CrmDeal, CrmContact } from "@bipesend/contracts";
 import { BoardColumn } from "./board-column";
 import { ContactsColumn } from "./contacts-column";
@@ -11,6 +11,7 @@ import { moveDealAction, createDealFromContactAction, updateDealAction } from ".
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useRealtime } from "@/lib/useRealtime";
+import type { CrmMembershipOption } from "../../types";
 
 interface PipelineBoardProps {
   tenantId: string;
@@ -18,7 +19,7 @@ interface PipelineBoardProps {
   stages: CrmPipelineStage[];
   deals: CrmDeal[];
   contacts?: CrmContact[];
-  memberships?: { id: string; userId: string; name: string | null; email: string; }[];
+  memberships?: CrmMembershipOption[];
   viewMode: "kanban" | "list";
   sessionToken?: string;
 }
@@ -41,14 +42,18 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
   });
   
   useEffect(() => {
+    // The server component owns the canonical snapshot after refresh/realtime.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDeals(initialDeals);
   }, [initialDeals]);
 
   useEffect(() => {
+    // Keep the draggable inbox aligned with the latest server snapshot.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (contacts) setContactsState(contacts);
   }, [contacts]);
 
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingDeal, setEditingDeal] = useState<CrmDeal | null>(null);
@@ -77,7 +82,7 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
 
       // Otimisticamente cria o deal e remove o contact da lista
       const tempDeal: CrmDeal = {
-        id: `temp-${Date.now()}`,
+        id: `temp-${contactId}-${toStageId}`,
         tenantId,
         contactId,
         pipelineId: pipeline.id,
@@ -201,6 +206,15 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
     setIsEditorOpen(true);
   };
 
+  const handleCreate = (stageId: string) => {
+    setPendingMove(null);
+    setEditingDeal(null);
+    setIsEditorOpen(true);
+    setCreateStageId(stageId);
+  };
+
+  const [createStageId, setCreateStageId] = useState<string | null>(null);
+
   if (viewMode === "list") {
     return (
       <>
@@ -220,6 +234,7 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
               if (!open) {
                  setPendingMove(null);
                  setEditingDeal(null);
+                 setCreateStageId(null);
               }
           }}
           tenantId={tenantId}
@@ -248,7 +263,7 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex h-full w-max p-6 gap-6 items-start">
+        <div className="crm-board">
           {stages.length === 0 ? (
              <div className="flex items-center justify-center h-full text-slate-500 w-full px-12">
                Este pipeline não possui etapas. Vá nas configurações para adicionar etapas.
@@ -268,6 +283,7 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
                   onEdit={handleEdit}
                   onMoveStage={handleMoveStage}
                   onAssignDeal={handleAssignDeal}
+                  onCreate={() => handleCreate(stage.id)}
                 />
               ))}
             </>
@@ -283,11 +299,14 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
             if (!open) {
                setPendingMove(null);
                setEditingDeal(null);
+               setCreateStageId(null);
             }
         }}
         tenantId={tenantId}
         pipelineId={pipeline.id}
-        stage={pendingMove ? stages.find(s => s.id === pendingMove.toStageId) : stages.find(s => s.id === editingDeal?.stageId)}
+        stage={pendingMove
+          ? stages.find(s => s.id === pendingMove.toStageId)
+          : stages.find(s => s.id === (editingDeal?.stageId ?? createStageId))}
         existingDeal={editingDeal}
         isMoveMode={!!pendingMove}
         memberships={memberships}
@@ -303,6 +322,7 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
             setIsEditorOpen(false);
             setEditingDeal(null);
             setPendingMove(null);
+            setCreateStageId(null);
         }}
       />
     </>

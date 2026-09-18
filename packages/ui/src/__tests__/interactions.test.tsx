@@ -18,6 +18,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "../components/overlays";
+import { SegmentedControl } from "../components/segmented-control";
 
 describe("Reusable interaction contracts", () => {
   it("keeps button loading disabled even if disabled=false was passed", async () => {
@@ -119,5 +120,28 @@ describe("Reusable interaction contracts", () => {
     await vi.advanceTimersByTimeAsync(300);
     expect(search).toHaveBeenCalledTimes(1);
     vi.useRealTimers();
+  });
+  it("announces and changes a segmented view selection", async () => {
+    function ViewSelector() {
+      const [view, setView] = useState<"board" | "list">("board");
+      return (
+        <SegmentedControl
+          label="Visualização"
+          value={view}
+          onValueChange={(value) => setView(value as "board" | "list")}
+          items={[
+            { value: "board", label: "Quadro" },
+            { value: "list", label: "Lista" },
+          ]}
+        />
+      );
+    }
+    render(<ViewSelector />);
+    const board = screen.getByRole("button", { name: "Quadro" });
+    const list = screen.getByRole("button", { name: "Lista" });
+    expect(board).toHaveAttribute("aria-pressed", "true");
+    await userEvent.click(list);
+    expect(list).toHaveAttribute("aria-pressed", "true");
+    expect(board).toHaveAttribute("aria-pressed", "false");
   });
 });

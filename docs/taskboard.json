@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "reviewedAt": "2026-09-16",
-  "baseCommit": "46832fcc6226665d545c69d4d2636df8722ba1e1",
+  "reviewedAt": "2026-09-18",
+  "baseCommit": "fa17091",
   "cards": [
     {
       "id": "FND-001",
@@ -2910,6 +2910,47 @@
         "docs/audit/evidence/checks.json"
       ],
       "blockers": [],
+      "owner": "Engenharia BipeSend"
+    },
+    {
+      "id": "FND-015",
+      "title": "Padronizar workspace claro e CRM",
+      "milestone": "Milestone 0 - implementação auditada",
+      "objective": "Evoluir packages/ui, o shell responsivo e o CRM para o contrato visual claro aprovado pelo usuário.",
+      "dependencies": [
+        "FND-011",
+        "AUTH-009",
+        "CRM-004"
+      ],
+      "status": "IN_PROGRESS",
+      "steps": [
+        "Consolidar tokens claros, tipografia, espaçamento, raios, sombras, motion e componentes compartilhados.",
+        "Substituir a sidebar permanente por menu expansível sob o cabeçalho e preservar drawer/navegação própria no mobile.",
+        "Aplicar o sistema ao CRM em quadro e lista, com busca, empty state, ações reais e reflow móvel."
+      ],
+      "codeAreas": [
+        "packages/ui",
+        "apps/tenant-web/src/features/workspace",
+        "apps/tenant-web/src/features/crm",
+        "rules"
+      ],
+      "tests": [
+        "pnpm --filter @bipesend/ui test, lint e typecheck",
+        "pnpm --filter @bipesend/tenant-web typecheck e lint dos arquivos alterados",
+        "pnpm ui:smoke e inspeção em 360/768/1440 px, teclado e reduced motion",
+        "pnpm rules:check, taskboard:check, architecture:check e secrets:check"
+      ],
+      "acceptance": [
+        "Workspace sem seletor ou dependência de tema escuro, com tokens claros canônicos.",
+        "Menu desktop abre abaixo do cabeçalho e fecha por Escape, rota ou backdrop; mobile mantém navegação própria.",
+        "CRM usa componentes/tokens compartilhados, ações não inertes e apresentação legível em quadro, lista e mobile."
+      ],
+      "evidence": [
+        "docs/audit/ui-light-crm.md"
+      ],
+      "blockers": [
+        "Validação visual em 360/768/1440 px pendente: Chromium do Playwright indisponível e download bloqueado por timeout de rede no ambiente de execução."
+      ],
       "owner": "Engenharia BipeSend"
     },
     {

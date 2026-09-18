@@ -2,11 +2,11 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { RefreshCw, LogOut, Settings, Maximize2 } from "lucide-react";
+import { RefreshCw, LogOut, Settings, Maximize2, Menu, X } from "lucide-react";
 import {
   Avatar,
+  BrandLogo,
   IconButton,
-  ThemeToggle,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -21,11 +21,15 @@ import { TenantSwitcher, type TenantData } from "./tenant-switcher";
 export function WorkspaceHeader({ 
   name, 
   activeTenant, 
-  availableTenants 
+  availableTenants,
+  navigationOpen,
+  onNavigationToggle,
 }: { 
   name: string; 
   activeTenant?: TenantData;
   availableTenants?: TenantData[];
+  navigationOpen: boolean;
+  onNavigationToggle(): void;
 }) {
   const router = useRouter(),
     path = usePathname(),
@@ -33,7 +37,20 @@ export function WorkspaceHeader({
   const current = navigation.find((item) => isActiveRoute(path, item.href));
   return (
     <header className="workspace-header">
-      <div className="flex items-center gap-4">
+      <div className="workspace-header-start">
+        <Link href="/" aria-label="BipeSend, início" className="workspace-header-brand">
+          <BrandLogo width={132} />
+        </Link>
+        <IconButton
+          label={navigationOpen ? "Fechar menu principal" : "Abrir menu principal"}
+          aria-expanded={navigationOpen}
+          aria-controls="workspace-navigation-panel"
+          onClick={onNavigationToggle}
+          className="workspace-menu-trigger"
+        >
+          {navigationOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+        </IconButton>
+        <div className="workspace-context">
         {activeTenant && availableTenants && (
           <>
             <TenantSwitcher activeTenant={activeTenant} availableTenants={availableTenants} />
@@ -43,8 +60,9 @@ export function WorkspaceHeader({
         <div className="workspace-breadcrumb">
           <strong>{current?.name ?? "Dashboard"}</strong>
         </div>
+        </div>
       </div>
-      <div className="ui-filter-bar">
+      <div className="workspace-header-actions">
         <IconButton
           label="Modo Foco (Nova Aba)"
           onClick={() => window.open(`${path}?focus=true`, "_blank")}
@@ -58,7 +76,6 @@ export function WorkspaceHeader({
         >
           <RefreshCw aria-hidden="true" />
         </IconButton>
-        <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button

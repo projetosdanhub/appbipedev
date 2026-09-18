@@ -4,7 +4,7 @@ Escopo revisado em 2026-09-16: a reforma de `packages/ui` está adiada pelo usu�
 
 ## Identidade e hierarquia
 
-Inter para títulos, Poppins para corpo; números tabulares em métricas. Manter tokens atuais de marca azul/violeta, ação, contraste, borda, sombras, raio e motion. O painel oferece light/dark/sistema. O tema configurável de cada site publicado não modifica o painel, overlays ou campos do editor.
+Inter para títulos, Poppins para corpo; números tabulares em métricas. Manter tokens atuais de marca azul/violeta, ação, contraste, borda, sombras, raio e motion. O painel usa tema claro único. O tema configurável de cada site publicado não modifica o painel, overlays ou campos do editor.
 
 Tela operacional: PageContainer, PageHeader, FilterBar quando necessária e conteúdo. Evitar cards aninhados como decoração. Uma ação primária evidente; secundárias têm menor peso. Labels e descrições esclarecem ações sem tooltip obrigatório.
 
@@ -50,7 +50,7 @@ Controles usam alvo confortável de 44 px conforme os tokens; compacto exige ver
 ## Critério de aceite
 
 - Galeria em desenvolvimento com dados sintéticos e exemplos de falha/empty/loading/disabled quando aplicáveis.
-- Light/dark/sistema; reflow 320 px; uso em 360, 768, 1024 e 1440 px; zoom 200% e teclado virtual.
+- Tema claro; reflow 320 px; uso em 360, 768, 1024 e 1440 px; zoom 200% e teclado virtual.
 - Tab/Shift+Tab, setas, Enter, Escape, anúncio de alteração e retorno de foco funcionais.
 - A ação não depende de cor, hover ou arraste. Reduced motion não esconde estado.
 - Sem import de servidor, fetch oculto, token local duplicado ou regra de negócio em ui.

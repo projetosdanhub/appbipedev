@@ -14,7 +14,7 @@ export default async function IntegrationsPage() {
 
   return (
     <IntegrationsClient 
-      tenantId={user.tenantId} 
+      tenantId={user.activeTenant.id}
       initialConnections={initialConnections} 
     />
   );

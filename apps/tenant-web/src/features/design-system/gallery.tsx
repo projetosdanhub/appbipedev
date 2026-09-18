@@ -9,7 +9,6 @@ import {
   Download,
   SlidersHorizontal,
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import {
   Badge,
   Button,
@@ -73,7 +72,6 @@ const samples = [
   { id: "c", name: "Empresa de exemplo C", stage: "Proposta" },
 ];
 export function DesignSystemGallery() {
-  const { setTheme } = useTheme();
   const [query, setQuery] = useState(""),
     [search, setSearch] = useState(""),
     [selected, setSelected] = useState<string[]>([]),
@@ -104,28 +102,7 @@ export function DesignSystemGallery() {
           description="Referência interativa para construir experiências consistentes. Todos os dados desta página são exemplos."
           actions={
             <>
-              <Badge variant="info">Fundação v1</Badge>
-              <Button
-                size="md"
-                variant="outline"
-                onClick={() => setTheme("light")}
-              >
-                Claro
-              </Button>
-              <Button
-                size="md"
-                variant="outline"
-                onClick={() => setTheme("dark")}
-              >
-                Escuro
-              </Button>
-              <Button
-                size="md"
-                variant="ghost"
-                onClick={() => setTheme("system")}
-              >
-                Sistema
-              </Button>
+              <Badge variant="info">Fundação clara v2</Badge>
             </>
           }
         />
