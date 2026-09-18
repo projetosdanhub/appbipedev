@@ -161,7 +161,6 @@ export function IntegrationsClient({
           <strong>2</strong>
           <small>Instagram e TikTok</small>
         </div>
-        </div>
         <div>
           <span>Conexões ativas</span>
           <strong>{initialConnections.filter((item) => item.status === "connected").length}</strong>
