@@ -61,6 +61,32 @@ export function CRMClient({
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // Controle de estado e clique fora do seletor de funil
+  const [isFunnelOpen, setIsFunnelOpen] = useState(false);
+  const funnelTriggerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isFunnelOpen) return;
+    const handleClickOutside = (event: MouseEvent | PointerEvent) => {
+      const target = event.target as Node;
+      const menuEl = document.querySelector(".crm-funnel-menu");
+      if (
+        funnelTriggerRef.current &&
+        !funnelTriggerRef.current.contains(target) &&
+        (!menuEl || !menuEl.contains(target))
+      ) {
+        setIsFunnelOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("pointerdown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isFunnelOpen]);
+
   // Estados locais sincronizados
   const [pipelines, setPipelines] = useState<CrmPipeline[]>(initialPipelines);
   const [stagesMap, setStagesMap] = useState<Record<string, CrmPipelineStage[]>>(initialStages);
@@ -252,74 +278,92 @@ export function CRMClient({
         {/* Left: Funnel control, animated Create Funnel button, Add Flow */}
         <div className="crm-top-start">
           {/* Seletor de Funil no Estilo Workspace com Menu e Criar Funil no Topo */}
-          <DropdownMenu>
-            <DropdownMenuTrigger className="crm-funnel-trigger" aria-label="Selecionar funil">
-              <div className="crm-funnel-trigger-icon" title="Funil comercial">
-                <Funnel className="w-4 h-4 text-[#007BFF]" aria-hidden="true" />
-              </div>
-              <div className="crm-funnel-copy">
-                <span>Funil</span>
-                <strong>{selectedPipeline ? selectedPipeline.name : "Nenhum funil"}</strong>
-              </div>
-              <ChevronsUpDown className="crm-funnel-chevrons" aria-hidden="true" />
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="start" className="crm-funnel-menu">
-              {/* Botão de criar pipeline no topo */}
-              <DropdownMenuItem
-                onSelect={() => setIsCreatePipelineOpen(true)}
-                className="crm-funnel-menu-create-item group"
+          <div ref={funnelTriggerRef} className="relative">
+            <DropdownMenu open={isFunnelOpen} onOpenChange={setIsFunnelOpen} modal={false}>
+              <DropdownMenuTrigger 
+                className="crm-funnel-trigger" 
+                aria-label="Selecionar funil"
+                onClick={() => setIsFunnelOpen(prev => !prev)}
               >
-                <div className="crm-funnel-menu-create-icon">
-                  <Plus className="w-4 h-4 text-white" aria-hidden="true" />
+                <div className="crm-funnel-trigger-icon" title="Funil comercial">
+                  <Funnel className="w-4 h-4 text-[#007BFF]" aria-hidden="true" />
                 </div>
-                <div className="crm-funnel-menu-create-copy">
-                  <strong>Criar novo funil</strong>
-                  <span>Adicionar novo fluxo de vendas</span>
+                <div className="crm-funnel-copy">
+                  <span>Funil</span>
+                  <strong>{selectedPipeline ? selectedPipeline.name : "Nenhum funil"}</strong>
                 </div>
-              </DropdownMenuItem>
+                <ChevronsUpDown className="crm-funnel-chevrons" aria-hidden="true" />
+              </DropdownMenuTrigger>
 
-              <DropdownMenuSeparator />
-
-              <DropdownMenuLabel className="crm-funnel-menu-label">
-                Funis disponíveis ({pipelines.length})
-              </DropdownMenuLabel>
-
-              {/* Lista de pipelines com scroll interno após 5 itens */}
-              <div className="crm-funnel-menu-list">
-                {pipelines.length > 0 ? (
-                  pipelines.map((p) => {
-                    const isSelected = p.id === selectedPipelineId;
-                    const stageCount = stagesMap[p.id]?.length || 0;
-                    return (
-                      <DropdownMenuItem
-                        key={p.id}
-                        onSelect={() => handleSelectPipeline(p.id)}
-                        className={`crm-funnel-menu-item ${isSelected ? "is-selected" : ""}`}
-                      >
-                        <div className="crm-funnel-item-left">
-                          <div className="crm-funnel-item-icon">
-                            <Funnel className="w-3.5 h-3.5" aria-hidden="true" />
-                          </div>
-                          <div className="crm-funnel-item-copy">
-                            <strong>{p.name}</strong>
-                            <span>{stageCount} {stageCount === 1 ? "etapa" : "etapas"}</span>
-                          </div>
-                        </div>
-                        {isSelected && (
-                          <Check className="w-4 h-4 text-[#007BFF] shrink-0 crm-check-icon" aria-hidden="true" />
-                        )}
-                      </DropdownMenuItem>
-                    );
-                  })
-                ) : (
-                  <div className="crm-funnel-menu-empty">
-                    Nenhum funil cadastrado
+              <DropdownMenuContent 
+                align="start" 
+                className="crm-funnel-menu"
+                onPointerDownOutside={() => setIsFunnelOpen(false)}
+                onInteractOutside={() => setIsFunnelOpen(false)}
+                onEscapeKeyDown={() => setIsFunnelOpen(false)}
+              >
+                {/* Botão de criar pipeline no topo */}
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setIsCreatePipelineOpen(true);
+                    setIsFunnelOpen(false);
+                  }}
+                  className="crm-funnel-menu-create-item group"
+                >
+                  <div className="crm-funnel-menu-create-icon">
+                    <Plus className="w-4 h-4 text-white" aria-hidden="true" />
                   </div>
-                )}
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                  <div className="crm-funnel-menu-create-copy">
+                    <strong>Criar novo funil</strong>
+                    <span>Adicionar novo fluxo de vendas</span>
+                  </div>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuLabel className="crm-funnel-menu-label">
+                  Funis disponíveis ({pipelines.length})
+                </DropdownMenuLabel>
+
+                {/* Lista de pipelines com scroll interno após 5 itens */}
+                <div className="crm-funnel-menu-list">
+                  {pipelines.length > 0 ? (
+                    pipelines.map((p) => {
+                      const isSelected = p.id === selectedPipelineId;
+                      const stageCount = stagesMap[p.id]?.length || 0;
+                      return (
+                        <DropdownMenuItem
+                          key={p.id}
+                          onSelect={() => {
+                            handleSelectPipeline(p.id);
+                            setIsFunnelOpen(false);
+                          }}
+                          className={`crm-funnel-menu-item ${isSelected ? "is-selected" : ""}`}
+                        >
+                          <div className="crm-funnel-item-left">
+                            <div className="crm-funnel-item-icon">
+                              <Funnel className="w-3.5 h-3.5" aria-hidden="true" />
+                            </div>
+                            <div className="crm-funnel-item-copy">
+                              <strong>{p.name}</strong>
+                              <span>{stageCount} {stageCount === 1 ? "etapa" : "etapas"}</span>
+                            </div>
+                          </div>
+                          {isSelected && (
+                            <Check className="w-4 h-4 text-[#007BFF] shrink-0 crm-check-icon" aria-hidden="true" />
+                          )}
+                        </DropdownMenuItem>
+                      );
+                    })
+                  ) : (
+                    <div className="crm-funnel-menu-empty">
+                      Nenhum funil cadastrado
+                    </div>
+                  )}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         {/* Right: Expandable Search, View Switcher & Focus Mode */}
