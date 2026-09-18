@@ -2,8 +2,16 @@
 
 import type { CSSProperties } from "react";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
-import { Plus } from "lucide-react";
-import { CrmPipelineStage, CrmDeal, CrmContact } from "@bipesend/contracts";
+import { Plus, MoreHorizontal, PlusCircle, Tags, Tag, Sparkles, Palette } from "lucide-react";
+import { CrmPipelineStage, CrmDeal, CrmContact, CrmTag } from "@bipesend/contracts";
+import { 
+  DropdownMenu, 
+  DropdownMenuTrigger, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuLabel 
+} from "@bipesend/ui";
 import { DealCard } from "./deal-card";
 import { stageColor } from "./stage-colors";
 import type { CrmMembershipOption } from "../../types";
@@ -13,14 +21,34 @@ interface BoardColumnProps {
   stages: CrmPipelineStage[];
   deals: CrmDeal[];
   contacts?: CrmContact[];
+  tags?: CrmTag[];
   memberships?: CrmMembershipOption[];
   onEdit: (deal: CrmDeal) => void;
   onMoveStage: (deal: CrmDeal, stageId: string) => void;
   onAssignDeal: (deal: CrmDeal, membershipId: string | null) => void;
-  onCreate: () => void;
+  onAddCards: (stage: CrmPipelineStage) => void;
+  onConfigureTags: () => void;
+  onApplyTags: (stage: CrmPipelineStage) => void;
+  onCreatePipeline: () => void;
+  onEditStageColor: (stage: CrmPipelineStage) => void;
 }
 
-export function BoardColumn({ stage, stages, deals, contacts, memberships, onEdit, onMoveStage, onAssignDeal, onCreate }: BoardColumnProps) {
+export function BoardColumn({ 
+  stage, 
+  stages, 
+  deals, 
+  contacts, 
+  tags,
+  memberships, 
+  onEdit, 
+  onMoveStage, 
+  onAssignDeal, 
+  onAddCards,
+  onConfigureTags,
+  onApplyTags,
+  onCreatePipeline,
+  onEditStageColor,
+}: BoardColumnProps) {
   const totalAmount = deals.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
   const currency = deals[0]?.currency || "BRL";
   const formattedTotal = new Intl.NumberFormat("pt-BR", { 
@@ -37,13 +65,18 @@ export function BoardColumn({ stage, stages, deals, contacts, memberships, onEdi
     >
       <div className="crm-column-header">
         <div className="crm-column-title">
-          <span className="crm-stage-dot" aria-hidden="true" />
+          <span 
+            className="crm-stage-dot cursor-pointer" 
+            title="Alterar cor do fluxo"
+            onClick={() => onEditStageColor(stage)}
+            aria-hidden="true" 
+          />
           <h3 id={`crm-stage-${stage.id}`}>{stage.name}</h3>
           <span className="crm-column-count" aria-label={`${deals.length} negócios`}>
             {deals.length}
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {totalAmount > 0 && (
             <span className="crm-column-total-amount" title={`Total em ${stage.name}`}>
               {formattedTotal}
@@ -52,12 +85,52 @@ export function BoardColumn({ stage, stages, deals, contacts, memberships, onEdi
           <button
             type="button"
             className="crm-column-header-add"
-            onClick={onCreate}
-            aria-label={`Criar card em ${stage.name}`}
-            title={`Adicionar card em ${stage.name}`}
+            onClick={() => onAddCards(stage)}
+            aria-label={`Adicionar cards em ${stage.name}`}
+            title={`Adicionar cards em ${stage.name}`}
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
+
+          {/* Menu Dropdown com as 4 opções obrigatórias do fluxo */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="crm-column-header-menu w-7 h-7 rounded-md flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+                aria-label={`Opções do fluxo ${stage.name}`}
+                title="Opções do fluxo"
+              >
+                <MoreHorizontal className="w-3.5 h-3.5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[210px]">
+              <DropdownMenuLabel className="text-[11px] text-slate-400 font-normal px-2 py-1">
+                Opções do Fluxo
+              </DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => onAddCards(stage)} className="cursor-pointer">
+                <PlusCircle className="w-4 h-4 mr-2 text-[#007BFF]" />
+                Adicionar cards
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onConfigureTags} className="cursor-pointer">
+                <Tags className="w-4 h-4 mr-2 text-indigo-500" />
+                Configurar etiquetas
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onApplyTags(stage)} className="cursor-pointer">
+                <Tag className="w-4 h-4 mr-2 text-emerald-500" />
+                Adicionar etiquetas
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onCreatePipeline} className="cursor-pointer">
+                <Sparkles className="w-4 h-4 mr-2 text-amber-500" />
+                Criar funil
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => onEditStageColor(stage)} className="cursor-pointer">
+                <Palette className="w-4 h-4 mr-2 text-purple-500" />
+                Alterar cor do fluxo
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -77,12 +150,14 @@ export function BoardColumn({ stage, stages, deals, contacts, memberships, onEdi
                     deal={deal} 
                     stages={stages}
                     contacts={contacts}
+                    tags={tags}
                     memberships={memberships}
                     provided={provided} 
                     snapshot={snapshot}
                     onEdit={() => onEdit(deal)}
                     onMoveStage={(stageId) => onMoveStage(deal, stageId)}
                     onAssign={(membershipId) => onAssignDeal(deal, membershipId)}
+                    onManageTags={onConfigureTags}
                   />
                 )}
               </Draggable>
@@ -92,8 +167,8 @@ export function BoardColumn({ stage, stages, deals, contacts, memberships, onEdi
             <button 
               type="button" 
               className="crm-add-card-stage group" 
-              onClick={onCreate}
-              aria-label={`Criar card em ${stage.name}`}
+              onClick={() => onAddCards(stage)}
+              aria-label={`Adicionar cards em ${stage.name}`}
             >
               <Plus aria-hidden="true" className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
               <span>+ {stage.name}</span>

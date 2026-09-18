@@ -160,20 +160,20 @@ describe("PipelineService", () => {
         requiredFieldRules: { version: 1, rules: [] }
       } as any);
 
-      const stages = await service.listStages(ctx as any, pipeline.id);
+      const stages = (await service.listStages(ctx as any, pipeline.id)) as any[];
       assert.strictEqual(stages.length, 2);
       assert.strictEqual(stages[0].name, "Stage 1");
       assert.strictEqual(stages[1].name, "Stage 2");
 
       await service.deleteStage(ctx as any, stages[0].id);
-      const remainingStages = await service.listStages(ctx as any, pipeline.id);
+      const remainingStages = (await service.listStages(ctx as any, pipeline.id)) as any[];
       assert.strictEqual(remainingStages.length, 1);
       assert.strictEqual(remainingStages[0].name, "Stage 2");
 
       await service.deleteStage(ctx as any, stages[1].id);
       await service.deletePipeline(ctx as any, pipeline.id);
 
-      const pipelines = await service.listPipelines(ctx as any);
+      const pipelines = (await service.listPipelines(ctx as any)) as any[];
       assert.strictEqual(pipelines.find(p => p.id === pipeline.id), undefined);
     }, tenant.id);
   });

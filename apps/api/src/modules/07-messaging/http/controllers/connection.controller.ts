@@ -5,7 +5,7 @@ export function connectionRoutes(
   app: FastifyInstance,
   connectionService: ConnectionService
 ) {
-  app.post<{ Body: { name: string } }>(
+  app.post<{ Body: { name: string; provider?: string; metadata?: Record<string, unknown> } }>(
     "/connections",
     {
       schema: {
@@ -14,6 +14,8 @@ export function connectionRoutes(
           required: ["name"],
           properties: {
             name: { type: "string" },
+            provider: { type: "string" },
+            metadata: { type: "object" },
           },
         },
       },
@@ -21,9 +23,9 @@ export function connectionRoutes(
     async (request, reply) => {
       const tenantId = request.tenantId;
       if (!tenantId) return reply.code(401).send();
-      const { name } = request.body;
+      const { name, provider, metadata } = request.body;
 
-      const connection = await connectionService.createConnection(tenantId, name);
+      const connection = await connectionService.createConnection(tenantId, name, provider, metadata);
 
       return reply.code(201).send(connection);
     }

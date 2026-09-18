@@ -3,8 +3,8 @@
 /* eslint-disable react-hooks/refs -- @hello-pangea/dnd exposes callback refs and style props through its provided object. */
 
 import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
-import { Calendar, MoreHorizontal, User as UserIcon, Phone } from "lucide-react";
-import { CrmDeal, CrmPipelineStage, CrmContact } from "@bipesend/contracts";
+import { Calendar, MoreHorizontal, User as UserIcon, Phone, Tag } from "lucide-react";
+import { CrmDeal, CrmPipelineStage, CrmContact, CrmTag } from "@bipesend/contracts";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "@bipesend/ui";
 import { stageColor } from "./stage-colors";
 import type { CrmMembershipOption } from "../../types";
@@ -13,15 +13,17 @@ interface DealCardProps {
   deal: CrmDeal;
   stages: CrmPipelineStage[];
   contacts?: CrmContact[];
+  tags?: CrmTag[];
   memberships?: CrmMembershipOption[];
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   onEdit: () => void;
   onMoveStage: (stageId: string) => void;
   onAssign: (membershipId: string | null) => void;
+  onManageTags?: () => void;
 }
 
-export function DealCard({ deal, stages, contacts, memberships, provided, snapshot, onEdit, onMoveStage, onAssign }: DealCardProps) {
+export function DealCard({ deal, stages, contacts, tags = [], memberships, provided, snapshot, onEdit, onMoveStage, onAssign, onManageTags }: DealCardProps) {
   const formattedValue = new Intl.NumberFormat("pt-BR", { 
     style: "currency", 
     currency: deal.currency || "BRL" 
@@ -68,6 +70,13 @@ export function DealCard({ deal, stages, contacts, memberships, provided, snapsh
               Editar lead
             </DropdownMenuItem>
             
+            {onManageTags && (
+              <DropdownMenuItem onClick={(e: React.MouseEvent) => { e.stopPropagation(); onManageTags(); }}>
+                <Tag className="w-3.5 h-3.5 mr-2 text-slate-500" />
+                Etiquetas do lead
+              </DropdownMenuItem>
+            )}
+
             {memberships && memberships.length > 0 && (
               <>
                 <DropdownMenuSeparator />
@@ -110,6 +119,30 @@ export function DealCard({ deal, stages, contacts, memberships, provided, snapsh
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* Tags do Lead / Card */}
+      {(() => {
+        const custom = (contact?.customFields || {}) as Record<string, unknown>;
+        const tagNames = (Array.isArray(custom.tags) ? custom.tags : []) as string[];
+        if (tagNames.length === 0) return null;
+        return (
+          <div className="flex flex-wrap gap-1 mb-2">
+            {tagNames.slice(0, 3).map((t, idx) => (
+              <span 
+                key={idx} 
+                className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200/70 truncate max-w-[120px]"
+              >
+                {t}
+              </span>
+            ))}
+            {tagNames.length > 3 && (
+              <span className="text-[10px] font-medium px-1 py-0.5 rounded bg-slate-100 text-slate-500">
+                +{tagNames.length - 3}
+              </span>
+            )}
+          </div>
+        );
+      })()}
       
       {/* Contato Vinculado */}
       <div className="flex items-center gap-2 text-slate-600 text-[12px] mb-2.5">

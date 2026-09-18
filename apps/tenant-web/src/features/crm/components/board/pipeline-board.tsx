@@ -2,7 +2,9 @@
 
 import { useState, useTransition, useEffect } from "react";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-import { CrmPipeline, CrmPipelineStage, CrmDeal, CrmContact } from "@bipesend/contracts";
+import { Plus } from "lucide-react";
+import { CrmPipeline, CrmPipelineStage, CrmDeal, CrmContact, CrmTag } from "@bipesend/contracts";
+import { Button } from "@bipesend/ui";
 import { BoardColumn } from "./board-column";
 import { ContactsColumn } from "./contacts-column";
 import { PipelineList } from "./pipeline-list";
@@ -19,12 +21,35 @@ interface PipelineBoardProps {
   stages: CrmPipelineStage[];
   deals: CrmDeal[];
   contacts?: CrmContact[];
+  tags?: CrmTag[];
   memberships?: CrmMembershipOption[];
   viewMode: "kanban" | "list";
   sessionToken?: string;
+  onAddCards?: (stage: CrmPipelineStage) => void;
+  onConfigureTags?: () => void;
+  onApplyTags?: (stage: CrmPipelineStage) => void;
+  onCreatePipeline?: () => void;
+  onEditStageColor?: (stage: CrmPipelineStage) => void;
+  onCreateStage?: () => void;
 }
 
-export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals, contacts, memberships, viewMode, sessionToken }: PipelineBoardProps) {
+export function PipelineBoard({ 
+  tenantId, 
+  pipeline, 
+  stages, 
+  deals: initialDeals, 
+  contacts, 
+  tags = [],
+  memberships, 
+  viewMode, 
+  sessionToken,
+  onAddCards,
+  onConfigureTags,
+  onApplyTags,
+  onCreatePipeline,
+  onEditStageColor,
+  onCreateStage,
+}: PipelineBoardProps) {
   const router = useRouter();
   const [deals, setDeals] = useState<CrmDeal[]>(initialDeals);
   const [contactsState, setContactsState] = useState<CrmContact[]>(contacts || []);
@@ -34,8 +59,6 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
     token: sessionToken || "",
     onEvent: (event) => {
       if (event === "crm.deal.changed") {
-        // Quando ocorre um evento no websocket, fazemos um router.refresh() 
-        // para re-buscar os deals no Server Component e passá-los nas props `deals`.
         router.refresh();
       }
     }
@@ -124,29 +147,13 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
     const draggedDeal = deals.find(d => d.id === draggableId);
     if (!draggedDeal) return;
 
-    if (source.droppableId === destination.droppableId) {
-       // Apenas reordenação na mesma coluna. No CRM atual não temos ordem de deals na coluna salva no banco
-       // Mas podemos atualizar a UI otimisticamente
-       const columnDeals = deals.filter(d => d.stageId === fromStageId);
-       const otherDeals = deals.filter(d => d.stageId !== fromStageId);
-       const [reordered] = columnDeals.splice(source.index, 1);
-       columnDeals.splice(destination.index, 0, reordered);
-       setDeals([...otherDeals, ...columnDeals]);
-       return;
-    }
-
-    handleMoveStage(draggedDeal, toStageId);
-  };
-
-  const handleMoveStage = (draggedDeal: CrmDeal, toStageId: string) => {
-    // Movimentação entre colunas
-    // Checar regras da coluna destino
-    const toStage = stages.find(s => s.id === toStageId);
-    if (toStage?.requiredFieldRules && toStage.requiredFieldRules.rules.length > 0) {
-      // Tem regras. Precisamos verificar se o deal tem tudo preenchido
-      // O Deal Editor Modal cuidará disso. Vamos abrir o modal em "modo movimento"
+    // Checar regras de transição de estágio
+    const destStage = stages.find(s => s.id === toStageId);
+    const rules = destStage?.requiredFieldRules?.rules || [];
+    
+    // Se a etapa destino tem regras obrigatórias, verifica antes de mover
+    if (rules.length > 0) {
       setPendingMove({ deal: draggedDeal, toStageId });
-      setEditingDeal(draggedDeal);
       setIsEditorOpen(true);
       return;
     }
@@ -168,7 +175,6 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
         setDeals(deals); // Reverte optimismo
       } else {
         toast.success(result.message);
-        // Atualiza a versão do deal
         setDeals(currentDeals => 
           currentDeals.map(d => d.id === draggedDeal.id ? { ...d, ...result.data } as CrmDeal : d)
         );
@@ -176,8 +182,36 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
     });
   };
 
+  const handleMoveStage = (deal: CrmDeal, toStageId: string) => {
+    const destStage = stages.find(s => s.id === toStageId);
+    const rules = destStage?.requiredFieldRules?.rules || [];
+    if (rules.length > 0) {
+      setPendingMove({ deal, toStageId });
+      setIsEditorOpen(true);
+      return;
+    }
+
+    const updatedDeals = deals.map(d => d.id === deal.id ? { ...d, stageId: toStageId } : d);
+    setDeals(updatedDeals);
+
+    startTransition(async () => {
+      const result = await moveDealAction(tenantId, pipeline.id, deal.id, {
+        expectedVersion: deal.version,
+        toStageId,
+      });
+      if (!result.success) {
+        toast.error(result.message);
+        setDeals(deals);
+      } else {
+        toast.success(result.message);
+        setDeals(currentDeals => 
+          currentDeals.map(d => d.id === deal.id ? { ...d, ...result.data } as CrmDeal : d)
+        );
+      }
+    });
+  };
+
   const handleAssignDeal = (deal: CrmDeal, membershipId: string | null) => {
-    // Otimisticamente atualiza
     const updatedDeals = deals.map(d => 
       d.id === deal.id ? { ...d, assignedMembershipId: membershipId } : d
     );
@@ -207,10 +241,15 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
   };
 
   const handleCreate = (stageId: string) => {
-    setPendingMove(null);
-    setEditingDeal(null);
-    setIsEditorOpen(true);
-    setCreateStageId(stageId);
+    const st = stages.find(s => s.id === stageId);
+    if (st && onAddCards) {
+      onAddCards(st);
+    } else {
+      setPendingMove(null);
+      setEditingDeal(null);
+      setIsEditorOpen(true);
+      setCreateStageId(stageId);
+    }
   };
 
   const [createStageId, setCreateStageId] = useState<string | null>(null);
@@ -268,8 +307,14 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="crm-board">
           {stages.length === 0 ? (
-             <div className="flex items-center justify-center h-full text-slate-500 w-full px-12">
-               Este pipeline não possui etapas. Vá nas configurações para adicionar etapas.
+             <div className="flex flex-col items-center justify-center h-full text-slate-500 w-full px-12 py-16 text-center">
+               <p className="text-sm font-medium text-slate-700 mb-1">Este funil ainda não possui fluxos de atendimento.</p>
+               <p className="text-xs text-slate-400 mb-4 max-w-sm">Adicione os fluxos (etapas) onde seus cards e clientes serão organizados.</p>
+               {onCreateStage && (
+                 <Button onClick={onCreateStage} variant="primary" size="sm">
+                   <Plus className="w-4 h-4 mr-1.5" /> Adicionar Primeiro Fluxo
+                 </Button>
+               )}
              </div>
           ) : (
             <>
@@ -280,16 +325,37 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
                 <BoardColumn 
                   key={stage.id} 
                   stage={stage} 
-                  stages={stages}
+                  stages={stages} 
                   deals={deals.filter(d => d.stageId === stage.id)}
                   contacts={contactsState}
+                  tags={tags}
                   memberships={memberships}
                   onEdit={handleEdit}
                   onMoveStage={handleMoveStage}
                   onAssignDeal={handleAssignDeal}
-                  onCreate={() => handleCreate(stage.id)}
+                  onAddCards={onAddCards ? onAddCards : () => handleCreate(stage.id)}
+                  onConfigureTags={onConfigureTags || (() => {})}
+                  onApplyTags={onApplyTags ? onApplyTags : () => {}}
+                  onCreatePipeline={onCreatePipeline || (() => {})}
+                  onEditStageColor={onEditStageColor || (() => {})}
                 />
               ))}
+
+              {/* Botão de adicionar novo fluxo no final do Kanban */}
+              {onCreateStage && (
+                <div className="crm-add-column-card">
+                  <button
+                    type="button"
+                    onClick={onCreateStage}
+                    className="crm-btn-add-column group"
+                    title="Adicionar novo fluxo ao funil"
+                    aria-label="Adicionar novo fluxo ao funil"
+                  >
+                    <Plus className="w-5 h-5 text-[#007BFF] transition-transform group-hover:scale-110" />
+                    <span>Adicionar Fluxo</span>
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -316,7 +382,6 @@ export function PipelineBoard({ tenantId, pipeline, stages, deals: initialDeals,
         memberships={memberships}
         onSuccess={(updatedDeal) => {
             if (pendingMove) {
-               // Atualizou o deal e moveu
                setDeals(deals.map(d => d.id === updatedDeal.id ? updatedDeal : d));
             } else if (editingDeal) {
                setDeals(deals.map(d => d.id === updatedDeal.id ? updatedDeal : d));
