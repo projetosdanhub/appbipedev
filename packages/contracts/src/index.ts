@@ -512,6 +512,7 @@ export const crmPipelineSchema = z.object({
   status: pipelineStatusSchema,
   defaultCurrency: z.string().length(3).default("BRL"),
   version: z.number().int().positive(),
+  isDefault: z.boolean().default(false),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 }).strict();
@@ -520,6 +521,8 @@ export const createCrmPipelineSchema = crmPipelineSchema.pick({
   name: true,
   description: true,
   defaultCurrency: true,
+}).extend({
+  isDefault: z.boolean().optional(),
 });
 
 export const updateCrmPipelineSchema = createCrmPipelineSchema.partial().extend({
@@ -665,3 +668,5 @@ export type ClaimResourceBody = z.infer<typeof claimResourceBodySchema>;
 export * from "./inbox.js";
 export * from "./messaging.js";
 export * from "./connection.js";
+export * from "./ai.js";
+export * from "./voice-profile.schema.js";

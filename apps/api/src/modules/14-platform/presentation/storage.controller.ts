@@ -1,13 +1,12 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { Database } from "../../00-shared/infrastructure/database.js";
-import { LocalStorageService } from "../infrastructure/local-storage.service.js";
+import { storageService } from "../../00-shared/infrastructure/storage.service.js";
 import { MediaConversionService } from "../application/media-conversion.service.js";
 
 export function storageRoutes(
   fastify: FastifyInstance,
   _db: Database,
 ) {
-  const storageService = new LocalStorageService();
   const conversionService = new MediaConversionService();
 
   fastify.post(

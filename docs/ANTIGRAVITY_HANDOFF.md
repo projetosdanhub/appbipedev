@@ -97,6 +97,63 @@ Revisar o workflow Foundation no GitHub; presença do YAML não garante que bran
 - Concluir **AUTH-014** para revisão final de segurança, fluxos e logs de E2E.
 - Confirmar sucesso da pipeline com `pnpm build && pnpm foundation:check`. Depois de corrigir os gates necessários ao marco, atualizar cards/evidências e revisar o diff antes do merge. Esta fundação não autoriza deploy do CRM completo com blockers P0 abertos.
 
+## Frente IA: Estúdio de Voz & Clonagem Neural (XTTSv2) — 2026-09-23
+- **Microsserviço de IA (`services/ai-service`)**:
+  - Baseado em Coqui XTTSv2 com endpoints REST FastAPI: `GET /v1/tts/voices`, `GET /v1/tts/voices/{id}/sample`, `POST /v1/tts/clone`, `POST /v1/tts/synthesize`, `POST /v1/tts/synthesize/audio`, `DELETE /v1/tts/voices/{id}` e `GET /v1/tts/health`.
+  - Tratamento de áudio robusto no Windows via `soundfile` e `torchaudio` monkey-patching, contornando limitações de binários externos e FFmpeg estático.
+  - Suporte a persistência local em disco (`app/speakers/`) e na nuvem via Cloudflare R2 (S3-compatible) em `services/ai-service/app/storage.py`.
+- **Vozes Pré-definidas Homologadas**:
+  - **Germani** (Feminina Oficial, calorosa e consultiva): convertida e ajustada a partir de `voz-feminina-copy-opna.mp3`.
+  - **Lucas** (Masculino SDR / Negócios, objetivo e confiante): gerada e calibrada com XTTSv2.
+  - **Bia** (Infantil / Jovem, alegre e acolhedora): gerada e calibrada com XTTSv2.
+- **Áudio da Landing Page**:
+  - Atualizado com a síntese de alta fidelidade da voz clonada da Germani declamando o pitch comercial: *"Olá Camila! Temos sim o Kit Duo Floral a pronta entrega com frete grátis hoje..."*.
+- **Interface e Experiência (`apps/tenant-web`)**:
+  - Nova aba **"Estúdio de Voz & Clonagem Neural (XTTSv2)"** integrada em `/ai-agents` com reprodução de prévias em tempo real, seleção de categorias (femininas, masculinas, infantis, clonadas), sintetizador interativo de texto com chips de demonstração rápida, player de áudio com download de WAV e formulário de upload de áudios de referência para clonagem.
+  - Vínculo direto de vozes aos Agentes de Atendimento Omnichannel no modal de criação (`CreateAgentModal`).
+
+## Frente CRM: Ajuste de Contagem de Funis e Conector Completo do Telegram — 2026-09-24
+- **Ajuste da Contagem de Funis do CRM (Funil Principal do Sistema + Cota Adicional)**:
+  - **Funil Principal Gratuito (`isDefault = true`, "Atendimento Omnichannel")**: Não consome a cota de funis do plano comercial contratado e é permanente em todos os workspaces.
+  - **Proteção Absoluta contra Exclusão**: Bloqueio de exclusão e arquivamento tanto na API (`CANNOT_DELETE_DEFAULT_PIPELINE`) quanto na interface visual (`archive-pipeline-modal.tsx` e `crm-client.tsx`).
+  - **Contagem de Funis Customizados (`countCustomPipelines`)**: Considera estritamente `is_default = false AND status = 'active'`, garantindo que limites comerciais se apliquem apenas a funis extras criados pelo usuário.
+  - **Transparência Visual nos Planos e CRM**:
+    - Catálogo de Planos e Landing Page exibem: "1 Funil adicional (+1 Principal Gratuito = 2 funis)", "3 adicionais (+1 Principal = 4 funis)", etc.
+    - Seletor de Funil no CRM exibe badge emerald `Principal Gratuito` e contador explicativo `1 Principal Gratuito + X adicionais`.
+    - Modal de Criação de Funil com banner explicativo de regras de cotas.
+- **Integração Completa do Conector Telegram (Telegram Bot API)**:
+  - **Webhook Controller (`telegram-webhook.controller.ts`)**: Rotas `GET /api/v1/webhooks/telegram` e `POST /api/v1/webhooks/telegram` com suporte a mensagens de texto, comandos (`/start`, `/ajuda`), inline callbacks, criação automática de contatos, conversas e mensagens inbound.
+  - **Roteamento Automático de Leads no CRM**: O helper `syncLeadToCrm` consulta os funis ordenando por `is_default DESC, created_at ASC LIMIT 1`, garantindo que todo contato do Telegram (e demais canais) entre automaticamente no funil principal do workspace.
+  - **Interface de Conexão no Tenant Web (`integrations-client.tsx`)**:
+    - Card de métricas e canal ativo com telemetria (latência, mensagens, status).
+    - Modal de onboarding com passo a passo ilustrado do `@BotFather` e botão de teste do token em tempo real (`testTelegramBotTokenAction` via `getMe`).
+    - Simulador de mensagens inbound com suporte completo a mensagens simuladas do Telegram.
+  - **Filtros e Ações no CRM**:
+    - `OmnichannelFilter` com suporte ao canal Telegram e ícone `Send` em azul `#229ED9`.
+    - `AddLeadModal` com filtro de leads do Telegram, pesquisa por `@username` e criação rápida com canal Telegram.
+
+## Frente SuperAdmin: Reestruturação de IA Mestre, Análise de Arquivos da Germani & Configurações de Identidade — 2026-09-24
+- **Reestruturação Completa da Criação de IA Mestre (`MasterAgentEditor`)**:
+  - Eliminação total de popups: criação e edição acontecem diretamente na tela (`isCreatingTemplate`) com fluxo guiado passo a passo.
+  - Passo 1 (Identidade & Persona): Nome, pronome/gênero, categoria e system prompt com templates de conduta rápida.
+  - Passo 2 (Motor de IA & Modelo Ativo): Catálogo com Google Gemini (3.8 Flash, 3.8 Pro, etc.) e OpenAI (GPT-4.5 Instant, o3-mini, etc.).
+  - Passo 3 (Temperatura & Criatividade Dedicada): Calibração de temperatura estritamente isolada daquele agente mestre, sem interferir na Germani.
+  - Passo 4 (Síntese Vocal): Associação direta de vozes homologadas ou clonadas no Estúdio XTTS.
+  - Passo 5 (Guardrails Inegociáveis): Chips de adição rápida e edição inline de diretrizes éticas.
+  - Coluna Direita (Sticky): Preview visual idêntico ao card que os clientes verão na biblioteca e Simulador de Consumo por Mensagem em tempo real (custo em BRL/USD, rendimento por R$ 1,00 e projeções por volume).
+- **Análise Multimodal de Arquivos para a Germani (`uploadGermaniAttachmentAction`)**:
+  - Suporte completo a envio de imagens, áudios e documentos no chat com a Germani (`germani-copilot-drawer.tsx` e `germani-chat-playground.tsx`).
+  - Tratamento com Base64 e integração direta à API multimodal do Google Gemini (`inlineData`), além de suporte a persistência no Cloudflare R2 / Local Storage.
+- **Configurações & Identidade do Painel SuperAdmin (`/settings`)**:
+  - Nova rota dedicada no SuperAdmin com acesso na barra lateral e top navbar.
+  - Simulador interativo em tempo real da aba do navegador (Chrome/Edge/Firefox) com atualização dinâmica de `document.title` e `<link rel="icon">`.
+  - Galeria de Favicons Oficiais da BipeSend (Degradê Original, Azul Soberano, Violeta Tech, Dark Carbon e ICO Clássico) e suporte a upload personalizado.
+  - Painel de Auditoria Lighthouse & Diretrizes de SEO Privado: confirmação do bloqueio de indexação (`robots: { index: false, follow: false }`) e checklist completo de Acessibilidade WCAG AAA/AA (100% Lighthouse target).
+- **Esclarecimento de Escopos e Memória da Germani**:
+  - `saveGermaniChatHistoryAction()`: Grava atômica e seguramente até 200 mensagens no servidor, garantindo continuidade entre diferentes dispositivos e mesmo após limpeza de cache do navegador.
+  - `clearGermaniChatHistoryAction()`: Limpa exclusivamente o histórico da conversa ativa; todas as configurações, personalidade, inteligência, temperatura, guardrails e integrações permanecem 100% intactas e salvas.
+  - Distinção no painel da Germani entre a Cota Global da Plataforma (tokens compartilhados com clientes) e as Calibrações Exclusivas da assessora.
+
 ## Reversão
 
 Nenhuma migration foi aplicada nesta entrega. Para desfazer código, use revert do(s) commit(s) da branch em um checkout apropriado; não apagar volumes nem executar down/reset. A reversão reabre os defeitos anteriores de autenticação: mantê-los corrigidos é preferível a reutilizar o caminho legado. Se houver mudanças locais adicionais, revisar antes de reverter.
@@ -106,3 +163,4 @@ Nenhuma migration foi aplicada nesta entrega. Para desfazer código, use revert 
 Código validado: `5f5449ff8c7e5c217d590f67e67c6a9dec4868e1`. [Abrir branch no GitHub](https://github.com/projetosdanhub/appbipedev/tree/feat/saas-foundation-design-system). A entrega documental posterior preserva esse código. O CI remoto deve ser consultado antes do merge; esta branch não foi mesclada.
 
 CI da implementação: [Foundation passou](https://github.com/projetosdanhub/appbipedev/actions/runs/34793805919), incluindo builds e smoke de navegador. Banco, integração real de identidade e MFA continuam nos gates explícitos.
+

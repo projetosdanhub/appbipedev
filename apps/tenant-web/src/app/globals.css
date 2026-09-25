@@ -261,3 +261,97 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: var(--color-ink-900) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+/* ───── Continuous Infinite Logo Marquee ───── */
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-infinite {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 28s linear infinite;
+}
+
+.animate-marquee-infinite:hover {
+  animation-play-state: paused;
+}
+
+/* ───── Figma-Style Micro-Animations (High Performance, GPU accelerated) ───── */
+
+/* 1. Shimmer sweep on primary CTA buttons */
+@keyframes figma-shimmer-sweep {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  50%, 100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.figma-shimmer-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.figma-shimmer-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 100%
+  );
+  transform: translateX(-150%) skewX(-20deg);
+  animation: figma-shimmer-sweep 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* 2. Physics-based hover micro-lift */
+.figma-hover-card {
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 320ms cubic-bezier(0.16, 1, 0.3, 1), border-color 320ms ease;
+}
+.figma-hover-card:hover {
+  transform: translateY(-4px);
+}
+
+/* 3. Subtle ambient glow for popular plan */
+@keyframes figma-ambient-pulse {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(0, 123, 255, 0.22), 0 10px 40px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 38px rgba(0, 123, 255, 0.38), 0 14px 48px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.figma-popular-glow {
+  animation: figma-ambient-pulse 4s ease-in-out infinite;
+}
+
+/* 4. Pulse wave for audio preview - uses transform scaleY to prevent layout reflow/card flexing */
+@keyframes figma-soundwave-kf {
+  0%, 100% {
+    transform: scaleY(0.25);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.figma-wave-bar {
+  height: 20px;
+  transform-origin: center;
+  animation: figma-soundwave-kf 1s ease-in-out infinite alternate;
+  will-change: transform;
+}

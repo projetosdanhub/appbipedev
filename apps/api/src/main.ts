@@ -81,7 +81,7 @@ async function bootstrap(): Promise<void> {
   const { authRoutes } = await import(
     "./modules/01-identity/presentation/auth.controller.js"
   );
-  const { createAuthMiddleware } = await import(
+  const { createAuthMiddleware, createSuperAdminAuthMiddleware } = await import(
     "./modules/00-shared/presentation/auth.middleware.js"
   );
 
@@ -91,6 +91,9 @@ async function bootstrap(): Promise<void> {
 
   const authMiddleware = createAuthMiddleware(
     sessionRepository,
+    userRepository,
+  );
+  const superAdminAuthMiddleware = createSuperAdminAuthMiddleware(
     userRepository,
   );
 
@@ -267,11 +270,25 @@ async function bootstrap(): Promise<void> {
 
   const websocketGateway = new WebsocketGateway();
 
-  // Evolution Service
+  // Evolution Service + Credentials Vault
   const { EvolutionService } = await import(
     "./modules/13-integrations/application/evolution.service.js"
   );
-  const evolutionService = new EvolutionService(db, websocketGateway);
+  const { CredentialsRepository } = await import(
+    "./modules/13-integrations/infrastructure/credentials.repository.js"
+  );
+  const { CredentialsService } = await import(
+    "./modules/13-integrations/application/credentials.service.js"
+  );
+
+  const credentialsRepository = new CredentialsRepository(db);
+  const credentialsService = new CredentialsService(credentialsRepository);
+  const evolutionService = new EvolutionService(db, websocketGateway, credentialsService);
+
+  const { storageService } = await import(
+    "./modules/00-shared/infrastructure/storage.service.js"
+  );
+  storageService.setCredentialsService(credentialsService);
 
   const dealService = new DealService(db, dealRepository, pipelineRepository, contactRepository, websocketGateway);
   
@@ -317,7 +334,11 @@ async function bootstrap(): Promise<void> {
     serverAdapter,
   });
 
-  app.register(serverAdapter.registerPlugin(), { prefix: '/admin/queues' });
+  // Bull Board Setup (Protected by SuperAdmin Auth)
+  app.register(async (adminQueuesApp) => {
+    adminQueuesApp.addHook("onRequest", superAdminAuthMiddleware);
+    adminQueuesApp.register(serverAdapter.registerPlugin(), { prefix: '' });
+  }, { prefix: '/admin/queues' });
 
   // Register auth routes (no auth required for most, auth plugin handles middleware where needed)
   app.register(async (instance) => {
@@ -348,12 +369,21 @@ async function bootstrap(): Promise<void> {
     const { ConnectionService } = await import(
       "./modules/07-messaging/application/connection.service.js"
     );
-    const connectionService = new ConnectionService(db, evolutionService);
+    const connectionService = new ConnectionService(db, evolutionService, websocketGateway);
     
     // Register messaging routes
     instance.register(async (app) => {
       connectionRoutes(app, connectionService);
     }, { prefix: "/api/v1/messaging" });
+  });
+
+  // Admin Credentials routes (Dedicated SuperAdmin Auth scope)
+  app.register(async (superadminApp) => {
+    superadminApp.addHook("onRequest", superAdminAuthMiddleware);
+    const { adminCredentialsRoutes } = await import(
+      "./modules/13-integrations/presentation/admin-credentials.controller.js"
+    );
+    adminCredentialsRoutes(superadminApp, credentialsService);
   });
 
   // WebSocket Route — registered outside auth middleware block;
@@ -373,6 +403,21 @@ async function bootstrap(): Promise<void> {
       "./modules/13-integrations/presentation/evolution-webhook.controller.js"
     );
     evolutionWebhookRoutes(instance, db, evolutionService);
+
+    const { metaWebhookRoutes } = await import(
+      "./modules/13-integrations/presentation/meta-webhook.controller.js"
+    );
+    metaWebhookRoutes(instance, db, websocketGateway);
+
+    const { tiktokWebhookRoutes } = await import(
+      "./modules/13-integrations/presentation/tiktok-webhook.controller.js"
+    );
+    tiktokWebhookRoutes(instance, db, websocketGateway);
+
+    const { telegramWebhookRoutes } = await import(
+      "./modules/13-integrations/presentation/telegram-webhook.controller.js"
+    );
+    telegramWebhookRoutes(instance, db, websocketGateway);
   });
 
   try {

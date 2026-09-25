@@ -550,6 +550,7 @@ model Pipeline {
   status          String   @default("active") @db.VarChar(50)
   defaultCurrency String   @default("BRL") @map("default_currency") @db.VarChar(3)
   version         Int      @default(1)
+  isDefault       Boolean  @default(false) @map("is_default")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
 

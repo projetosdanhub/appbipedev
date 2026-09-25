@@ -8,7 +8,7 @@ export class FakeMessagingProvider implements IMessagingProvider {
     this.sentMessages.push({ instanceName, remoteJid, payload });
   }
 
-  async getConnectionStatus(instanceName: string): Promise<"connected" | "disconnected" | "connecting"> {
+  async getConnectionStatus(_instanceName: string): Promise<"connected" | "disconnected" | "connecting"> {
     return this.connectionStatus;
   }
 }

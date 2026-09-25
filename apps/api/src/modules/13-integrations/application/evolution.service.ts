@@ -2,57 +2,182 @@ import type { Database } from "../../00-shared/infrastructure/database.js";
 import { storageService } from "../../00-shared/infrastructure/storage.service.js";
 import { env } from "../../../config/env.js";
 import type { WebsocketGateway } from "../../15-events/infrastructure/websocket.gateway.js";
+import { syncLeadToCrm } from "./crm-sync.helper.js";
+import type { CredentialsService } from "./credentials.service.js";
 import crypto from "node:crypto";
+import QRCode from "qrcode";
+
+/** Cache em memória para evitar query ao BD a cada operação. */
+interface CachedCredentials {
+  url: string;
+  apiKey: string;
+  fetchedAt: number;
+}
+
+const CACHE_TTL_MS = 60_000; // 60 segundos
 
 export class EvolutionService {
-  constructor(private readonly db: Database, private gateway?: WebsocketGateway) {}
+  private _credCache: CachedCredentials | null = null;
+
+  constructor(
+    private readonly db: Database,
+    private gateway?: WebsocketGateway,
+    private credentialsService?: CredentialsService,
+  ) {}
+
+  /** Retorna credenciais do BD (via CredentialsService) com fallback para .env. Cache de 60s. */
+  private async getCredentials(): Promise<{ url: string; apiKey: string }> {
+    // Cache hit
+    if (this._credCache && Date.now() - this._credCache.fetchedAt < CACHE_TTL_MS) {
+      return this._credCache;
+    }
+
+    // Tenta BD primeiro (se CredentialsService disponível)
+    if (this.credentialsService) {
+      try {
+        const creds = await this.credentialsService.getEvolutionCredentials();
+        this._credCache = { ...creds, fetchedAt: Date.now() };
+        return this._credCache;
+      } catch {
+        // Fallback silencioso
+      }
+    }
+
+    // Fallback .env
+    const key = process.env.EVOLUTION_API_KEY || env.EVOLUTION_API_KEY;
+    const apiKey = (key && key !== "12345") ? key : "BipesendLocalDevApiKey123";
+    const url = env.EVOLUTION_API_URL;
+    this._credCache = { url, apiKey, fetchedAt: Date.now() };
+    return this._credCache;
+  }
+
+  private async getApiKey(): Promise<string> {
+    return (await this.getCredentials()).apiKey;
+  }
+
+  private async getApiUrl(): Promise<string> {
+    return (await this.getCredentials()).url;
+  }
+
+  /**
+   * Extrai o QR Code oficial gerado pelo motor Baileys da Evolution API.
+   * Prioriza o base64 PNG nativo que vem perfeitamente formatado para o scanner do WhatsApp.
+   * Se houver apenas o código raw de pareamento (2@...), gera via qrcode com nível 'L' (padrão WhatsApp).
+   */
+  private async extractStandardQrCode(data: any): Promise<string | null> {
+    // 1. Prioriza o base64 nativo oficial emitido pelo Baileys
+    const b64 = data?.base64 || data?.qrcode?.base64;
+    if (b64 && typeof b64 === "string") {
+      if (b64.startsWith("data:image/")) {
+        return b64;
+      }
+      if (b64.length > 100) {
+        return `data:image/png;base64,${b64}`;
+      }
+    }
+
+    // 2. Se apenas o código raw estiver disponível, renderiza com nível 'L'
+    const rawCode = data?.code || data?.qrcode?.code;
+    if (rawCode && typeof rawCode === "string" && rawCode.trim().length > 10) {
+      try {
+        return await QRCode.toDataURL(rawCode.trim(), {
+          width: 360,
+          margin: 2,
+          color: {
+            dark: "#000000",
+            light: "#FFFFFF",
+          },
+          errorCorrectionLevel: "L",
+        });
+      } catch (err) {
+        console.warn("[EvolutionService] Erro ao gerar QR Code padrão via QRCode.toDataURL:", err);
+      }
+    }
+
+    return null;
+  }
 
   async createInstance(tenantId: string, name: string) {
     const instanceName = name.replace(/[^a-zA-Z0-9]/g, "").toLowerCase() + "-" + tenantId.split("-")[0];
     
-    // Check if connection already exists
-    const existing = await this.db.query("SELECT id FROM connections WHERE tenant_id = $1 AND instance_name = $2 LIMIT 1", [tenantId, instanceName]);
+    // Verifica se conexão já existe
+    const existing = await this.db.query(
+      "SELECT id FROM connections WHERE tenant_id = $1 AND instance_name = $2 LIMIT 1",
+      [tenantId, instanceName]
+    );
     
-    const webhookUrl = env.API_PUBLIC_URL ? `${env.API_PUBLIC_URL}/api/v1/webhooks/evolution` : "https://api.localhost/api/v1/webhooks/evolution";
+    const webhookUrl = env.API_PUBLIC_URL 
+      ? `${env.API_PUBLIC_URL}/api/v1/webhooks/evolution` 
+      : "http://host.docker.internal:4000/api/v1/webhooks/evolution";
     
-    const url = `${env.EVOLUTION_API_URL}/instance/create`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": env.EVOLUTION_API_KEY || "",
-      },
-      body: JSON.stringify({
-        instanceName,
-        token: instanceName,
-        qrcode: true,
-        integration: "WHATSAPP-BAILEYS",
-        reject_call: true,
-        webhook: webhookUrl,
-        webhook_by_events: false,
-        events: ["MESSAGES_UPSERT", "CALL", "CONNECTION_UPDATE", "QRCODE_UPDATED"]
-      })
-    });
+    const baseUrl = await this.getApiUrl();
+    const url = `${baseUrl}/instance/create`;
+    let qrcode: string | null = null;
+    const apiKey = await this.getApiKey();
 
-    if (!response.ok) {
-      const err = await response.text();
-      throw new Error(`Failed to create instance in Evolution API: ${err}`);
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": apiKey,
+        },
+        body: JSON.stringify({
+          instanceName,
+          token: instanceName,
+          qrcode: true,
+          integration: "WHATSAPP-BAILEYS",
+          reject_call: true,
+          webhook: webhookUrl,
+          webhook_by_events: false,
+          events: ["MESSAGES_UPSERT", "CALL", "CONNECTION_UPDATE", "QRCODE_UPDATED"]
+        }),
+        signal: AbortSignal.timeout(8000)
+      });
+
+      if (response.ok) {
+        const data = await response.json() as any;
+        qrcode = await this.extractStandardQrCode(data);
+      } else {
+        const err = await response.text();
+        console.warn(`[EvolutionService] Evolution API returned status ${response.status}: ${err}`);
+      }
+    } catch (_fetchErr) {
+      console.warn(`[EvolutionService] Evolution API create call error at ${url}`);
     }
 
-    const data = await response.json() as any;
-    const qrcode = data?.qrcode?.base64 || data?.base64 || null; 
+    // Se não veio QR code no create (instância criada ou já existente), busca via connect com polling
+    if (!qrcode) {
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          await new Promise((r) => setTimeout(r, attempt === 1 ? 800 : 1500));
+          const connectUrl = `${baseUrl}/instance/connect/${instanceName}`;
+          const connectRes = await fetch(connectUrl, {
+            headers: { "apikey": apiKey },
+            signal: AbortSignal.timeout(6000),
+          });
+          if (connectRes.ok) {
+            const connectData = await connectRes.json() as any;
+            qrcode = await this.extractStandardQrCode(connectData);
+            if (qrcode) break;
+          }
+        } catch (_connectErr) {
+          // Retry silencioso
+        }
+      }
+    }
     
     const connectionId = crypto.randomUUID();
     
     if (existing.length === 0) {
       await this.db.query(
-        "INSERT INTO connections (id, tenant_id, name, provider, instance_name, status, created_at, updated_at) VALUES ($1, $2, $3, 'evolution_api', $4, 'connecting', NOW(), NOW())",
-        [connectionId, tenantId, name, instanceName]
+        "INSERT INTO connections (id, tenant_id, name, provider, instance_name, status, qrcode, created_at, updated_at) VALUES ($1, $2, $3, 'evolution_api', $4, 'connecting', $5, NOW(), NOW())",
+        [connectionId, tenantId, name, instanceName, qrcode]
       );
     } else {
       await this.db.query(
-        "UPDATE connections SET status = 'connecting', updated_at = NOW() WHERE tenant_id = $1 AND instance_name = $2",
-        [tenantId, instanceName]
+        "UPDATE connections SET status = 'connecting', qrcode = COALESCE($1, qrcode), updated_at = NOW() WHERE tenant_id = $2 AND instance_name = $3",
+        [qrcode, tenantId, instanceName]
       );
     }
     
@@ -60,6 +185,77 @@ export class EvolutionService {
       instanceName,
       qrcode
     };
+  }
+
+  async getQrCode(instanceName: string) {
+    const apiKey = await this.getApiKey();
+    const baseUrl = await this.getApiUrl();
+    try {
+      const url = `${baseUrl}/instance/connect/${instanceName}`;
+      const response = await fetch(url, {
+        headers: {
+          "apikey": apiKey,
+        },
+        signal: AbortSignal.timeout(8000),
+      });
+
+      if (response.ok) {
+        const data = await response.json() as any;
+        let qrcode = await this.extractStandardQrCode(data);
+
+        // Se o QR expirou ou atingiu contagem limite (ou code nulo), recria a instância na Evolution
+        if (!qrcode && (data.count === undefined || data.count >= 3 || !data.code)) {
+          console.log(`[EvolutionService] QR code expirado para ${instanceName}, recriando instância fresh...`);
+          try {
+            await fetch(`${baseUrl}/instance/delete/${instanceName}`, {
+              method: "DELETE",
+              headers: { "apikey": apiKey },
+              signal: AbortSignal.timeout(5000),
+            });
+          } catch {}
+
+          const createRes = await fetch(`${baseUrl}/instance/create`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": apiKey,
+            },
+            body: JSON.stringify({
+              instanceName,
+              token: instanceName,
+              qrcode: true,
+              integration: "WHATSAPP-BAILEYS",
+              reject_call: true,
+              events: ["MESSAGES_UPSERT", "CALL", "CONNECTION_UPDATE", "QRCODE_UPDATED"],
+            }),
+            signal: AbortSignal.timeout(8000),
+          });
+
+          if (createRes.ok) {
+            await new Promise((r) => setTimeout(r, 1500));
+            const freshConnectRes = await fetch(`${baseUrl}/instance/connect/${instanceName}`, {
+              headers: { "apikey": apiKey },
+              signal: AbortSignal.timeout(6000),
+            });
+            if (freshConnectRes.ok) {
+              const freshData = await freshConnectRes.json() as any;
+              qrcode = await this.extractStandardQrCode(freshData);
+            }
+          }
+        }
+
+        if (qrcode) {
+          await this.db.query(
+            "UPDATE connections SET qrcode = $1, status = 'connecting', updated_at = NOW() WHERE instance_name = $2",
+            [qrcode, instanceName]
+          );
+          return qrcode;
+        }
+      }
+    } catch (err) {
+      console.warn(`[EvolutionService] Não foi possível buscar QR code de ${instanceName}:`, err);
+    }
+    return null;
   }
 
   async handleMessagesUpsert(instanceName: string, data: any) {
@@ -135,7 +331,7 @@ export class EvolutionService {
       let conversationId = "";
 
       if (conversations.length === 0) {
-        if (isFromMe) return null; // Don't create conversation if fromMe and no open conversation exists
+        if (isFromMe) return null;
 
         conversationId = crypto.randomUUID();
         await tx.query(
@@ -167,6 +363,19 @@ export class EvolutionService {
         "UPDATE conversations SET last_activity_at = NOW() WHERE id = $1 AND tenant_id = $2",
         [conversationId, tenantId]
       );
+
+      // 4. Sincroniza Lead com o CRM Kanban automaticamente
+      if (!isFromMe) {
+        await syncLeadToCrm({
+          db: tx as unknown as Database,
+          gateway: this.gateway,
+          tenantId,
+          contactId,
+          contactName: pushName,
+          channel: "whatsapp",
+          previewText: text,
+        });
+      }
       
       return { conversationId, tenantId };
     });
@@ -191,18 +400,14 @@ export class EvolutionService {
   }
 
   private async rejectCall(instanceName: string, remoteJid: string, callId: string) {
-    // Normally evolution has an endpoint to reject calls or block
-    // Wait, Evolution API `call` webhook doesn't allow direct rejection through a simple endpoint, 
-    // it depends on the evolution API version. Often people send a text message immediately.
-    // Assuming Evolution API POST /chat/rejectCall or similar isn't standard, we might just send the message.
-    // For now, let's pretend /chat/rejectCall exists or just skip it if it doesn't.
     try {
-      const url = `${env.EVOLUTION_API_URL}/chat/rejectCall/${instanceName}`;
+      const baseUrl = await this.getApiUrl();
+      const url = `${baseUrl}/chat/rejectCall/${instanceName}`;
       await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "apikey": env.EVOLUTION_API_KEY || "",
+          "apikey": await this.getApiKey(),
         },
         body: JSON.stringify({
           number: remoteJid,
@@ -216,12 +421,13 @@ export class EvolutionService {
 
   private async sendMessage(instanceName: string, remoteJid: string, text: string) {
     try {
-      const url = `${env.EVOLUTION_API_URL}/message/sendText/${instanceName}`;
+      const baseUrl = await this.getApiUrl();
+      const url = `${baseUrl}/message/sendText/${instanceName}`;
       await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "apikey": env.EVOLUTION_API_KEY || "",
+          "apikey": await this.getApiKey(),
         },
         body: JSON.stringify({
           number: remoteJid,
@@ -239,12 +445,19 @@ export class EvolutionService {
     
     // state could be 'open', 'close', 'connecting'
     let dbStatus = "disconnected";
-    if (data.state === "open") dbStatus = "connected";
-    if (data.state === "connecting") dbStatus = "connecting";
+    let qrcodeToSave: string | null = null;
+    
+    if (data.state === "open") {
+      dbStatus = "connected";
+    } else if (data.state === "connecting") {
+      dbStatus = "connecting";
+      // Se tiver qrcode no connection update
+      qrcodeToSave = await this.extractStandardQrCode(data) || data.qrcode?.base64 || data.base64 || null;
+    }
     
     await this.db.query(
-      "UPDATE connections SET status = $1, qrcode = NULL, updated_at = NOW() WHERE instance_name = $2",
-      [dbStatus, instanceName]
+      "UPDATE connections SET status = $1, qrcode = COALESCE($2, qrcode), updated_at = NOW() WHERE instance_name = $3",
+      [dbStatus, qrcodeToSave, instanceName]
     );
 
     const connections = await this.db.query("SELECT tenant_id FROM connections WHERE instance_name = $1 LIMIT 1", [instanceName]);
@@ -254,12 +467,12 @@ export class EvolutionService {
   }
 
   async handleQrcodeUpdated(instanceName: string, data: any) {
-    const qrcode = data.qrcode?.base64 || data.base64;
+    const qrcode = await this.extractStandardQrCode(data) || data.qrcode?.base64 || data.base64;
     if (!qrcode) return;
 
     await this.db.query(
-      "UPDATE connections SET status = 'connecting', updated_at = NOW() WHERE instance_name = $1",
-      [instanceName]
+      "UPDATE connections SET status = 'connecting', qrcode = $1, updated_at = NOW() WHERE instance_name = $2",
+      [qrcode, instanceName]
     );
 
     const connections = await this.db.query("SELECT tenant_id FROM connections WHERE instance_name = $1 LIMIT 1", [instanceName]);
@@ -267,15 +480,17 @@ export class EvolutionService {
       this.gateway?.broadcastToTenant(connections[0].tenant_id, "connection.qrcode", { instanceName, qrcode });
     }
   }
+
   async deleteInstance(tenantId: string, instanceName: string) {
     // Apaga na API do Evolution
     try {
-      const url = `${env.EVOLUTION_API_URL}/instance/delete/${instanceName}`;
+      const baseUrl = await this.getApiUrl();
+      const url = `${baseUrl}/instance/delete/${instanceName}`;
       await fetch(url, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "apikey": env.EVOLUTION_API_KEY || "",
+          "apikey": await this.getApiKey(),
         }
       });
     } catch (e) {

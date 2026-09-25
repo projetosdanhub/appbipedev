@@ -5,36 +5,41 @@ import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@bipesend/db";
 import * as argon2 from "argon2";
-import { authenticator } from "otplib";
+import { verifyTotp } from "./totp";
+
+import { hashSecret } from "@bipesend/security";
 
 export function getSurfaceAuthConfig(surface: "tenant" | "platform"): NextAuthConfig {
+  const isSecure = process.env.NODE_ENV === "production" && process.env.INSECURE_COOKIES !== "true";
+  
   return {
+    trustHost: true,
     secret: surface === "platform" ? platformSecret() : authSecret(),
     cookies: {
       sessionToken: {
-        name: `${process.env.NODE_ENV === "production" ? "__Secure-" : ""}bipesend.${surface}.session-token`,
+        name: `${isSecure ? "__Secure-" : ""}bipesend.${surface}.session-token`,
         options: {
           httpOnly: true,
           sameSite: "lax",
           path: "/",
-          secure: process.env.NODE_ENV === "production",
+          secure: isSecure,
         },
       },
       csrfToken: {
-        name: `bipesend.${surface}.csrf-token`,
+        name: `${isSecure ? "__Host-" : ""}bipesend.${surface}.csrf-token`,
         options: {
           httpOnly: true,
           sameSite: "lax",
           path: "/",
-          secure: process.env.NODE_ENV === "production",
+          secure: isSecure,
         },
       },
       callbackUrl: {
-        name: `bipesend.${surface}.callback-url`,
+        name: `${isSecure ? "__Secure-" : ""}bipesend.${surface}.callback-url`,
         options: {
           sameSite: "lax",
           path: "/",
-          secure: process.env.NODE_ENV === "production",
+          secure: isSecure,
         },
       },
     },
@@ -61,42 +66,46 @@ export function getSurfaceAuthConfig(surface: "tenant" | "platform"): NextAuthCo
           email: { label: "Email", type: "email" },
           password: { label: "Password", type: "password" },
           code: { label: "Code", type: "text" },
+          loginType: { label: "Login Type", type: "text" },
           rememberMe: { label: "Remember Me", type: "text" },
         },
         async authorize(credentials) {
-          if (
-            typeof credentials?.email !== "string" ||
-            typeof credentials?.password !== "string" ||
-            credentials.password.length > 128
-          )
-            return null;
+          if (typeof credentials?.email !== "string") return null;
           const email = credentials.email.trim().toLowerCase();
-          await checkAuthRateLimit(
-            `login:${surface}`,
-            email,
-            10,
-            15 * 60 * 1000,
-          );
+          const loginType = (credentials?.loginType as string) || (credentials?.password ? "password" : "code");
 
-          const user = await prisma.user.findUnique({
-            where: { email },
-          });
+          if (loginType === "password") {
+            if (
+              typeof credentials?.password !== "string" ||
+              credentials.password.length > 128
+            )
+              return null;
+            try {
+              await checkAuthRateLimit(
+                `login:${surface}`,
+                email,
+                10,
+                15 * 60 * 1000,
+              );
+            } catch (err: any) {
+              if (err?.message !== "AUTH_UNAVAILABLE" || process.env.NODE_ENV === "production") {
+                throw err;
+              }
+            }
 
-          if (!user || !user.password) return null;
-          if (
-            surface === "platform"
-              ? !user.isSuperadmin || !user.twoFactorEnabled
-              : user.isSuperadmin
-          )
-            return null;
+            const user = await prisma.user.findUnique({
+              where: { email },
+            });
 
-          const isValid = await argon2.verify(
-            user.password,
-            credentials.password as string,
-          );
-          if (!isValid) return null;
+            if (!user || !user.password) return null;
+            if (surface === "platform" && !user.isSuperadmin) return null;
 
-          if (user.twoFactorEnabled) {
+            const isValid = await argon2.verify(
+              user.password,
+              credentials.password as string,
+            );
+            if (!isValid) return null;
+
             class AuthError2FA extends CredentialsSignin {
               code = "2FA_REQUIRED";
               constructor() { super("2FA_REQUIRED"); }
@@ -110,45 +119,167 @@ export function getSurfaceAuthConfig(surface: "tenant" | "platform"): NextAuthCo
               constructor() { super("INVALID_2FA_CODE"); }
             }
 
-            if (!credentials.code) {
-              throw new AuthError2FA();
+            const rawCode = typeof credentials?.code === "string" ? credentials.code.trim().toUpperCase() : "";
+            const hasValidCodeFormat = rawCode.length >= 6 && rawCode !== "UNDEFINED" && rawCode !== "NULL";
+
+            if (!user.twoFactorEnabled) {
+              if (surface === "platform") {
+                // Superadmin precisa configurar 2FA obrigatoriamente
+                if (!hasValidCodeFormat) {
+                  throw new AuthErrorSetup2FA();
+                }
+
+                if (!user.twoFactorSecret) {
+                  throw new AuthErrorSetup2FA();
+                }
+
+                const isCodeValid = verifyTotp({
+                  token: rawCode,
+                  secret: user.twoFactorSecret,
+                });
+
+                if (!isCodeValid) {
+                  throw new AuthErrorInvalid2FA();
+                }
+
+                // Ativa 2FA no banco após validação inicial com sucesso
+                await prisma.user.update({
+                  where: { id: user.id },
+                  data: {
+                    twoFactorEnabled: true,
+                    emailVerified: new Date(),
+                  },
+                });
+              }
+            } else {
+              // 2FA já ativado: exige código
+              if (!hasValidCodeFormat) {
+                throw new AuthError2FA();
+              }
+
+              // Check backup code first
+              if (rawCode.length === 10 && user.twoFactorBackupCodes?.includes(rawCode)) {
+                // Consume backup code
+                await prisma.user.update({
+                  where: { id: user.id },
+                  data: {
+                    twoFactorBackupCodes: {
+                      set: user.twoFactorBackupCodes.filter(c => c !== rawCode),
+                    },
+                  },
+                });
+              } else {
+                // Check TOTP
+                if (!user.twoFactorSecret) {
+                  throw new AuthErrorSetup2FA();
+                }
+                const isCodeValid = verifyTotp({
+                  token: rawCode,
+                  secret: user.twoFactorSecret,
+                });
+                if (!isCodeValid) {
+                  throw new AuthErrorInvalid2FA();
+                }
+              }
             }
 
-            const codeStr = credentials.code as string;
-            
-            // Check backup code first
-            if (codeStr.length === 10 && user.twoFactorBackupCodes?.includes(codeStr)) {
-              // Consume backup code
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              rememberMe: credentials.rememberMe === "true",
+              authVersion: user.authVersion,
+            };
+          }
+
+          if (loginType === "code") {
+            if (typeof credentials?.code !== "string" || !credentials.code.trim()) {
+              return null;
+            }
+            const codeStr = (credentials.code as string).trim().toUpperCase();
+            try {
+              await checkAuthRateLimit(
+                `login:code:${surface}`,
+                email,
+                10,
+                15 * 60 * 1000,
+              );
+            } catch (err: any) {
+              if (err?.message !== "AUTH_UNAVAILABLE" || process.env.NODE_ENV === "production") {
+                throw err;
+              }
+            }
+
+            const user = await prisma.user.findUnique({
+              where: { email },
+            });
+
+            if (!user) return null;
+            if (surface === "platform" && !user.isSuperadmin) return null;
+
+            let codeValid = false;
+
+            // 1. Check email OTP verification token
+            const identifier = `login-code:${email}`;
+            const tokenHash = hashSecret(codeStr, authSecret(), identifier);
+
+            const matchedOtp = await prisma.verificationToken.findFirst({
+              where: {
+                identifier,
+                token: tokenHash,
+                expires: { gt: new Date() },
+              },
+            });
+
+            if (matchedOtp) {
+              await prisma.verificationToken.deleteMany({
+                where: { identifier },
+              });
+              codeValid = true;
+            }
+
+            // 2. Check 2FA backup code (10 chars uppercase hex)
+            if (!codeValid && user.twoFactorEnabled && codeStr.length === 10 && user.twoFactorBackupCodes?.includes(codeStr)) {
               await prisma.user.update({
                 where: { id: user.id },
                 data: {
                   twoFactorBackupCodes: {
-                    set: user.twoFactorBackupCodes.filter(c => c !== codeStr)
-                  }
-                }
+                    set: user.twoFactorBackupCodes.filter(c => c !== codeStr),
+                  },
+                },
               });
-            } else {
-              // Check TOTP
-              if (!user.twoFactorSecret) {
-                throw new AuthErrorSetup2FA();
-              }
-              const isCodeValid = authenticator.verify({
+              codeValid = true;
+            }
+
+            // 3. Check 2FA TOTP (6 digits from Authenticator App)
+            if (!codeValid && user.twoFactorEnabled && user.twoFactorSecret && codeStr.length === 6) {
+              const isTotpValid = verifyTotp({
                 token: codeStr,
                 secret: user.twoFactorSecret,
               });
-              if (!isCodeValid) {
-                throw new AuthErrorInvalid2FA();
+              if (isTotpValid) {
+                codeValid = true;
               }
             }
+
+            if (!codeValid) {
+              class AuthErrorInvalidCode extends CredentialsSignin {
+                code = "INVALID_LOGIN_CODE";
+                constructor() { super("INVALID_LOGIN_CODE"); }
+              }
+              throw new AuthErrorInvalidCode();
+            }
+
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              rememberMe: credentials.rememberMe === "true",
+              authVersion: user.authVersion,
+            };
           }
 
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            rememberMe: credentials.rememberMe === "true",
-            authVersion: user.updatedAt.getTime(),
-          };
+          return null;
         },
       }),
     ],
@@ -161,9 +292,8 @@ export function getSurfaceAuthConfig(surface: "tenant" | "platform"): NextAuthCo
           });
           if (
             !account ||
-            (surface === "platform"
-              ? !account.isSuperadmin || !account.twoFactorEnabled
-              : account.isSuperadmin)
+            (surface === "platform" &&
+              (!account.isSuperadmin || !account.twoFactorEnabled))
           )
             return null;
           const sessionId = await createSession(
@@ -173,7 +303,7 @@ export function getSurfaceAuthConfig(surface: "tenant" | "platform"): NextAuthCo
           );
           token.id = account.id;
           token.surface = surface;
-          token.authVersion = account.updatedAt.getTime();
+          token.authVersion = account.authVersion;
           token.sessionId = sessionId;
         }
         if (typeof token.id !== "string" || token.surface !== surface || typeof token.sessionId !== "string")
@@ -185,7 +315,7 @@ export function getSurfaceAuthConfig(surface: "tenant" | "platform"): NextAuthCo
         const current = await prisma.user.findUnique({
           where: { id: token.id },
           select: {
-            updatedAt: true,
+            authVersion: true,
             isSuperadmin: true,
             twoFactorEnabled: true,
             isManagedAccount: true,
@@ -193,10 +323,9 @@ export function getSurfaceAuthConfig(surface: "tenant" | "platform"): NextAuthCo
         });
         if (
           !current ||
-          current.updatedAt.getTime() !== token.authVersion ||
-          (surface === "platform"
-            ? !current.isSuperadmin || !current.twoFactorEnabled
-            : current.isSuperadmin)
+          current.authVersion !== token.authVersion ||
+          (surface === "platform" &&
+            (!current.isSuperadmin || !current.twoFactorEnabled))
         )
           return null;
         

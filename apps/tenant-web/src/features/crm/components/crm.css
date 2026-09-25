@@ -23,11 +23,28 @@
   z-index: 10;
 }
 
-.crm-top-start,
+.crm-top-start {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex: 1;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.crm-top-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .crm-top-end {
   display: flex;
   align-items: center;
   gap: 0.625rem;
+  flex: 1;
+  justify-content: flex-end;
   min-width: 0;
 }
 
@@ -36,13 +53,15 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  max-width: 14.5rem;
+  width: 12.5rem; /* Largura padrão ligeiramente reduzida e estável (200px) */
+  min-width: 12.5rem;
+  max-width: 12.5rem;
   min-height: 2.375rem;
-  padding: 0.25rem 0.625rem;
-  border-radius: var(--radius-control);
+  padding: 0.2rem 0.85rem 0.2rem 0.25rem;
+  border-radius: 9999px; /* Formato Pílula Moderno e Refinado */
   background: var(--bg-surface);
   border: 1px solid var(--border-default);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
@@ -50,23 +69,24 @@
 
 .crm-funnel-trigger:hover {
   background: var(--bg-subtle);
-  border-color: var(--border-strong);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+  border-color: #93c5fd;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.12);
 }
 
-.crm-funnel-trigger[data-state="open"] {
-  background: var(--bg-subtle);
+.crm-funnel-trigger[data-state="open"],
+.crm-funnel-trigger.is-open {
+  background: #eff6ff;
   border-color: #007BFF;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.18);
 }
 
 .crm-funnel-trigger-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.85rem;
-  height: 1.85rem;
-  border-radius: 0.375rem;
+  width: 1.95rem;
+  height: 1.95rem;
+  border-radius: 9999px; /* Ícone perfeitamente redondo */
   background: rgba(0, 123, 255, 0.08);
   color: #007BFF;
   flex-shrink: 0;
@@ -74,33 +94,60 @@
 }
 
 .crm-funnel-trigger:hover .crm-funnel-trigger-icon {
-  transform: scale(1.08) rotate(8deg);
+  transform: scale(1.06);
   background: rgba(0, 123, 255, 0.14);
 }
 
+/* Animação do funil girando quando aberto */
+@keyframes crmFunnelSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.crm-funnel-trigger[data-state="open"] .crm-funnel-trigger-icon,
+.crm-funnel-trigger.is-open .crm-funnel-trigger-icon,
+.crm-funnel-trigger-icon.is-spinning {
+  background: rgba(0, 123, 255, 0.18);
+  animation: crmFunnelSpin 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.crm-funnel-trigger[data-state="open"] .crm-funnel-trigger-icon svg,
+.crm-funnel-trigger.is-open .crm-funnel-trigger-icon svg {
+  color: #007BFF;
+}
+
 .crm-funnel-copy {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   min-width: 0;
   text-align: left;
   flex: 1;
+  overflow: hidden;
 }
 
 .crm-funnel-copy span {
   color: var(--text-muted);
-  font-size: var(--text-caption);
+  font-size: 0.6875rem;
   font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: 0.01em;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .crm-funnel-copy strong {
   overflow: hidden;
   color: var(--text-primary);
-  font-size: var(--text-body);
-  font-weight: 600;
+  font-size: 0.8125rem; /* Tamanho mais suave e refinado */
+  font-weight: 550;
   text-overflow: ellipsis;
   white-space: nowrap;
   line-height: 1.25;
+  letter-spacing: -0.01em;
 }
 
 .crm-funnel-chevrons {
@@ -121,6 +168,13 @@
 }
 
 /* ── Funnel Dropdown Menu (Arredondado, Espaçoso & Elegante) ── */
+.crm-funnel-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  z-index: 40;
+}
+
 .crm-funnel-menu {
   min-width: 21.5rem;
   width: 23rem;
@@ -197,6 +251,20 @@
   font-weight: 400;
   margin-top: 1px;
 }
+
+.crm-funnel-default-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.35rem;
+  border-radius: 9999px;
+  background: #fef3c7;
+  color: #b45309;
+  font-size: 0.625rem;
+  font-weight: 700;
+  border: 1px solid #fde68a;
+  line-height: 1;
+}
+
 
 .crm-funnel-menu-separator {
   margin: 0.45rem 0;
@@ -352,30 +420,83 @@
   color: var(--text-muted);
 }
 
-/* ── Expandable Search Bar ── */
+.crm-funnel-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.crm-funnel-item-archive-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  opacity: 0.6;
+}
+
+.crm-funnel-item-archive-btn:hover {
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fde68a;
+  opacity: 1;
+}
+
+.crm-funnel-menu-archived-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.625rem;
+  border: 1px solid var(--border-default);
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 0.4rem;
+}
+
+.crm-funnel-menu-archived-btn:hover {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: #cbd5e1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* ── Search Bar (Já Expandida por Padrão) ── */
 .crm-search-box {
   position: relative;
   display: flex;
   align-items: center;
-  width: 2.35rem;
+  width: 17.5rem;
+  max-width: 100%;
   height: 2.35rem;
   border-radius: var(--radius-pill);
-  border: 1px solid transparent;
-  background: transparent;
-  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border-control);
+  background: var(--bg-surface);
+  box-shadow: 0 1px 4px 0 rgb(0 0 0 / 0.06);
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   overflow: hidden;
 }
 
 .crm-search-box:hover {
-  background: var(--bg-subtle);
-  border-color: var(--border-default);
+  border-color: #cbd5e1;
 }
 
-.crm-search-box.is-expanded {
-  width: 17.5rem;
-  background: var(--bg-surface);
-  border-color: var(--border-control);
-  box-shadow: 0 1px 4px 0 rgb(0 0 0 / 0.06);
+.crm-search-box:focus-within {
+  border-color: #007BFF;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
 }
 
 .crm-search-trigger {
@@ -389,9 +510,8 @@
   justify-content: center;
   background: none;
   border: none;
-  cursor: pointer;
+  pointer-events: none;
   color: var(--text-muted);
-  transition: color 0.2s;
 }
 
 .crm-search-trigger:hover {
@@ -1034,4 +1154,991 @@
   transform: scale(1.3);
   box-shadow: 0 0 0 5px color-mix(in srgb, var(--stage-color, #007BFF) 40%, transparent);
 }
+
+/* ── Card Inline de Adicionar Novo Fluxo ── */
+@keyframes crmSlideInInline {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.crm-add-stage-inline-card {
+  width: 19.5rem;
+  min-width: 19.5rem;
+  max-width: 19.5rem;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  border-radius: 0.875rem;
+  background: #ffffff;
+  border: 1.5px solid color-mix(in srgb, var(--stage-color, #007BFF) 40%, #e2e8f0);
+  box-shadow: 0 6px 20px -3px color-mix(in srgb, var(--stage-color, #007BFF) 14%, rgba(15, 23, 42, 0.08));
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: crmSlideInInline 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crm-edit-stage-color-card {
+  width: calc(100% - 0.75rem);
+  margin: 0.375rem auto 0.5rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  border: 1.5px solid color-mix(in srgb, var(--stage-color, #007BFF) 40%, #e2e8f0);
+  box-shadow: 0 4px 16px -2px color-mix(in srgb, var(--stage-color, #007BFF) 16%, rgba(15, 23, 42, 0.08));
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: crmSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.crm-inline-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.875rem;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f8fafc;
+}
+
+.crm-inline-card-body {
+  padding: 0.875rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.crm-inline-input {
+  width: 100%;
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  font-size: 0.8125rem;
+  font-family: var(--font-body);
+  color: #0f172a;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.crm-inline-input:focus {
+  border-color: #007BFF;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.crm-saved-colors-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.375rem;
+}
+
+.crm-color-swatch {
+  width: 100%;
+  height: 1.85rem;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  padding: 0;
+}
+
+.crm-color-swatch:hover {
+  transform: scale(1.08);
+}
+
+.crm-color-swatch.is-selected {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 2px #ffffff, 0 2px 6px rgba(0, 0, 0, 0.25);
+  transform: scale(1.05);
+}
+
+.crm-color-picker-label {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.crm-color-native-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.crm-color-picker-bubble {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.crm-color-picker-bubble:hover {
+  transform: scale(1.06);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.crm-inline-hex-input {
+  flex: 1;
+  min-width: 0;
+  height: 2.25rem;
+  padding: 0 0.625rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  font-size: 0.75rem;
+  font-family: monospace;
+  font-weight: 600;
+  color: #0f172a;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.crm-inline-hex-input:focus {
+  border-color: #007BFF;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.crm-btn-save-color {
+  height: 2.25rem;
+  padding: 0 0.625rem;
+  border-radius: 0.5rem;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.6875rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+}
+
+.crm-btn-save-color:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.crm-btn-submit-stage {
+  flex: 1;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #007BFF;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.crm-btn-submit-stage:hover:not(:disabled) {
+  background: #0069d9;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.crm-btn-submit-stage:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.crm-btn-cancel-stage {
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #64748b;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.crm-btn-cancel-stage:hover:not(:disabled) {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ── ABA EXPANSÍVEL DO CABEÇALHO: CRIAR NOVO FUNIL COMERCIAL ──
+   ══════════════════════════════════════════════════════════════ */
+.crm-top-bar-wrapper {
+  position: relative;
+  width: 100%;
+  z-index: 35;
+}
+
+.crm-create-pipeline-drawer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: var(--bg-surface, #ffffff);
+  border-top: 1px solid var(--border-default, #e2e8f0);
+  border-bottom: 2px solid #007bff;
+  box-shadow: 0 20px 40px -8px rgba(15, 23, 42, 0.18), 0 6px 16px -2px rgba(15, 23, 42, 0.08);
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  padding: 1.25rem 1.75rem 1.5rem;
+  animation: crmHeaderDrawerExpand 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+@keyframes crmHeaderDrawerExpand {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.crm-cpi-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.15rem;
+}
+
+.crm-cpi-title-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.crm-cpi-icon-wrapper {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.625rem;
+  background: linear-gradient(135deg, #007bff 0%, #6366f1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.28);
+}
+
+.crm-cpi-title {
+  font-family: var(--font-title);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.crm-cpi-badge-header {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #007bff;
+  background: rgba(0, 123, 255, 0.08);
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 123, 255, 0.18);
+}
+
+.crm-cpi-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+  line-height: 1.35;
+}
+
+.crm-cpi-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.crm-cpi-close-btn:hover:not(:disabled) {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+  transform: scale(1.05);
+}
+
+.crm-cpi-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.crm-cpi-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .crm-cpi-fields-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.crm-cpi-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.crm-cpi-label {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.crm-cpi-required {
+  color: #ef4444;
+}
+
+.crm-cpi-optional {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.crm-cpi-char-counter {
+  font-size: 0.6875rem;
+  color: #94a3b8;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.crm-cpi-input {
+  width: 100%;
+  height: 2.375rem;
+  padding: 0 0.875rem;
+  border-radius: 0.625rem;
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.crm-cpi-input:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+
+.crm-cpi-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.crm-cpi-input-error {
+  border-color: #ef4444 !important;
+  background: #fef2f2;
+}
+
+.crm-cpi-input-error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.crm-cpi-error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: #dc2626;
+  margin-top: 0.2rem;
+  animation: ui-fade-in 0.2s ease-out;
+}
+
+/* ── Chave Estratégica: Alta Conversão, Resgate & Pós-Venda ── */
+.crm-cpi-strategy-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  background: linear-gradient(180deg, #f8faff 0%, #f1f5fd 100%);
+  transition: all 0.2s ease;
+}
+
+.crm-cpi-strategy-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.crm-cpi-strategy-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.crm-cpi-strategy-icon-box {
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 0.45rem;
+  background: #e0edff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.crm-cpi-strategy-title {
+  font-family: var(--font-title);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.25;
+}
+
+.crm-cpi-strategy-badge {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: #007bff;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 0.08rem 0.4rem;
+  border-radius: 9999px;
+  line-height: 1.2;
+}
+
+.crm-cpi-strategy-desc {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  color: #64748b;
+  margin-top: 0.1rem;
+  line-height: 1.25;
+}
+
+/* Switch tátil redondo animado */
+.crm-cpi-switch-label {
+  position: relative;
+  display: inline-block;
+  width: 2.5rem;
+  height: 1.375rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.crm-cpi-switch-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.crm-cpi-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #cbd5e1;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 9999px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.crm-cpi-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 1rem;
+  width: 1rem;
+  left: 0.1875rem;
+  bottom: 0.1875rem;
+  background-color: #ffffff;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.crm-cpi-switch-input:checked + .crm-cpi-switch-slider {
+  background: linear-gradient(135deg, #007bff 0%, #6366f1 100%);
+}
+
+.crm-cpi-switch-input:checked + .crm-cpi-switch-slider:before {
+  transform: translateX(1.125rem);
+}
+
+/* Esteira de Fluxos Estratégicos (Clean & Compact) */
+.crm-cpi-flow-track {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding: 0.4rem 0.2rem 0.2rem;
+  scrollbar-width: thin;
+}
+
+.crm-cpi-flow-node {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.3rem 0.55rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+.crm-cpi-flow-node:hover {
+  transform: translateY(-1px);
+  border-color: #93c5fd;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.12);
+}
+
+.crm-cpi-flow-node.is-rescue {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+}
+
+.crm-cpi-flow-node.is-retention {
+  background: #f0fdfa;
+  border-color: #ccfbf1;
+}
+
+.crm-cpi-flow-phase-tag {
+  font-family: var(--font-body);
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  line-height: 1;
+}
+
+.crm-cpi-flow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.crm-cpi-flow-node-name {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.crm-cpi-flow-arrow {
+  margin: 0 0.1rem;
+}
+
+.crm-cpi-strategy-disabled-note {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: #64748b;
+  font-style: italic;
+  padding-top: 0.35rem;
+  border-top: 1px dashed #cbd5e1;
+}
+
+/* ── Footer Row com Funil Padrão e Ações ── */
+.crm-cpi-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.crm-cpi-default-box {
+  display: flex;
+  align-items: center;
+}
+
+.crm-cpi-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.crm-cpi-checkbox {
+  width: 1.0625rem;
+  height: 1.0625rem;
+  border-radius: 0.3rem;
+  border: 1.5px solid #94a3b8;
+  accent-color: #007bff;
+  cursor: pointer;
+}
+
+.crm-cpi-toggle-text {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.crm-cpi-toggle-text strong {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.crm-cpi-replace-hint {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  color: #b45309;
+  font-weight: 500;
+}
+
+.crm-cpi-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.crm-cpi-btn-cancel {
+  height: 2.125rem;
+  padding: 0 0.875rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.crm-cpi-btn-cancel:hover:not(:disabled) {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.crm-cpi-btn-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.125rem;
+  padding: 0 1.125rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: linear-gradient(135deg, #007bff 0%, #6366f1 100%);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.28);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crm-cpi-btn-submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0069d9 0%, #4f46e5 100%);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.crm-cpi-btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ── SIMULAÇÃO DE IA: CRIANDO FUNIL COMERCIAL ──
+   ══════════════════════════════════════════════════════════════ */
+.crm-cpi-ai-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  animation: ui-fade-in 0.2s ease-out forwards;
+}
+
+.crm-cpi-ai-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 24rem;
+  width: 100%;
+  padding: 1.25rem;
+}
+
+.crm-cpi-ai-icon-aura {
+  position: relative;
+  width: 4.25rem;
+  height: 4.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.crm-cpi-ai-icon-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px dashed #6366F1;
+  animation: crmAiRingSpin 4s linear infinite;
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.25);
+}
+
+@keyframes crmAiRingSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.crm-cpi-ai-icon-inner {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #007BFF 0%, #6366F1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 123, 255, 0.35);
+  animation: crmAiGlowPulse 2s ease-in-out infinite;
+}
+
+@keyframes crmAiGlowPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 14px rgba(0, 123, 255, 0.35);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+  }
+}
+
+.crm-cpi-ai-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.crm-cpi-ai-title {
+  font-family: var(--font-title);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.crm-cpi-ai-step-text {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #475569;
+  margin-top: 0.25rem;
+  min-height: 1.35rem;
+  animation: ui-fade-in 0.2s ease-out;
+}
+
+.crm-cpi-ai-progress-track {
+  width: 100%;
+  height: 5px;
+  border-radius: 9999px;
+  background: #e2e8f0;
+  overflow: hidden;
+  margin-top: 0.85rem;
+}
+
+.crm-cpi-ai-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #007BFF 0%, #6366F1 50%, #8B5CF6 100%);
+  border-radius: 9999px;
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+}
+
+.crm-cpi-ai-indicators {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.65rem;
+}
+
+.crm-cpi-ai-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  transition: all 0.3s ease;
+}
+
+.crm-cpi-ai-dot.is-active {
+  width: 16px;
+  background: linear-gradient(90deg, #007BFF, #6366F1);
+  border-radius: 9999px;
+}
+
+/* ── Omnichannel Filter & Badges ── */
+.crm-omnichannel-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  border-radius: 0.625rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.crm-omnichannel-filter-btn:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.crm-omnichannel-filter-btn.is-active {
+  border-color: rgba(0, 123, 255, 0.4);
+  background: rgba(0, 123, 255, 0.05);
+  color: #007BFF;
+  box-shadow: 0 0 0 1px rgba(0, 123, 255, 0.15);
+}
+
+.crm-omnichannel-badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.25rem;
+  border-radius: 9999px;
+  background: #007BFF;
+  color: #ffffff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.crm-omnichannel-dropdown {
+  position: absolute;
+  top: calc(100% + 0.375rem);
+  right: 0;
+  width: 280px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.875rem;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+  z-index: 50;
+  padding: 0.5rem;
+  animation: crmSlideDown 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crm-omnichannel-dropdown-header {
+  padding: 0.5rem 0.625rem 0.625rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.crm-omnichannel-dropdown-list {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 0.25rem 0;
+}
+
+.crm-omnichannel-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.625rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.crm-omnichannel-option:hover {
+  background: #f8fafc;
+}
+
+.crm-omnichannel-option.is-selected {
+  background: rgba(0, 123, 255, 0.06);
+}
+
+.crm-funnel-omnichannel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.125rem 0.4rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(0, 123, 255, 0.12), rgba(99, 102, 241, 0.12));
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #4f46e5;
+}
+
+.crm-stage-fixed-badge {
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.375rem;
+  background: rgba(0, 123, 255, 0.1);
+  color: #007BFF;
+  border: 1px solid rgba(0, 123, 255, 0.2);
+}
+
+
+
 

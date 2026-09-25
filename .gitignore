@@ -18,3 +18,29 @@ infra/certs/*
 playwright-report/
 test-results/
 *.tsbuildinfo
+
+# Scratch, temporários e relatórios locais
+scratch/
+scratch_*
+lighthouse-report*.json
+superadmin-qr.*
+voice-tll-exemple*.md
+*.pdf
+!apps/**/public/**/*.pdf
+!docs/**/*.pdf
+docs/*.html
+
+# Python e IA local
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+services/ai-service/.venv/
+services/ai-service/app/speakers/*.wav
+services/ai-service/app/speakers/*.json
+!services/ai-service/app/speakers/.gitkeep
+
+# Scripts de bootstrap com credenciais locais
+scripts/save-meta-credentials.ts
+scripts/create-superadmin.ts

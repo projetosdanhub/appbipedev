@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="techGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#007BFF" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="36" fill="#0F172A" />
+  <g transform="translate(56, 20)">
+    <rect x="12" y="8" width="64" height="92" rx="12" fill="#1E293B" stroke="url(#techGrad)" stroke-width="3" />
+    <rect x="18" y="18" width="52" height="68" rx="6" fill="#0B1120" />
+    <circle cx="44" cy="92" r="3" fill="#007BFF" />
+    <rect x="34" y="12" width="20" height="3" rx="1.5" fill="#64748B" />
+    <path d="M28 52 L38 62 L60 40" stroke="#10B981" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  </g>
+  <text x="100" y="152" font-family="'Inter', system-ui, sans-serif" font-size="14.5" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">TECHHOUSE</text>
+  <text x="100" y="170" font-family="'Poppins', system-ui, sans-serif" font-size="7.5" font-weight="700" fill="#38BDF8" text-anchor="middle" letter-spacing="1.2">ASSISTÊNCIA DE CELULARES</text>
+</svg>

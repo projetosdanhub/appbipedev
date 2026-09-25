@@ -1,0 +1,13 @@
+{
+  "builtin_voices": [
+    {
+      "id": "germani",
+      "name": "Germani",
+      "gender": "female",
+      "category": "female",
+      "language": "pt",
+      "description": "Voz feminina oficial da BipeSend — calorosa, consultiva, natural e acolhedora.",
+      "source_file": "germani.wav"
+    }
+  ]
+}

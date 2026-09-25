@@ -1,0 +1,87 @@
+[
+  {
+    "id": "initial-greeting",
+    "role": "assistant",
+    "content": "Oi Daniel! Tudo bem? Qual a nossa missão hoje? Pode me pedir para abrir qualquer menu, analisar dados em tempo real ou preparar tarefas que eu cuido de tudo com você.",
+    "timestamp": "21:56"
+  },
+  {
+    "id": "usr-1790303109116",
+    "role": "user",
+    "content": "Oii Germani, tudo joia por aí?",
+    "timestamp": "23:25"
+  },
+  {
+    "id": "msg-1790303112358",
+    "role": "assistant",
+    "content": "Beleza, Daniel! Me diz o que você precisa agora — posso criar, editar ou excluir planos, abrir ou voltar telas, ou calibrar agentes!",
+    "timestamp": "23:25",
+    "tokensUsed": 107,
+    "executionTimeMs": 3117,
+    "activeSkill": "Assessoria Executiva",
+    "tokenDetails": {
+      "promptTokens": 22,
+      "completionTokens": 85,
+      "totalTokens": 107,
+      "estimatedCostUsd": 0.000027,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash"
+    }
+  },
+  {
+    "id": "usr-1790303145234",
+    "role": "user",
+    "content": "abra nossa aba de planos e crie um novo novo por favor",
+    "timestamp": "23:25"
+  },
+  {
+    "id": "msg-1790303145706",
+    "role": "assistant",
+    "content": "Abrindo a tela de Planos!",
+    "timestamp": "23:25",
+    "tokensUsed": 107,
+    "executionTimeMs": 350,
+    "activeSkill": "Assessoria Executiva",
+    "navigationAction": {
+      "path": "/plans",
+      "label": "Planos & Assinaturas",
+      "autoNavigate": true
+    },
+    "tokenDetails": {
+      "promptTokens": 22,
+      "completionTokens": 85,
+      "totalTokens": 107,
+      "estimatedCostUsd": 0.000027,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash"
+    }
+  },
+  {
+    "id": "usr-1790303189449",
+    "role": "user",
+    "content": "crie um novo plano por favor",
+    "timestamp": "23:26"
+  },
+  {
+    "id": "msg-1790303190001",
+    "role": "assistant",
+    "content": "Prontinho! Criei o plano **Bipe Pro Mensal** por R$ 147,00/mês com 1 conexão(ões) WhatsApp.",
+    "timestamp": "23:26",
+    "tokensUsed": 107,
+    "executionTimeMs": 410,
+    "activeSkill": "Assessoria Executiva",
+    "navigationAction": {
+      "path": "/plans",
+      "label": "Planos & Assinaturas",
+      "autoNavigate": true
+    },
+    "tokenDetails": {
+      "promptTokens": 22,
+      "completionTokens": 85,
+      "totalTokens": 107,
+      "estimatedCostUsd": 0.000027,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash"
+    }
+  }
+]

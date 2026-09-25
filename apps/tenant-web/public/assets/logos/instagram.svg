@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <radialGradient id="igRadial" cx="25%" cy="105%" r="115%">
+      <stop offset="0%" stop-color="#ffd676" />
+      <stop offset="10%" stop-color="#f2a454" />
+      <stop offset="50%" stop-color="#f0416c" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </radialGradient>
+    <linearGradient id="igLinear" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ec4899" stop-opacity="0.1" />
+    </linearGradient>
+    <filter id="igShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#831843" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#igRadial)" filter="url(#igShadow)"/>
+  <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#igLinear)"/>
+  
+  <!-- Outer Rounded Square Outline -->
+  <rect x="11" y="11" width="26" height="26" rx="7" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Center Camera Lens Circle -->
+  <circle cx="24" cy="24" r="6.2" fill="none" stroke="#ffffff" stroke-width="2.6"/>
+  
+  <!-- Top Right Flash Dot -->
+  <circle cx="31.2" cy="16.8" r="1.6" fill="#ffffff"/>
+</svg>

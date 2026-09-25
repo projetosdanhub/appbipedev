@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bipeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#007BFF"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="#0F172A"/>
+  <path d="M160 128h112c53 0 96 35.8 96 80 0 24.3-13.1 46.2-34.4 60.8C359.8 281.4 384 309.8 384 344c0 48.6-43 88-96 88H160V128zm64 64v64h48c17.7 0 32-14.3 32-32s-14.3-32-32-32h-48zm0 128v64h56c17.7 0 32-14.3 32-32s-14.3-32-32-32h-56z" fill="url(#bipeGrad)"/>
+</svg>

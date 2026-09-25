@@ -1,0 +1,10 @@
+fastapi==0.103.1
+uvicorn==0.23.2
+pydantic==2.3.0
+python-multipart==0.0.6
+# PyTorch CPU mode (Otimizado para ausência de GPU dedicada)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.0.1+cpu
+torchaudio==2.0.2+cpu
+# Coqui TTS engine (Para clonagem XTTSv2)
+TTS==0.21.3

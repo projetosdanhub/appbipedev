@@ -1,0 +1,140 @@
+[
+  {
+    "id": "plan-starter",
+    "name": "Bipe Starter",
+    "description": "Ideal para autônomos e pequenos negócios iniciando no atendimento omnichannel.",
+    "priceMonthly": 147,
+    "priceYearly": 1470,
+    "isActive": true,
+    "showOnLandingPage": true,
+    "colorScheme": "blue",
+    "limits": {
+      "contacts": 2000,
+      "crmPipelines": 1,
+      "aiAgents": 1,
+      "whatsappConnections": 1,
+      "instagramConnections": 1,
+      "tiktokConnections": 1,
+      "automations": 3,
+      "transparentCheckout": true,
+      "teamMembers": 2,
+      "monthlyAiMessages": 1500
+    },
+    "features": [
+      "1 Agente Personalizada (Envio de Áudio, Voz e Arquivos)",
+      "1 Conexão BipeSend WhatsApp API Oficial",
+      "1 Perfil Instagram Direct integrado",
+      "1 Conexão TikTok Direct integrada",
+      "1 Funil CRM adicional (+1 Principal Gratuito = 2 funis)",
+      "Checkout Transparente incluso",
+      "Simulação de digitação em tempo real",
+      "Até 2.000 contatos gerenciados",
+      "2 Membros de equipe incluídos"
+    ]
+  },
+  {
+    "id": "plan-growth",
+    "name": "Bipe Pro Growth",
+    "description": "Perfeito para empresas em aceleração de vendas e atendimento comercial dinâmico.",
+    "priceMonthly": 297,
+    "priceYearly": 2970,
+    "isActive": true,
+    "isPopular": true,
+    "showOnLandingPage": true,
+    "badge": "Mais Vendido",
+    "colorScheme": "emerald",
+    "limits": {
+      "contacts": 10000,
+      "crmPipelines": 3,
+      "aiAgents": 3,
+      "whatsappConnections": 2,
+      "instagramConnections": 2,
+      "tiktokConnections": 2,
+      "automations": 15,
+      "transparentCheckout": true,
+      "teamMembers": 6,
+      "monthlyAiMessages": 8000
+    },
+    "features": [
+      "3 Agentes Personalizadas simultâneas (Vendas, Suporte e SDR)",
+      "2 Conexões BipeSend WhatsApp API independentes",
+      "2 Conexões Instagram Direct",
+      "2 Conexões TikTok Direct",
+      "3 Funis CRM adicionais (+1 Principal Gratuito = 4 funis)",
+      "15 Automações de fluxo ativas",
+      "Checkout Transparente com Pix e Cartão",
+      "Envio de áudios com voz natural e arquivos",
+      "Até 10.000 contatos gerenciados",
+      "6 Membros de equipe com filas de atendimento",
+      "Transbordo automático para humanos"
+    ]
+  },
+  {
+    "id": "plan-scale",
+    "name": "Bipe Enterprise Scale",
+    "description": "Para operações consolidadas com alto volume de tráfego, múltiplos números e times.",
+    "priceMonthly": 597,
+    "priceYearly": 5970,
+    "isActive": true,
+    "showOnLandingPage": true,
+    "colorScheme": "violet",
+    "limits": {
+      "contacts": 50000,
+      "crmPipelines": 10,
+      "aiAgents": 10,
+      "whatsappConnections": 5,
+      "instagramConnections": 5,
+      "tiktokConnections": 5,
+      "automations": 50,
+      "transparentCheckout": true,
+      "teamMembers": 20,
+      "monthlyAiMessages": 35000
+    },
+    "features": [
+      "10 Agentes Personalizadas para diferentes setores",
+      "5 Conexões BipeSend WhatsApp API de alta vazão",
+      "5 Conexões Instagram Direct + TikTok",
+      "10 Funis CRM adicionais (+1 Principal Gratuito = 11 funis)",
+      "50 Automações inteligentes integradas",
+      "Checkout Transparente completo",
+      "Envio de áudios com a sua voz e arquivos ilimitados",
+      "Até 50.000 contatos gerenciados",
+      "20 Membros de equipe com papéis RBAC avançados",
+      "Painel de auditoria e segurança contra jailbreak",
+      "Suporte VIP prioritário via WhatsApp"
+    ]
+  },
+  {
+    "id": "plan-1790303189997",
+    "name": "Bipe Pro Mensal",
+    "description": "Plano ativado em tempo real via Assessora Germani com 1 conexão(ões) WhatsApp e IA integrada.",
+    "priceMonthly": 147,
+    "priceYearly": 1470,
+    "isActive": true,
+    "showOnLandingPage": true,
+    "colorScheme": "blue",
+    "limits": {
+      "contacts": 2500,
+      "crmPipelines": 1,
+      "aiAgents": 1,
+      "whatsappConnections": 1,
+      "instagramConnections": 1,
+      "tiktokConnections": 1,
+      "automations": 5,
+      "transparentCheckout": true,
+      "teamMembers": 2,
+      "monthlyAiMessages": 4410
+    },
+    "features": [
+      "1 Agente(s) de IA com Voz Humanizada",
+      "1 Conexão(ões) BipeSend WhatsApp API",
+      "1 Perfil Instagram Direct integrado",
+      "1 Conexão TikTok Direct integrada",
+      "1 Funil CRM adicional (+1 Principal Gratuito = 2 funis)",
+      "Checkout Transparente incluso",
+      "Até 2.500 contatos no CRM",
+      "Simulação de digitação em tempo real",
+      "Suporte prioritário via WhatsApp"
+    ]
+  }
+]

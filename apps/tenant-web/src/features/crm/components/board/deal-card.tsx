@@ -3,7 +3,7 @@
 /* eslint-disable react-hooks/refs -- @hello-pangea/dnd exposes callback refs and style props through its provided object. */
 
 import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
-import { Calendar, MoreHorizontal, User as UserIcon, Phone, Tag } from "lucide-react";
+import { Calendar, MoreHorizontal, User as UserIcon, Phone, Tag, MessageCircle, Camera, Music2 } from "lucide-react";
 import { CrmDeal, CrmPipelineStage, CrmContact, CrmTag } from "@bipesend/contracts";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from "@bipesend/ui";
 import { stageColor } from "./stage-colors";
@@ -144,20 +144,55 @@ export function DealCard({ deal, stages, contacts, tags = [], memberships, provi
         );
       })()}
       
-      {/* Contato Vinculado */}
-      <div className="flex items-center gap-2 text-slate-600 text-[12px] mb-2.5">
-        <div className="w-5 h-5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center font-bold text-[10px] flex-shrink-0">
-          {contact?.name ? contact.name.charAt(0).toUpperCase() : <UserIcon className="w-3 h-3 text-slate-400" />}
-        </div>
-        <span className="truncate font-medium text-slate-700">
-          {contact?.name || "Sem contato vinculado"}
-        </span>
-        {contact?.phone && (
-          <span className="ml-auto text-slate-400 flex items-center gap-1 text-[11px]" title={contact.phone}>
-            <Phone className="w-3 h-3" />
-          </span>
-        )}
-      </div>
+      {/* Contato Vinculado & Canal Omnichannel */}
+      {(() => {
+        const custom = (contact?.customFields || {}) as Record<string, unknown>;
+        const source = (contact?.source || custom.channel || "").toString().toLowerCase();
+
+        let channelBadge = null;
+        if (source.includes("whatsapp")) {
+          channelBadge = (
+            <span className="flex items-center gap-1 text-[11px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60" title="Canal: WhatsApp">
+              <MessageCircle className="w-3 h-3" />
+              <span>WhatsApp</span>
+            </span>
+          );
+        } else if (source.includes("instagram")) {
+          channelBadge = (
+            <span className="flex items-center gap-1 text-[11px] text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded border border-pink-200/60" title="Canal: Instagram">
+              <Camera className="w-3 h-3" />
+              <span>Instagram</span>
+            </span>
+          );
+        } else if (source.includes("tiktok")) {
+          channelBadge = (
+            <span className="flex items-center gap-1 text-[11px] text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/60" title="Canal: TikTok">
+              <Music2 className="w-3 h-3" />
+              <span>TikTok</span>
+            </span>
+          );
+        }
+
+        return (
+          <div className="flex items-center gap-2 text-slate-600 text-[12px] mb-2.5">
+            <div className="w-5 h-5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center font-bold text-[10px] flex-shrink-0">
+              {contact?.name ? contact.name.charAt(0).toUpperCase() : <UserIcon className="w-3 h-3 text-slate-400" />}
+            </div>
+            <span className="truncate font-medium text-slate-700">
+              {contact?.name || "Sem contato vinculado"}
+            </span>
+
+            <div className="ml-auto flex items-center gap-1.5">
+              {channelBadge}
+              {contact?.phone && !channelBadge && (
+                <span className="text-slate-400 flex items-center gap-1 text-[11px]" title={contact.phone}>
+                  <Phone className="w-3 h-3" />
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       <div className="h-px w-full bg-slate-100 mb-2.5" />
 

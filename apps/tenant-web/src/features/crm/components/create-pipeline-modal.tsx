@@ -106,6 +106,16 @@ export function CreatePipelineModal({
           </DialogDescription>
         </DialogHeader>
 
+        <div className="p-3 bg-blue-50/70 border border-blue-100 rounded-xl text-xs text-blue-900 flex items-start gap-2.5 mt-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 mt-1 shrink-0" />
+          <div>
+            <strong className="font-semibold text-slate-800">Regra de Cota do CRM:</strong>
+            <p className="text-slate-600 mt-0.5 leading-relaxed">
+              O <strong>Funil Principal do Sistema (Atendimento Omnichannel)</strong> é gratuito e não consome cota. Este funil consumirá 1 vaga de funil adicional do seu plano.
+            </p>
+          </div>
+        </div>
+
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 pt-2">
           <div className="space-y-1.5">
             <Label htmlFor="pipeline-name" className="text-sm font-medium text-slate-700">

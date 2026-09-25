@@ -1,0 +1,668 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "voice_analysis_and_xtts_v2_integration_manifest",
+  "profile_id": "germani_reference_v1",
+  "display_name": "Perfil vocal — germani-voice.wav",
+  "created_date_utc": "2026-09-24",
+  "description_language": "pt-BR",
+  "purpose": "Orientar a IA implementadora a configurar uma clonagem fiel ao áudio de referência no XTTS v2 e integrar a voz em uma aplicação conversacional.",
+  "read_first": {
+    "usage": "Envie este JSON e o arquivo germani-voice.wav juntos à IA implementadora. Ela deve mapear somente os kwargs nativos para cada método do XTTS.",
+    "is_xtts_checkpoint_config": false,
+    "is_trained_voice_model": false,
+    "contains_audio_bytes": false,
+    "contains_speaker_embedding": false,
+    "contains_gpt_conditioning_latent": false,
+    "audio_is_required": true,
+    "important": "Este documento não substitui o config.json do checkpoint. A identidade vocal deve ser extraída do WAV pelo próprio XTTS v2. As medidas e descrições não recriam uma voz sozinhas.",
+    "fidelity_expectation": "Preset inicial fundamentado, sem garantia de clonagem perfeita. A fidelidade depende do checkpoint, da referência, do texto, da inferência e da validação por escuta.",
+    "evidence_categories": {
+      "measured": "Calculado diretamente dos bytes do áudio; estimadores acústicos têm limitações.",
+      "inferred": "Interpretação limitada das medidas; não é uma avaliação auditiva.",
+      "recommended": "Escolha inicial de implementação, não característica extraída da pessoa.",
+      "unconfirmed": "Não verificado; null significa desconhecido, não ausência da característica."
+    },
+    "stack_assumptions": {
+      "user_terms": [
+        "ttsl",
+        "xts..v2"
+      ],
+      "implemented_target": "Coqui XTTS v2 — API Python Xtts",
+      "xts_v2_interpretation": "Interpretado como XTTS v2.",
+      "ttsl_exact_product_or_wrapper": null,
+      "ttsl_note": "O termo ttsl não identifica com segurança uma API específica. Caso seja outro produto ou wrapper, adapte os campos sem assumir equivalência de parâmetros.",
+      "installed_runtime_version": null
+    }
+  },
+  "source_audio": {
+    "file_name": "germani-voice.wav",
+    "relative_path": "germani-voice.wav",
+    "sha256": "06806dd8f1fa71c3734e6567b01cb169ead626fbd5eff7fc44f62b6675f8f4fc",
+    "file_size_bytes": 1375566,
+    "container": "WAV",
+    "codec": "PCM signed 16-bit little-endian",
+    "sample_rate_hz": 44100,
+    "channels": 1,
+    "bit_depth": 16,
+    "sample_count": 687744,
+    "duration_seconds": 15.595102,
+    "analysis_scope": "Arquivo completo, sem processamento destrutivo.",
+    "reference_modified": false,
+    "speaker_count_verified": false,
+    "source_language_verified": false,
+    "human_or_synthetic_origin": "unconfirmed",
+    "transcript": null
+  },
+  "measured_acoustics": {
+    "evidence": "measured",
+    "pitch": {
+      "method": "Praat autocorrelation via praat-parselmouth",
+      "pitch_floor_hz": 60,
+      "pitch_ceiling_hz": 450,
+      "time_step_seconds": 0.01,
+      "voicing_threshold": 0.45,
+      "voiced_frames": 985,
+      "total_frames": 1555,
+      "voiced_frame_fraction": 0.633,
+      "median_hz": 176.099,
+      "mean_hz": 177.114,
+      "std_hz": 34.65,
+      "percentiles_hz": {
+        "p5": 123.179,
+        "p10": 133.077,
+        "p25": 154.663,
+        "p50": 176.099,
+        "p75": 194.62,
+        "p90": 221.667,
+        "p95": 240.865
+      },
+      "p10_to_p90_span_semitones": 8.834,
+      "median_crosscheck_hz": {
+        "floor_75_ceiling_500": 175.795,
+        "floor_50_ceiling_600": 177.027
+      },
+      "confidence": "moderada; mediana consistente em três faixas de busca, sem revisão manual de cada quadro",
+      "note": "Estatísticas apenas dos quadros classificados como vozeados. Não fixar a saída em 176 Hz: a variação de F0 faz parte da prosódia.",
+      "limitations": "Pode haver erros de oitava e falhas em transições, ruídos e fonação irregular. Fração vozeada não equivale à porcentagem de fala; consoantes surdas também são fala.",
+      "native_xtts_control": false
+    },
+    "levels": {
+      "sample_peak_dbfs": -3.305,
+      "rms_dbfs": -17.805,
+      "integrated_loudness_lufs": -18.13,
+      "ffmpeg_integrated_loudness_lufs": -18.1,
+      "ffmpeg_true_peak_dbtp": -3.3,
+      "ffmpeg_loudness_range_lu": 2.4,
+      "crest_factor_db": 14.5,
+      "frame_rms_percentiles_dbfs": {
+        "p5": -48.957,
+        "p10": -45.785,
+        "p25": -30.363,
+        "p50": -19.625,
+        "p75": -15.748,
+        "p90": -13.969,
+        "p95": -12.925
+      },
+      "loudness_method": "pyloudnorm, medidor mono de loudness integrada com blocos de 400 ms; conferência com FFmpeg ebur128.",
+      "true_peak_method": "Estimativa FFmpeg ebur128=peak=true.",
+      "lra_caution": "LRA de um trecho de 15,6 s é descritivo da amostra curta, não um alvo universal para a voz."
+    },
+    "signal_integrity": {
+      "full_scale_sample_count": 0,
+      "near_full_scale_above_minus_0_1_db_count": 0,
+      "digital_full_scale_clipping_detected": false,
+      "dc_offset_normalized": -2.751e-05,
+      "note": "Não há amostras em escala completa; isso não exclui distorção ou compressão ocorrida antes deste arquivo."
+    },
+    "harmonicity": {
+      "method": "Praat cross-correlation, voiced-aligned frames",
+      "minimum_pitch_hz": 60,
+      "time_step_seconds": 0.01,
+      "silence_threshold": 0.1,
+      "periods_per_window": 4.5,
+      "valid_frame_count": 944,
+      "median_hnr_db": 9.776,
+      "mean_hnr_db": 10.043,
+      "interpretation": "Descritor de periodicidade dos quadros analisados. Não representa SNR do ambiente, qualidade global, rouquidão clínica ou controle de naturalidade."
+    },
+    "spectral_balance": {
+      "method": "STFT power spectrum, Hann 2048 samples, hop 441 samples, frames RMS > -35 dBFS",
+      "active_frame_count": 1223,
+      "median_power_centroid_hz": 295.669,
+      "median_rolloff_95_hz": 495.264,
+      "active_power_band_percent": {
+        "0_300_hz": 69.472,
+        "300_1000_hz": 24.316,
+        "1000_4000_hz": 3.752,
+        "4000_8000_hz": 1.321,
+        "8000_22051_hz": 1.14
+      },
+      "interpretation": "Nesta gravação há concentração de energia abaixo de 1 kHz. A medida inclui voz, microfone e processamento; não permite separar esses fatores.",
+      "do_not_use_as_equalizer_target": true,
+      "note": "Centroide ponderado por potência, não por magnitude. Rolloff de 95% é uma medida de distribuição de energia, não o limite de banda do arquivo."
+    },
+    "low_amplitude_intervals": {
+      "method": "FFmpeg silencedetect, absolute amplitude threshold -40 dBFS, minimum duration 0.15 s",
+      "intervals": [
+        {
+          "start_seconds": 13.9803,
+          "end_seconds": 14.2372,
+          "duration_seconds": 0.2569,
+          "position": "internal"
+        },
+        {
+          "start_seconds": 15.2901,
+          "end_seconds": 15.5951,
+          "duration_seconds": 0.305,
+          "position": "trailing"
+        }
+      ],
+      "total_seconds": 0.5619,
+      "note": "Intervalos de baixa amplitude detectados, sem alinhamento de palavras. Não são uma lista completa de pausas linguísticas, nem prova de silêncio ambiental puro."
+    },
+    "prosody_trace": {
+      "bin_duration_seconds": 0.5,
+      "purpose": "Resumo temporal da referência para comparação; não aplicar esta sequência de frequências ou volumes a textos diferentes.",
+      "bins": [
+        {
+          "start_seconds": 0.0,
+          "end_seconds": 0.5,
+          "median_voiced_f0_hz": 219.42,
+          "voiced_frame_fraction": 0.771,
+          "rms_dbfs": -15.69
+        },
+        {
+          "start_seconds": 0.5,
+          "end_seconds": 1.0,
+          "median_voiced_f0_hz": 176.78,
+          "voiced_frame_fraction": 0.82,
+          "rms_dbfs": -17.16
+        },
+        {
+          "start_seconds": 1.0,
+          "end_seconds": 1.5,
+          "median_voiced_f0_hz": 138.32,
+          "voiced_frame_fraction": 0.54,
+          "rms_dbfs": -19.0
+        },
+        {
+          "start_seconds": 1.5,
+          "end_seconds": 2.0,
+          "median_voiced_f0_hz": 187.33,
+          "voiced_frame_fraction": 0.52,
+          "rms_dbfs": -17.16
+        },
+        {
+          "start_seconds": 2.0,
+          "end_seconds": 2.5,
+          "median_voiced_f0_hz": 190.37,
+          "voiced_frame_fraction": 0.68,
+          "rms_dbfs": -17.37
+        },
+        {
+          "start_seconds": 2.5,
+          "end_seconds": 3.0,
+          "median_voiced_f0_hz": 198.82,
+          "voiced_frame_fraction": 0.66,
+          "rms_dbfs": -18.89
+        },
+        {
+          "start_seconds": 3.0,
+          "end_seconds": 3.5,
+          "median_voiced_f0_hz": 175.12,
+          "voiced_frame_fraction": 0.74,
+          "rms_dbfs": -17.27
+        },
+        {
+          "start_seconds": 3.5,
+          "end_seconds": 4.0,
+          "median_voiced_f0_hz": 179.15,
+          "voiced_frame_fraction": 0.98,
+          "rms_dbfs": -15.73
+        },
+        {
+          "start_seconds": 4.0,
+          "end_seconds": 4.5,
+          "median_voiced_f0_hz": 169.31,
+          "voiced_frame_fraction": 0.46,
+          "rms_dbfs": -18.88
+        },
+        {
+          "start_seconds": 4.5,
+          "end_seconds": 5.0,
+          "median_voiced_f0_hz": 151.76,
+          "voiced_frame_fraction": 0.62,
+          "rms_dbfs": -19.92
+        },
+        {
+          "start_seconds": 5.0,
+          "end_seconds": 5.5,
+          "median_voiced_f0_hz": 104.78,
+          "voiced_frame_fraction": 0.22,
+          "rms_dbfs": -27.77
+        },
+        {
+          "start_seconds": 5.5,
+          "end_seconds": 6.0,
+          "median_voiced_f0_hz": 164.1,
+          "voiced_frame_fraction": 0.28,
+          "rms_dbfs": -21.34
+        },
+        {
+          "start_seconds": 6.0,
+          "end_seconds": 6.5,
+          "median_voiced_f0_hz": 183.73,
+          "voiced_frame_fraction": 0.68,
+          "rms_dbfs": -18.47
+        },
+        {
+          "start_seconds": 6.5,
+          "end_seconds": 7.0,
+          "median_voiced_f0_hz": 190.07,
+          "voiced_frame_fraction": 0.86,
+          "rms_dbfs": -15.62
+        },
+        {
+          "start_seconds": 7.0,
+          "end_seconds": 7.5,
+          "median_voiced_f0_hz": 174.47,
+          "voiced_frame_fraction": 0.82,
+          "rms_dbfs": -15.54
+        },
+        {
+          "start_seconds": 7.5,
+          "end_seconds": 8.0,
+          "median_voiced_f0_hz": 207.69,
+          "voiced_frame_fraction": 0.36,
+          "rms_dbfs": -22.67
+        },
+        {
+          "start_seconds": 8.0,
+          "end_seconds": 8.5,
+          "median_voiced_f0_hz": 211.83,
+          "voiced_frame_fraction": 0.94,
+          "rms_dbfs": -15.33
+        },
+        {
+          "start_seconds": 8.5,
+          "end_seconds": 9.0,
+          "median_voiced_f0_hz": 179.51,
+          "voiced_frame_fraction": 0.84,
+          "rms_dbfs": -16.7
+        },
+        {
+          "start_seconds": 9.0,
+          "end_seconds": 9.5,
+          "median_voiced_f0_hz": 210.29,
+          "voiced_frame_fraction": 0.7,
+          "rms_dbfs": -16.19
+        },
+        {
+          "start_seconds": 9.5,
+          "end_seconds": 10.0,
+          "median_voiced_f0_hz": 181.11,
+          "voiced_frame_fraction": 0.9,
+          "rms_dbfs": -17.04
+        },
+        {
+          "start_seconds": 10.0,
+          "end_seconds": 10.5,
+          "median_voiced_f0_hz": 130.99,
+          "voiced_frame_fraction": 0.38,
+          "rms_dbfs": -23.54
+        },
+        {
+          "start_seconds": 10.5,
+          "end_seconds": 11.0,
+          "median_voiced_f0_hz": 153.62,
+          "voiced_frame_fraction": 0.48,
+          "rms_dbfs": -19.93
+        },
+        {
+          "start_seconds": 11.0,
+          "end_seconds": 11.5,
+          "median_voiced_f0_hz": 155.63,
+          "voiced_frame_fraction": 0.54,
+          "rms_dbfs": -17.27
+        },
+        {
+          "start_seconds": 11.5,
+          "end_seconds": 12.0,
+          "median_voiced_f0_hz": 243.72,
+          "voiced_frame_fraction": 0.8,
+          "rms_dbfs": -16.03
+        },
+        {
+          "start_seconds": 12.0,
+          "end_seconds": 12.5,
+          "median_voiced_f0_hz": 153.0,
+          "voiced_frame_fraction": 0.46,
+          "rms_dbfs": -21.41
+        },
+        {
+          "start_seconds": 12.5,
+          "end_seconds": 13.0,
+          "median_voiced_f0_hz": 175.23,
+          "voiced_frame_fraction": 0.8,
+          "rms_dbfs": -15.3
+        },
+        {
+          "start_seconds": 13.0,
+          "end_seconds": 13.5,
+          "median_voiced_f0_hz": 175.79,
+          "voiced_frame_fraction": 0.8,
+          "rms_dbfs": -15.7
+        },
+        {
+          "start_seconds": 13.5,
+          "end_seconds": 14.0,
+          "median_voiced_f0_hz": 133.11,
+          "voiced_frame_fraction": 0.78,
+          "rms_dbfs": -17.64
+        },
+        {
+          "start_seconds": 14.0,
+          "end_seconds": 14.5,
+          "median_voiced_f0_hz": 143.65,
+          "voiced_frame_fraction": 0.38,
+          "rms_dbfs": -22.06
+        },
+        {
+          "start_seconds": 14.5,
+          "end_seconds": 15.0,
+          "median_voiced_f0_hz": 144.03,
+          "voiced_frame_fraction": 0.86,
+          "rms_dbfs": -18.32
+        },
+        {
+          "start_seconds": 15.0,
+          "end_seconds": 15.5,
+          "median_voiced_f0_hz": 119.8,
+          "voiced_frame_fraction": 0.06,
+          "rms_dbfs": -31.75
+        },
+        {
+          "start_seconds": 15.5,
+          "end_seconds": 15.595,
+          "median_voiced_f0_hz": null,
+          "voiced_frame_fraction": 0.0,
+          "rms_dbfs": -52.96
+        }
+      ]
+    },
+    "not_reliably_established": {
+      "words_per_minute": null,
+      "syllables_per_second": null,
+      "environmental_snr_db": null,
+      "reverberation_time_seconds": null,
+      "formants_by_phoneme_hz": null,
+      "jitter_percent": null,
+      "shimmer_percent": null,
+      "reason": "Não há transcrição alinhada, ruído de fundo isolado, segmentação fonética ou protocolo adequado para essas medidas. Não preencher com números presumidos."
+    }
+  },
+  "vocal_profile": {
+    "evidence": "inferred_and_unconfirmed",
+    "acoustic_summary_pt": "Tom central medido próximo de 176 Hz; a faixa entre os percentis 10 e 90 vai de 133 a 222 Hz, com amplitude melódica de cerca de 8,8 semitons. Energia concentrada em frequências baixas nesta gravação. Loudness integrada próxima de −18,1 LUFS, pico verdadeiro estimado em −3,3 dBTP e sem saturação digital de escala completa detectada.",
+    "identity_source": "speaker_embedding extraído de germani-voice.wav pelo checkpoint XTTS v2 em uso",
+    "style_source": "gpt_cond_latent extraído da mesma referência",
+    "timbre_instruction": "Priorizar a semelhança com o áudio original. Preservar a ressonância, a articulação e a textura transferidas pela referência; não substituir a identidade por adjetivos genéricos.",
+    "pitch_instruction": "Preservar variação natural de entonação. Usar as estatísticas como referência de avaliação, sem deslocamento de pitch automático ou alvo fixo.",
+    "quality_instruction": "Priorizar fala inteligível, contínua, sem repetições, cliques ou cortes. Manter a dinâmica natural antes de qualquer acabamento de volume.",
+    "perceptual_attributes": {
+      "auditory_review_completed": false,
+      "accent_region": null,
+      "emotion": null,
+      "breathiness": null,
+      "roughness": null,
+      "nasality": null,
+      "perceived_warmth": null,
+      "speaking_style": null,
+      "reason": "A análise realizada é instrumental. Esses atributos perceptivos precisam de escuta e não foram inventados a partir do nome do arquivo ou das medidas."
+    }
+  },
+  "reference_preparation": {
+    "evidence": "recommended",
+    "use_original_as_first_baseline": true,
+    "reason": "Formato PCM mono e margem de pico adequados para uma primeira inferência; a qualidade perceptiva ainda deve ser comparada na saída.",
+    "resample_file_before_loading": false,
+    "resampling_note": "Fornecer o WAV original. O carregador do modelo faz a reamostragem requerida internamente; não mudar apenas a taxa declarada no cabeçalho.",
+    "external_gain_db": 0.0,
+    "denoise_enabled": false,
+    "dereverb_enabled": false,
+    "equalizer_enabled": false,
+    "compressor_enabled": false,
+    "pitch_shift_semitones": 0.0,
+    "time_stretch_factor": 1.0,
+    "silence_trimming_enabled": false,
+    "preserve_breaths_and_word_edges": true,
+    "preprocessing_policy": "Aplicar correção apenas se um defeito for confirmado por escuta e prejudicar a clonagem. Comparar sempre com a referência original; remoção agressiva de ruído pode alterar o timbre.",
+    "additional_reference_option": {
+      "required_for_initial_test": false,
+      "suggestion": "Se a semelhança não bastar, comparar com 2 ou 3 trechos adicionais de aproximadamente 10 a 20 segundos, da mesma voz e com gravação consistente, contendo frases variadas.",
+      "selection": "Priorizar um único locutor por trecho, palavras completas, ausência de música e sobreposição de falantes e o estilo que será usado na aplicação.",
+      "conditioning_note": "A duração e a ordem das referências influenciam quanto entra no condicionamento. O limite gpt_cond_len se aplica ao áudio concatenado; não presumir que todos os arquivos foram integralmente usados."
+    }
+  },
+  "xtts_v2": {
+    "evidence": "recommended_using_documented_native_parameters",
+    "model_name": "tts_models/multilingual/multi-dataset/xtts_v2",
+    "api_family": "TTS.tts.models.xtts.Xtts",
+    "language": "pt",
+    "application_locale": "pt-BR",
+    "language_origin": "Idioma de saída sugerido pelo contexto da solicitação em português; não é detecção do idioma ou sotaque do WAV.",
+    "preset_status": "baseline_not_auditioned",
+    "preset_basis": "Temperatura, top-k, top-p e penalidades partem do config.json publicado para coqui/XTTS-v2. Condicionamento explicitado para utilizar a referência inteira, que dura menos de 30 s.",
+    "comparison_seed": 42,
+    "seed_note": "Definir no gerador aleatório do runtime, não passar seed como kwarg deste perfil. Seed não garante igualdade entre GPUs, versões e execuções concorrentes.",
+    "reference_paths": [
+      "germani-voice.wav"
+    ],
+    "conditioning": {
+      "method": "get_conditioning_latents",
+      "audio_path_argument": "Lista de caminhos locais para reference_paths, resolvidos pelo adaptador.",
+      "kwargs": {
+        "max_ref_length": 30,
+        "gpt_cond_len": 30,
+        "gpt_cond_chunk_len": 4,
+        "librosa_trim_db": null,
+        "sound_norm_refs": false,
+        "load_sr": 22050
+      },
+      "outputs": [
+        "gpt_cond_latent",
+        "speaker_embedding"
+      ],
+      "max_ref_length_note": "Nome do argumento desta API. Em XttsConfig/full_inference, o campo correspondente se chama max_ref_len; não intercambiar os nomes sem mapear a chamada.",
+      "expected_reference_coverage_seconds": 15.595102,
+      "coverage_note": "Os limites de 30 s não criam ou repetem áudio. Esta única referência possui 15,595 s e cabe integralmente nos limites."
+    },
+    "inference": {
+      "method": "inference",
+      "required_dynamic_arguments": [
+        "text",
+        "language",
+        "gpt_cond_latent",
+        "speaker_embedding"
+      ],
+      "kwargs": {
+        "temperature": 0.75,
+        "length_penalty": 1.0,
+        "repetition_penalty": 5.0,
+        "top_k": 50,
+        "top_p": 0.85,
+        "do_sample": true,
+        "speed": 1.0,
+        "enable_text_splitting": true
+      },
+      "parameter_notes": {
+        "temperature": "Controla amostragem; 0,75 é ponto de partida, não emoção extraída do áudio.",
+        "top_k_and_top_p": "Limitam candidatos na amostragem; não controlam semelhança de locutor diretamente.",
+        "repetition_penalty": "Começar em 5,0 e investigar repetições com testes; aumentar indefinidamente não melhora a naturalidade.",
+        "length_penalty": "Manter neutro; não usar como controle de velocidade. Seu efeito depende do algoritmo de geração.",
+        "speed": "1,0 preserva a temporização nominal. Ajustes posteriores exigem comparação por escuta.",
+        "enable_text_splitting": "Divide textos longos segundo o tokenizador. A aplicação deve preferir frases completas e respeitar o limite de tokens do checkpoint."
+      }
+    },
+    "streaming": {
+      "method": "inference_stream",
+      "optional": true,
+      "shared_kwargs_from": "xtts_v2.inference.kwargs",
+      "additional_kwargs": {
+        "stream_chunk_size": 20,
+        "overlap_wav_len": 1024
+      },
+      "stream_chunk_size_unit": "tokens de áudio; não milissegundos",
+      "overlap_wav_len_unit": "amostras de áudio",
+      "overlap_at_24000_hz_ms": 42.667,
+      "transport": "Enviar os chunks PCM na ordem e informar a taxa de 24 kHz ao consumidor.",
+      "do_not": "Não reiniciar o condicionamento a cada chunk, não normalizar cada chunk separadamente e não inserir cabeçalho WAV a cada bloco em um fluxo PCM.",
+      "latency_guarantee_ms": null,
+      "latency_note": "Medir na infraestrutura real. GPU, filas, comprimento do texto e transporte alteram a latência; os parâmetros acima não garantem um prazo."
+    },
+    "output": {
+      "sample_rate_hz": 24000,
+      "channels": 1,
+      "model_waveform_type": "floating_point",
+      "file_format_recommendation": "WAV PCM signed 16-bit little-endian",
+      "keep_native_sample_rate_until_transport_requires_conversion": true,
+      "note": "Saída de 24 kHz não vira áudio com mais detalhe ao ser reamostrada para 44,1 ou 48 kHz. Nunca salvar amostras de 24 kHz declarando uma taxa diferente sem reamostrar."
+    },
+    "conditioning_cache": {
+      "status_in_this_export": "not_extracted",
+      "extract_once_per_reference_and_checkpoint": true,
+      "reuse_across_utterances": true,
+      "gpt_cond_latent": null,
+      "speaker_embedding": null,
+      "cache_key_inputs": [
+        "source_audio.sha256",
+        "checkpoint_identifier_or_hash",
+        "conditioning.kwargs",
+        "preprocessing_version",
+        "ordered_reference_hashes_if_multiple"
+      ],
+      "invalidate_when_inputs_change": true,
+      "note": "Não usar F0, HNR, centroide espectral ou vetores aleatórios no lugar de embeddings. Extrair os tensores com o mesmo modelo que vai sintetizar."
+    },
+    "not_supported_as_native_controls_in_this_api": [
+      "pitch_hz",
+      "pitch_shift",
+      "formant_shift",
+      "warmth",
+      "breathiness",
+      "emotion",
+      "style_strength",
+      "similarity_boost",
+      "stability",
+      "ultra_realistic"
+    ],
+    "adapter_rule": "Não passar este JSON inteiro a model.inference ou ao gerador Transformers. Usar somente os kwargs listados para o método correspondente; o restante é documentação e política da aplicação."
+  },
+  "voice_application_policy": {
+    "evidence": "recommended_not_extracted_personality",
+    "delivery_goal": "Conversa clara e natural, com a identidade e a prosódia condicionadas pelo WAV.",
+    "style_transfer_rule": "No XTTS v2, a principal referência de identidade e estilo é o áudio. Um prompt descritivo destinado a uma IA textual não é um controle acústico nativo.",
+    "text_generation": {
+      "instructions_pt": [
+        "Escrever falas que soem naturais quando lidas em voz alta, adequadas ao contexto e sem excesso de formalidade.",
+        "Usar pontuação convencional para organizar frases e perguntas; evitar séries de reticências e exclamações.",
+        "Normalizar números, valores, datas, horários e abreviações quando isso melhorar a pronúncia sem mudar o significado.",
+        "Manter nomes próprios e termos do usuário; resolver pronúncias em um dicionário da aplicação quando necessário.",
+        "Não inserir comandos como [sussurrando], [rindo] ou instruções de atuação no texto enviado ao XTTS.",
+        "Não enviar Markdown, emojis ou SSML cru sem uma camada explícita que os converta para texto falável.",
+        "Formar uma frase ou oração com sentido antes de sintetizar. Evitar enviar cada token do LLM isoladamente.",
+        "Não acrescentar hesitações, risadas ou respirações aleatórias apenas para parecer humano."
+      ],
+      "initial_chunk_target_words": [
+        12,
+        35
+      ],
+      "chunk_target_note": "Heurística da aplicação, não limite do XTTS nem medição do áudio. Priorizar fronteiras linguísticas e o limite real do tokenizador."
+    },
+    "audio_runtime": {
+      "keep_model_loaded": true,
+      "reuse_conditioning_tensors": true,
+      "cancel_pending_synthesis_when_user_interrupts": true,
+      "discard_stale_chunks_after_interruption": true,
+      "buffer_policy": "Usar buffer suficiente para evitar lacunas sem acumular atraso desnecessário; ajustar por medição da aplicação.",
+      "pause_policy": "Deixar a síntese produzir as pausas da frase. Ao concatenar frases separadas, inspecionar o silêncio existente antes de acrescentar pausas, para não duplicá-las."
+    }
+  },
+  "postprocessing": {
+    "evidence": "recommended",
+    "baseline_effects_enabled": false,
+    "reference_normalization_needed_for_first_test": false,
+    "automatic_eq_or_pitch_correction": false,
+    "optional_application_loudness_target_lufs": -18.0,
+    "optional_true_peak_ceiling_dbtp": -1.0,
+    "scope": "Alvos opcionais para a saída completa, escolhidos para comparação próxima da referência; não são parâmetros do XTTS nem exigências universais do canal.",
+    "method": "Se necessário, aplicar ganho global moderado à fala final, medir o pico verdadeiro e limitar apenas o necessário. Não comprimir fortemente nem igualar volumes de cada sílaba.",
+    "streaming_note": "Não tentar forçar LUFS medido em janelas minúsculas. Usar política estável de ganho e headroom ao longo do fluxo.",
+    "telephony_note": "Se o destino exigir outra taxa ou codec, converter uma única vez ao final. A largura de banda do canal pode limitar a semelhança percebida."
+  },
+  "evaluation_plan": {
+    "status": "not_run_on_xtts",
+    "purpose": "Escolher o melhor ajuste por semelhança e inteligibilidade, sem confundir um bom número acústico com uma voz convincente.",
+    "first_test": "Gerar as frases abaixo com o preset baseline e comparar à referência no mesmo volume de reprodução.",
+    "test_texts_pt_br": [
+      "Olá! Me conta como posso ajudar você hoje.",
+      "Entendi. Você prefere conversar agora ou quer que eu explique por partes?",
+      "O atendimento está marcado para quinta-feira, às quinze horas e trinta minutos.",
+      "O valor é cento e vinte e nove reais e noventa centavos.",
+      "Certo. Vou conferir essa informação antes de continuar."
+    ],
+    "listening_criteria": [
+      "A identidade vocal permanece reconhecível em todas as frases?",
+      "O texto é pronunciado por completo, sem omissões, invenções ou repetições?",
+      "A entonação acompanha perguntas, afirmações e finais de frase sem monotonia?",
+      "Há cortes, estalos, sílabas metálicas, sibilância excessiva ou mudanças de locutor?",
+      "As pausas e a velocidade soam naturais para a aplicação?"
+    ],
+    "optional_temperature_comparison": {
+      "values": [
+        0.65,
+        0.75,
+        0.85
+      ],
+      "keep_other_parameters_and_seed_fixed": true,
+      "interpretation": "Uma temperatura menor pode reduzir variação de amostragem; não garante mais fidelidade. Escolher pela escuta e pelo conteúdo pronunciado."
+    },
+    "quantitative_checks": [
+      "Conferir taxa real de saída, áudio não vazio e ausência de clipping.",
+      "Comparar estatísticas de F0 somente em amostras e textos comparáveis, sem exigir igualdade exata.",
+      "Avaliar inteligibilidade e semelhança por escuta. Se usar ASR ou embeddings externos, tratar as pontuações como auxiliares, com métricas e calibração documentadas.",
+      "Medir tempo até o primeiro áudio, tempo total e interrupção no sistema real; não atribuir latência com base apenas no nome do modelo."
+    ],
+    "similarity_score": null,
+    "naturalness_mos": null,
+    "reason_scores_are_null": "Nenhuma voz clonada foi sintetizada ou avaliada nesta sessão.",
+    "fine_tuning": "Não iniciar fine-tuning apenas com estes 15,6 segundos. Primeiro validar o condicionamento; caso o zero-shot não atenda, planejar um conjunto maior de gravações e validação separada."
+  },
+  "troubleshooting": [
+    {
+      "symptom": "Timbre pouco parecido",
+      "action": "Conferir arquivo e hash, condicionamento do mesmo checkpoint, referência integral e ausência de outro locutor. Comparar outra referência limpa antes de procurar parâmetros de similaridade inexistentes."
+    },
+    {
+      "symptom": "Voz monótona ou artificial",
+      "action": "Rever texto, pontuação e referência de estilo. Comparar temperaturas mantendo os demais fatores fixos; não fixar F0 nem adicionar efeitos automáticos."
+    },
+    {
+      "symptom": "Repetições, prolongamentos ou palavras omitidas",
+      "action": "Verificar tokenização e tamanho das frases; comparar amostragem e penalidade de repetição. Confirmar que o adaptador não enviou campos descritivos ao gerador."
+    },
+    {
+      "symptom": "Áudio muito agudo, grave, rápido ou lento",
+      "action": "Verificar primeiro a taxa de reprodução e o cabeçalho WAV. Manter speed=1.0 e garantir reamostragem real quando a taxa do canal mudar."
+    },
+    {
+      "symptom": "Clipes ou cortes entre blocos",
+      "action": "Verificar ordenação e cancelamento dos chunks, buffer, sobreposição da API e o formato do transporte. Não normalizar nem adicionar cabeçalhos individualmente ao PCM."
+    },
+    {
+      "symptom": "Atraso alto",
+      "action": "Manter modelo e condicionamento em memória; medir fila, hardware e primeiro chunk. Só então ajustar o streaming, sem prometer ganho não medido."
+    }
+  ],
+  "implementation_prompt_pt": "Configure a voz da aplicação usando este manifesto e o WAV germani-voice.wav. Use o áudio como fonte da identidade vocal. Não trate o manifesto como o config.json do checkpoint. Confirme a versão instalada de XTTS v2 e mapeie exclusivamente os kwargs nativos para get_conditioning_latents, inference e, se necessário, inference_stream. Extraia gpt_cond_latent e speaker_embedding uma vez com o mesmo modelo da síntese e reutilize-os, invalidando o cache quando referência, checkpoint ou pré-processamento mudarem. Comece com os parâmetros baseline, language=pt e speed=1.0; mantenha a saída nativa de 24 kHz. Use as medidas acústicas como referência de avaliação, não como controles de pitch, timbre ou emoção. Preserve a variação natural da voz e não invente sotaque, rouquidão, soprosidade ou personalidade. Aplique a política de texto falável e teste as frases propostas antes de considerar a configuração aprovada. Evite DSP agressivo e não passe campos de outras plataformas, como stability ou similarity_boost, ao XTTS. Se ttsl for um wrapper específico, identifique sua API e adapte o contrato. Relate claramente o que foi configurado, o que foi efetivamente testado e quais ajustes dependem de escuta. Não declare perfeição ou pontuação de similaridade sem medição."
+}

@@ -1,9 +1,9 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
-import { Plus, PlusCircle, Tags, Tag, Palette } from "lucide-react";
-import { CrmPipelineStage, CrmDeal, CrmContact, CrmTag } from "@bipesend/contracts";
+import { Plus, PlusCircle, Tags, Tag, Palette, Trash2 } from "lucide-react";
+import { CrmPipeline, CrmPipelineStage, CrmDeal, CrmContact, CrmTag } from "@bipesend/contracts";
 import { 
   DropdownMenu, 
   DropdownMenuTrigger, 
@@ -14,6 +14,8 @@ import {
 } from "@bipesend/ui";
 import { DealCard } from "./deal-card";
 import { stageColor } from "./stage-colors";
+import { EditStageColorCard } from "./edit-stage-color-card";
+import { isProtectedStage } from "../../utils/omnichannel";
 import type { CrmMembershipOption } from "../../types";
 
 interface BoardColumnProps {
@@ -23,6 +25,9 @@ interface BoardColumnProps {
   contacts?: CrmContact[];
   tags?: CrmTag[];
   memberships?: CrmMembershipOption[];
+  tenantId?: string;
+  pipelineId?: string;
+  pipeline?: CrmPipeline;
   onEdit: (deal: CrmDeal) => void;
   onMoveStage: (deal: CrmDeal, stageId: string) => void;
   onAssignDeal: (deal: CrmDeal, membershipId: string | null) => void;
@@ -30,7 +35,9 @@ interface BoardColumnProps {
   onConfigureTags: () => void;
   onApplyTags: (stage: CrmPipelineStage) => void;
   onCreatePipeline?: () => void;
-  onEditStageColor: (stage: CrmPipelineStage) => void;
+  onEditStageColor?: (stage: CrmPipelineStage) => void;
+  onStageSaved?: (stage: CrmPipelineStage, isEdit: boolean) => void;
+  onDeleteStage?: (stage: CrmPipelineStage) => void;
 }
 
 export function BoardColumn({ 
@@ -40,6 +47,9 @@ export function BoardColumn({
   contacts, 
   tags,
   memberships, 
+  tenantId,
+  pipelineId,
+  pipeline,
   onEdit, 
   onMoveStage, 
   onAssignDeal, 
@@ -47,8 +57,24 @@ export function BoardColumn({
   onConfigureTags,
   onApplyTags,
   onCreatePipeline,
-  onEditStageColor
+  onEditStageColor,
+  onStageSaved,
+  onDeleteStage,
 }: BoardColumnProps) {
+  const [isEditingColor, setIsEditingColor] = useState(false);
+  const [previewColor, setPreviewColor] = useState<string | null>(null);
+
+  const isProtected = isProtectedStage(stage, pipeline);
+  const currentStageColor = previewColor || stageColor(stage.colorToken);
+
+  const handleTriggerColorEdit = () => {
+    if (tenantId && pipelineId && onStageSaved) {
+      setIsEditingColor((prev) => !prev);
+    } else if (onEditStageColor) {
+      onEditStageColor(stage);
+    }
+  };
+
   const totalAmount = deals.reduce((acc, deal) => acc + (deal.amount ? Number(deal.amount) : 0), 0);
   const formattedTotal = new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -60,17 +86,22 @@ export function BoardColumn({
     <section
       className="crm-column"
       aria-labelledby={`crm-stage-${stage.id}`}
-      style={{ "--stage-color": stageColor(stage.colorToken) } as CSSProperties}
+      style={{ "--stage-color": currentStageColor } as CSSProperties}
     >
       <div className="crm-column-header">
         <div className="crm-column-title">
           <span 
             className="crm-stage-dot cursor-pointer" 
             title="Alterar cor do fluxo"
-            onClick={() => onEditStageColor(stage)}
+            onClick={handleTriggerColorEdit}
             aria-hidden="true" 
           />
           <h3 id={`crm-stage-${stage.id}`}>{stage.name}</h3>
+          {isProtected && (
+            <span className="crm-stage-fixed-badge" title="Fluxo primário fixo do Omnichannel">
+              Fixo
+            </span>
+          )}
           <span className="crm-column-count" aria-label={`${deals.length} negócios`}>
             {deals.length}
           </span>
@@ -121,16 +152,53 @@ export function BoardColumn({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
-                onClick={() => onEditStageColor(stage)} 
+                onClick={handleTriggerColorEdit} 
                 className="cursor-pointer whitespace-nowrap flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 rounded-lg hover:bg-slate-100/80 transition-colors"
               >
                 <Palette className="w-4 h-4 text-purple-500 shrink-0" />
                 <span>Alterar cor do fluxo</span>
               </DropdownMenuItem>
+              {onDeleteStage && (
+                <>
+                  <DropdownMenuSeparator />
+                  {isProtected ? (
+                    <div className="px-3 py-1.5 text-[11px] font-medium text-slate-400 bg-slate-50/70 rounded-lg flex items-center gap-1.5 cursor-not-allowed">
+                      <span>🔒 Fluxo primário fixo</span>
+                    </div>
+                  ) : (
+                    <DropdownMenuItem 
+                      onClick={() => onDeleteStage(stage)} 
+                      className="cursor-pointer whitespace-nowrap flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4 text-rose-600 shrink-0" />
+                      <span>Excluir fluxo</span>
+                    </DropdownMenuItem>
+                  )}
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
+
+      {/* Card inline para editar cor do fluxo */}
+      {isEditingColor && tenantId && pipelineId && onStageSaved && (
+        <EditStageColorCard
+          tenantId={tenantId}
+          pipelineId={pipelineId}
+          stage={stage}
+          onClose={() => {
+            setIsEditingColor(false);
+            setPreviewColor(null);
+          }}
+          onStageSaved={(updatedStage, isEdit) => {
+            setIsEditingColor(false);
+            setPreviewColor(null);
+            onStageSaved(updatedStage, isEdit);
+          }}
+          onColorChangePreview={(color) => setPreviewColor(color)}
+        />
+      )}
 
       {/* Divisória Estilizada do Fluxo */}
       <div className="crm-flow-divider">

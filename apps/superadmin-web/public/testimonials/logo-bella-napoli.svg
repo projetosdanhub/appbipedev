@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="pizzaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#DC2626" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="36" fill="#FFFDF5" stroke="#FDE68A" stroke-width="2" />
+  <g transform="translate(50, 22)">
+    <circle cx="50" cy="52" r="42" fill="#FEF3C7" />
+    <path d="M50 14 L86 78 C86 78 50 90 14 78 Z" fill="#F59E0B" />
+    <path d="M48 24 L78 72 C78 72 48 82 22 72 Z" fill="#FBBF24" />
+    <circle cx="45" cy="45" r="5.5" fill="#DC2626" />
+    <circle cx="60" cy="62" r="4.5" fill="#DC2626" />
+    <circle cx="35" cy="65" r="5" fill="#DC2626" />
+    <circle cx="55" cy="35" r="2.5" fill="#16A34A" />
+    <circle cx="42" cy="58" r="2" fill="#16A34A" />
+    <path d="M14 78 C30 84 70 84 86 78" stroke="#B45309" stroke-width="5" stroke-linecap="round" fill="none" />
+  </g>
+  <text x="100" y="152" font-family="'Inter', system-ui, sans-serif" font-size="13.5" font-weight="900" fill="#78350F" text-anchor="middle" letter-spacing="1.5">BELLA NAPOLI</text>
+  <text x="100" y="170" font-family="'Poppins', system-ui, sans-serif" font-size="7.8" font-weight="700" fill="#DC2626" text-anchor="middle" letter-spacing="1.2">PIZZARIA &amp; FORNO A LENHA</text>
+</svg>

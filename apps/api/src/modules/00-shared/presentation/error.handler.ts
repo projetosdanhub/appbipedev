@@ -9,8 +9,10 @@ export function errorHandler(
 ) {
   const reqId = request.id as string;
 
-  // Log all errors for internal tracking
+  // Log errors for internal tracking
   if (error instanceof AppError) {
+    request.log.warn({ err: error, code: error.code }, error.message);
+  } else if (error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
     request.log.warn({ err: error, code: error.code }, error.message);
   } else {
     request.log.error({ err: error }, "Unhandled error");
@@ -38,6 +40,18 @@ export function errorHandler(
       },
     };
     return reply.status(400).send(envelope);
+  }
+
+  // Handle standard Fastify 4xx client errors (e.g. empty body, invalid content type, not found)
+  if (error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
+    const envelope: ErrorEnvelope = {
+      error: {
+        code: (error.code as any) || "BAD_REQUEST",
+        message: error.message || "Requisição inválida.",
+        requestId: reqId,
+      },
+    };
+    return reply.status(error.statusCode).send(envelope);
   }
 
   // Default fallback for unexpected errors (do not leak stack)

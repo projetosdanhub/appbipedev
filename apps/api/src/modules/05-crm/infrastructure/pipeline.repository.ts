@@ -8,23 +8,34 @@ export class PipelineRepository {
   async createPipeline(tenantId: string, input: CreateCrmPipeline): Promise<PipelineEntity> {
     return this.db.withTransaction(async (txDb) => {
       const nameNormalized = input.name.toLowerCase().trim();
+      const isDefault = Boolean(input.isDefault);
       const rows = await txDb.query(
-        `INSERT INTO pipelines (tenant_id, name, name_normalized, description, default_currency) 
-         VALUES ($1, $2, $3, $4, $5) 
-         RETURNING id, tenant_id as "tenantId", name, name_normalized as "nameNormalized", description, status, default_currency as "defaultCurrency", version, created_at as "createdAt", updated_at as "updatedAt"`,
-        [tenantId, input.name, nameNormalized, input.description || null, input.defaultCurrency || 'BRL']
+        `INSERT INTO pipelines (tenant_id, name, name_normalized, description, default_currency, is_default) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
+         RETURNING id, tenant_id as "tenantId", name, name_normalized as "nameNormalized", description, status, default_currency as "defaultCurrency", is_default as "isDefault", version, created_at as "createdAt", updated_at as "updatedAt"`,
+        [tenantId, input.name, nameNormalized, input.description || null, input.defaultCurrency || 'BRL', isDefault]
       );
       return { ...rows[0], stages: [] };
+    }, tenantId);
+  }
+
+  async countCustomPipelines(tenantId: string): Promise<number> {
+    return this.db.withTransaction(async (txDb) => {
+      const res = await txDb.query(
+        `SELECT COUNT(*)::int as count FROM pipelines WHERE tenant_id = $1 AND is_default = false AND status = 'active'`,
+        [tenantId]
+      );
+      return res[0]?.count ?? 0;
     }, tenantId);
   }
 
   async listPipelines(tenantId: string): Promise<PipelineEntity[]> {
     return this.db.withTransaction(async (txDb) => {
       const pipelines = await txDb.query(
-        `SELECT id, tenant_id as "tenantId", name, name_normalized as "nameNormalized", description, status, default_currency as "defaultCurrency", version, created_at as "createdAt", updated_at as "updatedAt"
+        `SELECT id, tenant_id as "tenantId", name, name_normalized as "nameNormalized", description, status, default_currency as "defaultCurrency", is_default as "isDefault", version, created_at as "createdAt", updated_at as "updatedAt"
          FROM pipelines 
          WHERE tenant_id = $1 
-         ORDER BY created_at ASC`,
+         ORDER BY is_default DESC, created_at ASC`,
         [tenantId]
       );
 
@@ -55,7 +66,7 @@ export class PipelineRepository {
   async getPipeline(tenantId: string, pipelineId: string): Promise<PipelineEntity | null> {
     return this.db.withTransaction(async (txDb) => {
       const rows = await txDb.query(
-        `SELECT id, tenant_id as "tenantId", name, name_normalized as "nameNormalized", description, status, default_currency as "defaultCurrency", version, created_at as "createdAt", updated_at as "updatedAt"
+        `SELECT id, tenant_id as "tenantId", name, name_normalized as "nameNormalized", description, status, default_currency as "defaultCurrency", is_default as "isDefault", version, created_at as "createdAt", updated_at as "updatedAt"
          FROM pipelines 
          WHERE id = $1 AND tenant_id = $2`,
         [pipelineId, tenantId]
@@ -90,6 +101,10 @@ export class PipelineRepository {
         sets.push(`description = $${idx++}`);
         values.push(input.description);
       }
+      if (input.status !== undefined) {
+        sets.push(`status = $${idx++}`);
+        values.push(input.status);
+      }
       if (input.defaultCurrency !== undefined) {
         sets.push(`default_currency = $${idx++}`);
         values.push(input.defaultCurrency);
@@ -109,7 +124,7 @@ export class PipelineRepository {
         `UPDATE pipelines 
          SET ${sets.join(", ")} 
          WHERE id = $${idx} AND tenant_id = $${idx+1}
-         RETURNING id, tenant_id as "tenantId", name, name_normalized as "nameNormalized", description, status, default_currency as "defaultCurrency", version, created_at as "createdAt", updated_at as "updatedAt"`,
+         RETURNING id, tenant_id as "tenantId", name, name_normalized as "nameNormalized", description, status, default_currency as "defaultCurrency", is_default as "isDefault", version, created_at as "createdAt", updated_at as "updatedAt"`,
         values
       );
 
@@ -204,6 +219,17 @@ export class PipelineRepository {
 
   async deletePipeline(tenantId: string, pipelineId: string): Promise<void> {
     return this.db.withTransaction(async (txDb) => {
+      const target = await txDb.query(
+        `SELECT id, is_default as "isDefault" FROM pipelines WHERE id = $1 AND tenant_id = $2 LIMIT 1`,
+        [pipelineId, tenantId]
+      );
+      if (!target.length) {
+        throw new Error("NOT_FOUND");
+      }
+      if (target[0].isDefault) {
+        throw new Error("CANNOT_DELETE_DEFAULT_PIPELINE");
+      }
+
       const deals = await txDb.query(
         `SELECT id FROM deals WHERE pipeline_id = $1 AND tenant_id = $2 LIMIT 1`,
         [pipelineId, tenantId]
@@ -222,8 +248,28 @@ export class PipelineRepository {
     }, tenantId);
   }
 
-  async deleteStage(tenantId: string, stageId: string): Promise<void> {
+  async deleteStage(tenantId: string, stageId: string, transferToStageId?: string): Promise<void> {
     return this.db.withTransaction(async (txDb) => {
+      if (transferToStageId) {
+        if (transferToStageId === stageId) {
+          throw new Error("CANNOT_TRANSFER_TO_SAME_STAGE");
+        }
+
+        const targetStages = await txDb.query(
+          `SELECT id, pipeline_id FROM pipeline_stages WHERE id = $1 AND tenant_id = $2 LIMIT 1`,
+          [transferToStageId, tenantId]
+        );
+        if (!targetStages.length) {
+          throw new Error("TARGET_STAGE_NOT_FOUND");
+        }
+
+        // Move todos os deals da etapa atual para a etapa de destino dentro da mesma transação
+        await txDb.query(
+          `UPDATE deals SET stage_id = $1, pipeline_id = $2, version = version + 1, updated_at = NOW() WHERE stage_id = $3 AND tenant_id = $4`,
+          [transferToStageId, targetStages[0].pipeline_id, stageId, tenantId]
+        );
+      }
+
       const deals = await txDb.query(
         `SELECT id FROM deals WHERE stage_id = $1 AND tenant_id = $2 LIMIT 1`,
         [stageId, tenantId]

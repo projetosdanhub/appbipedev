@@ -9,6 +9,7 @@ import {
   CreditCard,
   Settings,
   Send,
+  Bot,
   ShieldAlert,
 } from "lucide-react";
 export const navigation = [
@@ -16,6 +17,7 @@ export const navigation = [
   { name: "Inbox", href: "/inbox", icon: MessageSquare, group: "Workspace" },
   { name: "CRM", href: "/crm", icon: Briefcase, group: "Workspace" },
   { name: "Contatos", href: "/users", icon: Users, group: "Workspace" },
+  { name: "Agentes IA", href: "/ai-agents", icon: Bot, group: "Crescimento" },
   { name: "Campanhas", href: "/campaigns", icon: Send, group: "Crescimento" },
   { name: "Automações", href: "/automations", icon: Zap, group: "Crescimento" },
   { name: "Integrações", href: "/integrations", icon: Plug, group: "Gestão" },

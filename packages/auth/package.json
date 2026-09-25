@@ -33,7 +33,9 @@
     "./session": "./src/session.ts",
     "./verification": "./src/verification.ts",
     "./impersonate": "./src/impersonate.ts",
-    "./mfa": "./src/mfa.ts"
+    "./mfa": "./src/mfa.ts",
+    "./login-code": "./src/login-code.ts",
+    "./totp": "./src/totp.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.policies.json",

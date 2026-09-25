@@ -5,6 +5,8 @@ const state = vi.hoisted(() => ({
     isSuperadmin: false,
     twoFactorEnabled: false,
     updatedAt: new Date(1000),
+    authVersion: 1000,
+    isManagedAccount: false,
   },
 }));
 
@@ -36,9 +38,9 @@ describe("Auth surface and revocation callbacks", () => {
     const jwt = { id: state.user.id, surface: "tenant", authVersion: 1000, sessionId: "test-session" };
     expect(await tenant.callbacks.jwt({ token: jwt })).toEqual(jwt);
     expect(await platform.callbacks.jwt({ token: jwt })).toBeNull();
-    state.user.updatedAt = new Date(2000);
+    state.user.authVersion = 2000;
     expect(await tenant.callbacks.jwt({ token: jwt })).toBeNull();
-    state.user.updatedAt = new Date(1000);
+    state.user.authVersion = 1000;
     state.user.isSuperadmin = true;
     expect(await tenant.callbacks.jwt({ token: jwt })).toBeNull();
     expect(

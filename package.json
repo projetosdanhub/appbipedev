@@ -18,6 +18,7 @@
     "ngrok:app": "ngrok http https://localhost:3443 --host-header=\"app.localhost\"",
     "ngrok:admin": "ngrok http https://localhost:3443 --host-header=\"admin.localhost\"",
     "ngrok:api": "ngrok http https://localhost:3443 --host-header=\"api.localhost\"",
+    "ngrok:landing": "ngrok http 3001 --host-header=rewrite",
     "foundation:build": "pnpm --filter @bipesend/contracts --filter @bipesend/config --filter @bipesend/security --filter @bipesend/events --filter @bipesend/auth -r build",
     "foundation:test": "pnpm foundation:build && pnpm --filter @bipesend/contracts --filter @bipesend/config --filter @bipesend/security --filter @bipesend/events --filter @bipesend/auth -r test",
     "taskboard:render": "node scripts/taskboard.mjs --render",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@types/qrcode": "^1.5.6",
+    "tsx": "^4.23.13",
     "turbo": "latest"
   },
   "dependencies": {

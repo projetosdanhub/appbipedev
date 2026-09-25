@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 import { useRealtime } from "@/lib/useRealtime";
 import type { CrmMembershipOption } from "../../types";
 
+import { AddStageInlineCard } from "./add-stage-inline";
+
 interface PipelineBoardProps {
   tenantId: string;
   pipeline: CrmPipeline;
@@ -31,6 +33,8 @@ interface PipelineBoardProps {
   onCreatePipeline?: () => void;
   onEditStageColor?: (stage: CrmPipelineStage) => void;
   onCreateStage?: () => void;
+  onStageSaved?: (stage: CrmPipelineStage, isEdit: boolean) => void;
+  onDeleteStage?: (stage: CrmPipelineStage) => void;
 }
 
 export function PipelineBoard({ 
@@ -49,6 +53,8 @@ export function PipelineBoard({
   onCreatePipeline,
   onEditStageColor,
   onCreateStage,
+  onStageSaved,
+  onDeleteStage,
 }: PipelineBoardProps) {
   const router = useRouter();
   const [deals, setDeals] = useState<CrmDeal[]>(initialDeals);
@@ -330,6 +336,9 @@ export function PipelineBoard({
                   contacts={contactsState}
                   tags={tags}
                   memberships={memberships}
+                  tenantId={tenantId}
+                  pipelineId={pipeline.id}
+                  pipeline={pipeline}
                   onEdit={handleEdit}
                   onMoveStage={handleMoveStage}
                   onAssignDeal={handleAssignDeal}
@@ -338,11 +347,20 @@ export function PipelineBoard({
                   onApplyTags={onApplyTags ? onApplyTags : () => {}}
                   onCreatePipeline={onCreatePipeline || (() => {})}
                   onEditStageColor={onEditStageColor || (() => {})}
+                  onStageSaved={onStageSaved}
+                  onDeleteStage={onDeleteStage}
                 />
               ))}
 
-              {/* Botão de adicionar novo fluxo no final do Kanban */}
-              {onCreateStage && (
+              {/* Adição inline de novo fluxo no final do Kanban */}
+              {onStageSaved ? (
+                <AddStageInlineCard
+                  tenantId={tenantId}
+                  pipelineId={pipeline.id}
+                  existingCount={stages.length}
+                  onStageSaved={onStageSaved}
+                />
+              ) : onCreateStage ? (
                 <div className="crm-add-column-card">
                   <button
                     type="button"
@@ -355,7 +373,7 @@ export function PipelineBoard({
                     <span>Adicionar Fluxo</span>
                   </button>
                 </div>
-              )}
+              ) : null}
             </>
           )}
         </div>

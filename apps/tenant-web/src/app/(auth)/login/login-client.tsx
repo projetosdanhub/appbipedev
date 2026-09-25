@@ -17,7 +17,7 @@ import {
 } from "@bipesend/ui";
 
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
-import { loginAction } from "../_actions/auth";
+import { loginAction, sendLoginCodeAction, loginWithCodeAction } from "../_actions/auth";
 
 /* ─── Google icon ─── */
 function GoogleIcon({ className }: { className?: string }) {
@@ -31,14 +31,21 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
+type AuthStep = "choice" | "password" | "code_email" | "code_verify";
+
 function LoginContent() {
-  const [authStep, setAuthStep] = useState<"choice" | "email">("choice");
+  const [authStep, setAuthStep] = useState<AuthStep>("choice");
   const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
   const [requires2FA, setRequires2FA] = useState(false);
   const [twoFactorCode, setTwoFactorCode] = useState("");
+  const [codeEmail, setCodeEmail] = useState("");
+  const [codeInputValue, setCodeInputValue] = useState("");
+  const [isSendingCode, setIsSendingCode] = useState(false);
+  const [isVerifyingCode, setIsVerifyingCode] = useState(false);
+  const [countdown, setCountdown] = useState(0);
   const [remainingTime, setRemainingTime] = useState("");
   const [emailPlaceholder, setEmailPlaceholder] = useState("E-mail (ex: seuemail@empresa.com.br)");
   const router = useRouter();
@@ -48,7 +55,7 @@ function LoginContent() {
     const handleResize = () => {
       setEmailPlaceholder(window.innerWidth < 768 ? "ex: seuemail@empresa.com.br" : "E-mail (ex: seuemail@empresa.com.br)");
     };
-    handleResize(); // set on mount
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -82,13 +89,21 @@ function LoginContent() {
     return () => clearInterval(interval);
   }, [lockoutUntil]);
 
+  // Timer para reenvio de código
+  useEffect(() => {
+    if (countdown <= 0) return;
+    const timer = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [countdown]);
+
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "", rememberMe: false },
     mode: "onBlur",
   });
 
-  // Função auxiliar para classes dos ícones
   const getIconClass = (val: string | undefined, isTouched: boolean, invalid: boolean) => {
     const base = "h-5 w-5 md:h-[18px] md:w-[18px] transition-colors duration-300";
     if (invalid) return `text-red-500 ${base}`;
@@ -96,17 +111,16 @@ function LoginContent() {
     return `text-[#7F90B2] ${base}`;
   };
 
+  // Submit E-mail + Senha
   const onSubmit = async (data: LoginInput) => {
     setServerError("");
-    // Simulate delay for smooth UI feedback
-    await new Promise((resolve) => setTimeout(resolve, 600));
+    await new Promise((resolve) => setTimeout(resolve, 400));
     try {
       const response = await loginAction({ ...data, rememberMe, code: requires2FA ? twoFactorCode : undefined });
-      console.log("loginAction response:", response);
       if (!response.success) { 
         if (response.message === "2FA_REQUIRED") {
           setRequires2FA(true);
-          toast.info("Código de autenticação necessário.");
+          toast.info("Código de autenticação 2FA necessário.");
           return;
         }
 
@@ -116,7 +130,7 @@ function LoginContent() {
         } else {
           const msg = response.message || "Erro ao realizar login";
           if (requires2FA) {
-            setServerError(msg); // Exibe erro do 2FA
+            setServerError(msg);
           } else {
             setServerError("Confira os dados inseridos.");
           }
@@ -124,11 +138,87 @@ function LoginContent() {
         return; 
       }
       toast.success("Bem-vindo de volta! 🎉");
-      // Hard redirect to clear any Next.js router cache and ensure the new session is picked up
       const cb = searchParams?.get("callbackUrl") || "/";
       window.location.href = cb;
     } catch {
       setServerError("Erro inesperado ao conectar ao servidor.");
+    }
+  };
+
+  // Solicitar código por e-mail
+  const handleRequestLoginCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setServerError("");
+    setIsSendingCode(true);
+
+    try {
+      if (!codeEmail || !codeEmail.includes("@")) {
+        throw new Error("Digite um e-mail válido.");
+      }
+
+      const res = await sendLoginCodeAction({ email: codeEmail });
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+
+      toast.success("Código de acesso enviado com sucesso!");
+      setAuthStep("code_verify");
+      setCountdown(45);
+    } catch (err: unknown) {
+      setServerError((err as { message?: string }).message || "Erro ao solicitar código.");
+    } finally {
+      setIsSendingCode(false);
+    }
+  };
+
+  // Reenviar código
+  const handleResendLoginCode = async () => {
+    if (countdown > 0 || isSendingCode) return;
+    setServerError("");
+    setIsSendingCode(true);
+
+    try {
+      const res = await sendLoginCodeAction({ email: codeEmail });
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+      toast.success("Novo código enviado com sucesso!");
+      setCountdown(45);
+    } catch (err: unknown) {
+      setServerError((err as { message?: string }).message || "Erro ao reenviar código.");
+    } finally {
+      setIsSendingCode(false);
+    }
+  };
+
+  // Validar código e autenticar
+  const handleVerifyLoginCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setServerError("");
+    setIsVerifyingCode(true);
+
+    try {
+      if (!codeInputValue) {
+        throw new Error("Digite o código de acesso.");
+      }
+
+      const res = await loginWithCodeAction({
+        email: codeEmail,
+        code: codeInputValue,
+        rememberMe,
+      });
+
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+
+      toast.success("Bem-vindo de volta! 🎉");
+      const cb = searchParams?.get("callbackUrl") || "/";
+      window.location.href = cb;
+    } catch (err: unknown) {
+      setServerError((err as { message?: string }).message || "Código inválido ou expirado.");
+    } finally {
+      setIsVerifyingCode(false);
     }
   };
 
@@ -138,10 +228,16 @@ function LoginContent() {
       {/* ── Heading Dinâmico ── */}
       <div className="space-y-2 text-center md:text-left mb-6">
         <h1 className="text-[26px] md:text-[30px] font-bold text-[#07113F] tracking-tight leading-[1.15]">
-          {authStep === "choice" ? "Entre na sua conta" : "Entrar com E-mail"}
+          {authStep === "choice" && "Entre na sua conta"}
+          {authStep === "password" && "Entrar com E-mail e Senha"}
+          {authStep === "code_email" && "Entrar com Código"}
+          {authStep === "code_verify" && "Código de Acesso"}
         </h1>
         <p className="text-[15px] md:text-[16px] text-[#475569] leading-[1.45] font-normal">
-          Acesse seu CRM e continue suas conversas com agilidade.
+          {authStep === "choice" && "Acesse seu CRM e continue suas conversas com agilidade."}
+          {authStep === "password" && "Digite seu e-mail e senha para continuar."}
+          {authStep === "code_email" && "Digite seu e-mail cadastrado para receber o código de acesso."}
+          {authStep === "code_verify" && `Digite o código enviado para ${codeEmail} ou seu autenticador.`}
         </p>
       </div>
 
@@ -165,27 +261,30 @@ function LoginContent() {
         <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300 w-full">
           <Button 
             type="button"
-            onClick={() => setAuthStep("email")}
+            onClick={() => {
+              setServerError("");
+              setAuthStep("password");
+            }}
             size="lg"
             className="w-full h-[54px] rounded-[14px] border-0 text-white font-semibold text-[16px] shadow-[0_10px_26px_rgba(63,79,215,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
             style={{ background: "linear-gradient(100deg, #08A6F8 0%, #1478FF 38%, #575AF8 70%, #B132F4 100%)" }}
           >
-            <Mail className="mr-2 h-5 w-5" />
+            <Mail className="mr-2.5 h-5 w-5" />
             Logar com E-mail e Senha
           </Button>
 
           <Button 
             type="button"
             onClick={() => {
-              toast.info("A autenticação por código é integrada. Use seu e-mail e senha, e pediremos o código caso o 2FA esteja ativado.");
-              setAuthStep("email");
+              setServerError("");
+              setAuthStep("code_email");
             }}
             variant="outline"
             size="lg"
             className="w-full h-[54px] rounded-[14px] border border-[#DCE5F2] bg-white text-[#07113F] font-semibold hover:bg-[#F9FBFE] hover:border-[#C4D1E2] transition-colors"
           >
-            <Smartphone className="h-5 w-5 mr-3 text-[#07113F]" />
-            <span className="text-[15px]">Login por código</span>
+            <KeyRound className="h-5 w-5 mr-3 text-[#0A74FF]" />
+            <span className="text-[15px]">Continuar com Código</span>
           </Button>
           
           <Button 
@@ -199,7 +298,7 @@ function LoginContent() {
             <span className="text-[15px]">Continuar com Google</span>
           </Button>
 
-          {/* Lembrar me (apenas no passo 1) */}
+          {/* Lembrar conectado */}
           <div className="pt-2 flex justify-center">
             <label className="flex items-center gap-3 cursor-pointer group relative">
               <div className="relative flex items-center justify-center">
@@ -228,8 +327,8 @@ function LoginContent() {
         </div>
       )}
 
-      {/* ── Passo 2: Formulário de Email ── */}
-      {authStep === "email" && (
+      {/* ── Passo 2A: Formulário de Email + Senha ── */}
+      {authStep === "password" && (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full" noValidate>
             
@@ -242,15 +341,15 @@ function LoginContent() {
                     </div>
                     <h3 className="text-[18px] font-semibold text-[#07113F]">Verificação em Duas Etapas</h3>
                     <p className="text-[14px] text-[#475569] mt-1">
-                      Digite o código gerado pelo seu aplicativo autenticador.
+                      Digite o código gerado pelo seu aplicativo autenticador ou código de recuperação.
                     </p>
                   </div>
                   <Input
                     id="login-code" type="text"
                     placeholder="000000"
-                    maxLength={6}
+                    maxLength={10}
                     value={twoFactorCode}
-                    onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ''))}
+                    onChange={(e) => setTwoFactorCode(e.target.value.trim().toUpperCase())}
                     autoComplete="one-time-code"
                     className="text-center tracking-[0.2em] font-medium text-[18px] h-[50px]"
                   />
@@ -328,14 +427,22 @@ function LoginContent() {
                 {form.formState.isSubmitting ? "Entrando..." : (requires2FA ? "Verificar código" : "Entrar")}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              {requires2FA && (
-                <Button type="button" variant="ghost" onClick={() => { setRequires2FA(false); setServerError(""); }} className="w-full mt-2 text-[#475569]">
-                  Voltar
-                </Button>
-              )}
+
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  setServerError("");
+                  setRequires2FA(false);
+                  setAuthStep("choice");
+                }}
+                className="w-full mt-2 text-[#475569] hover:text-[#07113F]"
+              >
+                <ArrowLeft className="mr-1.5 h-4 w-4" />
+                Voltar para opções
+              </Button>
             </div>
             
-            {/* Termos rodapé */}
             <div className="pt-3 pb-1 text-center">
               <p className="text-[12px] text-[#475569] leading-relaxed">
                 Ao entrar, você concorda com nossos{" "}
@@ -343,18 +450,122 @@ function LoginContent() {
                 <Link href="/privacy" className="text-[#0056D2] hover:underline font-medium transition-colors">Política de Privacidade</Link>.
               </p>
             </div>
-
-            <div className="pt-1 text-center">
-              <p className="text-[14px] text-[#475569] font-medium">
-                Crie sua conta agora!{" "}
-                <Link href="/register" className="font-semibold text-[#0056D2] hover:text-[#0056D2]/80 transition-colors">
-                  Criar Conta
-                </Link>
-              </p>
-            </div>
           </form>
         </Form>
       )}
+
+      {/* ── Passo 2B: Inserir E-mail para Código ── */}
+      {authStep === "code_email" && (
+        <form onSubmit={handleRequestLoginCode} className="space-y-4 w-full animate-in fade-in" noValidate>
+          <div className="space-y-3">
+            <Input
+              id="code-email-input"
+              type="email"
+              placeholder={emailPlaceholder}
+              value={codeEmail}
+              onChange={(e) => setCodeEmail(e.target.value)}
+              required
+              autoFocus
+              leftIcon={<Mail className="h-5 w-5 text-[#7F90B2]" />}
+              className="h-[50px] text-[15px] md:h-[46px] md:text-[14px]"
+            />
+          </div>
+
+          <div className="pt-2 space-y-2">
+            <Button
+              type="submit"
+              isLoading={isSendingCode}
+              size="lg"
+              className="w-full text-[17px] font-semibold text-white h-[52px] rounded-[14px] border-0 shadow-[0_10px_26px_rgba(63,79,215,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
+              style={{ background: "linear-gradient(100deg, #08A6F8 0%, #1478FF 38%, #575AF8 70%, #B132F4 100%)" }}
+            >
+              {isSendingCode ? "Verificando..." : "Continuar"}
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setServerError("");
+                setAuthStep("choice");
+              }}
+              className="w-full text-[#475569] hover:text-[#07113F]"
+            >
+              <ArrowLeft className="mr-1.5 h-4 w-4" />
+              Voltar para opções
+            </Button>
+          </div>
+        </form>
+      )}
+
+      {/* ── Passo 2C: Digitar Código de Acesso ── */}
+      {authStep === "code_verify" && (
+        <form onSubmit={handleVerifyLoginCode} className="space-y-4 w-full animate-in fade-in" noValidate>
+          <div className="text-center mb-4">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#F0F5FF] mb-3">
+              <KeyRound className="w-6 h-6 text-[#0A74FF]" />
+            </div>
+            <p className="text-[14px] text-[#475569]">
+              Insira o código de 6 dígitos recebido por e-mail ou gerado no seu autenticador.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Input
+              id="code-verify-input"
+              type="text"
+              placeholder="000000"
+              maxLength={10}
+              value={codeInputValue}
+              onChange={(e) => setCodeInputValue(e.target.value.trim().toUpperCase())}
+              autoComplete="one-time-code"
+              autoFocus
+              className="text-center tracking-[0.2em] font-semibold text-[20px] h-[52px]"
+            />
+          </div>
+
+          <div className="pt-2 space-y-2">
+            <Button
+              type="submit"
+              isLoading={isVerifyingCode}
+              disabled={codeInputValue.length < 6}
+              size="lg"
+              className="w-full text-[17px] font-semibold text-white h-[52px] rounded-[14px] border-0 shadow-[0_10px_26px_rgba(63,79,215,0.18)] transition-transform duration-150 hover:-translate-y-[1px]"
+              style={{ background: "linear-gradient(100deg, #08A6F8 0%, #1478FF 38%, #575AF8 70%, #B132F4 100%)" }}
+            >
+              {isVerifyingCode ? "Verificando..." : "Verificar e Entrar"}
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+
+            <div className="flex items-center justify-between pt-2">
+              <button
+                type="button"
+                onClick={handleResendLoginCode}
+                disabled={countdown > 0 || isSendingCode}
+                className={`text-[13px] font-medium transition-opacity ${
+                  countdown > 0 ? "text-[#94A3B8] cursor-not-allowed" : "text-[#0056D2] hover:underline"
+                }`}
+              >
+                {countdown > 0 ? `Reenviar código em ${countdown}s` : "Reenviar código por e-mail"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setServerError("");
+                  setCodeInputValue("");
+                  setAuthStep("code_email");
+                }}
+                className="text-[13px] font-medium text-[#475569] hover:text-[#07113F]"
+              >
+                Trocar e-mail
+              </button>
+            </div>
+          </div>
+        </form>
+      )}
+
     </div>
   );
 }

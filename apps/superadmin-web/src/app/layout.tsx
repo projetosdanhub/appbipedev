@@ -16,9 +16,17 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Superpainel - BipeSend",
+  title: "BipeSend SuperAdmin | Painel Master & Gestão da Plataforma",
   robots: { index: false, follow: false },
-  description: "BipeSend Superadmin Dashboard",
+  description: "Painel de controle master da plataforma BipeSend — Gestão global de tenants, planos, infraestrutura e métricas.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/assets/brand/icon-logomarca-degradê-webp.webp", type: "image/webp" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/assets/brand/icon-logomarca-degradê-webp.webp",
+  },
 };
 
 export default function RootLayout({

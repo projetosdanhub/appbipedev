@@ -26,6 +26,7 @@ import {
   MessageCircle, 
   Camera, 
   Music2, 
+  Send,
   Plus, 
   Check, 
   Loader2, 
@@ -41,10 +42,12 @@ import { stageColor } from "./board/stage-colors";
 export interface ConnectedAccount {
   id: string;
   name: string;
-  provider: string; // 'evolution_api' | 'instagram' | 'tiktok'
+  provider: string; // 'evolution_api' | 'instagram' | 'tiktok' | 'telegram'
   status: string;
   instanceName?: string;
   username?: string;
+  phone?: string | null;
+  metadata?: Record<string, unknown> | null;
 }
 
 interface AddLeadModalProps {
@@ -102,6 +105,9 @@ export function AddLeadModal({
     if (custom.channel === "tiktok" || custom.tiktok || custom.tiktokHandle) {
       return { key: "tiktok", label: "TikTok", icon: Music2 };
     }
+    if (custom.channel === "telegram" || custom.telegram || custom.telegramUsername) {
+      return { key: "telegram", label: "Telegram", icon: Send };
+    }
     if (c.phone || c.phoneE164 || custom.channel === "whatsapp") {
       return { key: "whatsapp", label: "WhatsApp", icon: MessageCircle };
     }
@@ -131,7 +137,7 @@ export function AddLeadModal({
       const phoneDigits = (contact.phone || contact.phoneE164 || "").replace(/\D/g, "");
       if (digitsOnly.length >= 3 && phoneDigits.includes(digitsOnly)) return true;
 
-      // 4. Custom fields: CPF, Instagram, TikTok
+      // 4. Custom fields: CPF, Instagram, TikTok, Telegram
       if (contact.customFields) {
         const custom = contact.customFields as Record<string, unknown>;
         // CPF / Documento
@@ -147,6 +153,10 @@ export function AddLeadModal({
         // @ TikTok
         const tiktok = String(custom.tiktok || custom.tiktokHandle || "");
         if (tiktok.toLowerCase().includes(term)) return true;
+
+        // @ Telegram
+        const telegram = String(custom.telegram || custom.telegramUsername || "");
+        if (telegram.toLowerCase().includes(term)) return true;
 
         // Qualquer outro campo
         const customStr = JSON.stringify(custom).toLowerCase();
@@ -183,6 +193,12 @@ export function AddLeadModal({
         return { label: "TikTok", value: tiktok.startsWith("@") ? tiktok : `@${tiktok}`, highlight: true };
       }
 
+      // Se buscou @ Telegram
+      const telegram = String(custom.telegram || custom.telegramUsername || "");
+      if (telegram.toLowerCase().includes(term)) {
+        return { label: "Telegram", value: telegram.startsWith("@") ? telegram : `@${telegram}`, highlight: true };
+      }
+
       // Se buscou telefone
       const phone = contact.phone || contact.phoneE164 || "";
       const phoneDigits = phone.replace(/\D/g, "");
@@ -201,6 +217,7 @@ export function AddLeadModal({
     if (custom.cpf) return { label: "CPF", value: String(custom.cpf), highlight: false };
     if (contact.phone || contact.phoneE164) return { label: "WhatsApp", value: contact.phone || contact.phoneE164 || "", highlight: false };
     if (custom.instagram || custom.instagramHandle) return { label: "Instagram", value: String(custom.instagram || custom.instagramHandle), highlight: false };
+    if (custom.telegram || custom.telegramUsername) return { label: "Telegram", value: String(custom.telegram || custom.telegramUsername), highlight: false };
     if (contact.email) return { label: "E-mail", value: contact.email, highlight: false };
     return { label: "Identificador", value: "Cliente sem contato adicional", highlight: false };
   };
@@ -274,6 +291,7 @@ export function AddLeadModal({
       if (newLeadSocial.trim()) {
         if (newLeadChannel === "instagram") customFields.instagram = newLeadSocial.trim();
         else if (newLeadChannel === "tiktok") customFields.tiktok = newLeadSocial.trim();
+        else if (newLeadChannel === "telegram") customFields.telegram = newLeadSocial.trim();
         else customFields.socialHandle = newLeadSocial.trim();
       }
 
@@ -440,6 +458,7 @@ export function AddLeadModal({
                     { key: "whatsapp", label: "WhatsApp" },
                     { key: "instagram", label: "Instagram" },
                     { key: "tiktok", label: "TikTok" },
+                    { key: "telegram", label: "Telegram" },
                     { key: "manual", label: "Outros" },
                   ].map((f) => (
                     <button
@@ -814,7 +833,7 @@ export function AddLeadModal({
 
               <div className="space-y-1.5">
                 <Label htmlFor="new-lead-social" className="text-xs font-semibold text-slate-700">
-                  @ Instagram / TikTok
+                  @ Instagram / TikTok / Telegram
                 </Label>
                 <Input
                   id="new-lead-social"
@@ -852,6 +871,7 @@ export function AddLeadModal({
                   <option value="whatsapp">WhatsApp</option>
                   <option value="instagram">Instagram</option>
                   <option value="tiktok">TikTok</option>
+                  <option value="telegram">Telegram</option>
                   <option value="website">Site / Landing Page</option>
                   <option value="indication">Indicação</option>
                   <option value="manual">Manual / Outros</option>

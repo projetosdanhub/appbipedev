@@ -59,8 +59,8 @@ export class PipelineService {
     return this.pipelineRepository.deletePipeline(context.tenantId, pipelineId);
   }
 
-  async deleteStage(context: TenantContext, stageId: string) {
+  async deleteStage(context: TenantContext, stageId: string, transferToStageId?: string) {
     assertPermission(context, "crm.pipelines.manage");
-    return this.pipelineRepository.deleteStage(context.tenantId, stageId);
+    return this.pipelineRepository.deleteStage(context.tenantId, stageId, transferToStageId);
   }
 }

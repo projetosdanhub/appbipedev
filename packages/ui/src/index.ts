@@ -23,3 +23,8 @@ export * from "./components/segmented-control";
 export * from "./components/filter-chip";
 export * from "./components/integration-card";
 export * from "./components/identity";
+export * from "./components/cloudflare-logo";
+export * from "./components/motion/shimmer-button";
+export * from "./components/motion/glow-card";
+export * from "./components/motion/pulse-badge";
+export * from "./components/motion/number-ticker";

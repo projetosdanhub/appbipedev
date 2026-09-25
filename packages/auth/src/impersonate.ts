@@ -24,7 +24,7 @@ export async function createImpersonationToken(
     token: {
       id: targetUserId,
       surface,
-      authVersion: targetUser.updatedAt.getTime(),
+      authVersion: targetUser.authVersion,
       sessionId,
       impersonatedBy: impersonatorId,
       isManagedAccount: targetUser.isManagedAccount

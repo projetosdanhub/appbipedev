@@ -14,5 +14,9 @@ const STAGE_COLORS: Record<string, string> = {
 };
 
 export function stageColor(token: string): string {
-  return STAGE_COLORS[token.replace(/^bg-/, "")] ?? "#64748b";
+  if (!token) return "#64748b";
+  if (token.startsWith("#") || token.startsWith("rgb")) {
+    return token;
+  }
+  return STAGE_COLORS[token.replace(/^bg-/, "")] ?? token ?? "#64748b";
 }

@@ -17,11 +17,16 @@ export async function fetchApi(path: string, options: RequestInit = {}) {
   }
 
   const isFormData = options.body instanceof FormData;
-  const defaultHeaders: HeadersInit = {
+  const activeTenantId = cookieStore.get("bipesend.tenant.active")?.value;
+  const defaultHeaders: Record<string, string> = {
     Cookie: allCookies, // Provedor de Sessão do Tenant Web
   };
   
-  if (!isFormData) {
+  if (activeTenantId) {
+    defaultHeaders["x-tenant-id"] = activeTenantId;
+  }
+  
+  if (!isFormData && options.body !== undefined && options.body !== null) {
     defaultHeaders["Content-Type"] = "application/json";
   }
 

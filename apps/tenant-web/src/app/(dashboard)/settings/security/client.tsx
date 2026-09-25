@@ -193,13 +193,13 @@ export function SecurityClient({ isTwoFactorEnabled }: { isTwoFactorEnabled: boo
               </div>
             </div>
 
-            <div className="flex items-center justify-center p-6 bg-[var(--color-surface-50)] border border-[var(--color-border-200)] rounded-[12px]">
+            <div className="flex items-center justify-center p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
               <Image 
                 src={setupData.qrCodeUrl} 
-                alt="QR Code" 
+                alt="QR Code de Autenticação em Duas Etapas" 
                 width={200} 
                 height={200} 
-                className="rounded-[8px]"
+                className="rounded-lg bg-white"
               />
             </div>
           </div>

@@ -91,6 +91,9 @@ export function pipelineRoutes(
         return reply.status(200).send({ success: true });
       } catch (e: any) {
         if (e.message === "NOT_FOUND") return reply.status(404).send({ error: "Pipeline not found" });
+        if (e.message === "CANNOT_DELETE_DEFAULT_PIPELINE") {
+          return reply.status(400).send({ error: "O funil principal do sistema é obrigatório e gratuito, não podendo ser excluído." });
+        }
         if (e.message === "CANNOT_DELETE_PIPELINE_WITH_DEALS") {
           return reply.status(400).send({ error: "Não é possível excluir pipeline com negócios vinculados." });
         }
@@ -166,13 +169,23 @@ export function pipelineRoutes(
       if (!request.tenantContext) return reply.status(403).send({ error: "Tenant access denied" });
       
       const params = request.params as { stageId: string };
+      const query = (request.query as { transferToStageId?: string } | undefined) || {};
+      const body = (request.body as { transferToStageId?: string } | undefined) || {};
+      const transferToStageId = query.transferToStageId || body.transferToStageId;
+
       try {
-        await pipelineService.deleteStage(request.tenantContext, params.stageId);
+        await pipelineService.deleteStage(request.tenantContext, params.stageId, transferToStageId);
         return reply.status(200).send({ success: true });
       } catch (e: any) {
         if (e.message === "NOT_FOUND") return reply.status(404).send({ error: "Stage not found" });
+        if (e.message === "TARGET_STAGE_NOT_FOUND") {
+          return reply.status(400).send({ error: "Fluxo de destino não encontrado para transferência dos cards." });
+        }
+        if (e.message === "CANNOT_TRANSFER_TO_SAME_STAGE") {
+          return reply.status(400).send({ error: "Não é possível transferir os cards para o próprio fluxo a ser excluído." });
+        }
         if (e.message === "CANNOT_DELETE_STAGE_WITH_DEALS") {
-          return reply.status(400).send({ error: "Não é possível excluir etapa com negócios vinculados." });
+          return reply.status(400).send({ error: "Não é possível excluir etapa com negócios vinculados sem indicar um fluxo de destino." });
         }
         return reply.status(403).send({ error: e.message || "Operation failed" });
       }

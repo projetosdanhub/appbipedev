@@ -52,6 +52,60 @@ export function createAuthMiddleware(
   };
 }
 
+export function createSuperAdminAuthMiddleware(
+  users: UserRepository,
+) {
+  return async (request: FastifyRequest, reply: FastifyReply) => {
+    // 1. Chave interna de serviço para server actions do SuperAdmin
+    const internalKey = request.headers["x-internal-api-key"] || (
+      request.headers["authorization"]?.startsWith("Bearer ")
+        ? request.headers["authorization"].split(" ")[1]
+        : null
+    );
+    if (internalKey && process.env.INTERNAL_API_KEY && internalKey === process.env.INTERNAL_API_KEY) {
+      request.user = {
+        id: "superadmin-internal",
+        email: "internal@bipesend.com.br",
+        name: "SuperAdmin Internal",
+        isSuperadmin: true,
+      } as any;
+      return;
+    }
+
+    // 2. Cookie de sessão da plataforma SuperAdmin (surface: "platform")
+    const secure = process.env.NODE_ENV === "production";
+    const cookieName = `${secure ? "__Secure-" : ""}bipesend.platform.session-token`;
+    const token = request.cookies[cookieName];
+    if (!token) {
+      return reply.status(401).send({ error: "Unauthorized: SuperAdmin session missing" });
+    }
+
+    let decoded;
+    try {
+      decoded = await decode({
+        token,
+        secret: (process.env.SUPERADMIN_AUTH_SECRET || process.env.AUTH_SECRET) as string,
+        salt: cookieName,
+      });
+    } catch {
+      return reply.status(401).send({ error: "Unauthorized: Invalid platform token" });
+    }
+
+    if (!decoded || !decoded.sessionId || decoded.surface !== "platform") {
+      return reply.status(401).send({ error: "Unauthorized: Invalid surface" });
+    }
+
+    const isValid = await verifySession(decoded.sessionId as string, "platform");
+    if (!isValid) return reply.status(401).send({ error: "Unauthorized: Invalid session" });
+
+    const user = await users.findById(decoded.id as string);
+    if (!user || !user.isSuperadmin) {
+      return reply.status(403).send({ error: "Forbidden: SuperAdmin required" });
+    }
+    request.user = user;
+  };
+}
+
 export function createTenantMiddleware(db: Database) {
   return async (request: FastifyRequest, reply: FastifyReply) => {
     if (!request.user) return reply.status(401).send({ error: "Unauthorized" });

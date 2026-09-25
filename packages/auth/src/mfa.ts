@@ -1,4 +1,4 @@
-import { authenticator } from "otplib";
+import { generateTotpSecret, generateTotpUri, verifyTotp } from "./totp";
 import { randomBytes } from "node:crypto";
 import { prisma } from "@bipesend/db";
 
@@ -6,8 +6,8 @@ import { prisma } from "@bipesend/db";
  * Initiates MFA setup by generating a secret and provisioning URI.
  */
 export async function setupMfa(userId: string, email: string) {
-  const secret = authenticator.generateSecret();
-  const uri = authenticator.keyuri(email, "Bipesend", secret);
+  const secret = generateTotpSecret();
+  const uri = generateTotpUri({ issuer: "Bipesend", label: email, secret });
   return { secret, uri };
 }
 
@@ -28,7 +28,7 @@ function generateBackupCodes(count = 10): string[] {
  * Generates and returns backup codes.
  */
 export async function verifyMfaSetup(userId: string, secret: string, code: string) {
-  const isValid = authenticator.verify({ token: code, secret });
+  const isValid = verifyTotp({ token: code, secret });
   if (!isValid) {
     throw new Error("INVALID_2FA_CODE");
   }

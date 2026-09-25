@@ -5,7 +5,12 @@ import { getConnectionsAction } from "@/features/integrations/actions/connection
 import { getWorkspaceUser } from "@/features/workspace/server/session";
 
 export const metadata: Metadata = {
-  title: "Loja de integrações",
+  title: "Canais e Integrações Oficiais | BipeSend",
+  description: "Conecte WhatsApp Oficial, Instagram Direct e TikTok for Business ao seu CRM Kanban e Inbox da BipeSend com sincronização em tempo real.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default async function IntegrationsPage() {

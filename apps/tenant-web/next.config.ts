@@ -19,15 +19,73 @@ try {
 } catch {}
 
 const nextConfig: NextConfig = {
-  // rewrites removed in favor of manual API proxy
+  compress: true,
+  poweredByHeader: false,
+  images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 86400,
+  },
+  async rewrites() {
+    return [
+      { source: "/politica-de-privacidade", destination: "/privacy" },
+      { source: "/termos", destination: "/terms" },
+      { source: "/exclusao-de-dados", destination: "/data-deletion" },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: "/assets/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://cloudflareinsights.com data:; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://cloudflareinsights.com data:; connect-src 'self' https://static.cloudflareinsights.com https://cloudflareinsights.com https://app.bipesend.com.br https://bipesend.com.br wss: ws: https:; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:;",
+          },
+        ],
+      },
+    ];
+  },
   serverExternalPackages: [],
   experimental: {
     // next-intl usa isso
     serverActions: {
-      allowedOrigins: ['app.localhost', 'app.localhost:3443', 'app.localhost:3080', ngrokHost, 'localhost:3000', '127.0.0.1:3000', 'localhost:3001', '127.0.0.1:3001'].filter(Boolean),
+      allowedOrigins: [
+        "app.bipesend.com.br",
+        "bipesend.com.br",
+        "www.bipesend.com.br",
+        "admin.bipesend.com.br",
+        "app.localhost",
+        "app.localhost:3443",
+        "app.localhost:3080",
+        "localhost:3000",
+        "127.0.0.1:3000",
+        "localhost:3001",
+        "127.0.0.1:3001",
+        ngrokHost,
+      ].filter(Boolean),
     },
   },
-  allowedDevOrigins: ['127.0.0.1', 'localhost', '::1', ngrokHost, 'app.localhost', 'admin.localhost'].filter(Boolean),
+  allowedDevOrigins: [
+    "127.0.0.1",
+    "localhost",
+    "::1",
+    "app.bipesend.com.br",
+    "bipesend.com.br",
+    "www.bipesend.com.br",
+    "admin.bipesend.com.br",
+    "app.localhost",
+    "admin.localhost",
+    ngrokHost,
+  ].filter(Boolean),
   transpilePackages: ["@bipesend/ui"],
 };
 

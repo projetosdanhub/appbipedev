@@ -177,4 +177,54 @@ describe("PipelineService", () => {
       assert.strictEqual(pipelines.find(p => p.id === pipeline.id), undefined);
     }, tenant.id);
   });
+
+  it("should protect default pipeline against deletion and correctly count only custom pipelines", async () => {
+    const tenant = await tenantRepo.create("Pipeline Default Quota Tenant");
+    const userId = randomUUID();
+
+    await db.withTransaction(async (txDb) => {
+      await txDb.query(`INSERT INTO users (id, email, name, updated_at) VALUES ($1, $2, $3, NOW())`, [userId, `pipe-default-${tenant.id}@test.com`, 'Test Default']);
+      const membership = await txDb.query(`INSERT INTO memberships (tenant_id, user_id, role) VALUES ($1, $2, $3) RETURNING id`, [tenant.id, userId, 'tenant_admin']);
+
+      const repo = new PipelineRepository(txDb);
+      const service = new PipelineService(txDb, repo);
+      const ctx = validContext(tenant.id, membership[0].id, userId);
+
+      // 1. Funil Principal Gratuito do Sistema (isDefault = true)
+      const defaultPipeline = await service.createPipeline(ctx as any, {
+        name: "Atendimento Omnichannel",
+        description: "Funil principal gratuito do sistema",
+        defaultCurrency: "BRL",
+        isDefault: true,
+      }) as any;
+
+      assert.strictEqual(defaultPipeline.isDefault, true);
+
+      // 2. Funil Comercial Adicional (isDefault = false)
+      const customPipeline = await service.createPipeline(ctx as any, {
+        name: "Expansão B2B",
+        description: "Funil adicional contratado",
+        defaultCurrency: "BRL",
+        isDefault: false,
+      }) as any;
+
+      assert.strictEqual(customPipeline.isDefault, false);
+
+      // 3. Contagem de funis customizados (deve ser 1, ignorando o principal gratuito)
+      const customCount = await repo.countCustomPipelines(tenant.id);
+      assert.strictEqual(customCount, 1, "Apenas funis adicionais não-default devem consumir cota do plano");
+
+      // 4. Tentativa de deletar o funil principal gratuito deve ser bloqueada
+      await assert.rejects(
+        async () => service.deletePipeline(ctx as any, defaultPipeline.id),
+        { message: "CANNOT_DELETE_DEFAULT_PIPELINE" },
+        "Funil principal do sistema não pode ser deletado sob nenhuma hipótese"
+      );
+
+      // 5. Deletar o funil customizado adicional deve ser permitido
+      await service.deletePipeline(ctx as any, customPipeline.id);
+      const updatedCustomCount = await repo.countCustomPipelines(tenant.id);
+      assert.strictEqual(updatedCustomCount, 0);
+    }, tenant.id);
+  });
 });

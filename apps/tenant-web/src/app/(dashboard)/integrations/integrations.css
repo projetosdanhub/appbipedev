@@ -1,163 +1,741 @@
-.integrations-page {
-  gap: var(--space-5);
+/* BipeSend - App Store & Omnichannel Integrations System
+   Design System Foundation: @bipesend/ui
+*/
+
+.integrations-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: var(--content-wide, 90rem);
+  margin-inline: auto;
+  padding-bottom: 4rem;
 }
-.integrations-native-badge {
-  min-height: 2.25rem;
-  padding-inline: var(--space-3);
-}
-.integrations-summary {
+
+/* ── 1. KPI & OVERVIEW METRICS GRID ── */
+.integrations-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
 }
-.integrations-summary > div {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-1) var(--space-3);
-  padding: var(--space-4) var(--space-5);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-card);
-  background: var(--bg-surface);
-  box-shadow: var(--shadow-xs);
+
+.kpi-metric-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-default, #dbe4f0);
+  border-radius: var(--radius-card, 1.125rem);
+  padding: 1.25rem 1.35rem;
+  box-shadow: var(--shadow-sm, 0 4px 14px rgba(37, 55, 88, 0.05));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
+  transition: all var(--motion-base, 180ms) ease;
 }
-.integrations-summary span,
-.integrations-summary small {
-  color: var(--text-muted);
-  font-size: var(--text-caption);
+
+.kpi-metric-card:hover {
+  border-color: var(--border-strong, #c5d1e2);
+  box-shadow: var(--shadow-card-hover, 0 10px 28px rgba(37, 55, 88, 0.08));
+  transform: translateY(-2px);
 }
-.integrations-summary strong {
-  grid-row: span 2;
-  align-self: center;
-  font-family: var(--font-title);
-  font-size: var(--text-heading-lg);
-  font-variant-numeric: tabular-nums;
-}
-.integrations-summary small {
-  line-height: 1.5;
-}
-.integrations-toolbar .ui-field {
-  width: min(22rem, 100%);
-}
-.integrations-toolbar .ui-label {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-}
-.integrations-toolbar .ui-input {
-  height: var(--control-height);
-}
-.integrations-filters {
+
+.kpi-metric-header {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  overflow-x: auto;
-  padding-block: 0.125rem;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
-.integrations-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-5);
+
+.kpi-metric-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary, #475569);
 }
-.integrations-grid article:first-child .ui-integration-icon {
-  background: var(--status-success-bg);
-  color: var(--status-success);
-}
-.integrations-grid article:nth-child(2) .ui-integration-icon {
-  background: #fff0f7;
-  color: #c72c75;
-}
-.integrations-grid article:nth-child(3) .ui-integration-icon {
-  background: var(--bg-subtle);
-  color: var(--text-primary);
-}
-.integration-qr-dialog {
-  width: min(31rem, calc(100vw - 2rem));
-}
-.integration-qr-content {
-  display: grid;
-  justify-items: center;
-  gap: var(--space-4);
-  min-height: 19rem;
-  padding: var(--space-5);
-  border-radius: var(--radius-card);
-  background: var(--bg-subtle);
-  text-align: center;
-}
-.integration-qr-content > p {
-  max-width: 24rem;
-  color: var(--text-secondary);
-  font-size: var(--text-small);
-  line-height: 1.65;
-}
-.integration-qr-frame {
-  padding: var(--space-3);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-card);
-  background: var(--bg-surface);
-  box-shadow: var(--shadow-control);
-}
-.integration-qr-frame img {
-  display: block;
-  border-radius: var(--radius-sm);
-}
-.integration-connected-state,
-.integration-loading-state {
+
+.kpi-metric-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-control, 0.75rem);
   display: flex;
-  min-height: 16rem;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpi-metric-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.kpi-metric-value {
+  font-family: var(--font-title, "Inter", sans-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.kpi-metric-total {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted, #64748b);
+}
+
+.kpi-metric-desc {
+  font-size: 0.775rem;
+  color: var(--text-muted, #64748b);
+  line-height: 1.4;
+}
+
+/* ── 2. SEÇÃO DE CONEXÕES ATIVAS (CENTRO DE OPERAÇÕES) ── */
+.active-operations-section {
+  display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 1.25rem;
 }
-.integration-connected-state > span {
+
+.section-headline-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+@media (min-width: 640px) {
+  .section-headline-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.section-main-title {
+  font-family: var(--font-title, "Inter", sans-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.section-main-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #475569);
+  line-height: 1.45;
+}
+
+.active-channels-grid {
   display: grid;
-  width: 4rem;
-  height: 4rem;
-  place-items: center;
-  border-radius: var(--radius-pill);
-  background: var(--status-success-bg);
-  color: var(--status-success);
+  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+  gap: 1.25rem;
 }
-.integration-connected-state svg {
-  width: 2rem;
-  height: 2rem;
+
+/* Card de Canal Ativo: Amplo, Elegante e Informativo */
+.active-channel-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-default, #dbe4f0);
+  border-radius: var(--radius-card, 1.125rem);
+  box-shadow: var(--shadow-sm, 0 4px 14px rgba(37, 55, 88, 0.05));
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  transition: all var(--motion-base, 180ms) ease;
+  position: relative;
+  overflow: hidden;
 }
-.integration-loading-state > svg {
-  width: 2.5rem;
-  height: 2.5rem;
-  color: var(--action-primary);
-  animation: ui-spin 0.8s linear infinite;
+
+.active-channel-card:hover {
+  border-color: var(--border-strong, #c5d1e2);
+  box-shadow: var(--shadow-card-hover, 0 10px 28px rgba(37, 55, 88, 0.09));
 }
-.integration-connected-state p,
-.integration-loading-state p {
-  max-width: 22rem;
-  color: var(--text-muted);
-  font-size: var(--text-small);
+
+.active-channel-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--brand-blue, #007bff) 0%, var(--brand-indigo, #4f46e5) 100%);
+  opacity: 0.9;
 }
-@media (max-width: 1023px) {
-  .integrations-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+.active-channel-card.channel-whatsapp::before {
+  background: linear-gradient(90deg, #25d366 0%, #128c7e 100%);
+}
+
+.active-channel-card.channel-instagram::before {
+  background: linear-gradient(90deg, #f58529 0%, #dd2a7b 50%, #8134af 100%);
+}
+
+.active-channel-card.channel-tiktok::before {
+  background: linear-gradient(90deg, #000000 0%, #25f4ee 50%, #fe2c55 100%);
+}
+
+.active-channel-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.active-channel-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.active-channel-logo-frame {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-control, 0.75rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg-subtle, #eef3fa);
+  border: 1px solid var(--border-default, #dbe4f0);
+}
+
+.active-channel-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.active-channel-name {
+  font-family: var(--font-title, "Inter", sans-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.active-channel-identifier {
+  font-size: 0.775rem;
+  color: var(--text-muted, #64748b);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Painel de Telemetria e Indicadores do Canal */
+.active-channel-telemetry-box {
+  background: var(--bg-subtle, #eef3fa);
+  border: 1px solid var(--border-default, #dbe4f0);
+  border-radius: var(--radius-control, 0.75rem);
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.telemetry-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+}
+
+.telemetry-item-label {
+  color: var(--text-secondary, #475569);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.telemetry-item-value {
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+/* Rodapé de Ações do Canal Ativo */
+.active-channel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--border-default, #dbe4f0);
+  margin-top: auto;
+}
+
+.active-channel-sync-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--action-primary, #0969e8);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-control, 0.75rem);
+  border: 1px solid rgba(9, 105, 232, 0.2);
+  background: var(--bg-selected, #e9f1ff);
+  transition: all var(--motion-fast, 140ms) ease;
+  cursor: pointer;
+}
+
+.active-channel-sync-btn:hover:not(:disabled) {
+  background: var(--action-primary, #0969e8);
+  color: #ffffff;
+  border-color: var(--action-primary, #0969e8);
+}
+
+.active-channel-sync-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.active-channel-sync-btn svg.spinning {
+  animation: spin 1s linear infinite;
+}
+
+/* ── 3. CATÁLOGO DE APLICATIVOS (LOJA DE APPS ESPAÇOSA) ── */
+.app-catalog-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.catalog-toolbar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .catalog-toolbar-wrap {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 }
-@media (max-width: 767px) {
-  .integrations-summary {
-    grid-template-columns: 1fr;
-  }
-  .integrations-toolbar {
-    align-items: stretch;
-  }
-  .integrations-toolbar .ui-field {
-    width: 100%;
-  }
-  .integrations-filters {
-    order: 2;
-  }
-  .integrations-grid {
-    grid-template-columns: 1fr;
-  }
-  .ui-integration-card {
-    min-height: auto;
+
+.catalog-category-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.catalog-category-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.catalog-category-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-pill, 999px);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--border-default, #dbe4f0);
+  background: var(--bg-surface, #ffffff);
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--motion-fast, 140ms) ease;
+}
+
+.catalog-category-tab:hover {
+  background: var(--bg-subtle, #eef3fa);
+  color: var(--text-primary, #0f172a);
+  border-color: var(--border-strong, #c5d1e2);
+}
+
+.catalog-category-tab.active {
+  background: var(--action-primary, #0969e8);
+  color: #ffffff;
+  border-color: var(--action-primary, #0969e8);
+  box-shadow: 0 2px 8px rgba(9, 105, 232, 0.28);
+}
+
+.catalog-tab-badge {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-pill, 999px);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.catalog-category-tab.active .catalog-tab-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Grid Espaçoso do Catálogo (Responsivo, sem cards minúsculos) */
+.catalog-enterprise-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
+  gap: 1.5rem;
+}
+
+@media (min-width: 1280px) {
+  .catalog-enterprise-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* Card Amplo e Generoso do Catálogo */
+.catalog-store-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-default, #dbe4f0);
+  border-radius: var(--radius-card, 1.125rem);
+  box-shadow: var(--shadow-sm, 0 4px 14px rgba(37, 55, 88, 0.05));
+  padding: 1.75rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  transition: all var(--motion-base, 180ms) ease;
+  min-height: 24rem;
+}
+
+.catalog-store-card:hover {
+  border-color: var(--border-strong, #c5d1e2);
+  box-shadow: var(--shadow-card-hover, 0 14px 34px rgba(37, 55, 88, 0.1));
+  transform: translateY(-2px);
+}
+
+.catalog-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.catalog-brand-logo-frame {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-control, 0.75rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.catalog-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.catalog-card-title {
+  font-family: var(--font-title, "Inter", sans-serif);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  line-height: 1.3;
+}
+
+.catalog-badges-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+}
+
+.catalog-pill-tag {
+  font-size: 0.675rem;
+  font-weight: 700;
+  padding: 0.175rem 0.55rem;
+  border-radius: var(--radius-pill, 999px);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.catalog-card-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #475569);
+  line-height: 1.6;
+}
+
+/* Lista de Recursos & Destaques Comerciais */
+.catalog-features-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border-subtle, #e2e8f0);
+}
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #475569);
+  line-height: 1.4;
+}
+
+.checklist-item svg {
+  width: 16px;
+  height: 16px;
+  shrink: 0;
+  margin-top: 0.125rem;
+}
+
+/* Rodapé de Ação do Catálogo */
+.catalog-card-action-bar {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-default, #dbe4f0);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.catalog-connect-btn {
+  width: 100%;
+  height: 42px;
+  border-radius: var(--radius-control, 0.75rem);
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all var(--motion-fast, 140ms) ease;
+  cursor: pointer;
+  border: none;
+}
+
+.catalog-connect-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+/* ── 4. CORES & MARCAS OFICIAIS ── */
+
+/* WhatsApp (#25D366) */
+.brand-bg-whatsapp {
+  background: rgba(37, 211, 102, 0.12);
+  border: 1px solid rgba(37, 211, 102, 0.25);
+  color: #128c7e;
+}
+
+.btn-theme-whatsapp {
+  background: #25d366 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.32);
+}
+
+.btn-theme-whatsapp:hover:not(:disabled) {
+  background: #20ba5a !important;
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.42);
+  transform: translateY(-1px);
+}
+
+/* Instagram Direct (#E4405F / Gradiente) */
+.brand-bg-instagram {
+  background: rgba(228, 64, 95, 0.1);
+  border: 1px solid rgba(228, 64, 95, 0.25);
+}
+
+.btn-theme-instagram {
+  background: linear-gradient(135deg, #f58529 0%, #dd2a7b 50%, #8134af 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(221, 42, 123, 0.32);
+}
+
+.btn-theme-instagram:hover:not(:disabled) {
+  filter: brightness(1.08);
+  box-shadow: 0 6px 18px rgba(221, 42, 123, 0.44);
+  transform: translateY(-1px);
+}
+
+/* TikTok for Business (#000000) */
+.brand-bg-tiktok {
+  background: rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.18);
+}
+
+.btn-theme-tiktok {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+}
+
+.btn-theme-tiktok:hover:not(:disabled) {
+  background: #1e293b !important;
+  box-shadow: 0 6px 18px rgba(37, 244, 238, 0.25), 0 0 12px rgba(254, 44, 85, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Telegram Bot API (#229ED9) */
+.brand-bg-telegram {
+  background: rgba(34, 158, 217, 0.12);
+  border: 1px solid rgba(34, 158, 217, 0.25);
+  color: #229ed9;
+}
+
+.btn-theme-telegram {
+  background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(34, 158, 217, 0.35);
+}
+
+.btn-theme-telegram:hover:not(:disabled) {
+  background: linear-gradient(135deg, #229ED9 0%, #1e8bbd 100%) !important;
+  box-shadow: 0 6px 18px rgba(34, 158, 217, 0.45);
+  transform: translateY(-1px);
+}
+
+/* Webhooks & API REST */
+.brand-bg-webhooks {
+  background: rgba(0, 123, 255, 0.1);
+  border: 1px solid rgba(0, 123, 255, 0.25);
+  color: #007bff;
+}
+
+.btn-theme-webhooks {
+  background: transparent !important;
+  color: var(--brand-blue, #007bff) !important;
+  border: 1px solid rgba(0, 123, 255, 0.3) !important;
+}
+
+.btn-theme-webhooks:hover {
+  background: var(--bg-selected, #e9f1ff) !important;
+  border-color: var(--brand-blue, #007bff) !important;
+}
+
+/* ── 5. QR CODE FRAME UNIVERSAL DE ALTO CONTRASTE ── */
+.universal-qr-box {
+  background: #ffffff !important;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-card, 1.125rem);
+  padding: 0.875rem;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 250px;
+  height: 250px;
+}
+
+.universal-qr-box img {
+  display: block;
+  width: 230px;
+  height: 230px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  border-radius: 0.375rem;
+  background: #ffffff;
+}
+
+/* ── 6. ANIMAÇÕES ── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseCheck {
+  0% { transform: scale(0.7); opacity: 0; }
+  60% { transform: scale(1.18); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pulse-check {
+  animation: pulseCheck 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* ── 7. FLUXO IN-CARD DE CONEXÃO WHATSAPP (SEM POPUP) ── */
+.catalog-incard-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+  gap: 1rem;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.catalog-incard-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-default, #dbe4f0);
+}
+
+.catalog-incard-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.catalog-incard-title {
+  font-family: var(--font-title, "Inter", sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+}
+
+.catalog-incard-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.catalog-incard-qr-frame {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-control, 0.75rem);
+  padding: 0.5rem;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 200px;
+}
+
+.catalog-incard-qr-frame img {
+  width: 184px;
+  height: 184px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.catalog-incard-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.75rem;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  border-radius: var(--radius-pill, 999px);
+  font-size: 0.725rem;
+  font-weight: 600;
+}
+
+.catalog-incard-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-default, #dbe4f0);
+}
+

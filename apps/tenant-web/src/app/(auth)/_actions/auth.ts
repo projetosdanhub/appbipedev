@@ -46,16 +46,20 @@ export async function loginAction(data: LoginInput & { code?: string }) {
     
     await signIn("credentials", signInData);
     const store = await cookies();
-    const secure = process.env.NODE_ENV === "production";
-    const name = `${secure ? "__Secure-" : ""}bipesend.tenant.session-token`;
-    const token = store.get(name);
-    if (token && !parsed.data.rememberMe)
+    let token = store.get("__Secure-bipesend.tenant.session-token");
+    let name = "__Secure-bipesend.tenant.session-token";
+    if (!token) {
+      token = store.get("bipesend.tenant.session-token");
+      name = "bipesend.tenant.session-token";
+    }
+    if (token && !parsed.data.rememberMe) {
       store.set(name, token.value, {
         httpOnly: true,
-        secure,
+        secure: name.startsWith("__Secure-"),
         sameSite: "lax",
         path: "/",
       });
+    }
     return { success: true, message: "Login realizado com sucesso!" };
   } catch (error) {
     const err = error as any;
@@ -83,6 +87,97 @@ export async function loginAction(data: LoginInput & { code?: string }) {
     return unavailable;
   }
 }
+
+export async function sendLoginCodeAction(data: { email: string }) {
+  try {
+    const { requestLoginCode } = await import("@bipesend/auth/login-code");
+    const { sendLoginCodeEmail } = await import("@/lib/mailer");
+
+    const res = await requestLoginCode(
+      data.email,
+      async (to, code) => {
+        await sendLoginCodeEmail(to, code);
+      },
+      "tenant"
+    );
+
+    if (!res.success) {
+      return {
+        success: false,
+        message: "Nenhuma conta encontrada com este e-mail.",
+      };
+    }
+
+    return {
+      success: true,
+      message: "Código de acesso enviado com sucesso para seu e-mail.",
+    };
+  } catch (error: any) {
+    if (error?.message === "AUTH_RATE_LIMITED") {
+      return {
+        success: false,
+        message: "Muitas tentativas em pouco tempo. Aguarde alguns instantes.",
+      };
+    }
+    return {
+      success: false,
+      message: "Não foi possível enviar o código. Tente novamente em instantes.",
+    };
+  }
+}
+
+export async function loginWithCodeAction(data: {
+  email: string;
+  code: string;
+  rememberMe?: boolean;
+}) {
+  try {
+    const signInData: Record<string, any> = {
+      email: data.email.trim().toLowerCase(),
+      code: data.code.trim().toUpperCase(),
+      loginType: "code",
+      rememberMe: String(data.rememberMe ?? false),
+      redirect: false,
+    };
+
+    await signIn("credentials", signInData);
+    const store = await cookies();
+    let token = store.get("__Secure-bipesend.tenant.session-token");
+    let name = "__Secure-bipesend.tenant.session-token";
+    if (!token) {
+      token = store.get("bipesend.tenant.session-token");
+      name = "bipesend.tenant.session-token";
+    }
+    if (token && !data.rememberMe) {
+      store.set(name, token.value, {
+        httpOnly: true,
+        secure: name.startsWith("__Secure-"),
+        sameSite: "lax",
+        path: "/",
+      });
+    }
+
+    return { success: true, message: "Login realizado com sucesso!" };
+  } catch (error) {
+    const err = error as any;
+    const isAuthError = err instanceof AuthError || (err && typeof err.type === "string");
+
+    if (isAuthError) {
+      const code = err.code || err.cause?.err?.code;
+      if (code === "INVALID_LOGIN_CODE") {
+        return {
+          success: false,
+          message: "Código inválido ou expirado. Confira e tente novamente.",
+        };
+      }
+    }
+    return {
+      success: false,
+      message: "Não foi possível autenticar com este código. Confira os dados digitados.",
+    };
+  }
+}
+
 export async function registerAction(data: RegisterInput) {
   const parsed = registerSchema.safeParse(data);
   if (!parsed.success) return { success: false, message: "Dados inválidos." };

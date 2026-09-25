@@ -62,7 +62,7 @@ describe("Auth server action boundaries", () => {
     mocks.getCookie.mockReturnValue({ value: "opaque-session" });
     expect((await loginAction(payload)).success).toBe(true);
     expect(mocks.setCookie).toHaveBeenCalledWith(
-      "bipesend.tenant.session-token",
+      "__Secure-bipesend.tenant.session-token",
       "opaque-session",
       expect.objectContaining({ httpOnly: true, sameSite: "lax" }),
     );

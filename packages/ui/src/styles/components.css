@@ -1211,3 +1211,18 @@
     border: 1px solid ButtonText;
   }
 }
+
+/* ───── Figma-style Motion Keyframes ───── */
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-150%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(350%) skewX(-12deg);
+  }
+}
+
+.animate-shimmer-sweep {
+  animation: shimmer-sweep 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
